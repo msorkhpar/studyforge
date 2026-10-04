@@ -283,6 +283,10 @@ ACCEPTANCE = {
     "opens a language-tagged practice with its editor filling the pane and the handles working": (
         "test_practice_tagged"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: a practice written in four languages.
+    "shows a practice written in four languages as one card, opens its panel in the reading "
+    "mode's language, switches the statement, panel and Submit target to another edition, and "
+    "marks each edition passed": "test_practice_editions",
     #: ⭐ A row of its own because its ORIGIN is the subject: the preview of that corpus read from
     #: a static server and from a file.
     "opens the read-only preview of a corpus of four languages from a static server and from a "

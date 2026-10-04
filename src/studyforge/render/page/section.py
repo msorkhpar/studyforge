@@ -106,7 +106,7 @@ from __future__ import annotations
 from studyforge.corpus.placement import ATTACHMENTS_DIRNAME
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import blocks
+from studyforge.render.page import blocks, editions
 from studyforge.render.page.anchors import TITLE_POSITION, section_anchor
 from studyforge.render.page.assets import Placement, filename
 from studyforge.render.page.errors import PageError
@@ -134,8 +134,13 @@ def render(
     narration: Narration = SILENT,
     *,
     heads_page: bool = False,
+    edited: bool = False,
 ) -> str:
     """Render one section: its deck, when it has one, then the section itself.
+
+    ⭐ `edited` says the section is one language edition of a practice that has several
+    (`page.editions`): it then carries `data-edition` with its language and NOT `data-lang`, so no
+    reading mode hides it. The workspace shows the edition the reader chose.
 
     ⚠️ **The section's own key is what a clip is addressed under**, which is the
     reason `data-section` is minted from kind and variant rather than from a
@@ -169,13 +174,19 @@ def render(
         key=escape_attribute(key),
         kind=escape_attribute(section.get("kind") or ""),
         label=escape_attribute(section.get("heading") or ""),
-        lang=_lang(section.get("lang")),
+        lang=_edition(section.get("lang")) if edited else _lang(section.get("lang")),
         heading=_heading(section, contents),
         body=body,
     )
     deck = _deck(section.get("video"), placement)
     files = _attachments(section.get("attachments"), placement)
     return blocks.JOIN.join(part for part in (deck, wrapper, files) if part)
+
+
+def _edition(lang: object) -> str:
+    """Return the `data-edition` attribute of a language edition: the language it is written in."""
+    named = isinstance(lang, str) and lang
+    return f' {editions.ATTRIBUTE}="{escape_attribute(lang)}"' if named else ""
 
 
 def _lang(lang: object) -> str:

@@ -117,7 +117,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import deck, mark, mock, mockform, quiz, review, scope
+from studyforge.render.page import deck, editions, mark, mock, mockform, quiz, review, scope
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -232,10 +232,12 @@ def render(section: dict, document: dict, placement: Placement, *, embedded: boo
             exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise)),
             embedded=embedded, **more,
         )
+    many = editions.edited_with(document, section)
     return templates.fill(
         PANEL_TEMPLATE,
         key=escape_attribute(key),
         corpus=escape_attribute(placement.corpus),
+        **editions.slots(many, section, placement.offer),
         file=files_sentence(exercise),
         grader=_region(grader(exercise)),
         tabs=_region(tabs(exercise)),

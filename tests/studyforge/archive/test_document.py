@@ -128,10 +128,10 @@ def test_build_reproduces_every_committed_document_byte_for_byte():
         assert render(build(**parts_of(document))) == text, path.name
         seen.update(key for key in OPTIONAL_KEYS if key in document)
     # ⛔ "Including every optional key" is part of the acceptance, so the
-    # sweep asserts it actually met all three rather than none. ⭐ `lang` is the
-    # exception: a tagged document is built by the tests that tag one, and no
-    # committed fixture carries it, so every fixture stays the bytes it was.
-    assert seen == set(OPTIONAL_KEYS) - {"lang"}
+    # sweep asserts it actually met all three rather than none. ⭐ `lang` and
+    # `edition` are the exceptions: a tagged document is built by the tests that tag one, and no
+    # committed fixture carries either, so every fixture stays the bytes it was.
+    assert seen == set(OPTIONAL_KEYS) - {"lang", "edition"}
 
 
 def test_the_key_order_is_what_reaches_disk():
@@ -167,6 +167,7 @@ def test_optional_keys_are_appended_after_the_digest():
         media_skipped=True,
         exercise=GRADED_EXERCISE,
         lang="aa",
+        edition="a",
     )
     assert tuple(document)[: len(DOCUMENT_KEYS)] == DOCUMENT_KEYS
     assert tuple(document)[len(DOCUMENT_KEYS) :] == OPTIONAL_KEYS

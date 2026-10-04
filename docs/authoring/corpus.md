@@ -443,6 +443,11 @@ repeated id, a shared fence label, a `default_mode` that is no mode or an `outsi
 that is neither value. The keys need `corpus_api` 8, which this build already writes;
 validation never asks a unit to have anything in a language.
 
+A practice written in several languages is one practice with an edition per language: the
+practice documents of a unit that share an `edition` (and each name their own `lang`) are one card,
+and the mode decides only which edition its panel opens in (`practices`, then `prose`, then
+`tabs`). See *One practice in several languages* in `exercises.md`.
+
 **What a reader sees.** A corpus that declares `modes` writes `modes.css` and `modes.js`
 beside `page.css` and `page.js`, and every page carries a switch listing the declared
 modes. On a first visit a card asks which one to read, listing each mode's label and

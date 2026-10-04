@@ -141,11 +141,11 @@ raw_api  source  address  variant  unit  kind  ordinal  ingested
 title  blocks  video  assets  attachments  counts  content_sha256
 ```
 
-**Five more, written only when they have something to say, always after the
+**Six more, written only when they have something to say, always after the
 digest:**
 
 ```
-assets_sha256  starting_code  media_skipped  exercise  lang
+assets_sha256  starting_code  media_skipped  exercise  lang  edition
 ```
 
 **A document carrying any other key is refused.** A key nothing reads is how a
@@ -168,6 +168,14 @@ and re-renders to the same bytes as before the key existed. A unit that holds
 a Kotlin lesson and a Java lesson is two lesson documents, each tagged, and the
 page holds both: a tagged section carries `data-lang="<id>"` and an untagged
 one carries nothing.
+
+**`edition` says a practice document is one language edition of a practice.** It is an id of
+lowercase letters, digits, `-` and `_`, the same on the practice documents of one unit that are one
+practice written in several languages, and each of them carries its own single `lang`. A document
+that names an `edition` without exactly one `lang` is refused when it is built or read. The site
+shows the documents of one `edition` as one card with a language switch in the panel
+(`exercises.md`, *One practice in several languages*); a document without it re-renders to the
+same bytes as before the key existed.
 
 **An adapter that reads Markdown can mark the regions.** `studyforge.archive.markdown.regions(text)`
 cuts a page at `<!-- lang: <id> -->` (or `<!-- lang: <id>,<id> -->` for a section of several

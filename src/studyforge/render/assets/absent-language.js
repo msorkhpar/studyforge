@@ -117,7 +117,11 @@
   /* The card whose section the address names, which is the practice that is open. */
   function openCard() {
     var id = window.location.hash.slice(1);
-    return cards().filter(function (card) { return card.getAttribute('data-practice-card') === id; })[0] || null;
+    /* ⭐ A practice of several language editions is open when any one of its editions is. */
+    return cards().filter(function (card) {
+      return card.getAttribute('data-practice-card') === id ||
+        !!card.querySelector('[data-edition-section="' + id + '"]');
+    })[0] || null;
   }
 
   function readable(from, step) {

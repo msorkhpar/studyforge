@@ -161,11 +161,13 @@ CODE = {
 }
 
 
-def build(tmp_path, name, manifest, *, units=UNITS, code=False):
+def build(tmp_path, name, manifest, *, units=UNITS, code=False, graded=False):
     """Build the corpus under `tmp_path / name` with `manifest` laid over the demo manifest.
 
     With `code` every practice is a code practice: a file to edit and a command that runs it, so
-    the page carries a panel for it as well as a card.
+    the page carries a panel for it as well as a card. With `graded` each also names a test and the
+    command that runs it, so it has Submit and a status. A part may carry a fifth item, the
+    `edition` its document names (one practice written in several languages).
     """
     documents, entries, sources = {}, [], {}
     if code:
@@ -173,7 +175,7 @@ def build(tmp_path, name, manifest, *, units=UNITS, code=False):
     for unit, title, parts in units:
         entries.append(corpora.unit_entry(unit, origin=f"src/{unit}.md", title=title))
         counts: dict[str, int] = {}
-        for kind, lang, blocks, heading in parts:
+        for kind, lang, blocks, heading, *more in parts:
             counts[kind] = counts.get(kind, 0) + 1
             ordinal = counts[kind]
             document = {
@@ -189,10 +191,20 @@ def build(tmp_path, name, manifest, *, units=UNITS, code=False):
             }
             if lang:
                 document["lang"] = lang
+            if more:
+                document["edition"] = more[0]
             if code and kind == "practice":
                 main = f"practice/unit-{unit}-{ordinal}.py"
                 document["exercise"] = {"main_path": main, "run_command": ["python3", main]}
                 sources[main] = "print('hello')\n"
+                if graded:
+                    test = f"practice/test_unit_{unit}_{ordinal}.py"
+                    document["exercise"].update(
+                        test_path=test,
+                        test_command=["python3", "-m", "pytest", test],
+                        provenance="bundled",
+                    )
+                    sources[test] = "def test_it():\n    assert True\n"
             documents[f"demo/raw/prose/unit-0{unit}/{kind}-{ordinal}.json"] = document
     root = corpora.write(
         tmp_path / name,

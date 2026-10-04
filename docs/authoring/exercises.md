@@ -644,6 +644,60 @@ and is exported thin. A corpus that names no profile is built on the plain bases
 
 ---
 
+## One practice in several languages: editions
+
+**A practice that differs only by language is ONE practice, not one per language.** A course
+that teaches the same task in Python, TypeScript, Java and Kotlin writes four exercises (four
+bundles, four gate records, four sets of plants), and its site lists **one** card for them, with
+**one** status, and one panel with a language switch at the top.
+
+**How a corpus opts in.** Every language's exercise stays a practice document of its own. The
+adapter writes two keys on each of them, in the fields it hands to `archive.document.build`:
+
+| Key | What it says |
+|---|---|
+| `lang` | the one language this document is written in: an id the manifest declares in `languages` |
+| `edition` | the id of the practice this document is one language edition of: lowercase letters, digits, `-` and `_`; every language's document of one practice gives the same id |
+
+The documents of one unit that share an `edition` are one practice. An `edition` with no `lang`, or
+with several languages in it, is refused when the document is built. A practice with no `edition`
+is what it always was, and so is an `edition` that only one document of its unit names (there is
+nothing to choose between) and one carried by a quiz or a deck (they are not written in a
+language). A corpus that never writes the key builds the bytes it built before.
+
+**What the reader sees.**
+
+- **One card.** The card of the practice is titled once, with no language in it: a trailing
+  parenthesis naming the edition's language (its id or its declared name, as in
+  `Keep a conversation (Python)`) is dropped from the title, and any other title is kept as written.
+  Under it the card says *Available in:* and lists each edition, in the order the documents are
+  numbered. The card sits where the first edition sits, and the outline lists the practice once;
+  *Practice (n)* counts practices, not editions.
+- **One panel, a switch at the top.** The card opens the one workspace, with the statement of the
+  shown edition on the left and its editor, Run and Submit on the right. The row of language buttons
+  is the first thing in the panel. Choosing another language swaps the statement, the workspace
+  files, the tests, the Run and Submit target and the editor to that edition's; nothing is merged.
+- **It opens in the reader's language.** The row opens on the first edition in this list: the
+  reading mode's `practices`, then its `prose` language, then its `tabs`, in that order; when the
+  practice has no edition in any of them, or the corpus declares no modes, it opens on the first
+  edition. The mode is the one chosen in the page header, read when the card is opened, so changing
+  the mode and opening a card again opens it in the new mode's language. The switch always lists
+  every edition: the mode picks where it opens, and never hides an edition. (The mode's
+  `practice_choice` does not change this.)
+- **Progress is per edition.** Each edition's pass is recorded under its own practice key, as a
+  practice with one language always was. The *Available in:* line marks each edition that has
+  passed, and the card's status summarises them: *Not started*, *Passed in 2 of 4 languages*, or
+  *Passed in every language*.
+
+**What stays per edition.** The gates run on each edition as they do on any practice: each has its
+bundle, its `gates.json`, its cases, and its plants (a `PlantSpec` against that edition's own
+reference). Nothing about authoring changes; `edition` only tells the site which documents are one
+practice. Every edition's statement and panel are on the page for a reader with no script and
+under `file://`, one after another under the list, as practices always are; the switch ships
+hidden and only a script shows it.
+
+---
+
 ## Run and Submit are different acts
 
 **Run executes the reader's program so they can see what it printed.**

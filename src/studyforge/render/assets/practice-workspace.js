@@ -39,7 +39,13 @@
    fragment, put there with `replaceState` so Back leaves the page as it always
    did. ⚠️ That is what survives the ONE reload a cold editor needs
    (`practice-editor.js`): the page comes back with the practice open, rather
-   than closed on a reader who had just opened it. */
+   than closed on a reader who had just opened it.
+
+   ⭐ **A practice written in several languages is one card** (`practice-editions.js`). Opening it
+   shows ONE edition's statement and panel — the language of the current reading mode, else the
+   first — and the switch at the top of the panel swaps the pair: the panel left is told it is
+   closed and the one shown is told it is opened, with the same two events, so the editor, Run and
+   Submit follow the edition shown and nothing is moved. */
 
 (function () {
   'use strict';
@@ -114,10 +120,18 @@
     return found;
   }
 
+  /* ⭐ A card's language editions (`[]` for a practice of its own). `section` and `panel` of a card
+     are the pair it shows: its first, until an edition is chosen. */
+  var editions = window.studyforge.editions;
+  var SWITCH = 'button[data-edition-switch]';
+
   var practices = [].slice.call(region.querySelectorAll(CARD)).map(function (card) {
+    var found = editions.of(card, panelOf);
     return {
       card: card,
       link: card.querySelector(OPEN_LINK),
+      editions: found,
+      lang: found.length ? found[0].lang : null,
       section: document.getElementById(card.getAttribute(CARD_SECTION)),
       panel: panelOf(card.getAttribute(CARD_KEY))
     };
@@ -140,11 +154,15 @@
     } catch (ignored) { return; }
   }
 
+  /* Only the pair a card is showing is ever visible: its editions' others stay hidden. */
   function each(one, visible) {
-    [one.section, one.panel].forEach(function (element) {
-      if (!element) { return; }
-      element.hidden = !visible;
-      if (visible) { element.setAttribute(OPEN, ''); } else { element.removeAttribute(OPEN); }
+    editions.pairs(one).forEach(function (pair) {
+      var shown = visible && pair.section === one.section;
+      [pair.section, pair.panel].forEach(function (element) {
+        if (!element) { return; }
+        element.hidden = !shown;
+        if (shown) { element.setAttribute(OPEN, ''); } else { element.removeAttribute(OPEN); }
+      });
     });
   }
 
@@ -182,17 +200,22 @@
     var one = practices[current];
     say(CLOSED, one);
     each(one, false);
+    editions.rows(one, false);
     column(null);
     wake();
   }
 
-  function open(index) {
+  function open(index, lang) {
     if (index < 0 || index >= practices.length) { return; }
     if (current < 0) { was = window.pageYOffset || 0; }
     leave();
     current = index;
     var one = practices[index];
+    if (one.editions.length) {
+      editions.use(one, editions.byLang(one, lang) || editions.preferred(one, shell));
+    }
     each(one, true);
+    editions.rows(one, true);
     part('title').textContent = one.link.textContent;
     act('previous').hidden = index === 0;
     act('next').hidden = index === practices.length - 1;
@@ -209,6 +232,31 @@
     [].slice.call(document.querySelectorAll(EXAMPLE)).forEach(function (entry) { entry.open = false; });
     say(OPENED, one);
   }
+
+  /* ⭐ The switch: another edition of the open practice takes the place of the one shown. */
+  function switchTo(lang) {
+    if (current < 0) { return; }
+    var one = practices[current];
+    var to = editions.byLang(one, lang);
+    if (!to || to.section === one.section) { return; }
+    say(CLOSED, one);
+    each(one, false);
+    wake();
+    editions.use(one, to);
+    each(one, true);
+    editions.rows(one, true);
+    still(one);
+    one.section.scrollTop = 0;
+    address('#' + one.section.id);
+    say(OPENED, one);
+    var pressed = one.panel && one.panel.querySelector(SWITCH + '[aria-pressed="true"]');
+    if (pressed) { pressed.focus({ preventScroll: true }); }
+  }
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest ? event.target.closest(SWITCH) : null;
+    if (button) { switchTo(button.getAttribute('data-edition-switch')); }
+  });
 
   function close() {
     if (current < 0) { return; }
@@ -246,9 +294,12 @@
      the reader to where the entry's state says they were — or, with none, to
      the practice's card, which is where they would have chosen it. */
   practices.forEach(function (one, index) {
-    if (location.hash !== '#' + one.section.id) { return; }
+    var named = editions.pairs(one).filter(function (pair) {
+      return location.hash === '#' + pair.section.id;
+    })[0];
+    if (!named) { return; }
     var kept = history.state && history.state[WAS];
-    open(index);
+    open(index, named.lang);
     var box = one.card.getBoundingClientRect();
     was = typeof kept === 'number'
       ? kept : Math.max(0, box.top + (window.pageYOffset || 0) - window.innerHeight / 3);
@@ -291,7 +342,9 @@
       if (!held) { return; }
       practices.forEach(function (one) {
         var own = one.card.getAttribute(CARD_KEY) || '';
-        if (!isQuiz(one) && one.card.querySelector(STATE)) {
+        if (one.editions.length) {
+          if (one.card.querySelector(STATE)) { editions.paint(one, held); }
+        } else if (!isQuiz(one) && one.card.querySelector(STATE)) {
           paint(one.card, held[own.slice(own.lastIndexOf('/') + 1)] === true);
         }
       });
