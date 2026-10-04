@@ -2,20 +2,32 @@ r"""The one command that runs a test file in the copy of a corpus's code.
 
 **What it does.** `argv_for(files, test, module, runtimes)` answers the argv a runner starts to
 run ONE test file, chosen by the test's suffix and the build file its module holds, or `None`
-where no command is known. `execute.codepair` pairs files and asks this for the command.
+where no command is known; `workdir_for(test)` answers the directory that argv starts in.
+`execute.codepair` pairs files and asks this for both.
 
 **Depends on.** `codetree` for where the copy is. ⛔ Reads the corpus and writes nothing, and
 names no corpus (R1): every name below is a tool's or a language's.
 
 ## ⭐ One command per kind of test
 
-- `.py` (corpus declares `python`): `python3 -m pytest -q -p no:cacheprovider <test>`;
+- `.py` (corpus declares `python`): `python3 -m pytest -q -p no:cacheprovider <test>`, started
+  in the copy's ROOT (see below);
 - `.ts`, `.js`, `.mjs`, `.cjs` (declares `node`): `node --test <test>`;
 - a JVM test, by the build file its module holds, Maven first: a `pom.xml` gives Maven's
   command (the reactor, `-pl <module> -am`, one class) exactly as it always has; otherwise,
   with `gradle` declared, a `build.gradle(.kts)` or `settings.gradle(.kts)` gives
   `gradle --offline -q -p <build> [:<dir>:]cleanTest [:<dir>:]test --tests <package.Class>`,
   the class named by the package its file declares.
+
+## ⭐ A Python test starts in the copy's root, so the corpus root is its import root
+
+⚠️ **Measured:** an example whose program imports a package at the corpus root (`from harness
+import ...`, a folder its block declares as `support`) failed its Run with `No module named
+'harness'`: started in the runner's `/work`, pytest put only the test's own folder on the path.
+⭐ So a `.py` test runs with the copy's root (`CODE_COPY`) as its working directory and its path
+relative to it: `python3 -m` puts the working directory first on the import path, so a folder
+named from the corpus root imports exactly as it does when the corpus is run from its root.
+Every other command starts in the runner's root (`ROOT_DIR`), as it always has.
 
 ⚠️ A Gradle subproject is addressed by its directory path, which is its name unless the
 settings file renames it; a directory name Gradle would not take unchanged gets no command
@@ -29,6 +41,7 @@ import re
 from pathlib import Path, PurePosixPath
 
 from studyforge.execute.codetree import CODE_COPY, in_copy
+from studyforge.execute.commands import ROOT_DIR
 
 MAVEN = "maven"
 POM = "pom.xml"
@@ -71,9 +84,18 @@ def argv_for(
     return None
 
 
+def workdir_for(test: str) -> str:
+    """Return the directory, relative to the runner's root, that `test`'s command starts in.
+
+    ⭐ The copy's root for a Python test, so the corpus root is on its import path; the
+    runner's root for every other test, whose command names the copy itself.
+    """
+    return CODE_COPY if PurePosixPath(test).suffix in PYTHON_SUFFIXES else ROOT_DIR
+
+
 def _pytest(test: str) -> list[str]:
-    """Return the argv that runs one pytest file in the copy, leaving no cache behind."""
-    return ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", in_copy(test)]
+    """Return the argv that runs one pytest file from the copy's root, leaving no cache behind."""
+    return ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", test]
 
 
 def _node(test: str) -> list[str]:

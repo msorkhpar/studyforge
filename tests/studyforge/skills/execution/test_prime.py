@@ -360,3 +360,49 @@ def test_a_prime_reached_through_a_link_is_named_and_a_plain_one_is_not(tmp_path
     assert why is not None and why.startswith(".studyforge/execution is a symbolic link")
     assert str(tmp_path) not in why, "the refusal names no host path"
     assert prime.linked(tmp_path, ".studyforge/../outside") is not None
+
+
+def gradle_build(root, where: str, *, checksums: bool) -> None:
+    """A Gradle build at `where` with one Kotlin source and test, and its checksum file if asked."""
+    base = root / where if where else root
+    put(base / "settings.gradle.kts", 'rootProject.name = "b"\n')
+    put(base / "build.gradle.kts", 'plugins { kotlin("jvm") version "2.4.20" }\n')
+    put(base / "src/main/kotlin/a/A.kt", "package a\nclass A\n")
+    put(base / "src/test/kotlin/a/ATest.kt", "package a\nclass ATest { val a: A? = null }\n")
+    if checksums:
+        put(base / "gradle/verification-metadata.xml", "<verification-metadata/>\n")
+
+
+def test_a_gradle_build_with_checksums_is_the_prime_over_a_shallower_one_without(tmp_path):
+    # ⭐ The component refuses a Gradle prime with no checksum file, so a deeper build that
+    # carries one is the prime; the shallower one (an example build) is not warmed from here.
+    gradle_build(tmp_path, "examples", checksums=False)
+    gradle_build(tmp_path, "tools/prime", checksums=True)
+    made = prime.prime_for(tmp_path, ("gradle", "kotlin"), seeded=SEEDED)
+    assert [one.root for one in made.projects] == ["tools/prime"]
+    assert "tools/prime/gradle/verification-metadata.xml" in made.build_files
+    assert all(origin.startswith("tools/prime/") for _, origin in made.copies())
+
+
+def test_where_the_shallowest_gradle_build_has_checksums_or_none_does_it_is_the_prime(tmp_path):
+    # ⛔ Every corpus that primed before primes the same build.
+    both = tmp_path / "both"
+    gradle_build(both, "examples", checksums=True)
+    gradle_build(both, "tools/prime", checksums=True)
+    made = prime.prime_for(both, ("gradle", "kotlin"), seeded=SEEDED)
+    assert [p.root for p in made.projects] == ["examples"]
+    neither = tmp_path / "neither"
+    gradle_build(neither, "examples", checksums=False)
+    gradle_build(neither, "tools/prime", checksums=False)
+    assert [
+        p.root for p in prime.prime_for(neither, ("gradle", "kotlin"), seeded=SEEDED).projects
+    ] == ["examples"]
+
+
+def test_two_gradle_builds_with_checksums_at_one_depth_are_still_refused(tmp_path):
+    gradle_build(tmp_path, "examples", checksums=False)
+    gradle_build(tmp_path, "tools/one", checksums=True)
+    gradle_build(tmp_path, "tools/two", checksums=True)
+    with pytest.raises(prime.PrimeRefused) as refused:
+        prime.prime_for(tmp_path, ("gradle", "kotlin"), seeded=SEEDED)
+    assert "tools/one" in str(refused.value) and "tools/two" in str(refused.value)

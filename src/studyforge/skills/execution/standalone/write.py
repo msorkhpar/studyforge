@@ -228,6 +228,8 @@ def release(
             manifest.source,
             live=manifest.live is not None,
             live_dirs=live.directories(manifest),
+            packages="node" in manifest.runtimes
+            and all(one in kept for one in images.PACKAGE_FILES),
         ),
         ".dockerignore": images.DOCKERIGNORE,
         "compose.yaml": _namespaced(built, namespace),

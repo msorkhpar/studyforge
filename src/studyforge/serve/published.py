@@ -19,7 +19,8 @@ process (spec §8.3).
 
 ⭐ **Every argv a record names**: each authored or shipped practice's
 `run_command` and `test_command` (its archive document's `exercise`), and each
-test file's command in the copy of the corpus's code (`execute.test_commands`).
+test file's command in the copy of the corpus's code, with the directory it starts in
+(`execute.test_runs`).
 ⛔ **Never the argv a request carried**: the list is recomputed from the corpus
 on disk, so a request can only ask for a command already in it, and a corpus
 rebuilt while serving is read again at the next run.
@@ -42,7 +43,7 @@ from studyforge.execute import (
     from_environment,
     instance_problems,
     refuse_instance,
-    test_commands,
+    test_runs,
     write_allowed,
 )
 from studyforge.serve.discovery import ServedCorpus
@@ -126,7 +127,7 @@ def allowed_runs(corpus: ServedCorpus) -> list[tuple[str, list[str]]]:
             for argv in _commands(path):
                 found.append((ROOT, argv))
     runtimes = corpus.corpus.manifest.runtimes
-    found.extend((ROOT, argv) for argv in test_commands(corpus.root, runtimes))
+    found.extend(test_runs(corpus.root, runtimes))
     return found
 
 

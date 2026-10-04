@@ -86,7 +86,7 @@ from studyforge.execute.conventions import (
     source_suffixes,
     tested_stem,
 )
-from studyforge.execute.testargv import argv_for
+from studyforge.execute.testargv import argv_for, workdir_for
 
 #: A word a test's text may name a source by.
 WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
@@ -220,14 +220,23 @@ def _test_argv(
     return argv_for(files, found.test, found.module, runtimes)
 
 
-def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
-    """Return the argv that runs each test file the copy holds, every one a command may run.
+def test_workdir(found: Pair) -> str:
+    """Return the directory `found`'s test command starts in, relative to the runner's root.
+
+    ⭐ `testargv.workdir_for`: the copy's root for a Python test, the runner's root otherwise.
+    """
+    return workdir_for(found.test or found.opened)
+
+
+def test_runs(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[tuple[str, list[str]]]:
+    """Return `(working directory, argv)` for each test file the copy holds that a command runs.
 
     ⭐ **The run service's allowlist reads this** (`serve.published`): a test's
     command names its build module and its own file and never its source, so
     each test is asked for on its own and no text is read but a JVM test's own
-    package line. ⚠️ Code too large to copy runs no test, exactly as the served
-    example then opens nothing.
+    package line. ⭐ Each entry carries the directory its command starts in
+    (`test_workdir`), because the run service compares both. ⚠️ Code too large to
+    copy runs no test, exactly as the served example then opens nothing.
     """
     try:
         files = code_files(Path(root))
@@ -240,8 +249,13 @@ def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[lis
             opened = Pair(opened=path, source=None, test=path, module=module)
             argv = _test_argv(files, opened, runtimes)  # ⭐ one walk for every test, not one each
             if argv is not None:
-                found.append(argv)
+                found.append((workdir_for(path), argv))
     return found
+
+
+def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
+    """Return the argv that runs each test file the copy holds: `test_runs` less directories."""
+    return [argv for _workdir, argv in test_runs(root, runtimes)]
 
 
 def _by_name(path: str, candidates: list[str], stem: str | None) -> str | None:

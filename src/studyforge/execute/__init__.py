@@ -84,7 +84,16 @@ from studyforge.execute.browser import (
     capture_page,
     find_browser,
 )
-from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command, test_commands
+from studyforge.execute.codepair import (
+    Pair,
+    is_code,
+    pair,
+    pairing,
+    test_command,
+    test_commands,
+    test_runs,
+    test_workdir,
+)
 from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, mirrored, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
@@ -215,6 +224,8 @@ __all__ = [
     "sync",
     "test_command",
     "test_commands",
+    "test_runs",
+    "test_workdir",
     "valid_key",
     "write_allowed",
     "write_settings",
