@@ -184,6 +184,7 @@ class _Reader(HTMLParser):
         self._summary: list[str] | None = None
         self._heading: tuple[str, list[str]] | None = None
         self.exam = False
+        self._quizzes: list[int] = []
 
     # -- state -------------------------------------------------------------
 
@@ -237,7 +238,12 @@ class _Reader(HTMLParser):
             self._main_depth = len(self._stack)
         marker = kind
         if self._main_depth is not None:
-            if any(name.startswith(EXAM_PREFIXES) for name in attrs):
+            # ⭐ A quiz on a lesson page is drawn with the mock form's markup (it carries the
+            # same `data-practice-mock` pass mark): only a region that is not a quiz marks an
+            # exam page, and nothing inside a quiz does.
+            if attrs.get("data-form-kind") == "quiz":
+                self._quizzes.append(len(self._stack))
+            if not self._quizzes and any(name.startswith(EXAM_PREFIXES) for name in attrs):
                 self.exam = True
             if self._withheld(tag, attrs):
                 self._silent += 1
@@ -285,6 +291,8 @@ class _Reader(HTMLParser):
             self._in_identity = False
         if marker == "silent":
             self._silent -= 1
+        if self._quizzes and self._quizzes[-1] == len(self._stack):
+            self._quizzes.pop()
         if marker == "example" and self._examples:
             self._examples.pop()
         if marker == "crumbskip":

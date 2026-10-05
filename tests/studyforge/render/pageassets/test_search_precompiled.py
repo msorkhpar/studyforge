@@ -128,6 +128,24 @@ def test_only_prose_titles_headings_and_menu_labels_are_findable(tmp_path):
         assert found[word], kind
 
 
+#: A lesson whose quiz is drawn with the mock form's markup, as a course quiz is.
+QUIZ_PAGE = """<!doctype html><html><head><title>A quizpagetitlemarker lesson</title>
+<script type="application/json" id="studyforge-identity">{"kind":"unit"}</script></head><body>
+<main id="content"><section id="s1" data-section="prose" data-kind="lesson" data-label="Lesson">
+<h2 id="s-a">A request</h2><p>The quizpageprosemarker passage.</p></section>
+<section id="s2" data-section="practice-1" data-kind="practice" data-label="Practice">
+<section data-practice-quiz="q" data-practice-mock="100" data-mock-form="exam"
+data-form-kind="quiz" data-corpus="c" aria-label="Questions" tabindex="-1">
+<p data-mock-domain="d">quizoptionmarker words</p></section></section></main></body></html>"""
+
+
+def test_a_lesson_with_a_quiz_drawn_as_a_mock_form_is_still_indexed():
+    page = searchindex.read(QUIZ_PAGE)
+    assert page["exam"] is False
+    text = " ".join(section[2] for section in page["sections"])
+    assert "quizpageprosemarker" in text and "quizoptionmarker" not in text
+
+
 @needs_node
 def test_an_exam_page_is_not_in_the_index_at_all(tmp_path):
     found = round_trip(built(KINDS), tmp_path, [])
