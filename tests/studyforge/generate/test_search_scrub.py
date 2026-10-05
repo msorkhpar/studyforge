@@ -29,5 +29,6 @@ def test_prose_that_describes_a_secret_shape_is_scrubbed_out_of_the_index():
     cleaned = {n: scrub(b) for n, b in raw.items()}  # what generate.site writes
     for name, text in cleaned.items():
         assert_clean(text, name)
-    data = json.loads(cleaned[searchindex.INDEX_NAME][len(searchindex.GLOBAL) : cleaned[searchindex.INDEX_NAME].rindex(";")])
+    text = cleaned[searchindex.INDEX_NAME]
+    data = json.loads(text[len(searchindex.GLOBAL) : text.rindex(";")])
     assert any("Redact" in r[3] for r in data["records"])

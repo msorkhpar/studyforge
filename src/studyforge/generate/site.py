@@ -211,8 +211,9 @@ def assets(
     if pages:
         # ⭐ The search index is read back off the pages just written: it says only what they say.
         # ⛔ Scrubbed: flattened out of its markup, prose that describes a secret's shape (a page on
-        # redaction saying "`Bearer` followed by ...") reads as the secret itself to the serve gate's
-        # personal-data check, which would refuse the whole index file. The pages keep their words.
+        # redaction saying "`Bearer` followed by ...") reads as the secret itself to the serve
+        # gate's personal-data check, which would refuse the whole index file. The pages keep
+        # their words.
         # ⭐ Twice: each text before it is indexed, so no term or snippet holds the shape, and each
         # file as written. Scrubbing only changes text of a secret's shape, so a precompiled
         # index's JSON is left whole.

@@ -48,7 +48,7 @@ colour changes.
 | `vendored` | the two bundles this project did not write, and their licences |
 | `grammars` | which fence languages the vendored highlighter covers, and the plain fallback |
 | `surface` | the class names and `data-*` hooks the stylesheet targets |
-| `errors` | `AssetError`, the only exception any of it raises; `search.Unbuilt` is a builder's, caught by `search_files` |
+| `errors` | `AssetError`, the only exception any of it raises; `search.Unbuilt` is a builder's |
 
 ⭐ **Assets are shared and linked, never inlined.** They were 79% of each 60 KB
 page in the extraction source and byte-identical across all of them; at 1,290
