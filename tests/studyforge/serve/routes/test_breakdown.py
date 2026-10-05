@@ -253,3 +253,69 @@ def test_a_refusal_says_its_own_sentence_and_no_case_line(tmp_path):
     assert len(refused) == 1
     assert refused[0].startswith(NO_BREAKDOWN.split("{")[0])
     assert CASE_LINE.split("{")[0] not in refused[0]
+
+
+# --------------------------------------------------------------------------
+# The detail lines, which only a page that asked is told
+# --------------------------------------------------------------------------
+
+import json  # noqa: E402
+
+from studyforge.serve.routes.breakdown import DETAIL_LINE, DETAIL_VERSION, detail  # noqa: E402
+
+LOGGED = (
+    '<testcase classname="practice.check_greet" name="{name}">'
+    '<failure message="AssertionError: assert 1 == 2"/>'
+    "<system-out>-- Captured Log --\n[log] DEBUG greet: input name=Ada\n"
+    "-- Captured Out --\nprinted</system-out></testcase>"
+)
+
+
+def parsed(line: str) -> dict:
+    assert line.startswith("--- detail ") and line.endswith(" ---")
+    return json.loads(line[len("--- detail ") : -len(" ---")])
+
+
+def test_detail_says_one_line_per_declared_case_then_one_for_the_run(tmp_path):
+    started = time.time()
+    write_report(tmp_path, LOGGED.format(name=ASK) + PASSING.format(name=EDGE))
+    lines = detail(workspace(), tmp_path, started)
+    assert len(lines) == 3
+    first, second, run = (parsed(line) for line in lines)
+    assert first == {
+        "v": DETAIL_VERSION,
+        "case": ASK,
+        "passed": False,
+        "message": "AssertionError: assert 1 == 2",
+        "log": ["DEBUG greet: input name=Ada"],
+        "out": ["printed"],
+        "err": [],
+    }
+    assert second["case"] == EDGE and second["passed"] is True
+    assert run["run"] is True and run["truncated"] is False
+    assert all("\n" not in line for line in lines)  # one line each, whatever the text held
+
+
+def test_detail_is_a_run_as_well_as_a_submit(tmp_path):
+    # ⭐ Unlike the fold, the detail does not wait for a Submit: a Run whose command wrote the report
+    # is told.
+    write_report(tmp_path, LOGGED.format(name=ASK) + PASSING.format(name=EDGE))
+    assert detail(workspace(), tmp_path, time.time() - 5)
+
+
+@pytest.mark.parametrize(
+    "record", [workspace(cases=False), workspace(graded=False, cases=False), None]
+)
+def test_detail_is_nothing_where_there_is_nothing_to_say(tmp_path, record):
+    write_report(tmp_path, LOGGED.format(name=ASK) + PASSING.format(name=EDGE))
+    assert detail(record, tmp_path, time.time() - 5) == ()
+
+
+def test_a_stale_report_costs_the_detail_and_never_raises(tmp_path):
+    write_report(tmp_path, LOGGED.format(name=ASK) + PASSING.format(name=EDGE))
+    assert detail(workspace(), tmp_path, time.time() + 3600) == ()
+    assert detail(workspace(), tmp_path / "elsewhere", time.time()) == ()
+
+
+def test_the_detail_line_has_one_spelling():
+    assert DETAIL_LINE.format(json="{}") == "--- detail {} ---"

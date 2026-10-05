@@ -165,6 +165,7 @@ from studyforge.exercise.record import (
     of,
     to_document,
 )
+from studyforge.exercise.casedetail import CaseDetail, Detail, detail_of
 from studyforge.exercise.report import (
     CLOCK_SLACK,
     PASSING_CHILDREN,
@@ -251,9 +252,12 @@ __all__ = [
     "STATES",
     "TEST",
     "UNGRADED",
+    "CaseDetail",
+    "Detail",
     "breakdown_of",
     "cases_document",
     "cases_of",
+    "detail_of",
     "completes_practice",
     "from_document",
     "kind_of",

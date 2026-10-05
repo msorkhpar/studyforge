@@ -79,10 +79,19 @@ report nobody was going to be shown.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from studyforge.archive.scrub import scrub
-from studyforge.exercise import TEST, ExerciseError, breakdown_of, from_document
+from studyforge.exercise import (
+    TEST,
+    CaseDetail,
+    Detail,
+    ExerciseError,
+    breakdown_of,
+    detail_of,
+    from_document,
+)
 
 #: Said, just before the exit line, when this run's breakdown could not be
 #: read. ⛔ NOT `routes.runs.NOT_RECORDED`: the outcome IS recorded, without a
@@ -136,3 +145,63 @@ def fold(
 def said(case: str, passed: bool) -> str:
     """Return the one line that says what this run's report made of one case."""
     return scrub(CASE_LINE.format(id=case, verdict=CASE_PASSED if passed else CASE_FAILED))
+
+
+#: One case's detail, or the run's, as a single line: `--- detail {json} ---`. ⭐ Said only to a
+#: client that
+#: ASKED (`routes.run.DETAIL_HEADER`), so a page built before this line existed sees the stream it
+#: always saw.
+DETAIL_LINE = "--- detail {json} ---"
+
+#: The wire's version of a detail record, so a client can refuse one it does not know.
+DETAIL_VERSION = 1
+
+
+def detail(workspace: dict | None, root: Path, started: float | None) -> tuple[str, ...]:
+    """Return one detail line per declared case, then one for the run, or nothing.
+
+    ⭐ **Both acts**: a Run whose command writes the report shows the same text a Submit does. ⛔
+    Nothing is
+    recorded and nothing is refused aloud: a report that is stale, unreadable or absent costs the
+    detail only,
+    and a Submit's own breakdown line already says why.
+    """
+    if workspace is None or started is None:
+        return ()
+    try:
+        found = detail_of(from_document(workspace, WHERE), root, WHERE, started=started)
+    except ExerciseError:
+        return ()
+    if found is None:
+        return ()
+    return (*(_case(one) for one in found.cases), _run(found))
+
+
+def _lines(values: tuple[str, ...]) -> list[str]:
+    return [scrub(value) for value in values]
+
+
+def _case(one: CaseDetail) -> str:
+    record = {
+        "v": DETAIL_VERSION,
+        "case": one.id,
+        "passed": one.passed,
+        "message": scrub(one.message),
+        "log": _lines(one.log),
+        "out": _lines(one.out),
+        "err": _lines(one.err),
+    }
+    return DETAIL_LINE.format(json=json.dumps(record, ensure_ascii=False, separators=(",", ":")))
+
+
+def _run(found: Detail) -> str:
+    record = {
+        "v": DETAIL_VERSION,
+        "run": True,
+        "log": _lines(found.log),
+        "out": _lines(found.out),
+        "err": _lines(found.err),
+        "truncated": found.truncated,
+        "perCaseOut": found.per_case_out,
+    }
+    return DETAIL_LINE.format(json=json.dumps(record, ensure_ascii=False, separators=(",", ":")))
