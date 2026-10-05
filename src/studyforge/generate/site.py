@@ -65,6 +65,7 @@ from __future__ import annotations
 import posixpath
 from pathlib import Path, PurePosixPath
 
+from studyforge.archive.scrub import scrub
 from studyforge.contents import status
 from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
@@ -195,7 +196,10 @@ def assets(corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...] = 
     shared = {**written_files(), **modes.files(offer_of(corpus))}
     if pages:
         # ⭐ The search index is read back off the pages just written: it says only what they say.
-        shared.update(search_files(search_pages(corpus, into, pages)))
+        # ⛔ Scrubbed: flattened out of its markup, prose that describes a secret's shape (a page on
+        # redaction saying "`Bearer` followed by ...") reads as the secret itself to the serve gate's
+        # personal-data check, which would refuse the whole index file. The pages keep their words.
+        shared.update({n: scrub(b) for n, b in search_files(search_pages(corpus, into, pages)).items()})
     if has_mock_exam(corpus):
         # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
         shared.update(mock_files())
