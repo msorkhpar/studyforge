@@ -72,6 +72,9 @@ RULE_BUNDLE_CONTENTS = "bundle-contents"
 #: A page whose exercises are not numbered `1..n`.
 RULE_PRACTICE_ORDINALS = "practice-ordinals"
 
+#: A code practice whose Run would grade like Submit, in a corpus that has adopted try-it files.
+RULE_RUN_IS_SUBMIT = "run-is-submit"
+
 #: ⛔ A gate record carrying personal data. ⚠️ `validate.corpus`' own spelling,
 #: because it is the same rule and two ids for one fact is two audits.
 RULE_PERSONAL_DATA = "personal-data"
@@ -215,6 +218,37 @@ def check_practice_ordinals(walk: Walk) -> Iterator[Finding]:
             )
 
 
+def check_run_is_not_submit(walk: Walk) -> Iterator[Finding]:
+    """Where a corpus has adopted try-it files, no graded code practice runs its tests on Run.
+
+    ⭐ **Opt-in by adoption.** The check fires only on a corpus in which at least one code
+    practice carries `try_file`: that corpus has said what Run is for (the reader's own calls, no
+    tests, no grade), so a practice whose `run_command` equals its `test_command` is the one it
+    forgot. ⛔ A corpus with no try-it file anywhere is left exactly as it was, so no existing
+    course newly fails.
+    """
+    found: list[tuple[Unit, object]] = []
+    for unit in walk.units:
+        if unit.document.get("kind") != "practice":
+            continue
+        try:
+            exercise = exercise_of(unit.document, unit.where)
+        except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
+            continue
+        if exercise is not None and not exercise.is_quiz and not exercise.is_deck:
+            found.append((unit, exercise))
+    if not any(exercise.try_file is not None for _, exercise in found):
+        return
+    for unit, exercise in found:
+        if exercise.test_command is not None and exercise.run_command == exercise.test_command:
+            yield Finding(
+                RULE_RUN_IS_SUBMIT,
+                unit.where,
+                "Run would grade like Submit: its run command equals its test command. Give the "
+                "practice a try-it entry point (`try_file`) that Run executes.",
+            )
+
+
 def _is_mock(unit: Unit) -> bool:
     """Does this unit's exercise declare a mock exam?"""
     try:
@@ -276,4 +310,5 @@ CHECKS = (
     check_bundle_digests,
     check_bundle_contents,
     check_practice_ordinals,
+    check_run_is_not_submit,
 )

@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-nine checks
+## The thirty checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -90,6 +90,7 @@ checker check* is this table and nothing else.
 | 27 | `check_example_files_are_released` | does every `code` file an example's tab names, and every `support` path its block declares, reach the released runner (a file or folder of the corpus, not hidden, build output or a framework folder)? |
 | 28 | `check_units_have_prose` | where `corpus.json` declares `modes`, does every unit hold a lesson, tagged or common? |
 | 29 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
+| 30 | `check_run_is_not_submit` | where a corpus has a practice with a `try_file`, does any graded code practice still run its tests on Run? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
@@ -102,7 +103,7 @@ made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
-**Checks 28 and 29 fire only on a corpus that declares `modes`**, and checks 26 and 27 only on an example tab that names a `code` file or a block that declares `support`.
+**Check 30 fires only on a corpus in which a practice carries a `try_file`** (see [exercises](exercises.md)), and then on every graded code practice whose Run would grade like Submit. **Checks 28 and 29 fire only on a corpus that declares `modes`**, and checks 26 and 27 only on an example tab that names a `code` file or a block that declares `support`.
 
 **Checks 17–20 fire only on a `generated` grader, check 21 only on an
 `authoritative` one, and check 22 only on a committed ledger. Check 24 fires only
@@ -119,7 +120,7 @@ file in both.
 
 ---
 
-## The fifty-five rule ids
+## The fifty-six rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -175,6 +176,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
+| `run-is-submit` | a graded code practice's run command equals its test command, in a corpus where another practice carries a `try_file`: Run would grade like Submit. A corpus with no try-it file anywhere is not judged |
 | `derivation-record` | an `authoritative` grader ships no record of its derivation's two gates, one nothing can read, or one that does not support the claim: another family's gates, no blanked method named, a starter or test that is not the exercise's own, or a starter identical to the original |
 | `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |
 | `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |

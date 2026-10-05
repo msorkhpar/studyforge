@@ -173,6 +173,9 @@ class Exercise:
     #: ⭐ How a plain quiz is drawn (`exercise.quiz.layout`): `None` is the default, one question at
     #: a time; `"page"` is the opt-out that draws every question on one page.
     layout: str | None = None
+    #: ⭐ The "try it" file, one of `files`: the reader's own small entry point, which `run_command`
+    #: executes (no tests, no grade). `None` is a practice whose Run is whatever `run_command` says.
+    try_file: str | None = None
 
     @property
     def graded(self) -> bool:
@@ -313,6 +316,7 @@ def to_document(exercise: Exercise) -> dict:
         "review": quiz.review_document(exercise.review) if exercise.review else None,
         "cards": cards_document(exercise.cards or ()),
         quiz.LAYOUT: exercise.layout,
+        "try_file": exercise.try_file,
     }
     return {key: values[key] for key in written_keys(exercise)}
 
@@ -331,6 +335,7 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         quiz.MOCK: quiz.mock_in(value, where) if kind == QUIZ else None,
         CONCEPTS: concepts_in(value, where),
         "files": _files(value, where) if kind == DEFAULT_KIND else None,
+        "try_file": _try_file(value, where) if kind == DEFAULT_KIND else None,
         "review": quiz.review_in(value, where) if kind == QUIZ else None,
         "cards": cards_in(value, where) if kind == FLASHCARDS else None,
         quiz.LAYOUT: quiz.layout_in(value, where) if kind == QUIZ else None,
@@ -355,6 +360,24 @@ def _files(value: dict, where: str) -> tuple[str, ...] | None:
             f"the test file."
         )
     return paths
+
+
+def _try_file(value: dict, where: str) -> str | None:
+    """Read `try_file`: absent is none; present is one of `files`, and Run is not the grader."""
+    if "try_file" not in value:
+        return None
+    path = require_path(value["try_file"], "try_file", where)
+    if path not in (value.get("files") or ()):
+        raise ExerciseError(
+            f"{where}: 'try_file' names a file that 'files' does not list. The try-it file is one "
+            f"of the files the reader edits, so it is listed there too."
+        )
+    if "test_command" in value and value.get("run_command") == value["test_command"]:
+        raise ExerciseError(
+            f"{where}: 'try_file' is set but 'run_command' equals 'test_command'. Run executes "
+            f"the try-it file and Submit grades; the two commands are different."
+        )
+    return path
 
 
 def _trust(value: dict, where: str) -> tuple[str, str]:

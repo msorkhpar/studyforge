@@ -71,7 +71,7 @@ def document(**overrides) -> dict:
 
 #: Commands that pass containment for any identity, used only while the real
 #: ones are being derived.
-_DEFAULT_COMMANDS = {"run_command": ["python3"], "test_command": ["python3"]}
+_DEFAULT_COMMANDS = {"run_command": ["python3"], "test_command": ["python3", "-m"]}
 
 
 def places(**overrides) -> Places:

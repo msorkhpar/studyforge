@@ -254,11 +254,11 @@ def files_sentence(exercise: Exercise) -> str:
     """
     if not exercise.files:
         return templates.fill(FILE_TEMPLATE, main=escape(exercise.main_path))
-    named = [exercise.main_path, *exercise.files]
-    listed = ", ".join(f"<code>{escape(path)}</code>" for path in named[:-1])
-    return templates.fill(
-        FILES_TEMPLATE, list=f"{listed} and <code>{escape(named[-1])}</code>"
-    )
+    named = [f"<code>{escape(path)}</code>" for path in (exercise.main_path, *exercise.files)]
+    said = templates.fill(FILES_TEMPLATE, list=f"{', '.join(named[:-1])} and {named[-1]}")
+    if exercise.try_file:
+        said += JOIN + templates.fill("practice-tryit.html", file=escape(exercise.try_file))
+    return said
 
 
 def key_of(document: dict, section: dict) -> str:

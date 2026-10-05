@@ -179,6 +179,9 @@ class CodeDraft:
     #: file, a memory file, a script). A plant that changes one is a `PlantSpec` whose
     #: replacement names it. Empty is every draft's behaviour until now: one file.
     files: Mapping[str, EditedFile] = field(default_factory=dict)
+    #: ⭐ Optional: the "try it" file, one of `files`, that `run_command` executes (no tests, no
+    #: grade). `None` is every draft's behaviour until now.
+    try_file: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

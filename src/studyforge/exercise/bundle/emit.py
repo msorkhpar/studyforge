@@ -254,10 +254,10 @@ def _record(bundle: Bundle, where: str) -> dict:
     if bundle.trust is not None:
         record["trust"] = bundle.trust
     record["cases"] = cases_document(bundle.cases)
-    record["report"] = report_document(
-        Report(format=bundle.report.format, path=places.in_workspace(bundle.report.path))
-    )
+    report = Report(format=bundle.report.format, path=places.in_workspace(bundle.report.path))
+    record["report"] = report_document(report)
     record["origin"] = origin_document(bundle.origin)
+    record |= {"try_file": places.in_workspace(bundle.try_file)} if bundle.try_file else {}
     return record
 
 

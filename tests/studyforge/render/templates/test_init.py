@@ -55,6 +55,7 @@ ONE_LINE = (
     "practice-grader-deck.html",
     "practice-grader-deck-several.html",
     "practice-files.html",
+    "practice-tryit.html",
     "practice-grader-bundled.html",
     "practice-grader-generated.html",
     "practice-grader-none.html",

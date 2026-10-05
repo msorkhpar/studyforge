@@ -69,7 +69,7 @@ from dataclasses import dataclass
 
 from studyforge.address import Address, require_ordinal
 from studyforge.describe import describe, describe_keys
-from studyforge.exercise.bundle.files import read_files, require_files_apart
+from studyforge.exercise.bundle.files import read_files, require_files_apart, require_try_file
 from studyforge.exercise.bundle.layout import (
     RUN_OUTPUT_DIRNAME,
     Places,
@@ -108,6 +108,7 @@ BUNDLE_KEYS = (
     "lang",
     "main_file",
     "files",
+    "try_file",
     "test_file",
     "build",
     "run_command",
@@ -123,7 +124,7 @@ BUNDLE_KEYS = (
 #: exception, for the reason `unit.trust` gives: a field an author fills in to
 #: say the obvious is a field an author fills in wrongly. ⭐ `build` is absent
 #: for an exercise whose tests need nothing but the language.
-OPTIONAL_KEYS = ("trust", "build", "files")
+OPTIONAL_KEYS = ("trust", "build", "files", "try_file")
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,6 +155,9 @@ class Bundle:
     #: ⭐ The further files the reader edits beside `main_file`, workspace-relative. `()` is the
     #: exercise of one file, which is every exercise a bundle described before this key.
     files: tuple[str, ...] = ()
+    #: ⭐ The "try it" file (one of `files`) that `run_command` executes. `None` is every bundle
+    #: before this key: Run is whatever `run_command` says.
+    try_file: str | None = None
 
     @property
     def edited(self) -> tuple[str, ...]:
@@ -201,11 +205,13 @@ def bundle_of(value: object, where: str) -> Bundle:
         origin=_origin(document, where),
         build=_build(document.get("build"), where),
         files=read_files(document.get("files"), where),
+        try_file=_try_file(document, where),
     )
     _require_derivable(bundle, where)
     _require_report_in_workspace(bundle, where)
     _require_build_apart(bundle, where)
     require_files_apart(bundle, where)
+    require_try_file(bundle, where)
     return bundle
 
 
@@ -223,6 +229,8 @@ def bundle_document(bundle: Bundle) -> dict:
     }
     if bundle.files:
         document["files"] = list(bundle.files)
+    if bundle.try_file is not None:
+        document["try_file"] = bundle.try_file
     document["test_file"] = bundle.test_file
     if bundle.build:
         document["build"] = list(bundle.build)
@@ -290,6 +298,11 @@ def _text(value: object, field: str, where: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ExerciseError(f"{where}: '{field}' is a non-empty string and is {describe(value)}.")
     return value
+
+
+def _try_file(document: dict, where: str) -> str | None:
+    """Read `try_file`: absent is none; present is a safe workspace-relative path."""
+    return require_path(document["try_file"], "try_file", where) if "try_file" in document else None
 
 
 def _optional_text(value: object, field: str, where: str) -> str | None:

@@ -41,6 +41,7 @@ runner is the caller's.
 | `drafts` | the page, the three source cases, the brief, the two draft shapes, and no retreat |
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
 | `quizdoc` | a quiz's own document read back, through R9's guard, as an adapter reads it |
+| `tryit` | a practice's try-it file: its name, skeleton and Run command per language |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |

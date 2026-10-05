@@ -348,6 +348,7 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
     """
     build = {"build": list(draft.build)} if draft.build else {}
     files = {"files": list(draft.files)} if draft.files else {}
+    tried = {"try_file": draft.try_file} if draft.try_file else {}
     return {
         "bundle_api": BUNDLE_API,
         "address": list(places.address.segments),
@@ -358,6 +359,7 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
         "lang": draft.lang,
         "main_file": draft.main_file,
         **files,
+        **tried,
         "test_file": draft.test_file,
         **build,
         "run_command": list(draft.run_command),

@@ -50,6 +50,7 @@ EXERCISE_KEYS = (
     "review",
     "cards",
     quiz.LAYOUT,
+    "try_file",
 )
 
 #: ⭐ `files` is the further files a reader edits beside `main_path`, written only where the
@@ -83,6 +84,7 @@ AUTHORED_KEYS = (
     "review",
     "cards",
     quiz.LAYOUT,
+    "try_file",
 )
 
 
@@ -146,6 +148,8 @@ def written_keys(exercise) -> tuple[str, ...]:
     concepts = {CONCEPTS} if exercise.concepts is not None else set()
     if exercise.files is not None and not exercise.is_quiz and not exercise.is_deck:
         concepts.add("files")
+    if exercise.try_file is not None and not (exercise.is_quiz or exercise.is_deck):
+        concepts.add("try_file")
     if exercise.is_deck:
         carried = set(DECK_KEYS) - (set() if exercise.origin else {"origin"})
         carried = (carried - {CONCEPTS}) | concepts

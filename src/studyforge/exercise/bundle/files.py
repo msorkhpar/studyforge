@@ -51,6 +51,22 @@ def require_files_apart(bundle: Bundle, where: str) -> None:
             )
 
 
+def require_try_file(bundle: Bundle, where: str) -> None:
+    """Refuse a try-it file that is not one of `files`, or a Run that would grade like Submit."""
+    if bundle.try_file is None:
+        return
+    if bundle.try_file not in bundle.files:
+        raise ExerciseError(
+            f"{where}: 'try_file' names a file that 'files' does not list. The try-it file is one "
+            f"of the files the reader edits, so it is listed there too."
+        )
+    if bundle.run_command == bundle.test_command:
+        raise ExerciseError(
+            f"{where}: 'try_file' is set but 'run_command' equals 'test_command'. Run executes "
+            f"the try-it file and Submit grades; the two commands are different."
+        )
+
+
 #: The language a further file is shown in, by its suffix; a file with none of these is shown in
 #: the practice's own language. ⚠️ A display word for the page, never a decision about the file.
 _FILE_LANGS = {
