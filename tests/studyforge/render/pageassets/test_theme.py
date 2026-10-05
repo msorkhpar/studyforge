@@ -36,9 +36,12 @@ CHOICES = ("system", "light", "dark")
 
 
 def boot() -> str:
-    """The skeleton's one inline script, as written."""
+    """The skeleton's head boot, as written: the first of its two inline scripts.
+
+    ⭐ The second puts the rail's saved scroll position back (`rail-scroll.js` saves it).
+    """
     found = re.findall(r"<script>(.*?)</script>", templates.template(SKELETON).template)
-    assert len(found) == 1, f"the skeleton carries {len(found)} inline scripts"
+    assert len(found) == 2, f"the skeleton carries {len(found)} inline scripts"
     return found[0]
 
 
@@ -229,45 +232,52 @@ def test_the_cache_is_written_from_the_paint_so_it_can_never_lag_the_page():
 
 
 @pytest.mark.parametrize("choice", CHOICES)
-def test_the_part_and_the_markup_agree_on_every_choice(choice):
+def test_the_part_keeps_each_stored_choice_and_the_markup_names_the_two_it_offers(choice):
     assert f"'{choice}'" in text(PART)
-    assert f'data-theme-choice="{choice}"' in templates.template(SKELETON).template
+    markup = templates.template(SKELETON).template
+    assert 'data-theme-choice="toggle"' in markup
+    assert "data-to-dark=" in markup and "data-to-light=" in markup
 
 
 def test_the_part_types_no_word_a_reader_sees():
-    # ⛔ R13: the labels are the template's. This part toggles `hidden` and
-    # `aria-pressed` and nothing else a reader can read.
+    # ⛔ R13: the names are the template's. This part picks one of the two attributes the
+    # button carries and types nothing else a reader can read.
     body = text(PART)
-    code = "\n".join(line for line in body.splitlines() if not line.lstrip().startswith("*"))
-    for label in ("System", "Light", "Dark"):
-        assert f'"{label}"' not in code and f"'{label}'" not in code
+    code_only = "\n".join(
+        line for line in body.splitlines() if not line.lstrip().startswith("*")
+    )
+    for label in ("System", "Light", "Dark", "Switch"):
+        assert f'"{label}' not in code_only and f"'{label}" not in code_only
 
 
 # --- the control the skeleton carries ----------------------------------------
 
 
-def test_the_control_is_in_the_masthead_and_is_not_an_eleventh_child_of_the_body():
-    # ⛔ `chrome.css` spans the rail over the body's ten top-level positions. A
-    # control placed beside them would move the rail rather than add a setting.
+def toolbar() -> str:
     page = templates.template(SKELETON).template
-    inside = page[page.index("<header>") : page.index("</header>")]
-    assert 'aria-label="Theme"' in inside
+    return page[page.index('<div role="toolbar"') : page.index("</header>")]
 
 
-def test_the_control_ships_hidden_with_a_name_and_three_pressed_states():
-    page = templates.template(SKELETON).template
-    group = re.search(r'<div role="group" aria-label="Theme"[^>]*>(.*?)</div>', page, re.DOTALL)
-    assert group is not None, page
-    assert "hidden" in group.group(0).split(">")[0]
-    buttons = re.findall(r"<button([^>]*)>", group.group(1))
-    assert len(buttons) == len(CHOICES)
-    assert [b for b in buttons if 'type="button"' in b] == buttons
-    pressed = [b for b in buttons if 'aria-pressed="true"' in b]
-    assert len(pressed) == 1 and 'data-theme-choice="system"' in pressed[0]
+def test_the_control_is_in_the_top_bar_and_is_not_a_new_child_of_the_body():
+    # ⛔ `chrome.css` spans the rail over the body's top-level positions. A control placed
+    # beside them would move the rail rather than add a setting.
+    assert 'data-section="theme"' in toolbar()
 
 
-def test_the_control_carries_a_word_for_each_choice():
-    page = templates.template(SKELETON).template
-    labels = re.findall(r'<button[^>]*data-theme-choice="([a-z]+)"[^>]*>([^<]+)</button>', page)
-    assert [choice for choice, _ in labels] == list(CHOICES)
-    assert all(word.strip() for _, word in labels)
+def test_the_control_is_one_focusable_icon_button_with_a_name_that_ships_hidden():
+    button = re.search(r'<button[^>]*data-section="theme"[^>]*>(.*?)</button>', toolbar(), re.S)
+    assert button is not None
+    opening = button.group(0).split(">")[0]
+    assert 'type="button"' in opening and "hidden" in opening
+    assert 'aria-label="' in opening
+    assert 'tabindex="-1"' not in opening
+    assert button.group(1).count("<svg") == 2
+    assert 'data-icon="sun"' in button.group(1) and 'data-icon="moon"' in button.group(1)
+    assert 'aria-hidden="true"' in button.group(1)
+
+
+def test_the_control_carries_a_word_for_each_theme_it_can_switch_to():
+    markup = toolbar()
+    for attribute in ("data-to-dark", "data-to-light"):
+        found = re.search(rf'{attribute}="([^"]+)"', markup)
+        assert found is not None and found.group(1).strip()

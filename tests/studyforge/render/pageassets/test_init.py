@@ -25,6 +25,7 @@ PUBLIC_SURFACE = frozenset(
         "PLAIN",
         "SCRIPT_NAME",
         "SCRIPT_PARTS",
+        "SEARCH_PARTS",
         "SPRITE_PART",
         "SPRITE_PLACEHOLDER",
         "STYLESHEET_NAME",
@@ -44,6 +45,7 @@ PUBLIC_SURFACE = frozenset(
         "licence_names",
         "names",
         "script",
+        "search_files",
         "stylesheet",
         "text",
         "written_files",
@@ -91,6 +93,10 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
         "dataclasses",
         "functools",
         "hashlib",
+        # ⭐ `search`: reads the pages a build wrote into the search index.
+        "html",
+        "json",
+        "re",
     }
     offenders = [
         f"{path.name}: {name}"

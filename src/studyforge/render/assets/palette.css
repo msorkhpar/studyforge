@@ -88,6 +88,8 @@
      is 452px, nearly two, which reads as too wide. */
   --page-max: 110rem;
   --gutter: 1.25rem;
+  /* The top bar's height: the page starts below it and the rail sticks under it. */
+  --topbar: 3.25rem;
   --player-height: 3.5rem;
 
   /* Radii by job, and nothing else is rounded. */
@@ -140,6 +142,7 @@
 
   --panel: #f8fafc;
   --shadow: 0 -1px 0 #dbe3ec;
+  --scrim: rgba(15, 23, 42, .45);
   --focus: #0369a1;
 }
 
@@ -182,6 +185,7 @@
 
     --panel: #1e293b;
     --shadow: 0 -1px 0 #27354a;
+    --scrim: rgba(2, 6, 23, .7);
     --focus: #38bdf8;
   }
 }
@@ -221,6 +225,7 @@
   --hl-code: rgba(255, 201, 51, .12);
   --panel: #1e293b;
   --shadow: 0 -1px 0 #27354a;
+  --scrim: rgba(2, 6, 23, .7);
   --focus: #38bdf8;
 }
 

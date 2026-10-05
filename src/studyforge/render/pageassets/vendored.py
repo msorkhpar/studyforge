@@ -40,6 +40,7 @@ VENDORED = {
     "plyr.js": "plyr.LICENSE",
     "plyr.css": "plyr.LICENSE",
     "plyr.svg": "plyr.LICENSE",
+    "minisearch.js": "minisearch.LICENSE",
 }
 
 #: Every vendored header must say all three, or "unedited" is unverifiable:

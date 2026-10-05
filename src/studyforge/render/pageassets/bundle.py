@@ -98,6 +98,11 @@ from studyforge.render.pageassets.source import text
 #: rule wins. It comes *before* `plyr.css` because the rule stated above is
 #: unchanged: nothing authored may follow the vendored player theme, or a video
 #: control stops taking its own look.
+#:
+#: ⭐ `topbar.css` and `search.css` follow `notes.css`: the bar and the search dialog are regions
+#: this framework emits inside the masthead, reached by role and `data-*` hook, and the rail's
+#: offset under the bar (`topbar.css`) has to come after the rail's own rules in `chrome.css`
+#: because at equal specificity the last rule wins.
 STYLE_PARTS = (
     "reset.css",
     "palette.css",
@@ -107,6 +112,8 @@ STYLE_PARTS = (
     "lists.css",
     "onward.css",
     "notes.css",
+    "topbar.css",
+    "search.css",
     "practice.css",
     "practice-detail.css",
     "practice-quiz.css",
@@ -202,11 +209,19 @@ STYLE_PARTS = (
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
 #: property being kept. ⚠️ It is not what stops the page flashing the wrong
 #: theme — a deferred part cannot be — and `page.html`'s head boot is.
+#:
+#: ⭐ `rail-scroll.js` saves the rail's scroll position through the store, so it follows
+#: `study-progress.js`; `search.js` needs no store and defines nothing another part reads, and the
+#: library it loads (`minisearch.js`) and the index (`search-index.js`) are written beside the
+#: bundle and fetched only when the reader first opens the search. Both sit before
+#: `read-mark.js` for that part's LAST-ness.
 SCRIPT_PARTS = (
     "prism.js",
     "plyr.js",
     "study-progress.js",
     "theme.js",
+    "rail-scroll.js",
+    "search.js",
     "copy-code.js",
     "video-player.js",
     "narration-stand-in.js",

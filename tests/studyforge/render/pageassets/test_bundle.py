@@ -11,6 +11,7 @@ from studyforge.render.page import DECK_PARTS, MOCK_FORM_PARTS, MOCK_PARTS, REVI
 from studyforge.render.pageassets import (
     SCRIPT_NAME,
     SCRIPT_PARTS,
+    SEARCH_PARTS,
     SPRITE_PART,
     SPRITE_PLACEHOLDER,
     STYLE_PARTS,
@@ -50,6 +51,7 @@ def test_every_part_on_disk_is_in_exactly_one_bundle_or_is_the_sprite():
         *REVIEW_PARTS,
         "example-run.css",
         "example-run.js",
+        *SEARCH_PARTS,
     ]
     used = list(STYLE_PARTS) + list(SCRIPT_PARTS) + [SPRITE_PART, *modes.PARTS, *exam_parts]
     assert sorted(used) == sorted(names()), "the directory and the bundles disagree"
