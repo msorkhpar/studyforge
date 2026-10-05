@@ -121,7 +121,9 @@ def mock_in(record: dict, where: str) -> Mock | None:
     mock = mock_of(record[MOCK], where) if MOCK in record else None
     asked = questions_in(record, where) or ()
     if mock is None:
-        require_no_exam_keys_on_questions(asked, where)
+        require_no_exam_keys_on_questions(
+            asked, where, allow_select=record.get("layout") != "page"
+        )
     else:
         require_against_questions(mock, asked, where)
     if mock is None and any(question.domain is not None for question in asked):

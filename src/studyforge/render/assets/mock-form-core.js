@@ -164,6 +164,31 @@
     var chosen = [];
     if (sitting && typeof sitting.scenarios === 'number') {
       chosen = ranked.filter(function (unit) { return unit.scenario; }).slice(0, sitting.scenarios);
+    } else if (sitting && sitting.per_domain && typeof sitting.questions === 'number') {
+      /* An exact count per domain, whole scenarios kept together: try shuffles until the units
+         fit every domain's count exactly (a count no whole scenarios can meet draws the best try). */
+      var best = null;
+      for (var attempt = 0; attempt < 200; attempt += 1) {
+        var trial = attempt === 0 ? ranked
+          : shuffled(units, random).sort(function (a, b) { return unseenRatio(a) - unseenRatio(b); });
+        var held = {};
+        var total = 0;
+        var tryChosen = [];
+        trial.forEach(function (unit) {
+          var counts = {};
+          unit.ids.forEach(function (id) { counts[metaById[id].domain] = (counts[metaById[id].domain] || 0) + 1; });
+          var fits = Object.keys(counts).every(function (d) {
+            return (held[d] || 0) + counts[d] <= (sitting.per_domain[d] || 0);
+          });
+          if (!fits) { return; }
+          Object.keys(counts).forEach(function (d) { held[d] = (held[d] || 0) + counts[d]; });
+          total += unit.ids.length;
+          tryChosen.push(unit);
+        });
+        if (!best || total > best.total) { best = { total: total, chosen: tryChosen }; }
+        if (total === sitting.questions) { break; }
+      }
+      chosen = best.chosen;
     } else if (sitting && typeof sitting.questions === 'number' && sitting.questions < all.length) {
       var n = sitting.questions;
       var quota = quotas(plan, metas, n);

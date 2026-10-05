@@ -136,7 +136,16 @@
     function pick(item) {
       var boxes = [].slice.call(item.querySelectorAll('input:checked'));
       if (!boxes.length) { return null; }
-      return meta(item).select ? boxes.map(function (box) { return box.value; }) : boxes[0].value;
+      if (!meta(item).select) { return boxes[0].value; }
+      /* A multiple-response question is answered only with exactly its n options chosen. */
+      return boxes.length === meta(item).select ? boxes.map(function (box) { return box.value; }) : null;
+    }
+    function incompleteIds() {
+      return state.order.filter(function (id) {
+        var select = meta(byId[id]).select;
+        var count = byId[id].querySelectorAll('input:checked').length;
+        return select && count > 0 && count !== select;
+      });
     }
     function answersNow() {
       var made = {};
@@ -348,6 +357,14 @@
     submit.addEventListener('click', function () {
       if (!state || state.submitted) { return; }
       state.answers = answersNow();
+      var partial = incompleteIds();
+      if (partial.length) {
+        var places = partial.map(function (id) { return state.order.indexOf(id) + 1; }).join(', ');
+        missing.textContent = fill(words.wrongCount || 'Choose exactly the number of options each question asks for. Not complete: {list}.', { list: places });
+        missing.hidden = false;
+        confirming = false;
+        return;
+      }
       var left = unansweredIds();
       if (left.length && !confirming) {
         confirming = true;

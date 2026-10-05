@@ -421,7 +421,8 @@ bytes. Any one key switches that mock to the exam form, and a question with `sel
 - **`difficulties`**, a list of `id` and `title`: the labels a question may carry in `difficulty`.
   The label is shown with the question in the exam layout and the results report a score for each.
 - **`sittings`**, a list of `id`, `title` and at most one of `questions` (a whole number to draw)
-  or `scenarios` (a whole number of scenarios to draw, with all their questions), and an optional
+  or `scenarios` (a whole number of scenarios to draw, with all their questions) or `per_domain`
+  (an object of domain id to the exact count of that domain to draw), and an optional
   `minutes`. A sitting with neither asks every question. The questions of the record are a **pool**
   and may be many more than one sitting asks. A sitting that draws `questions` draws them by domain
   weight, keeping each scenario's questions together; a sitting that draws `scenarios` draws that
@@ -439,6 +440,8 @@ bytes. Any one key switches that mock to the exam form, and a question with `sel
 **The question keys**, written after `domain` and only where present: `scenario` (an id of the
 mock's `scenarios`), `difficulty` (an id of `difficulties`), `select` and `shuffle`. All four are
 refused on a quiz with no `mock`.
+Exception: `select` is accepted on a plain quiz drawn one question at a time (not `layout: page`).
+Authoring syntax for `select` and `per_domain`: [Multiple-response items and question pools](pools-and-multiple-response.md).
 
 - **`select: n`** makes a **multiple-response question**: a whole number of at least 2, the number
   of options the reader must choose. Exactly `n` options are keyed `correct`, and at least one is

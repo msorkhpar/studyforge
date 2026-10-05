@@ -22,7 +22,7 @@ from studyforge.exercise.quiz.options import QUIZ_ID, QUIZ_ID_PERMITTED
 
 DIFFICULTY_KEYS = ("id", "title")
 SCENARIO_KEYS = ("id", "title", "context")
-SITTING_KEYS = ("id", "title", "questions", "scenarios", "minutes")
+SITTING_KEYS = ("id", "title", "questions", "scenarios", "per_domain", "minutes")
 REQUIRED_SITTING_KEYS = ("id", "title")
 SCALE_KEYS = ("min", "max", "pass")
 
@@ -68,6 +68,9 @@ class Sitting:
     questions: int | None = None
     scenarios: int | None = None
     minutes: int | None = None
+    #: ⭐ `(domain id, count)` pairs: draw exactly that many questions of each domain. Mutually
+    #: exclusive with `questions` and `scenarios`; the sitting's total is the sum.
+    per_domain: tuple[tuple[str, int], ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,9 +91,13 @@ class Scale:
 
 def sitting_document(sitting: Sitting) -> dict:
     written: dict = {"id": sitting.id, "title": sitting.title}
-    for key in ("questions", "scenarios", "minutes"):
+    for key in ("questions", "scenarios"):
         if getattr(sitting, key) is not None:
             written[key] = getattr(sitting, key)
+    if sitting.per_domain is not None:
+        written["per_domain"] = dict(sitting.per_domain)
+    if sitting.minutes is not None:
+        written["minutes"] = sitting.minutes
     return written
 
 
@@ -185,6 +192,18 @@ def _count(value: object, what: str, where: str) -> int:
     return value
 
 
+def _per_domain(value: object, where: str) -> tuple[tuple[str, int], ...]:
+    if not isinstance(value, dict) or not value:
+        raise ExerciseError(
+            f"{where}: a sitting's 'per_domain' is a non-empty object of domain id to a count. "
+            f"The value is {describe(value)}."
+        )
+    return tuple(
+        (_token(domain, "a per_domain domain", where), _count(count, "per_domain", where))
+        for domain, count in value.items()
+    )
+
+
 def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
@@ -199,12 +218,18 @@ def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
                 f"{where}: a sitting draws a number of 'questions' or a number of 'scenarios', "
                 f"and this one names both."
             )
+        if "per_domain" in entry and ("questions" in entry or "scenarios" in entry):
+            raise ExerciseError(
+                f"{where}: a sitting draws a count 'per_domain' or a number of 'questions' or "
+                f"'scenarios', and this one names more than one."
+            )
         found.append(Sitting(
             _token(entry["id"], "a sitting's", where),
             _words(entry["title"], "a sitting's 'title' names it", where),
             _count(entry["questions"], "questions", where) if "questions" in entry else None,
             _count(entry["scenarios"], "scenarios", where) if "scenarios" in entry else None,
             minutes_of(entry["minutes"], where, sitting=True) if "minutes" in entry else None,
+            _per_domain(entry["per_domain"], where) if "per_domain" in entry else None,
         ))
     _distinct([one.id for one in found], "sitting", where)
     return tuple(found)

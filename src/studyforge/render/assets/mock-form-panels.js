@@ -186,6 +186,12 @@
       var line = make('p', { 'data-form-part': 'verdict' }, (right ? words.right : words.wrong) + ' ');
       line.insertAdjacentHTML('beforeend', entry.says[chosen[0]]);
       box.appendChild(line);
+      chosen.slice(1).forEach(function (more) {
+        if (!Object.prototype.hasOwnProperty.call(entry.says, more)) { return; }
+        var extra = make('p', { 'data-form-part': 'verdict-more' });
+        extra.insertAdjacentHTML('beforeend', entry.says[more]);
+        box.appendChild(extra);
+      });
       box.hidden = false;
       item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
     }

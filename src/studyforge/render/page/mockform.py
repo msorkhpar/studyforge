@@ -193,12 +193,25 @@ def render(
         ),
         answers=_key_block(questions),
         plan=_safe(_plan(exercise)),
-        words=_safe({**WORDS, **QUIZ_WORDS} if quizzing else WORDS),
+        words=_safe(_words(questions, quizzing)),
         stylesheet=escape_attribute(assets(STYLESHEET_NAME)),
         core=escape_attribute(assets(CORE_NAME)),
         panels=escape_attribute(assets(PANELS_NAME)),
         script=escape_attribute(assets(SCRIPT_NAME)),
     )
+
+
+#: Said only on a page that has a multiple-response question, so every other page is unchanged.
+SELECT_WORDS = {
+    "wrongCount": "Choose exactly the number of options each question asks for. Not complete: {list}.",
+}
+
+
+def _words(questions: tuple[Question, ...], quizzing: bool) -> dict:
+    words = {**WORDS, **QUIZ_WORDS} if quizzing else dict(WORDS)
+    if any(one.select for one in questions):
+        words.update(SELECT_WORDS)
+    return words
 
 
 def files() -> dict[str, str]:
@@ -296,6 +309,14 @@ def _plan(exercise: Exercise) -> dict:
                 "id": one.id,
                 "title": one.title,
                 **({"questions": one.questions} if one.questions else {}),
+                **(
+                    {
+                        "questions": sum(count for _, count in one.per_domain),
+                        "per_domain": dict(one.per_domain),
+                    }
+                    if one.per_domain
+                    else {}
+                ),
                 **({"scenarios": one.scenarios} if one.scenarios else {}),
                 **({"minutes": one.minutes} if one.minutes else {}),
             }

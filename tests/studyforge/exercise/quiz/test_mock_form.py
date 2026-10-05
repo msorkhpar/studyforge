@@ -224,11 +224,39 @@ def test_shuffle_is_only_ever_false(value):
 def test_the_exam_keys_of_a_question_are_refused_on_a_quiz_with_no_mock(key, value):
     question = {k: v for k, v in mock_exam.questions(ORIGIN)[0].items() if k != "domain"}
     question[key] = value
+    extra = {}
     if key == "select":
         question["options"][1]["correct"] = True
+        extra = {"layout": "page"}  # the stepper reads `select`; the one-page layout does not
     with pytest.raises(ExerciseError) as raised:
-        from_document(record(questions=[question]), WHERE)
+        from_document(record(questions=[question], **extra), WHERE)
     assert "declares no 'mock'" in str(raised.value)
+
+
+def test_a_plain_quiz_drawn_a_question_at_a_time_may_ask_for_two_answers():
+    question = {k: v for k, v in mock_exam.questions(ORIGIN)[0].items() if k != "domain"}
+    question["options"][1]["correct"] = True
+    question["select"] = 2
+    exercise = from_document(record(questions=[question]), WHERE)
+    assert exercise.questions[0].select == 2
+    assert to_document(exercise)["questions"][0]["select"] == 2
+
+
+def test_a_sitting_draws_a_count_per_domain_and_writes_it_back():
+    sitting = {"id": "x", "title": "X", "per_domain": {"AS1": 2, "AS2": 1}}
+    exercise = from_document(with_mock(sittings=[sitting]), WHERE)
+    assert exercise.mock.sittings[0].per_domain == (("AS1", 2), ("AS2", 1))
+    assert to_document(exercise)["mock"]["sittings"] == [sitting]
+
+
+def test_per_domain_is_refused_when_wrong():
+    def attempt(**sitting):
+        return refused(with_mock(sittings=[{"id": "x", "title": "X", **sitting}]))
+    assert "more than one" in attempt(per_domain={"AS1": 1}, questions=3)
+    assert "per_domain" in attempt(per_domain={})
+    assert "per_domain" in attempt(per_domain={"AS1": 0})
+    assert "does not declare" in attempt(per_domain={"NOPE": 1})
+    assert "pool holds" in attempt(per_domain={"AS1": 99})
 
 
 # ------------------------------------------------------------------ scoring
