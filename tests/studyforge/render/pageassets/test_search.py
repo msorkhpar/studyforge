@@ -310,3 +310,4 @@ def test_the_plant_is_caught_when_an_option_sentence_is_left_in_the_index(monkey
     monkeypatch.setattr(searchindex, "quiz_sentences", lambda pages: set())
     body = _built(monkeypatch)[searchindex.INDEX_NAME]
     assert carries(body.encode(), _marks())
+
