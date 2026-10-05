@@ -131,6 +131,12 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
         "underneath stays `--code-bg`, deliberately, because the seven syntax ratios "
         "were measured against it and repainting it would invalidate all of them",
     ),
+    "--scrim": (
+        STRUCTURAL,
+        None,
+        "the translucent veil behind the search dialog; no text sits on it, the dialog's own "
+        "ground (`--panel`) carries every word",
+    ),
     "--panel": (
         SURFACE,
         None,
