@@ -53,6 +53,17 @@ SEARCH_PARTS = (LIBRARY_NAME,)
 GLOBAL = "window.studyforge=window.studyforge||{};window.studyforge.searchIndex="
 VERSION = 1
 
+#: The shape version of a sharded index (a manifest, shards, repeated texts as record numbers).
+SHARDED_VERSION = 2
+
+#: ⭐ The most bytes one index file may hold. The serve gate refuses a text file over 4 MiB, so an
+#: index that would pass this is split into shards of about this size and a small manifest
+#: (`search-index.js`) that names them. A small course stays one file.
+SHARD_BYTES = 3 * 1024 * 1024
+
+#: Where a shard puts its records for the search part to merge: `searchShards[<file name>]`.
+SHARD_GLOBAL = "window.studyforge=window.studyforge||{};window.studyforge.searchShards=window.studyforge.searchShards||{};window.studyforge.searchShards["
+
 #: Elements that never carry something a reader searches for.
 SILENT_TAGS = frozenset({"script", "style", "template", "noscript", "svg", "head"})
 
@@ -284,8 +295,67 @@ def document(pages: list[tuple[str, str]]) -> dict:
     return {"version": VERSION, "pages": table, "records": records}
 
 
-def files(pages: list[tuple[str, str]]) -> dict[str, str]:
-    """`filename -> content` for the search index and the library that reads it."""
-    body = json.dumps(document(pages), ensure_ascii=False, separators=(",", ":"))
+def _dedupe(records: list[list]) -> list[list]:
+    """⭐ A text that an earlier record already carries is replaced by that record's number.
+
+    The same sentence under several headings (a repeated note, a shared example) is then written
+    once; the search part puts the text back, so the words indexed and shown are unchanged.
+    """
+    seen: dict[str, int] = {}
+    out: list[list] = []
+    for at, (page, heading, anchor, text) in enumerate(records):
+        if len(text) > 24 and text in seen:
+            text = seen[text]
+        elif text:
+            seen[text] = at
+        out.append([page, heading, anchor, text])
+    return out
+
+
+def _script(body: str) -> str:
     body = body.replace("</", "<\\/").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
-    return {INDEX_NAME: GLOBAL + body + ";\n", LIBRARY_NAME: part(LIBRARY_NAME)}
+    return body
+
+
+def _dump(value) -> str:
+    return _script(json.dumps(value, ensure_ascii=False, separators=(",", ":")))
+
+
+def shard_name(number: int) -> str:
+    """The file name of shard `number`, beside `search-index.js`."""
+    stem, dot, suffix = INDEX_NAME.rpartition(".")
+    return f"{stem}-{number}{dot}{suffix}"
+
+
+def files(pages: list[tuple[str, str]]) -> dict[str, str]:
+    """`filename -> content` for the search index and the library that reads it.
+
+    ⭐ One file, `search-index.js`, while it fits `SHARD_BYTES`; otherwise a manifest of that name
+    (the page table and the shard names) plus `search-index-0.js`, `-1.js` and so on, each under
+    the cap, that the search part loads and joins in order.
+    """
+    doc = document(pages)
+    out = {LIBRARY_NAME: part(LIBRARY_NAME)}
+    # ⭐ A course that fits is written exactly as it always was: one file, every text in full.
+    whole = GLOBAL + _dump(doc) + ";\n"
+    if len(whole.encode("utf-8")) <= SHARD_BYTES:
+        out[INDEX_NAME] = whole
+        return out
+    records = _dedupe(doc["records"])
+    # Each record is written once, then packed in order; the manifest carries the page table.
+    rows = [_dump(record) for record in records]
+    chunks: list[list[str]] = [[]]
+    size = 0
+    for row in rows:
+        width = len(row.encode("utf-8")) + 1
+        if size + width > SHARD_BYTES - 1024 and chunks[-1]:
+            chunks.append([])
+            size = 0
+        chunks[-1].append(row)
+        size += width
+    names = [shard_name(n) for n in range(len(chunks))]
+    for name, chunk in zip(names, chunks):
+        out[name] = f"{SHARD_GLOBAL}{_dump(name)}]=[" + ",".join(chunk) + "];\n"
+    manifest = {"version": SHARDED_VERSION, "pages": doc["pages"], "shards": names}
+    out[INDEX_NAME] = GLOBAL + _dump(manifest) + ";\n"
+    return out

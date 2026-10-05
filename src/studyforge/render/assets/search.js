@@ -95,13 +95,40 @@
     state = 'loading';
     status.textContent = word('loading');
     script(LIBRARY, function () {
-      script(INDEX, build, fail);
+      script(INDEX, shards, fail);
     }, fail);
+  }
+
+  /* ⭐ A large course writes its records in shards beside the index, which then holds only the
+     page table and the shard names. They are loaded one after the other and joined in order,
+     so a record's number is the same as in one file. A text that repeats an earlier record's is
+     written as that record's number and put back here. */
+  function shards() {
+    var found = window.studyforge && window.studyforge.searchIndex;
+    if (!found || !found.shards) { build(); return; }
+    var names = found.shards;
+    var records = [];
+    (function next(at) {
+      if (at === names.length) { found.records = records; build(); return; }
+      script(names[at], function () {
+        var part = window.studyforge.searchShards && window.studyforge.searchShards[names[at]];
+        if (!part) { fail(); return; }
+        records = records.concat(part);
+        next(at + 1);
+      }, fail);
+    }(0));
+  }
+
+  function restored(records) {
+    records.forEach(function (record) {
+      if (typeof record[3] === 'number') { record[3] = records[record[3]][3]; }
+    });
   }
 
   function build() {
     data = window.studyforge && window.studyforge.searchIndex;
-    if (!data || !window.MiniSearch) { fail(); return; }
+    if (!data || !data.records || !window.MiniSearch) { fail(); return; }
+    restored(data.records);
     engine = new window.MiniSearch({
       fields: ['title', 'heading', 'text'],
       searchOptions: { prefix: true, fuzzy: 0.15, boost: { title: 3, heading: 2 }, combineWith: 'AND' }

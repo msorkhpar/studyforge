@@ -3,7 +3,7 @@
   "depth1": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
    ".studyforge/assets/page.css": "6a7a013a69f6eaa61ec54191a9a8e927e9f2112e068baa7d017f232f16b8b949",
-   ".studyforge/assets/page.js": "59057b7b76c14bf0ca2925791767314e4372c8157c61df68cfab4feb07906c7b",
+   ".studyforge/assets/page.js": "9c358e8c2145701d64a7077185060faffc91a4133177e8de305cd3ca332e6c3b",
    ".studyforge/assets/search-index.js": "5f27924c7b2149e5dec83975214bca7c32d86b23ee5a67c8f157bca38d32f9f7",
    ".studyforge/depth-one/depth-one-demo.section.html": "27f75c2456964ce6bdb41773505fb6dea141bc6ba530e14d4a06053449d91fcf",
    ".studyforge/depth-one/units/unit-01/unit-01-what-a-triple-is.unit.html": "076b48b9e02d1af8b16a01d7b6da823a6d9581041b5ce7f786fa8986ed177e7d",
@@ -16,7 +16,7 @@
   "depth2": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
    ".studyforge/assets/page.css": "6a7a013a69f6eaa61ec54191a9a8e927e9f2112e068baa7d017f232f16b8b949",
-   ".studyforge/assets/page.js": "59057b7b76c14bf0ca2925791767314e4372c8157c61df68cfab4feb07906c7b",
+   ".studyforge/assets/page.js": "9c358e8c2145701d64a7077185060faffc91a4133177e8de305cd3ca332e6c3b",
    ".studyforge/assets/search-index.js": "41b376f054184fd08abbfee05a705272341a57afab5556629e80c779cb1c297e",
    "advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html": "9c1a388305ed0fa934194d8e0b1b711afb270e1770f2a26c1642e481a40b2a4a",
    "advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html": "3fbd99d7336e38b973c64c6f18ecb29b7bdf01d5632a3ac100a723b511bc3f16",
@@ -32,7 +32,7 @@
   "runnable": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
    ".studyforge/assets/page.css": "6a7a013a69f6eaa61ec54191a9a8e927e9f2112e068baa7d017f232f16b8b949",
-   ".studyforge/assets/page.js": "59057b7b76c14bf0ca2925791767314e4372c8157c61df68cfab4feb07906c7b",
+   ".studyforge/assets/page.js": "9c358e8c2145701d64a7077185060faffc91a4133177e8de305cd3ca332e6c3b",
    ".studyforge/assets/search-index.js": "c08e77dedbbcea65a1180256ce3c4ecd18bd0048d524ce592c63adacea8ec48d",
    "index.html": "b63cfe0c285c36037f267dd3ef30b581c9a901679f6f4b146da7c1c575528c77",
    "kata/study/kata.section.html": "4a77d17c5b7d69852c97a9a14b5fcc6a79a6a72281bc077af93b2fdb80bd07e1",
@@ -45,7 +45,7 @@
   "shared-origin": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
    ".studyforge/assets/page.css": "6a7a013a69f6eaa61ec54191a9a8e927e9f2112e068baa7d017f232f16b8b949",
-   ".studyforge/assets/page.js": "59057b7b76c14bf0ca2925791767314e4372c8157c61df68cfab4feb07906c7b",
+   ".studyforge/assets/page.js": "9c358e8c2145701d64a7077185060faffc91a4133177e8de305cd3ca332e6c3b",
    ".studyforge/assets/search-index.js": "b77131db270d6f55658a5b175f9eaa4e8512939b1e7c52a14a32101566020aa5",
    "field-notes/study/field-notes.section.html": "281b454616a417e332cfa78b2fedeac4f2b170b8e102a612c8989f47b7d95eeb",
    "field-notes/study/field-notes.unit-01-taking-a-reading.unit.html": "79d016446e3b7724defd610080a2cdda06a2e4379cb24553ae52b3bb888c8fa2",
