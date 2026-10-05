@@ -55,7 +55,12 @@ def test_a_corpus_that_declares_no_modes_gets_no_bar_no_rule_no_script_and_no_fi
 def test_the_shared_bundle_keeps_its_bytes_whether_or_not_a_page_holds_an_example(tmp_path):
     plain = files(build(tmp_path, "plain", WITHOUT, {}))
     held = files(build(tmp_path, "held", WITH, {}))
-    shared = [name for name in plain if name.startswith(".studyforge/assets/")]
+    # ⭐ The search index says what the pages say, so it is the one shared file that differs.
+    shared = [
+        name
+        for name in plain
+        if name.startswith(".studyforge/assets/") and not name.endswith("search-index.js")
+    ]
     assert shared and all(plain[name] == held[name] for name in shared)
     assert b"data-example" not in b"".join(plain.values())
 

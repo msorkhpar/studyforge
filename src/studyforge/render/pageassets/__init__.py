@@ -85,6 +85,8 @@ from studyforge.render.pageassets.grammars import (
     grammar_for,
     highlighted_languages,
 )
+from studyforge.render.pageassets.search import SEARCH_PARTS
+from studyforge.render.pageassets.search import files as search_files
 from studyforge.render.pageassets.source import (
     ASSET_DIR,
     LICENCE_SUFFIX,
@@ -122,6 +124,7 @@ __all__ = [
     "PLAIN",
     "SCRIPT_NAME",
     "SCRIPT_PARTS",
+    "SEARCH_PARTS",
     "SPRITE_PART",
     "SPRITE_PLACEHOLDER",
     "STYLESHEET_NAME",
@@ -141,6 +144,7 @@ __all__ = [
     "licence_names",
     "names",
     "script",
+    "search_files",
     "stylesheet",
     "text",
     "written_files",

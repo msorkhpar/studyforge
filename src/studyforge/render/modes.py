@@ -53,7 +53,7 @@ STYLESHEET_NAME = "modes.css"
 SCRIPT_NAME = "modes.js"
 
 #: The slots this part fills, in the skeleton's order.
-SLOTS = ("rootattributes", "modehead", "modeswitch")
+SLOTS = ("rootattributes", "modehead", "modeswitch", "modenote")
 
 #: The two files, as `pageassets` finds them on disk.
 PARTS = (STYLESHEET_NAME, SCRIPT_NAME, *example_tabs.PARTS, *absent_language.PARTS)
@@ -269,7 +269,7 @@ def pager_attributes(tag: Tag | None, target: str, rel: str, shown: bool) -> str
 def slots(
     made: Offer | None, href: Callable[[str], str], entry: Tag | None = None
 ) -> dict[str, str]:
-    """The three skeleton slots; every one is `''` for a corpus that declares no modes.
+    """The four skeleton slots; every one is `''` for a corpus that declares no modes.
 
     `href` turns a shared file's name into the address this page uses for it, and `entry`
     is the tag of the page's own unit or module, which adds the note a page outside a mode shows.
@@ -290,7 +290,8 @@ def slots(
             known=known,
         )
         + NEWLINE,
-        "modeswitch": _switch(made) + NEWLINE + _note(made, entry),
+        "modeswitch": _switch(made) + NEWLINE,
+        "modenote": _note(made, entry),
     }
 
 

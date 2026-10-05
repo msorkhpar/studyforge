@@ -11,12 +11,12 @@
    tokens only, so both schemes and both themes read it. ⛔ No ligature: the
    words are UI text, and nothing here sets the mono face. */
 
-body > header > div[role="group"][aria-label="Reading mode"] {
+body > header div[role="group"][aria-label="Reading mode"] {
   display: flex;
   flex-wrap: wrap;
   width: max-content;
   max-width: 100%;
-  margin: 0 0 .75rem auto;
+  margin: 0;
   gap: 1px;
   padding: 2px;
   border: 1px solid var(--rule);
@@ -24,12 +24,12 @@ body > header > div[role="group"][aria-label="Reading mode"] {
   background: var(--surface);
 }
 
-body > header > div[role="group"][aria-label="Reading mode"][hidden],
-body > header > div[role="dialog"][data-section="mode-question"][hidden] {
+body > header div[role="group"][aria-label="Reading mode"][hidden],
+body > header div[role="dialog"][data-section="mode-question"][hidden] {
   display: none;
 }
 
-body > header > div[role="group"][aria-label="Reading mode"] button {
+body > header div[role="group"][aria-label="Reading mode"] button {
   font-family: var(--font-ui);
   font-size: .78rem;
   line-height: 1.7;
@@ -41,19 +41,19 @@ body > header > div[role="group"][aria-label="Reading mode"] button {
   cursor: pointer;
 }
 
-body > header > div[role="group"][aria-label="Reading mode"] button:hover {
+body > header div[role="group"][aria-label="Reading mode"] button:hover {
   color: var(--fg);
   background: var(--surface-2);
 }
 
-body > header > div[role="group"][aria-label="Reading mode"] button[aria-pressed="true"] {
+body > header div[role="group"][aria-label="Reading mode"] button[aria-pressed="true"] {
   color: var(--fg);
   background: var(--accent-soft);
   box-shadow: inset 0 -2px 0 var(--accent);
   font-weight: 700;
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] {
+body > header div[role="dialog"][data-section="mode-question"] {
   position: fixed;
   z-index: 20;
   top: 20vh;
@@ -71,26 +71,26 @@ body > header > div[role="dialog"][data-section="mode-question"] {
   box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .35);
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] h2 {
+body > header div[role="dialog"][data-section="mode-question"] h2 {
   margin: 0 0 .4rem;
   font-size: 1.1rem;
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] p {
+body > header div[role="dialog"][data-section="mode-question"] p {
   margin: 0 0 .75rem;
   font-size: .9rem;
   color: var(--fg-soft);
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] ul {
+body > header div[role="dialog"][data-section="mode-question"] ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] li { margin: 0 0 .5rem; }
+body > header div[role="dialog"][data-section="mode-question"] li { margin: 0 0 .5rem; }
 
-body > header > div[role="dialog"][data-section="mode-question"] button {
+body > header div[role="dialog"][data-section="mode-question"] button {
   display: block;
   width: 100%;
   padding: .55rem .75rem;
@@ -103,16 +103,16 @@ body > header > div[role="dialog"][data-section="mode-question"] button {
   cursor: pointer;
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] button:hover {
+body > header div[role="dialog"][data-section="mode-question"] button:hover {
   background: var(--accent-soft);
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] button strong {
+body > header div[role="dialog"][data-section="mode-question"] button strong {
   display: block;
   font-size: .98rem;
 }
 
-body > header > div[role="dialog"][data-section="mode-question"] button span {
+body > header div[role="dialog"][data-section="mode-question"] button span {
   display: block;
   font-size: .85rem;
   color: var(--fg-soft);

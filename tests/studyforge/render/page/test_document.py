@@ -254,6 +254,7 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
             "rootattributes",
             "modehead",
             "modeswitch",
+            "modenote",
         }
     )
 

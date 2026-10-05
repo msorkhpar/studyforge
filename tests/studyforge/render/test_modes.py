@@ -36,7 +36,7 @@ def test_the_root_carries_the_default_mode_and_the_head_links_the_two_files():
     assert slots["rootattributes"] == ' data-mode="only-bb"'
     assert '<link rel="stylesheet" href="../x/modes.css">' in slots["modehead"]
     assert '<script src="../x/modes.js" defer></script>' in slots["modehead"]
-    assert set(slots) == {"rootattributes", "modehead", "modeswitch"}
+    assert set(slots) == {"rootattributes", "modehead", "modeswitch", "modenote"}
     assert slots["modehead"].endswith("\n") and slots["modeswitch"].endswith("\n")
 
 

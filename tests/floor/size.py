@@ -86,6 +86,9 @@ VENDORED = {
     "src/studyforge/render/assets/prism.js": (
         "Prism, vendored minified third-party code under prism.LICENSE"
     ),
+    "src/studyforge/render/assets/minisearch.js": (
+        "MiniSearch, vendored third-party code under minisearch.LICENSE"
+    ),
     "src/studyforge/render/assets/plyr.js": (
         "Plyr, vendored minified third-party code under plyr.LICENSE"
     ),

@@ -57,6 +57,9 @@ CORPUS = "depth2"
 #: a fixture too small to exhibit the defect at all.
 UNITS = 40
 
+#: The top bar's height in pixels: the rail sticks just under it (`--topbar` is 3.25rem).
+TOPBAR = 52
+
 #: The region under test, spelled as `chrome.css` and `test_rail.py` spell it.
 RAIL = 'nav[aria-label="Containers"]'
 
@@ -92,9 +95,9 @@ SHIPPED = (
         # column 3 sticks and scrolls by the same four declarations, and a
         # pattern that matched both would rewrite a region this module is
         # not about — and the control then asserts nothing about the rail.
-        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n"
+        "grid-column: 1;\n    grid-row: 1 / span 11;\n    align-self: start;\n"
         "    position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
-        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n",
+        "grid-column: 1;\n    grid-row: 1 / span 11;\n    align-self: start;\n",
     ),
 )
 
@@ -322,7 +325,7 @@ def test_the_rail_is_still_at_the_top_of_the_window_at_the_foot_of_a_long_page(
         "the page did not scroll at all, so this reading says nothing about a rail "
         "that scrolls away"
     )
-    assert read["rail border box"]["top"] == pytest.approx(0, abs=TOUCHING), (
+    assert read["rail border box"]["top"] == pytest.approx(TOPBAR, abs=TOUCHING), (
         f"after scrolling {read['page scroll offset']:.0f}px the rail's border box top is "
         f"{read['rail border box']['top']:.2f}px, so it has scrolled off the window"
     )

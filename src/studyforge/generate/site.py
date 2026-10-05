@@ -62,6 +62,7 @@ a page, which is a reading of the *reader's* disk and not of the corpus.
 
 from __future__ import annotations
 
+import posixpath
 from pathlib import Path, PurePosixPath
 
 from studyforge.contents import status
@@ -89,7 +90,7 @@ from studyforge.render.page import (
     mock_form_files,
     review_files,
 )
-from studyforge.render.pageassets import written_files
+from studyforge.render.pageassets import search_files, written_files
 
 
 def write_site(root: Path | str, into: Path | str, *, narration: bool | None = None) -> Written:
@@ -103,11 +104,10 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
     deletes none.
     """
     corpus = for_output(voiced(read_corpus(root), narration), into)
+    pages = unit_pages(corpus, into) + container_pages(corpus, into) + root_index(corpus, into)
     return (
-        unit_pages(corpus, into)
-        + container_pages(corpus, into)
-        + root_index(corpus, into)
-        + assets(corpus, into)
+        pages
+        + assets(corpus, into, pages.pages)
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
         + files_unreached(corpus)
@@ -167,7 +167,20 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
     return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
 
 
-def assets(corpus: Corpus, into: Path | str) -> Written:
+def search_pages(
+    corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...]
+) -> list[tuple[str, str]]:
+    """`(address from the asset directory, html)` for every page this build wrote, to be indexed."""
+    found = []
+    for page in pages:
+        if page.suffix != ".html":
+            continue
+        address = posixpath.relpath(str(page), str(corpus.shared.assets))
+        found.append((address, (Path(into) / Path(str(page))).read_text(encoding="utf-8")))
+    return found
+
+
+def assets(corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...] = ()) -> Written:
     """Write the shared stylesheet and script every page of the site links.
 
     ⛔ **Asked of `render.pageassets` as one call**, never assembled here: the
@@ -180,6 +193,9 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
     shared = {**written_files(), **modes.files(offer_of(corpus))}
+    if pages:
+        # ⭐ The search index is read back off the pages just written: it says only what they say.
+        shared.update(search_files(search_pages(corpus, into, pages)))
     if has_mock_exam(corpus):
         # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
         shared.update(mock_files())

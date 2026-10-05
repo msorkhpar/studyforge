@@ -545,7 +545,7 @@ def test_the_masthead_prints_no_bare_kind_label(open_page: OpenPage, built_site:
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))
     lines = open_page.evaluate(
-        "Array.from(document.querySelectorAll('body > header p')).map(p => p.textContent.trim())"
+        "Array.from(document.querySelectorAll('body > header > p')).map(p => p.textContent.trim())"
     )
     assert list(lines) == [], f"the masthead prints {lines} under the title"
 

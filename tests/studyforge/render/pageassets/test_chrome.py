@@ -185,7 +185,8 @@ SKELETON_SLOTS = {
     ),
     "rootattributes": "the mode attribute on `<html>` of a modes corpus; nothing is painted",
     "modehead": "a modes corpus' stylesheet, script and boot, in `<head>`; nothing is painted",
-    "modeswitch": "a modes corpus' switch and first-visit question, inside the masthead",
+    "modeswitch": "a modes corpus' switch and first-visit question, inside the top bar",
+    "modenote": "the note a page outside the reading mode shows, in the masthead under the bar",
     "player": "the narration transport's — the DEFERRED row above",
     "nav": "region 3",
     "rail": (

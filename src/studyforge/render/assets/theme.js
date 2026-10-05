@@ -67,7 +67,15 @@
    system scheme. A reader who has CHOSEN a theme has made those media queries
    wrong, so the chosen one is widened to `all` and the other is switched off;
    choosing *system* puts both media queries back exactly as the skeleton wrote
-   them. */
+   them.
+
+   ⭐ **THE CONTROL IS ONE ICON BUTTON IN THE TOP BAR.** It shows the theme the page is in and
+   pressing it chooses the other, so a reader who follows their system and presses it stores
+   the opposite of what the system says. *System* is still the stored default and still what
+   an absent record means; the button simply no longer offers a way back to it, and a reader
+   who wants that clears the site data. ⛔ Its two accessible names are attributes of the
+   button in `page.html` (`data-to-dark`, `data-to-light`); this part picks one and types
+   nothing. The icon itself is chosen by `topbar.css` from the same attribute and scheme. */
 
 (function () {
   'use strict';
@@ -85,7 +93,8 @@
      every hook on this page has: markup and script cannot import one another. */
   var THEME = 'data-theme';
   var CONTROL = '[data-section="theme"]';
-  var CHOICE = 'data-theme-choice';
+  var TO_DARK = 'data-to-dark';
+  var TO_LIGHT = 'data-to-light';
 
   /* The browser-chrome colour, one per system scheme, and what switches one
      off. ⚠️ `not all` rather than removing the element: the skeleton's own two
@@ -93,15 +102,15 @@
   var COLOUR = 'meta[name="theme-color"]';
   var EVERY = 'all';
   var NONE = 'not all';
-
+  var SCHEME = '(prefers-color-scheme: dark)';
 
   var store = window.studyforge.progress;
   var root = document.documentElement;
 
   var control = document.querySelector(CONTROL);
   if (!control) { return; }
-  var buttons = [].slice.call(control.querySelectorAll('[' + CHOICE + ']'));
-  if (!buttons.length) { return; }
+
+  var system = window.matchMedia ? window.matchMedia(SCHEME) : null;
 
   /* Each theme-colour element with the media query the skeleton gave it, read
      once, before anything here has had a chance to change one. */
@@ -116,10 +125,14 @@
     return held === LIGHT || held === DARK ? held : SYSTEM;
   }
 
+  /* The theme the page is showing, whether it was chosen or followed. */
+  function showing(choice) {
+    if (choice !== SYSTEM) { return choice; }
+    return system && system.matches ? DARK : LIGHT;
+  }
+
   /* ⛔ The cache the head boot reads, kept in step with every paint and kept by
-     the STORE rather than by this part. ⚠️ One part touches the browser's
-     storage (`test_progress` asserts it), and that does not stop being true
-     because the area is a different one. ⭐ *System* caches NOTHING: an absent
+     the STORE rather than by this part. ⭐ *System* caches NOTHING: an absent
      cache and a cached word must not be two answers to one question. */
   function remember(choice) {
     store.cache(PREFERENCE, choice === SYSTEM ? null : choice);
@@ -142,10 +155,11 @@
         );
       }
     });
-    buttons.forEach(function (button) {
-      var mine = button.getAttribute(CHOICE) === choice;
-      button.setAttribute('aria-pressed', mine ? 'true' : 'false');
-    });
+    var name = control.getAttribute(showing(choice) === DARK ? TO_LIGHT : TO_DARK);
+    if (name) {
+      control.setAttribute('aria-label', name);
+      control.setAttribute('title', name);
+    }
   }
 
   /* ⛔ Shown from the STORE's answer, never from what was just pressed: a write
@@ -158,9 +172,14 @@
   paint(chosen());
   control.hidden = false;
 
-  buttons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      choose(button.getAttribute(CHOICE));
-    });
+  control.addEventListener('click', function () {
+    choose(showing(chosen()) === DARK ? LIGHT : DARK);
   });
+
+  /* A page that follows the system follows it when it changes. */
+  if (system && system.addEventListener) {
+    system.addEventListener('change', function () {
+      if (chosen() === SYSTEM) { paint(SYSTEM); }
+    });
+  }
 }());

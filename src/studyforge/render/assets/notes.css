@@ -1,6 +1,5 @@
-/* What the page tells the reader, and the two controls it offers: the index's
-   plain explanation, the practices note, the read control and the theme
-   control.
+/* What the page tells the reader, and the control it offers: the index's
+   plain explanation, the practices note and the read control.
 
    ⭐ ONE OF THE FOUR CHROME PARTS (`chrome.css` says how they divide).
 
@@ -128,55 +127,4 @@ section[aria-label="About this site"] ol { margin: 0; padding-left: 1.2rem; }
 section[aria-label="About this site"] li,
 section[aria-label="About this site"] p { margin: 0 0 .35rem; max-width: none; }
 
-/* --- the theme control --------------------------------------------------- */
-
-/* ⛔ studyforge ships both a dark and a light theme. The
-   palette carries both; this is the control that
-   lets a reader say which one they want, on every page kind.
-
-   ⭐ INSIDE THE MASTHEAD, NOT A REGION OF ITS OWN. `page.html` declares ten
-   top-level positions inside `<body>` and the rail's grid row span is that
-   number, so an eleventh child of `<body>` would move the rail rather than add
-   a control. ⛔ Reached by its role and its label, like every other region in
-   these four parts — no class, no colour.
-
-   ⭐ A segmented control on its own line, right of the trail: it is the page's
-   only setting, so it reads as one rather than as three buttons. The chosen
-   segment is told apart by GROUND and by an accent underline, never by the
-   accent as small text — the accent on its own wash is a mark's ratio, not a
-   body ratio, and this text is smaller than body text. */
-
-body > header > div[role="group"][aria-label="Theme"] {
-  display: flex;
-  width: max-content;
-  margin: 0 0 .75rem auto;
-  gap: 1px;
-  padding: 2px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-}
-
-body > header > div[role="group"][aria-label="Theme"] button {
-  font-family: var(--font-ui);
-  font-size: .78rem;
-  line-height: 1.7;
-  padding: .05rem .55rem;
-  border: 0;
-  border-radius: var(--radius-tight);
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-body > header > div[role="group"][aria-label="Theme"] button:hover {
-  color: var(--fg);
-  background: var(--surface-2);
-}
-
-body > header > div[role="group"][aria-label="Theme"] button[aria-pressed="true"] {
-  color: var(--fg);
-  background: var(--accent-soft);
-  box-shadow: inset 0 -2px 0 var(--accent);
-  font-weight: 700;
-}
+/* The theme control is one icon button in the top bar, styled in `topbar.css`. */
