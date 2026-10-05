@@ -6,6 +6,7 @@ import json
 
 from studyforge.archive.scrub import assert_clean, scrub
 from studyforge.render.pageassets import search as searchindex
+from tests.studyforge.render.pageassets.test_search import built
 
 PAGE = """<!doctype html><html><head><title>Redaction</title>
 <script type="application/json" id="studyforge-identity">{"kind":"unit"}</script></head><body>
@@ -15,7 +16,9 @@ PAGE = """<!doctype html><html><head><title>Redaction</title>
 
 
 def test_prose_that_describes_a_secret_shape_is_scrubbed_out_of_the_index():
-    raw = searchindex.files([("../a/unit.html", PAGE)])
+    # The record path, whose file holds every text as it is; `test_search_site` covers the
+    # precompiled one.
+    raw = built([("../a/unit.html", PAGE)], node=None)
     body = raw[searchindex.INDEX_NAME]
     try:
         assert_clean(body, "index")

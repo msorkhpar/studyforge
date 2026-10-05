@@ -4,8 +4,11 @@
    (`search-index.js`, written by the build from the pages themselves) are two files beside
    `page.js`, loaded from the site on the first time the box is opened, and never from anywhere
    else. ⛔ They are scripts and not fetched JSON so the search also works from a page opened
-   as a file. The index is turned into a ranked index in the page, in chunks, so the box stays
-   usable while it fills.
+   as a file. ⭐ The index was built by the build: this part hands it to `MiniSearch.loadJSON`
+   and builds nothing. A large one comes in string pieces (`search-index-0.js` and on), joined in
+   order before the one load. ⚠️ A site built without `node` holds the records instead (versions 1
+   and 2), and only then a third file, `search-build.js`, that builds them here. A version this
+   part does not know fails, and so does a piece that is missing.
 
    ⭐ **ONE RECORD PER HEADING, GROUPED BY PAGE.** A result names the page (and the module it is
    in) once, and under it the parts of the page that matched, each with the matched words marked
@@ -25,6 +28,9 @@
   var DIALOG = '[data-section="search"]';
   var LIBRARY = 'minisearch.js';
   var INDEX = 'search-index.js';
+  var BUILDER = 'search-build.js';
+  var KINDS = { 1: 'records', 2: 'records', 3: 'precompiled' };
+  var SEARCH = { prefix: true, fuzzy: 0.15, boost: { title: 3, heading: 2 }, combineWith: 'AND' };
   var BUNDLE = /\/page\.js(?:\?|#|$)/;
   var MAX_PAGES = 8;
   var MAX_PARTS = 3;
@@ -41,8 +47,8 @@
   var hints = dialog.querySelector('[data-search-hints]');
   var close = dialog.querySelector('[data-search-close]');
 
-  var data = null;
   var engine = null;
+  var entry = null;
   var state = 'idle';
   var pending = null;
   var returnTo = null;
@@ -95,52 +101,63 @@
     state = 'loading';
     status.textContent = word('loading');
     script(LIBRARY, function () {
-      script(INDEX, shards, fail);
+      script(INDEX, opened, fail);
     }, fail);
   }
 
-  /* ⭐ A large course writes its records in shards beside the index, which then holds only the
-     page table and the shard names. They are loaded one after the other and joined in order,
-     so a record's number is the same as in one file. A text that repeats an earlier record's is
-     written as that record's number and put back here. */
-  function shards() {
+  function opened() {
     var found = window.studyforge && window.studyforge.searchIndex;
-    if (!found || !found.shards) { build(); return; }
-    var names = found.shards;
-    var records = [];
+    var kind = found && Object.prototype.hasOwnProperty.call(KINDS, found.version) && KINDS[found.version];
+    if (!kind || !window.MiniSearch) { fail(); return; }
+    if (kind === 'precompiled') { pieces(found); return; }
+    script(BUILDER, function () { built(found); }, fail);
+  }
+
+  /* ⭐ A precompiled index: whole in the manifest, or its pieces loaded one after the other. */
+  function pieces(found) {
+    if (typeof found.index === 'string') { loaded(found, found.index); return; }
+    var names = found.parts;
+    if (!names || !names.length) { fail(); return; }
+    var joined = [];
     (function next(at) {
-      if (at === names.length) { found.records = records; build(); return; }
+      if (at === names.length) { loaded(found, joined.join('')); return; }
       script(names[at], function () {
-        var part = window.studyforge.searchShards && window.studyforge.searchShards[names[at]];
-        if (!part) { fail(); return; }
-        records = records.concat(part);
+        var piece = window.studyforge.searchParts && window.studyforge.searchParts[names[at]];
+        if (typeof piece !== 'string') { fail(); return; }
+        joined.push(piece);
         next(at + 1);
       }, fail);
     }(0));
   }
 
-  function restored(records) {
-    records.forEach(function (record) {
-      if (typeof record[3] === 'number') { record[3] = records[record[3]][3]; }
-    });
+  function loaded(found, json) {
+    try {
+      engine = window.MiniSearch.loadJSON(json, {
+        fields: found.fields, storeFields: found.storeFields, searchOptions: SEARCH
+      });
+    } catch (error) { fail(); return; }
+    entry = function (hit) {
+      var page = Number(String(hit.id).split('.')[0]);
+      return { key: page, url: found.pages[page], title: hit.title, trail: hit.trail,
+        heading: hit.heading, anchor: hit.anchor, text: hit.snippet };
+    };
+    ready();
   }
 
-  function build() {
-    data = window.studyforge && window.studyforge.searchIndex;
-    if (!data || !data.records || !window.MiniSearch) { fail(); return; }
-    restored(data.records);
-    engine = new window.MiniSearch({
-      fields: ['title', 'heading', 'text'],
-      searchOptions: { prefix: true, fuzzy: 0.15, boost: { title: 3, heading: 2 }, combineWith: 'AND' }
-    });
-    var docs = data.records.map(function (record, id) {
-      return { id: id, title: data.pages[record[0]][1], heading: record[1], text: record[3] };
-    });
-    engine.addAllAsync(docs, { chunkSize: 300 }).then(function () {
-      state = 'ready';
-      status.textContent = '';
-      if (input.value.trim()) { run(); }
+  /* ⚠️ The records of a site built without `node`: `search-build.js` joins and builds them. */
+  function built(found) {
+    if (!window.studyforge.searchBuild) { fail(); return; }
+    window.studyforge.searchBuild(found, SEARCH, script, function (made, named) {
+      engine = made;
+      entry = named;
+      ready();
     }, fail);
+  }
+
+  function ready() {
+    state = 'ready';
+    status.textContent = '';
+    if (input.value.trim()) { run(); }
   }
 
   /* --- matching and showing ------------------------------------------------ */
@@ -203,17 +220,16 @@
     var order = [];
     var by = {};
     found.slice(0, 80).forEach(function (hit) {
-      var record = data.records[hit.id];
-      var key = record[0];
-      if (!by[key]) { by[key] = []; order.push(key); }
-      by[key].push({ record: record, hit: hit });
+      var part = entry(hit);
+      if (!by[part.key]) { by[part.key] = []; order.push(part.key); }
+      by[part.key].push(part);
     });
-    return order.slice(0, MAX_PAGES).map(function (key) { return { page: data.pages[key], parts: by[key] }; });
+    return order.slice(0, MAX_PAGES).map(function (key) { return { page: by[key][0], parts: by[key] }; });
   }
 
-  function target(page, record) {
-    var url = new URL(page[0], base()).href;
-    return record[2] ? url + '#' + record[2] : url;
+  function target(part) {
+    var url = new URL(part.url, base()).href;
+    return part.anchor ? url + '#' + part.anchor : url;
   }
 
   function show(groups, query, terms) {
@@ -226,10 +242,10 @@
       var title = document.createElement('p');
       title.id = 'search-page-' + g;
       title.setAttribute('data-search-page', '');
-      title.textContent = group.page[1];
-      if (group.page[2]) {
+      title.textContent = group.page.title;
+      if (group.page.trail) {
         var crumb = document.createElement('small');
-        crumb.textContent = group.page[2];
+        crumb.textContent = group.page.trail;
         title.appendChild(crumb);
       }
       box.setAttribute('aria-labelledby', title.id);
@@ -239,11 +255,11 @@
         row.setAttribute('role', 'option');
         row.setAttribute('aria-selected', 'false');
         row.id = 'search-hit-' + count;
-        row.href = target(group.page, part.record);
+        row.href = target(part);
         var head = document.createElement('strong');
-        marked(head, part.record[1] || group.page[1], pattern);
+        marked(head, part.heading || part.title, pattern);
         row.appendChild(head);
-        var text = snippet(part.record[3], pattern);
+        var text = snippet(part.text, pattern);
         if (text) {
           var body = document.createElement('span');
           marked(body, text, pattern);

@@ -48,7 +48,7 @@ colour changes.
 | `vendored` | the two bundles this project did not write, and their licences |
 | `grammars` | which fence languages the vendored highlighter covers, and the plain fallback |
 | `surface` | the class names and `data-*` hooks the stylesheet targets |
-| `errors` | `AssetError`, the only exception any of it raises |
+| `errors` | `AssetError`, the only exception any of it raises; `search.Unbuilt` is a builder's, caught by `search_files` |
 
 ⭐ **Assets are shared and linked, never inlined.** They were 79% of each 60 KB
 page in the extraction source and byte-identical across all of them; at 1,290
@@ -87,6 +87,7 @@ from studyforge.render.pageassets.grammars import (
 )
 from studyforge.render.pageassets.search import SEARCH_PARTS
 from studyforge.render.pageassets.search import files as search_files
+from studyforge.render.pageassets.search import Unbuilt
 from studyforge.render.pageassets.source import (
     ASSET_DIR,
     LICENCE_SUFFIX,
@@ -133,6 +134,7 @@ __all__ = [
     "SURFACE_HOOKS",
     "VENDORED",
     "AssetError",
+    "Unbuilt",
     "class_for",
     "compose",
     "falls_back",

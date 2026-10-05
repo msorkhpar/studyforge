@@ -34,6 +34,7 @@ PUBLIC_SURFACE = frozenset(
         "SURFACE_HOOKS",
         "VENDORED",
         "AssetError",
+        "Unbuilt",
         "class_for",
         "compose",
         "falls_back",
@@ -97,6 +98,9 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
         "html",
         "json",
         "re",
+        # ⭐ And warns on standard error when no precompiled index could be built.
+        "collections",
+        "sys",
     }
     offenders = [
         f"{path.name}: {name}"
