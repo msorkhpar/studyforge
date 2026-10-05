@@ -35,6 +35,7 @@ by their title and trail alone, because their body is a list of the units' title
 
 from __future__ import annotations
 
+import html as htmllib
 import json
 import re
 from html.parser import HTMLParser
@@ -277,12 +278,57 @@ def read(html: str) -> dict:
     }
 
 
+#: A quiz option's sentence is searched for in a served file from this many words (the same floor
+#: as `serve.withheld.MIN_WORDS`, which this module does not import).
+MIN_WORDS = 4
+
+_SAYS = re.compile(r'"says"\s*:\s*(?=\{)')
+
+
+def quiz_sentences(pages: list[tuple[str, str]]) -> set[str]:
+    """Every option sentence the pages' own quiz scripts carry, whitespace collapsed.
+
+    ⭐ Read off the HTML, like the rest of the index: a quiz page holds its sentences in a
+    `"says":{...}` object, so the index needs no corpus to know them.
+    """
+    decoder = json.JSONDecoder()
+    found: set[str] = set()
+    for _url, html in pages:
+        for hit in _SAYS.finditer(html):
+            try:
+                value, _end = decoder.raw_decode(html, hit.end())
+            except ValueError:
+                continue
+            for sentence in value.values() if isinstance(value, dict) else ():
+                if isinstance(sentence, str):
+                    for form in (sentence, htmllib.unescape(sentence)):
+                        form = _squash(form)
+                        if len(form.split()) >= MIN_WORDS:
+                            found.add(form)
+    return found
+
+
+def _without(sentences: set[str]):
+    """Return a function that cuts every one of `sentences` out of a text."""
+    if not sentences:
+        return lambda text: text
+    pattern = re.compile("|".join(re.escape(s) for s in sorted(sentences, key=len, reverse=True)))
+    return lambda text: _squash(pattern.sub(" ", text)) if pattern.search(text) else text
+
+
 def document(pages: list[tuple[str, str]]) -> dict:
-    """The index record for `(url, html)` pairs: one page table and one record per heading."""
+    """The index record for `(url, html)` pairs: one page table and one record per heading.
+
+    ⛔ A sentence a quiz offers as an option is cut out of the text, wherever the page's prose
+    happens to say the same words: the serve gate refuses any file that holds one, and the
+    index must pass it unchanged. A page's own text is still searched; only that sentence is not.
+    """
     table: list[list[str]] = []
     records: list[list] = []
+    cut = _without(quiz_sentences(pages))
     for url, html in sorted(pages):
         page = read(html)
+        page["sections"] = [(h, a, cut(t)) for h, a, t in page["sections"]]
         if not page["title"]:
             continue
         number = len(table)
