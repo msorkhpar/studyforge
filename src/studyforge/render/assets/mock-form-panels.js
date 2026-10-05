@@ -186,6 +186,12 @@
       var line = make('p', { 'data-form-part': 'verdict' }, (right ? words.right : words.wrong) + ' ');
       line.insertAdjacentHTML('beforeend', entry.says[chosen[0]]);
       box.appendChild(line);
+      chosen.slice(1).forEach(function (more) {
+        if (!Object.prototype.hasOwnProperty.call(entry.says, more)) { return; }
+        var extra = make('p', { 'data-form-part': 'verdict-more' });
+        extra.insertAdjacentHTML('beforeend', entry.says[more]);
+        box.appendChild(extra);
+      });
       box.hidden = false;
       item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
     }
@@ -268,6 +274,21 @@
       box.appendChild(ul);
       box.hidden = false;
       item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
+    }
+
+    /* A multiple-response question with some but not its n options chosen blocks the submit. */
+    function refuseShort(state) {
+      var partial = state.order.filter(function (id) {
+        var select = metaById[id].select;
+        var count = byId[id].querySelectorAll('input:checked').length;
+        return select && count > 0 && count !== select;
+      });
+      if (!partial.length) { return false; }
+      var places = partial.map(function (id) { return state.order.indexOf(id) + 1; }).join(', ');
+      missing.textContent = fill(words.wrongCount || 'Choose exactly the number of options each '
+        + 'question asks for. Not complete: {list}.', { list: places });
+      missing.hidden = false;
+      return true;
     }
 
     function show() {
@@ -359,7 +380,7 @@
     return {
       matches: matches, walkable: walkable, buildNavigator: buildNavigator,
       drawNavigator: drawNavigator, showStart: showStart, show: show, explain: explain,
-      explainAll: explainAll, answered: answered, countText: countText
+      explainAll: explainAll, answered: answered, countText: countText, refuseShort: refuseShort
     };
   }
 

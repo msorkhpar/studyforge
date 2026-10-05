@@ -74,7 +74,8 @@ remembers where you got to is a complete product. See
 **3. An address is recorded, never computed from a title.** Slugifying a title
 to get a URL looks obviously fine and is wrong in practice: real catalogues
 serve many units at a slug their title does not produce. See
-[What an adapter must produce](archive.md).
+[What an adapter must produce](archive.md). Exam-style quizzes and mocks ("Select two" items,
+question pools) are in [Multiple-response items and question pools](pools-and-multiple-response.md).
 
 **4. You say where the output goes.** Under one generated root, or in a
 `study/` directory beside each source file it came from. It is a field in the

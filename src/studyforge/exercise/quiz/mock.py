@@ -51,6 +51,7 @@ from studyforge.exercise.quiz.exam import (
     minutes_of,
     scale_of,
     scenarios_of,
+    require_per_domain,
     sitting_document,
     sittings_of,
 )
@@ -242,6 +243,7 @@ def require_against_questions(mock: Mock, questions: tuple[Question, ...], where
             f"question, so a score reported for it would be 0 of 0."
         )
     for sitting in mock.sittings:
+        require_per_domain(sitting, mock.domains, questions, where)
         if sitting.questions is not None:
             for domain, wanted in quotas(mock, sitting.questions, questions).items():
                 held = sum(1 for one in questions if one.domain == domain)
@@ -261,23 +263,6 @@ def require_against_questions(mock: Mock, questions: tuple[Question, ...], where
             raise ExerciseError(
                 f"{where}: a sitting draws {sitting.scenarios} scenarios and the exam declares "
                 f"{len(declared)}."
-            )
-
-
-def require_no_exam_keys_on_questions(questions: tuple[Question, ...], where: str) -> None:
-    """⛔ Refuse a mock-only question key on a quiz that declares no `mock`."""
-    for question in questions:
-        if (
-            question.scenario is not None
-            or question.select is not None
-            or question.shuffle is not None
-            or question.difficulty is not None
-        ):
-            raise ExerciseError(
-                f"{where}: a question names a 'scenario', 'select', 'shuffle' or 'difficulty' "
-                f"on a quiz that "
-                f"declares no {MOCK!r}. Those are what a mock exam's page reads, so on a plain "
-                f"quiz they are keys nothing reads while the corpus validates green."
             )
 
 

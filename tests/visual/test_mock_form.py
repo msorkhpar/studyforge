@@ -84,6 +84,12 @@ def sit_with_question(page: OpenPage, question: str) -> None:
     raise AssertionError(f"{question} was not drawn in 30 full sittings")
 
 
+def answer_one(page: OpenPage, question: str) -> None:
+    """Answer one question with any option, or with two for the multiple-response one."""
+    for option in ["a", "b"] if question == "p9" else ["b"]:
+        pick(page, question, option)
+
+
 def goto(page: OpenPage, number: int) -> None:
     click(page, f'{part("number")}[data-index="{number - 1}"]')
 
@@ -92,7 +98,9 @@ def answer_all(page: OpenPage, answers: dict, drawn: list[str]) -> None:
     for question in drawn:
         chosen = answers[question]
         for option in chosen if isinstance(chosen, list) else [chosen]:
-            pick(page, question, option)
+            box = f'[data-practice-question="{question}"] input[value="{option}"]'
+            if not page.evaluate(f"document.querySelector({box!r}).checked"):
+                pick(page, question, option)
 
 
 def asked_since(page: OpenPage, mark: int) -> list[str]:
@@ -233,7 +241,7 @@ def test_the_navigator_says_answered_open_and_flagged_and_filters(where, request
     drawn = begin(page)["drawn"]
     first = next(q for q in QUESTIONS if q.id == drawn[0])
     keyed = KEYED[drawn[0]]
-    pick(page, drawn[0], keyed[0] if isinstance(keyed, list) else keyed)
+    answer_all(page, {drawn[0]: keyed}, [drawn[0]])
     click(page, FLAG)
     read = read_state(page)
     assert read["flagPressed"] == "true" and read["flagText"] == "Flagged for review"
@@ -279,7 +287,7 @@ def test_a_reload_keeps_the_order_the_options_the_answers_the_flags_and_the_cloc
     page = request.getfixturevalue(where)
     before = begin(page)
     drawn = before["drawn"]
-    pick(page, drawn[0], "b" if drawn[0] != "p9" else "a")
+    answer_one(page, drawn[0])
     click(page, FLAG)
     time.sleep(1.2)
     reopen(page)
@@ -328,7 +336,7 @@ def test_start_again_draws_a_new_set_that_prefers_questions_not_yet_seen(where, 
 def test_time_up_submits_by_itself_and_a_reload_after_time_does_too(where, request):
     page = request.getfixturevalue(where)
     drawn = begin(page)["drawn"]
-    pick(page, drawn[0], "b" if drawn[0] != "p9" else "a")
+    answer_one(page, drawn[0])
     page.evaluate(
         "(() => { const held = JSON.parse(localStorage.getItem('studyforge.mockform.v1'));"
         " const name = Object.keys(held.exams)[0];"
@@ -392,7 +400,8 @@ def test_every_option_is_explained_with_the_key_marked_and_the_choice_shown(wher
     page = request.getfixturevalue(where)
     begin(page, "full")
     drawn = read_state(page)["drawn"]
-    wrong = {q: ("a" if KEYED[q] != "a" and not isinstance(KEYED[q], list) else "c") for q in drawn}
+    wrong = {q: (["c", "d"] if isinstance(KEYED[q], list)
+                 else "a" if KEYED[q] != "a" else "c") for q in drawn}
     read = finish(page, wrong)
     assert read["result"]
     for review in read["reviews"]:
@@ -408,7 +417,7 @@ def test_every_option_is_explained_with_the_key_marked_and_the_choice_shown(wher
 @pytest.mark.parametrize("where", PLACES)
 @pytest.mark.parametrize(
     "chosen,right",
-    [(["a"], False), (["a", "c"], False), (["b", "d"], False), (["c", "d"], False),
+    [(["a", "c"], False), (["b", "d"], False), (["c", "d"], False),
      (["a", "b"], True), (["b", "a"], True)],
 )
 def test_a_multiple_response_question_is_scored_all_or_nothing(where, chosen, right, request):
@@ -453,7 +462,7 @@ def test_the_results_label_the_key_and_the_readers_choice_in_sentence_case(where
 def test_submitting_with_questions_open_asks_once_more_then_grades_them_wrong(where, request):
     page = request.getfixturevalue(where)
     drawn = begin(page, "full")["drawn"]
-    pick(page, drawn[0], "b" if drawn[0] != "p9" else "a")
+    answer_one(page, drawn[0])
     click(page, part("submit"))
     read = read_state(page)
     assert read["missing"].startswith("Not answered yet: 2, 3") and not read["result"]
@@ -470,7 +479,8 @@ def test_the_review_shows_only_missed_or_only_flagged_questions(where, request):
     goto(page, 3)
     click(page, FLAG)
     wrong = {q: (["a", "b"] if q == "p9" else KEYED[q]) for q in drawn}
-    wrong[drawn[1]] = "c" if KEYED.get(drawn[1]) != "c" and drawn[1] != "p9" else "a"
+    wrong[drawn[1]] = (["c", "d"] if drawn[1] == "p9"
+                       else "c" if KEYED.get(drawn[1]) != "c" else "a")
     read = finish(page, {**wrong})
     missed = [q for q in drawn if read["verdicts"][q] == "wrong"]
     assert len(read["visible"]) == 10 and missed
@@ -532,13 +542,14 @@ def test_the_exam_form_is_captured(corpus: Path, open_page: OpenPage, capture_di
     page.capture(capture_dir / "02-exam-layout-scenario-card.png")
     click(page, FLAG)
     goto(page, 1)
-    pick(page, drawn[0], "b" if drawn[0] != "p9" else "a")
+    answer_one(page, drawn[0])
     click(page, FLAG)
     page.capture(capture_dir / "03-navigator-with-flag.png")
     if "p9" in drawn:
         goto(page, drawn.index("p9") + 1)
         pick(page, "p9", "a")
         page.capture(capture_dir / "04-multiple-response.png")
+        pick(page, "p9", "a")  # unchoose it, so the answers below choose the pair once
     page.capture(capture_dir / "05-timer.png")
     answer_all(page, KEYED, drawn)
     click(page, part("submit"))

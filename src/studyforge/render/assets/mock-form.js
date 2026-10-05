@@ -6,8 +6,8 @@
    parts and the draw, `mock-form-panels.js` the navigator, start panel and results.
 
    The rule. A question with one key is right when the chosen option is the key; one that asks the
-   reader to choose n is right only when exactly its n keyed options are chosen. A percent is
-   rounded DOWN. A scaled score is linear in the questions right.
+   reader to choose n is right only when exactly its n keyed options are chosen, and cannot be
+   submitted with some other number chosen. A percent is rounded DOWN; a scaled score is linear.
 
    State. Kept in the reader's own browser under `studyforge.mockform.v1`, per exam: the sitting,
    the seed, the start time, the drawn questions in order, the answers, the flags and whether it
@@ -49,9 +49,7 @@
     var needsStart = timed || sittings.length > 0;
     var store = backing();
     var state = recall(store, name);
-    var timer = null;
-    var announced = {};
-    var confirming = false;
+    var timer = null, announced = {}, confirming = false;
     var startPanel = part(exam, 'start');
     var bar = part(exam, 'bar');
     var navigator = part(exam, 'navigator');
@@ -136,7 +134,8 @@
     function pick(item) {
       var boxes = [].slice.call(item.querySelectorAll('input:checked'));
       if (!boxes.length) { return null; }
-      return meta(item).select ? boxes.map(function (box) { return box.value; }) : boxes[0].value;
+      if (!meta(item).select) { return boxes[0].value; }
+      return boxes.length === meta(item).select ? boxes.map(function (box) { return box.value; }) : null;
     }
     function answersNow() {
       var made = {};
@@ -348,6 +347,7 @@
     submit.addEventListener('click', function () {
       if (!state || state.submitted) { return; }
       state.answers = answersNow();
+      if (P.refuseShort(state)) { confirming = false; return; }
       var left = unansweredIds();
       if (left.length && !confirming) {
         confirming = true;
