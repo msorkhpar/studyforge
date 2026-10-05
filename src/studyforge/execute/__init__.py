@@ -47,6 +47,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `commands` | what the runner will start, checked before any process exists |
 | `browser` | a headless browser this machine has, asked for one page's screenshot and DOM |
 | `errors` | `RunRefused`, the one exception |
+| `searchnode` | the site's search index, precompiled once under `node` at build time |
 
 ## The seam: the reader starts the runner
 
@@ -130,6 +131,7 @@ from studyforge.execute.live import redactions, valid_key
 from studyforge.execute.live import start as start_live
 from studyforge.execute.remote import SERVICE_PORT, Service, ServiceProbe
 from studyforge.execute.runner import RUN_ENVIRONMENT, RUNNER_DOWN, SERVICE, Runner
+from studyforge.execute.searchnode import NODE_ON_PATH, search_index_builder
 from studyforge.execute.workbench import (
     MAIN_KEY,
     SETTINGS_DIR,
@@ -163,6 +165,7 @@ __all__ = [
     "LIVE_MARKER",
     "MAIN_KEY",
     "MODES",
+    "NODE_ON_PATH",
     "ROOT_DIR",
     "RUNNER_DOWN",
     "RUN_ENVIRONMENT",
@@ -217,6 +220,7 @@ __all__ = [
     "require_commands",
     "require_container",
     "require_workdir",
+    "search_index_builder",
     "select",
     "settings",
     "source_suffixes",

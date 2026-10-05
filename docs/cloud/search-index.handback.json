@@ -1,0 +1,105 @@
+{
+ "branch": "cloud/search-index",
+ "base": "release/claude-cert-support @ 91fca25a0a4fa7a11190cb3e448cd1221779e227",
+ "head": "0e16b16702abb6f3dc0536c371c345bd52a4aa73 (the implementation commit; this file is committed after it)",
+ "files_changed": [
+  "docs/cloud/search-index.handback.json",
+  "docs/cloud/search-index.handback.md",
+  "src/studyforge/execute/__init__.py",
+  "src/studyforge/execute/searchnode.py",
+  "src/studyforge/generate/site.py",
+  "src/studyforge/render/assets/search-build.js",
+  "src/studyforge/render/assets/search.js",
+  "src/studyforge/render/pageassets/__init__.py",
+  "src/studyforge/render/pageassets/search.py",
+  "tests/baseline/sites.json",
+  "tests/studyforge/execute/test_searchnode.py",
+  "tests/studyforge/generate/test_search_scrub.py",
+  "tests/studyforge/generate/test_search_site.py",
+  "tests/studyforge/render/pageassets/test_init.py",
+  "tests/studyforge/render/pageassets/test_search.py",
+  "tests/studyforge/render/pageassets/test_search_precompiled.py"
+ ],
+ "tests": {
+  "targeted": {
+   "command": "python -m pytest tests/studyforge/render tests/studyforge/generate tests/studyforge/execute tests/test_compatibility_baseline.py tests/test_generated_text.py tests/gate_coverage -n 2",
+   "result": "4257 passed, 33 skipped, 1 failed (execute/test_workbench.py::test_a_folder_that_cannot_be_written_is_refused_saying_so: fails on the base too; the session runs as root)"
+  },
+  "search_only": {
+   "command": "python -m pytest tests/studyforge/render/pageassets tests/studyforge/generate/test_search_site.py tests/studyforge/execute/test_searchnode.py tests/gate_coverage tests/test_process_starts.py -n 2",
+   "result": "all passed"
+  },
+  "full_suite": {
+   "command": "python -m pytest -n 2",
+   "result": "run once before the last fix: 33 failed, 14247 passed, 780 skipped, 30 errors. The failing files were then re-run on this branch and on the base: the same 12 failures and 30 errors on both (docker absent, running as root, a git object missing from the shallow clone, a newer ruff, this machine's git identity). test_process_starts and gate_coverage, which this change had broken, were fixed and pass."
+  },
+  "environment": "Python 3.14.0rc2, node v22.22.0, no browser, no docker"
+ },
+ "sizes": {
+  "corpus": "synthetic, 310 pages (10 modules x 30 units: prose, headings, code figures, a two-language example, a practice section)",
+  "before_bytes": {
+   "search-index.js": 15561,
+   "search-index-0.js": 3143086,
+   "search-index-1.js": 353428,
+   "total_index": 3512075,
+   "with_minisearch_js": 3598994
+  },
+  "after_bytes": {
+   "search-index.js": 5442,
+   "search-index-0.js": 3078502,
+   "search-index-1.js": 214459,
+   "total_index": 3298403,
+   "with_minisearch_js": 3385322
+  },
+  "shard_count_after": 2,
+  "largest_file_after": "search-index-0.js, 3078502 bytes (cap 3145728, gate 4194304)",
+  "small_fixtures": {
+   "depth1_index_bytes": {
+    "before": 2572,
+    "after": 7630
+   },
+   "depth2_index_bytes": {
+    "before": 4007,
+    "after": 8290
+   }
+  }
+ },
+ "timings": {
+  "old_build_ms_median": 920.4,
+  "old_build_ms_runs": [
+   800.1,
+   894.2,
+   920.4,
+   968.9,
+   990.3
+  ],
+  "old_build_measured": "new MiniSearch(...) + addAll of the old records, same 310 pages",
+  "new_loadJSON_ms_median": 126.7,
+  "new_loadJSON_ms_runs": [
+   116.5,
+   120.0,
+   126.7,
+   130.4,
+   149.4
+  ],
+  "node_version": "v22.22.0",
+  "caveat": "five separate node processes each; node timing is a proxy for the browser, not a browser measurement. The page used addAllAsync in chunks, so its wall time was longer than addAll's."
+ },
+ "plant": {
+  "what": "search.py _Reader._code: 'if tag == \"pre\" or any(name.startswith(CODE_PREFIXES) for name in attrs):' replaced by 'if any(name.startswith(CODE_PREFIXES) for name in attrs):', so the reader keeps a bare <pre>'s text",
+  "failing_assertion": "test_search_precompiled.py::test_only_prose_titles_headings_and_menu_labels_are_findable: AssertionError: bare pre / assert ('barepremarker' not in '{\"documentc...nversion\":2}')",
+  "restored": "file restored, 59 passed"
+ },
+ "fallback_warning": "studyforge: warning: the search index is built in the browser, not precompiled: node was not found",
+ "notes": [
+  "No addAll in search.js. Without node the browser must still build the index, so that code moved to search-build.js, written only when the build fell back.",
+  "Precompiled pages: a page holding a mock exam (data-practice-mock / data-mock-*) gives no record at all, its title included. Practice sections (data-kind=practice) are skipped whole.",
+  "Starting node is in execute/searchnode.py, because test_process_starts allows only execute to start processes. render.pageassets.search.files takes an injected build callable and generate/site.py wires in execute.search_index_builder(node). write_site(..., node=) and assets(..., node=) take a node path, None for none.",
+  "The fallback writes the old record format (v1/v2) with the reduced prose-only content, not the old content.",
+  "Snippets are the start of each section's text, so the browser marks matches in them rather than centring on the first match.",
+  "Small courses grow: a serialised index of a few pages is about 2-3x the raw records (a few KB). Large ones shrink because less is indexed.",
+  "tests/baseline/sites.json is re-recorded (page.js and search-index.js only). It assumes node is on PATH; a host without node builds the v1 index and those baseline entries differ.",
+  "The brief asked for a Sonnet co-author trailer; the commits carry the trailer of the model that actually did the work.",
+  "The repository floor still reports pre-existing findings (search.py was over its size ceiling on the base; it now carries a Size exception claim)."
+ ]
+}

@@ -80,6 +80,7 @@ from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
+from studyforge.execute import NODE_ON_PATH, search_index_builder
 from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents
@@ -94,7 +95,13 @@ from studyforge.render.page import (
 from studyforge.render.pageassets import search_files, written_files
 
 
-def write_site(root: Path | str, into: Path | str, *, narration: bool | None = None) -> Written:
+def write_site(
+    root: Path | str,
+    into: Path | str,
+    *,
+    narration: bool | None = None,
+    node: str | None = NODE_ON_PATH,
+) -> Written:
     """Build one corpus's whole reading floor under `into`.
 
     ⛔ `into` is separate from `root` and required, for the reason
@@ -102,13 +109,14 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
     decision and not the framework's, and no default may take it silently.
     ⭐ `narration` overrides `corpus.json`'s `narration` for this build;
     `None` keeps the corpus's own answer. Off copies no clip and
-    deletes none.
+    deletes none. ⭐ `node` is the program the search index is precompiled with: by default
+    the one on `PATH`; `None`, or one that fails, leaves it to the browser and warns.
     """
     corpus = for_output(voiced(read_corpus(root), narration), into)
     pages = unit_pages(corpus, into) + container_pages(corpus, into) + root_index(corpus, into)
     return (
         pages
-        + assets(corpus, into, pages.pages)
+        + assets(corpus, into, pages.pages, node=node)
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
         + files_unreached(corpus)
@@ -181,7 +189,13 @@ def search_pages(
     return found
 
 
-def assets(corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...] = ()) -> Written:
+def assets(
+    corpus: Corpus,
+    into: Path | str,
+    pages: tuple[PurePosixPath, ...] = (),
+    *,
+    node: str | None = NODE_ON_PATH,
+) -> Written:
     """Write the shared stylesheet and script every page of the site links.
 
     ⛔ **Asked of `render.pageassets` as one call**, never assembled here: the
@@ -199,7 +213,12 @@ def assets(corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...] = 
         # ⛔ Scrubbed: flattened out of its markup, prose that describes a secret's shape (a page on
         # redaction saying "`Bearer` followed by ...") reads as the secret itself to the serve gate's
         # personal-data check, which would refuse the whole index file. The pages keep their words.
-        shared.update({n: scrub(b) for n, b in search_files(search_pages(corpus, into, pages)).items()})
+        # ⭐ Twice: each text before it is indexed, so no term or snippet holds the shape, and each
+        # file as written. Scrubbing only changes text of a secret's shape, so a precompiled
+        # index's JSON is left whole.
+        build = search_index_builder(node)
+        found = search_files(search_pages(corpus, into, pages), build=build, clean=scrub)
+        shared.update({n: scrub(b) for n, b in found.items()})
     if has_mock_exam(corpus):
         # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
         shared.update(mock_files())
