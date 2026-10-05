@@ -1,0 +1,44 @@
+/* What a run reported about each case: its failure message and the text the reader's code wrote (`practice-detail.js`).
+   ⛔ No new token and no new colour: the message and the text sit in the same box the program's own output does,
+   and a folded section is a `details` element, so a keyboard and a screen reader open it as they open any other. */
+section[data-practice] [data-practice-part="case-detail"] {
+  margin: .3rem 0 .5rem 5rem;
+}
+
+section[data-practice] [data-practice-part="case-message"],
+section[data-practice] [data-practice-part$="-lines"] {
+  margin: .25rem 0 0;
+  max-height: 14rem;
+  overflow: auto;
+  padding: .45rem .65rem;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  font-size: .8rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: var(--radius-tight);
+}
+
+section[data-practice] [data-practice-part="case-detail"] details,
+section[data-practice] [data-practice-part="run-detail"] details {
+  margin: .25rem 0 0;
+}
+
+section[data-practice] [data-practice-part="case-detail"] summary,
+section[data-practice] [data-practice-part="run-detail"] summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--fg-soft);
+}
+
+section[data-practice] [data-practice-part="run-detail"] { margin: .5rem 0 0; }
+
+section[data-practice] [data-practice-part="run-note"] {
+  margin: .3rem 0 0;
+  font-size: .85rem;
+  color: var(--muted);
+}

@@ -183,6 +183,10 @@ ACCEPTANCE = {
     #: and needs the server to say the lines.
     "draws what a Submit reported — main ask, edge cases n/m, each failed case "
     "named — beside a run verdict it never changes": "test_practice_breakdown",
+    #: ⭐ Beside the breakdown, and for the same reason: what each case said — its failure message
+    #: and the lines the reader's code logged — arrives on the run's own stream, only when asked.
+    "draws each case's failure message and logged lines under that case, keeps printed text "
+    "apart, and draws nothing where the server sent none": "test_practice_detail",
     #: ⭐ The served-faces clause, and it is a row of its own because its ORIGIN and its
     #: POLICY are the subject: `file://` carries no policy, so no clause above
     #: can see a policy that blocks the faces on a served page.

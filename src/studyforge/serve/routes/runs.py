@@ -93,7 +93,7 @@ from studyforge.execute import (
 from studyforge.progress import CASES_KEY
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
-from studyforge.serve.routes.breakdown import fold
+from studyforge.serve.routes.breakdown import detail, fold
 from studyforge.serve.routes.content import ContentSource
 from studyforge.serve.routes.reachable import Reachable
 from studyforge.serve.withheld import OutputGate, marks_of
@@ -287,6 +287,8 @@ class Outcome:
     #: read BEFORE the run started — omitted by a caller with no breakdown.
     workspace: dict | None = None
     started: float | None = None
+    #: ⭐ Whether the client asked for each case's message and captured text.
+    wants_detail: bool = False
 
     def record(self, verdict: int | str) -> tuple[str, ...]:
         """Record the run's verdict and breakdown; return the lines to say, if any.
@@ -295,6 +297,8 @@ class Outcome:
         report that cannot be read honestly costs the breakdown, not the run.
         """
         cases, said = fold(self.mode, self.workspace, self.corpus.root, self.started)
+        if self.wants_detail:
+            said = (*said, *detail(self.workspace, self.corpus.root, self.started))
         address, ordinal, section = self.practice
         try:
             self.corpus.progress().record_run(

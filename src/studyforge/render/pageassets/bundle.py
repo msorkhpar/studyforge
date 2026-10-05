@@ -66,6 +66,10 @@ from studyforge.render.pageassets.source import text
 #: after `notes.css` because the panel sits under a section the reading surface
 #: has already set, and at equal specificity the last rule wins.
 #:
+#: ⭐ `practice-detail.css` follows `practice.css` directly: it dresses the text a run reports under
+#: each case, in the
+#: panel's own box.
+#:
 #: ⭐ `practice-quiz.css` follows `practice.css` directly and for that
 #: part's own reason: the two are one region split at a named seam for R11 — the
 #: panel and the run on one side, the questions on the other — and a quiz wears
@@ -104,6 +108,7 @@ STYLE_PARTS = (
     "onward.css",
     "notes.css",
     "practice.css",
+    "practice-detail.css",
     "practice-quiz.css",
     "practice-workspace.css",
     "practice-panes.css",
@@ -154,6 +159,10 @@ STYLE_PARTS = (
 #: LAST-ness is the property being kept, and after `narration.js` so the parts
 #: that draw a region of their own read together.
 #:
+#: ⭐ `practice-detail.js` PRECEDES `practice.js`: it publishes `window.studyforge.practiceDetail`,
+#: which the panel
+#: reads when it wires a practice, and a page whose server sends no detail draws nothing from it.
+#:
 #: ⭐ `practice-files.js` is before `practice-editor.js`, which calls what it publishes when a
 #: practice opens (the further files' tabs and the link to the editor in a tab of its own).
 #:
@@ -203,6 +212,7 @@ SCRIPT_PARTS = (
     "narration-stand-in.js",
     "narration-probe.js",
     "narration.js",
+    "practice-detail.js",
     "practice.js",
     "practice-files.js",
     "practice-editor.js",

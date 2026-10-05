@@ -71,16 +71,16 @@
     return /^\d+$/.test(found[1]) ? Number(found[1]) : found[1];
   }
 
-  function start(corpus, practice, mode, onLine) {
+  function start(corpus, practice, mode, onLine, options) {
     if (!available()) { return refused('no-origin'); }
     if (MODES.indexOf(mode) === -1) { return refused('mode'); }
     if (!CORPUS.test(corpus) || !KEY.test(practice)) { return refused('practice'); }
-    return streamed(BASE + corpus + '/' + mode + '/' + practice, onLine);
+    return streamed(BASE + corpus + '/' + mode + '/' + practice, onLine, options && options.detail === true);
   }
 
   /* POST to `url` and hand each line of the body to `onLine` as it arrives;
      resolve with the verdict the last line spells. */
-  function streamed(url, onLine) {
+  function streamed(url, onLine, detail) {
     var last = null;
     var each = function (line) {
       last = line;
@@ -89,7 +89,9 @@
     return fetch(url, {
       method: 'POST',
       cache: 'no-store',
-      credentials: 'same-origin'
+      credentials: 'same-origin',
+      /* ⭐ Asked for only by a page that draws it; without the header the stream is the one it always was. */
+      headers: detail ? { 'X-Studyforge-Detail': '1' } : {}
     }).then(function (response) {
       if (!response.ok) { return refused(response.status); }
       var reader = response.body.getReader();
