@@ -6,8 +6,8 @@
    parts and the draw, `mock-form-panels.js` the navigator, start panel and results.
 
    The rule. A question with one key is right when the chosen option is the key; one that asks the
-   reader to choose n is right only when exactly its n keyed options are chosen. A percent is
-   rounded DOWN. A scaled score is linear in the questions right.
+   reader to choose n is right only when exactly its n keyed options are chosen, and cannot be
+   submitted with some other number chosen. A percent is rounded DOWN; a scaled score is linear.
 
    State. Kept in the reader's own browser under `studyforge.mockform.v1`, per exam: the sitting,
    the seed, the start time, the drawn questions in order, the answers, the flags and whether it
@@ -49,9 +49,7 @@
     var needsStart = timed || sittings.length > 0;
     var store = backing();
     var state = recall(store, name);
-    var timer = null;
-    var announced = {};
-    var confirming = false;
+    var timer = null, announced = {}, confirming = false;
     var startPanel = part(exam, 'start');
     var bar = part(exam, 'bar');
     var navigator = part(exam, 'navigator');
@@ -137,15 +135,7 @@
       var boxes = [].slice.call(item.querySelectorAll('input:checked'));
       if (!boxes.length) { return null; }
       if (!meta(item).select) { return boxes[0].value; }
-      /* A multiple-response question is answered only with exactly its n options chosen. */
       return boxes.length === meta(item).select ? boxes.map(function (box) { return box.value; }) : null;
-    }
-    function incompleteIds() {
-      return state.order.filter(function (id) {
-        var select = meta(byId[id]).select;
-        var count = byId[id].querySelectorAll('input:checked').length;
-        return select && count > 0 && count !== select;
-      });
     }
     function answersNow() {
       var made = {};
@@ -357,14 +347,7 @@
     submit.addEventListener('click', function () {
       if (!state || state.submitted) { return; }
       state.answers = answersNow();
-      var partial = incompleteIds();
-      if (partial.length) {
-        var places = partial.map(function (id) { return state.order.indexOf(id) + 1; }).join(', ');
-        missing.textContent = fill(words.wrongCount || 'Choose exactly the number of options each question asks for. Not complete: {list}.', { list: places });
-        missing.hidden = false;
-        confirming = false;
-        return;
-      }
+      if (P.refuseShort(state)) { confirming = false; return; }
       var left = unansweredIds();
       if (left.length && !confirming) {
         confirming = true;

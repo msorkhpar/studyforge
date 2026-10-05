@@ -276,6 +276,21 @@
       item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
     }
 
+    /* A multiple-response question with some but not its n options chosen blocks the submit. */
+    function refuseShort(state) {
+      var partial = state.order.filter(function (id) {
+        var select = metaById[id].select;
+        var count = byId[id].querySelectorAll('input:checked').length;
+        return select && count > 0 && count !== select;
+      });
+      if (!partial.length) { return false; }
+      var places = partial.map(function (id) { return state.order.indexOf(id) + 1; }).join(', ');
+      missing.textContent = fill(words.wrongCount || 'Choose exactly the number of options each '
+        + 'question asks for. Not complete: {list}.', { list: places });
+      missing.hidden = false;
+      return true;
+    }
+
     function show() {
       c.stopTimer();
       var asked = S().order.length;
@@ -365,7 +380,7 @@
     return {
       matches: matches, walkable: walkable, buildNavigator: buildNavigator,
       drawNavigator: drawNavigator, showStart: showStart, show: show, explain: explain,
-      explainAll: explainAll, answered: answered, countText: countText
+      explainAll: explainAll, answered: answered, countText: countText, refuseShort: refuseShort
     };
   }
 

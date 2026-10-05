@@ -204,6 +204,28 @@ def _per_domain(value: object, where: str) -> tuple[tuple[str, int], ...]:
     )
 
 
+def require_per_domain(sitting: Sitting, domains: tuple, questions: tuple, where: str) -> None:
+    """⛔ Refuse a `per_domain` count naming an undeclared domain or more than the pool holds."""
+    if sitting.per_domain is None:
+        return
+    held = {one.id: 0 for one in domains}
+    for one in questions:
+        if one.domain in held:
+            held[one.domain] += 1
+    for domain, wanted in sitting.per_domain:
+        if domain not in held:
+            raise ExerciseError(
+                f"{where}: a sitting's 'per_domain' names a domain the mock does not declare. "
+                f"The id is not reproduced here, since a refusal never quotes a value that may "
+                f"be personal."
+            )
+        if wanted > held[domain]:
+            raise ExerciseError(
+                f"{where}: a sitting draws {wanted} questions of one domain and the pool holds "
+                f"{held[domain]} of it."
+            )
+
+
 def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(

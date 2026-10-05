@@ -203,7 +203,8 @@ def render(
 
 #: Said only on a page that has a multiple-response question, so every other page is unchanged.
 SELECT_WORDS = {
-    "wrongCount": "Choose exactly the number of options each question asks for. Not complete: {list}.",
+    "wrongCount": "Choose exactly the number of options each question asks for. "
+    "Not complete: {list}.",
 }
 
 

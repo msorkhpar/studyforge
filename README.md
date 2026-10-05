@@ -257,6 +257,7 @@ at, written for somebody who has not read the design and does not intend to:
 - [What a corpus is](docs/authoring/corpus.md): the manifest, key by key.
 - [Placement](docs/authoring/placement.md): where generated output goes, drawn for each choice.
 - [Exercises](docs/authoring/exercises.md): deciding about exercises, including deciding you have none.
+- [Multiple-response items and question pools](docs/authoring/pools-and-multiple-response.md): "Select two" items and a per-attempt draw from a pool.
 - [What an adapter must produce](docs/authoring/archive.md): the archive's documents and blocks.
 - [What `validate` checks](docs/authoring/validate.md): every check and what it refuses.
 - [Worked examples](docs/authoring/examples.md): the two shipped corpora, end to end.

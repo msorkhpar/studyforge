@@ -67,8 +67,8 @@ from studyforge.exercise.quiz.mock import (
     Mock,
     mock_of,
     require_against_questions,
-    require_no_exam_keys_on_questions,
 )
+from studyforge.exercise.quiz.examkeys import require_no_exam_keys_on_questions
 from studyforge.exercise.quiz.questions import Question, questions_of
 from studyforge.exercise.quiz.review import REVIEW, Review, review_of
 from studyforge.unit.errors import ContentError

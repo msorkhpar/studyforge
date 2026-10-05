@@ -51,6 +51,7 @@ from studyforge.exercise.quiz.exam import (
     minutes_of,
     scale_of,
     scenarios_of,
+    require_per_domain,
     sitting_document,
     sittings_of,
 )
@@ -242,23 +243,7 @@ def require_against_questions(mock: Mock, questions: tuple[Question, ...], where
             f"question, so a score reported for it would be 0 of 0."
         )
     for sitting in mock.sittings:
-        if sitting.per_domain is not None:
-            held_by = {one.id: 0 for one in mock.domains}
-            for one in questions:
-                if one.domain in held_by:
-                    held_by[one.domain] += 1
-            for domain, wanted in sitting.per_domain:
-                if domain not in held_by:
-                    raise ExerciseError(
-                        f"{where}: a sitting's 'per_domain' names a domain the mock does not "
-                        f"declare. The id is not reproduced here, since a refusal never quotes "
-                        f"a value that may be personal."
-                    )
-                if wanted > held_by[domain]:
-                    raise ExerciseError(
-                        f"{where}: a sitting draws {wanted} questions of one domain and the "
-                        f"pool holds {held_by[domain]} of it."
-                    )
+        require_per_domain(sitting, mock.domains, questions, where)
         if sitting.questions is not None:
             for domain, wanted in quotas(mock, sitting.questions, questions).items():
                 held = sum(1 for one in questions if one.domain == domain)
@@ -278,30 +263,6 @@ def require_against_questions(mock: Mock, questions: tuple[Question, ...], where
             raise ExerciseError(
                 f"{where}: a sitting draws {sitting.scenarios} scenarios and the exam declares "
                 f"{len(declared)}."
-            )
-
-
-def require_no_exam_keys_on_questions(
-    questions: tuple[Question, ...], where: str, allow_select: bool = False
-) -> None:
-    """⛔ Refuse a mock-only question key on a quiz that declares no `mock`.
-
-    ⭐ `select` is the one exception, and only for a quiz drawn one question at a time (the
-    default layout): a multiple-response question is a question, not a mock's feature, and the
-    stepper page reads it. A quiz with `layout: page` still refuses it.
-    """
-    for question in questions:
-        if (
-            question.scenario is not None
-            or (question.select is not None and not allow_select)
-            or question.shuffle is not None
-            or question.difficulty is not None
-        ):
-            raise ExerciseError(
-                f"{where}: a question names a 'scenario', 'select', 'shuffle' or 'difficulty' "
-                f"on a quiz that "
-                f"declares no {MOCK!r}. Those are what a mock exam's page reads, so on a plain "
-                f"quiz they are keys nothing reads while the corpus validates green."
             )
 
 

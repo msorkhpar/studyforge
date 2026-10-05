@@ -283,6 +283,12 @@ ACCEPTANCE = {
     "draws a plain quiz one question at a time, explains each answer and ends in a summary": (
         "test_quiz_steps"
     ),
+    #: ⭐ A row of its own: a sitting that draws an exact count per domain from a pool, a fresh form
+    #: each attempt and the same one after a reload, and a "Select two" item that cannot be
+    #: submitted short and is right only with its exact pair.
+    "draws an exact count per domain from a pool, and scores a select-two item all or nothing": (
+        "test_mock_pools_select"
+    ),
     #: ⭐ A row of its own: a practice tagged for a language keeps its editor filling the pane.
     "opens a language-tagged practice with its editor filling the pane and the handles working": (
         "test_practice_tagged"

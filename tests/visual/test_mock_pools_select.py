@@ -41,13 +41,13 @@ def click(page: OpenPage, selector: str) -> None:
     time.sleep(0.05)
 
 
-def state(page: OpenPage) -> dict:
+def read_state(page: OpenPage) -> dict:
     return page.evaluate(STATE)
 
 
 def begin(page: OpenPage) -> dict:
     click(page, part("begin"))
-    return state(page)
+    return read_state(page)
 
 
 def reopen(page: OpenPage) -> None:
@@ -93,7 +93,8 @@ def fresh(page: OpenPage, url: str) -> OpenPage:
 
 def test_a_sitting_draws_exactly_its_count_per_domain(open_page: OpenPage, pooled: str):
     page = fresh(open_page, pooled)
-    assert state(page)["sittings"][0].startswith("Quick form: 7 questions"), state(page)["sittings"]
+    sittings = read_state(page)["sittings"]
+    assert sittings[0].startswith("Quick form: 7 questions"), sittings
     for _ in range(8):
         drawn = begin(page)["drawn"]
         domains = [DOMAIN[one] for one in drawn]
@@ -104,13 +105,15 @@ def test_a_sitting_draws_exactly_its_count_per_domain(open_page: OpenPage, poole
         click(page, part("again"))
 
 
-def test_two_attempts_draw_different_forms_and_a_reload_keeps_one(open_page: OpenPage, pooled: str, capture_dir: Path):
+def test_two_attempts_draw_different_forms_and_a_reload_keeps_one(
+    open_page: OpenPage, pooled: str, capture_dir: Path
+):
     page = fresh(open_page, pooled)
     forms = []
     for _ in range(6):
         forms.append(tuple(begin(page)["drawn"]))
         reopen(page)
-        assert tuple(state(page)["drawn"]) == forms[-1], "a reload changed the attempt's form"
+        assert tuple(read_state(page)["drawn"]) == forms[-1], "a reload changed the attempt's form"
         click(page, part("again"))
     assert len(set(forms)) >= 2, "six attempts all drew one form"
     page.capture(capture_dir / "pool-attempt.png")
@@ -120,7 +123,9 @@ def pick(page: OpenPage, question: str, option: str) -> None:
     click(page, f'[data-practice-question="{question}"] input[value="{option}"]')
 
 
-def test_a_multiple_response_item_in_a_mock_cannot_be_submitted_short(open_page: OpenPage, pooled: str):
+def test_a_multiple_response_item_in_a_mock_cannot_be_submitted_short(
+    open_page: OpenPage, pooled: str
+):
     page = fresh(open_page, pooled)
     for _ in range(40):
         drawn = begin(page)["drawn"]
@@ -136,13 +141,13 @@ def test_a_multiple_response_item_in_a_mock_cannot_be_submitted_short(open_page:
                 pick(page, question, option)
     pick(page, "p9", KEYED["p9"][0])
     click(page, part("submit"))
-    read = state(page)
-    assert not read["result"] and "p9" not in read["missing"] and read["missing"].startswith("Choose exactly")
+    read = read_state(page)
+    assert not read["result"] and read["missing"].startswith("Choose exactly")
     click(page, part("submit"))
-    assert not state(page)["result"], "a second submit got past a short item"
+    assert not read_state(page)["result"], "a second submit got past a short item"
     pick(page, "p9", KEYED["p9"][1])
     click(page, part("submit"))
-    read = state(page)
+    read = read_state(page)
     assert read["result"] and read["verdicts"]["p9"] == "correct"
     assert "7 of 7 (100%)" in read["overall"]
 
@@ -157,13 +162,20 @@ def read_quiz(page: OpenPage, question: str) -> dict:
     )
 
 
-@pytest.mark.parametrize("chosen,right", [(["a"], None), (["a", "c"], False), (["b", "c"], False), (["a", "b"], True), (["b", "a"], True)])
-def test_a_select_two_item_in_a_plain_quiz_is_right_only_with_the_exact_pair(open_page: OpenPage, plain, chosen, right, capture_dir: Path):
+@pytest.mark.parametrize(
+    "chosen,right",
+    [(["a"], None), (["a", "c"], False), (["b", "c"], False), (["a", "b"], True),
+     (["b", "a"], True)],
+)
+def test_a_select_two_item_in_a_plain_quiz_is_right_only_with_the_exact_pair(
+    open_page: OpenPage, plain, chosen, right, capture_dir: Path
+):
     url, question, keyed = plain
     assert keyed == ["a", "b"]
     page = fresh(open_page, url)
     for option in chosen:
-        click(page, f'section[data-form-kind="quiz"] [data-practice-question="{question}"] input[value="{option}"]')
+        box = f'[data-practice-question="{question}"] input[value="{option}"]'
+        click(page, f'section[data-form-kind="quiz"] {box}')
     read = page.evaluate(
         f"(() => {{ const q = document.querySelector('[data-practice-question=\"{question}\"]');"
         " return {verdict: q.getAttribute('data-practice-verdict'),"

@@ -57,3 +57,25 @@ def read_shuffle(value: object, where: str) -> bool:
             f"value is {describe(value)}."
         )
     return False
+
+
+def require_no_exam_keys_on_questions(
+    questions: tuple, where: str, allow_select: bool = False
+) -> None:
+    """⛔ Refuse a mock-only question key on a quiz that declares no `mock`.
+
+    ⭐ `select` is allowed when a stepper draws the quiz (`allow_select`), not with `layout: page`.
+    """
+    for question in questions:
+        if (
+            question.scenario is not None
+            or (question.select is not None and not allow_select)
+            or question.shuffle is not None
+            or question.difficulty is not None
+        ):
+            raise ExerciseError(
+                f"{where}: a question names a 'scenario', 'select', 'shuffle' or 'difficulty' "
+                f"on a quiz that "
+                f"declares no 'mock'. Those are what a mock exam's page reads, so on a plain "
+                f"quiz they are keys nothing reads while the corpus validates green."
+            )

@@ -1,7 +1,7 @@
 # Multiple-response items and question pools
 
 How a course writes the two exam-style features. Both are opt-in; a quiz or mock that uses neither
-renders exactly as before. The record keys are in `exercises.md` (the exam form); this page is the
+renders exactly as before. The record keys are in [Exercises](exercises.md#the-exam-form) (the exam form); this page is the
 authoring side, including the markdown a course's own tools can read.
 
 ## 1. A multiple-response item ("Select two")
