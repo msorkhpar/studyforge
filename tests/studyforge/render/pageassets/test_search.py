@@ -250,3 +250,63 @@ def test_the_search_part_loads_the_shards_and_merges_them_in_order(monkeypatch, 
     assert [d["heading"] for d in docs] == [r[1] for r in original]
     texts = [r[3] if isinstance(r[3], str) else original[r[3]][3] for r in original]
     assert [d["text"] for d in docs] == texts
+
+
+# -- a quiz option sentence that the page's own prose repeats is never in the index --------------
+
+OPTION = "A log that the agent can edit is not an audit trail at all."
+OTHER = "Both comparisons are inclusive, so reaching the minimum is enough."
+
+QUIZ_UNIT = f"""<!doctype html><html><head><title>Audit logs</title>
+<script type="application/json" id="studyforge-identity">{{"kind":"unit"}}</script></head><body>
+<main id="content"><section data-section="prose"><h2 id="s-a">Audit</h2>
+<p>Before the quiz. {OPTION} After the sentence, more prose stays searchable: zebrafinch.</p>
+<h2 id="s-b">Limits</h2><p>{OTHER} Tail words: quokka.</p></section>
+<section data-practice-quiz="k"><script>var quiz={{"q-1":{{"keys":["b"],"says":{{"a":"{OPTION}",
+"b":"Ruled out because \\u0026quot;{OTHER}\\u0026quot;"}}}}}};</script></section>
+</main></body></html>"""
+
+
+def _marks():
+    from studyforge.serve.withheld import Marks
+
+    return Marks(frozenset({OPTION, f'Ruled out because "{OTHER}"'}), frozenset({"q-1"}))
+
+
+def _built(monkeypatch, shard=None):
+    if shard:
+        monkeypatch.setattr(searchindex, "SHARD_BYTES", shard)
+    return searchindex.files([("../a/unit.html", QUIZ_UNIT)])
+
+
+def test_a_single_file_index_passes_the_serve_gate_and_keeps_the_rest_of_the_prose(monkeypatch):
+    from studyforge.serve.withheld import carries
+
+    out = _built(monkeypatch)
+    body = out[searchindex.INDEX_NAME]
+    assert not carries(body.encode(), _marks())
+    assert "zebrafinch" in body and "quokka" in body and "Before the quiz." in body
+
+
+def test_sharded_index_files_pass_the_serve_gate_and_are_served_200(monkeypatch, tmp_path):
+    from studyforge.serve.response import Request
+    from studyforge.serve.routes.assets import serve
+    from studyforge.serve.withheld import carries
+
+    out = _built(monkeypatch, shard=150)
+    out = {n: c for n, c in out.items() if n.startswith("search-index")}
+    assert len(out) > 1, "the cap forced a manifest and shards"
+    for name, content in out.items():
+        assert not carries(content.encode(), _marks()), name
+        (tmp_path / name).write_text(content, encoding="utf-8")
+        request = Request("GET", f"/{name}", {})
+        got = serve(tmp_path, request, f"/{name}", withheld=lambda b: carries(b, _marks()))
+        assert got.status == 200, name
+
+
+def test_the_plant_is_caught_when_an_option_sentence_is_left_in_the_index(monkeypatch):
+    from studyforge.serve.withheld import carries
+
+    monkeypatch.setattr(searchindex, "quiz_sentences", lambda pages: set())
+    body = _built(monkeypatch)[searchindex.INDEX_NAME]
+    assert carries(body.encode(), _marks())
