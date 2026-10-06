@@ -300,3 +300,92 @@ def test_a_mock_page_keeps_its_intro_and_domain_table_and_replaces_only_the_ques
     page = render(given, sample_placement()).decode("utf-8")
     assert "INTRO The exam takes ninety minutes." in page and "DOMAINROW one" in page
     assert "KEYTEXT" not in page and "data-practice-quiz=" in page
+
+
+# --------------------------------------------------------------------------
+# ⭐ a page with two quiz sections (page and module scope): each is its own interactive quiz
+# --------------------------------------------------------------------------
+
+
+def _quiz_record(prefix):
+    return {
+        "kind": "quiz",
+        "questions": [
+            {
+                "id": f"{prefix}{n}",
+                "stem": f"Which choice fits case {prefix}{n}?",
+                "options": [
+                    {
+                        "id": "a",
+                        "text": "Option one",
+                        "correct": True,
+                        "says": f"KEYTEXT {prefix}{n}",
+                    },
+                    {"id": "b", "text": "Option two", "correct": False, "says": "Not this one."},
+                ],
+                "origin": {"path": "basics/01.md", "section": "Idea"},
+            }
+            for n in (1, 2)
+        ],
+    }
+
+
+def _quiz_section(heading, record):
+    stems = [one["stem"] for one in record["questions"]]
+    return [
+        {"type": "heading", "level": 2, "text": heading},
+        {
+            "type": "list",
+            "ordered": True,
+            "items": [
+                [stem, {"type": "list", "ordered": False, "items": ["a", "b"]}] for stem in stems
+            ],
+        },
+        {
+            "type": "disclosure",
+            "summary": "Answer key",
+            "open": False,
+            "blocks": [{"type": "para", "text": f"KEYTEXT {heading}"}],
+        },
+    ]
+
+
+def two_quiz_unit():
+    page, module = _quiz_record("p"), _quiz_record("m")
+    blocks = [
+        {"type": "heading", "level": 2, "text": "Idea"},
+        {"type": "para", "text": "Some prose."},
+        *_quiz_section("Quiz", page),
+        *_quiz_section("Module quiz", module),
+    ]
+    lesson_section = {
+        "key": "prose",
+        "kind": "lesson",
+        "heading": "Lesson",
+        "blocks": blocks,
+        "video": None,
+        "workspace": None,
+        "attachments": [],
+    }
+    return document(
+        sections=[
+            lesson_section,
+            section(key="practice-prose-1", workspace=page),
+            section(key="practice-prose-2", workspace=module),
+        ]
+    ), page, module
+
+
+def test_a_page_with_a_page_quiz_and_a_module_quiz_draws_both_interactive_and_no_key_text():
+    given, page, module = two_quiz_unit()
+    html = render(given, sample_placement()).decode("utf-8")
+    visible = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.S)
+    assert visible.count("data-practice-quiz=") == 2, "a quiz section is left as a static list"
+    assert "<details" not in html and "Answer key" not in html and "KEYTEXT" not in visible
+    for record in (page, module):
+        for one in record["questions"]:
+            assert visible.count(one["stem"]) == 1, "a question is drawn twice or not at all"
+    assert "data-practices" not in html and "data-practice-card" not in html
+    keys = re.findall(r'data-practice-quiz="([^"]+)"', html)
+    assert len(set(keys)) == 2, "the two quizzes share one progress key"
+    assert visible.index("Module quiz") < visible.rindex("data-practice-quiz=")
