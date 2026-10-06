@@ -93,7 +93,10 @@ CONTRACT = "contract"
 REASONS = {
     PAGE: "its page has since moved",
     TESTS: "a test file it was authored from has since moved",
-    SOURCES: "a file its exercises were copied from (try-it, starter, reference, statement) has since moved",
+    SOURCES: (
+        "a file its exercises were copied from (try-it, starter, reference, statement) "
+        "has since moved"
+    ),
     PLAN: "its plan has since moved",
     CONTRACT: "its coverage report is at a contract version this build does not keep",
 }

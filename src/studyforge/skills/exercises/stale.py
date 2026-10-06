@@ -82,7 +82,9 @@ def stale_units(root: Path | str) -> tuple[Stale, ...]:
         planned = {"plan": _replanned(recorded, unit)}
         tracked = recorded.get("sources")
         copied = (
-            {name: _source(base, name, unit) for name in tracked} if isinstance(tracked, dict) else None
+            {name: _source(base, name, unit) for name in tracked}
+            if isinstance(tracked, dict)
+            else None
         )
         stale = stale_of(unit, recorded, recorded.get("page"), now, planned, copied)
         if stale is not None:

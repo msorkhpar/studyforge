@@ -153,7 +153,9 @@ def test_a_unit_authored_before_tracking_is_counted_and_never_stale(tmp_path):
     _move_tryit(tmp_path, 1)  # not visible to a unit that recorded nothing
     assert stale_units(tmp_path) == ()
     assert untracked_units(tmp_path) == 2
-    assert untracked_summary(2) == "2 unit(s) authored before try-it tracking; re-author to track them"
+    assert untracked_summary(2) == (
+        "2 unit(s) authored before try-it tracking; re-author to track them"
+    )
     assert untracked_summary(0) == ""
 
 
