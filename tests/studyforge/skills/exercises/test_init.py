@@ -30,6 +30,8 @@ PUBLIC_SURFACE = frozenset(
         "stale_of",
         "stale_summary",
         "stale_units",
+        "untracked_summary",
+        "untracked_units",
         "ACCOUNTED_KEYS",
         "ADVANCED",
         "ASPECT_KEYS",

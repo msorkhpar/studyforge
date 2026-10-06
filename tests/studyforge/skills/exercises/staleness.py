@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from studyforge.skills.exercises.ledger import source_digest
 from studyforge.skills.exercises import (
     CORE,
     COVERAGE_API,
@@ -53,6 +54,11 @@ def grader_of(number: int) -> str:
     return f"tests/test_page_{number:02d}.py"
 
 
+def tryit_of(number: int) -> str:
+    """The try-it file fixture unit `number`'s practice was copied from."""
+    return f"source/unit-{number:02d}/practice-1/python/tryit/try_it.py"
+
+
 def plan_of(aspects: tuple[Aspect, ...] = ASPECTS) -> dict:
     """The plan document the pass records for `aspects`."""
     return plan_document(plan_for(aspects, CORE, "the fixture"))
@@ -63,6 +69,8 @@ def authored(root: Path, number: int = 1) -> str:
     unit, page, tests = unit_of(number), page_of(number), grader_of(number)
     write(root, page, f"# Page {number}\n\n## Greeting\n\nSay hello.\n")
     write(root, tests, "def test_greets():\n    assert True\n")
+    tryit = tryit_of(number)
+    write(root, tryit, "print('try it')\n")
     report = {
         "coverage_api": COVERAGE_API,
         "page": page,
@@ -70,6 +78,7 @@ def authored(root: Path, number: int = 1) -> str:
         "quiz": None,
         "case": "code-and-tests",
         "digests": {path: file_digest(root, path, "the fixture") for path in (page, tests)},
+        "sources": {tryit: source_digest(root, tryit, "the fixture")},
         "plan": plan_of(),
         "shipped": [f"{unit}/practice-1"],
         "accounts": [],

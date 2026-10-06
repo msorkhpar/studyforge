@@ -31,7 +31,13 @@ from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak, scrub
 from studyforge.exitcodes import UNUSABLE
-from studyforge.skills.exercises import AuthoringError, remove_stale, stale_units
+from studyforge.skills.exercises import (
+    AuthoringError,
+    remove_stale,
+    stale_units,
+    untracked_summary,
+    untracked_units,
+)
 from studyforge.validate.report import INVALID, OK
 
 #: What a corpus with nothing stale says.
@@ -77,6 +83,7 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     try:
         found = stale_units(root)
+        legacy = untracked_summary(untracked_units(root))
         removed = remove_stale(root, found) if arguments.remove else ()
     except (AuthoringError, PersonalDataLeak) as refused:
         print(scrub(str(refused)), file=stream, flush=True)
@@ -87,9 +94,13 @@ def main(argv: list[str] | None = None, out=None) -> int:
     for folder in removed:
         print(f"removed  {folder}", file=stream)
     if not found:
-        print(CLEAN, file=stream, flush=True)
+        print(CLEAN, file=stream, flush=not legacy)
+        if legacy:
+            print(legacy, file=stream, flush=True)
         return OK
     total = f"{len(found)} authored unit(s) are stale"
     tail = "removed; author their pages again" if removed else "nothing was changed"
-    print(f"{total}: {tail}", file=stream, flush=True)
+    print(f"{total}: {tail}", file=stream, flush=not legacy)
+    if legacy:
+        print(legacy, file=stream, flush=True)
     return INVALID

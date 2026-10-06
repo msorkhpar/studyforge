@@ -60,6 +60,7 @@ COVERAGE_KEYS = (
     "quiz",
     "case",
     "digests",
+    "sources",
     "plan",
     "shipped",
     "accounts",
@@ -78,6 +79,10 @@ PAGE = "page"
 #: A test file the unit was authored from no longer digests to what was recorded.
 TESTS = "tests"
 
+#: A file the unit's exercises were copied from (a try-it file, a starter, a reference, a
+#: statement, a check script) no longer digests to what was recorded, or is gone.
+SOURCES = "sources"
+
 #: The plan the unit was authored against is not the plan its page gets now.
 PLAN = "plan"
 
@@ -88,6 +93,7 @@ CONTRACT = "contract"
 REASONS = {
     PAGE: "its page has since moved",
     TESTS: "a test file it was authored from has since moved",
+    SOURCES: "a file its exercises were copied from (try-it, starter, reference, statement) has since moved",
     PLAN: "its plan has since moved",
     CONTRACT: "its coverage report is at a contract version this build does not keep",
 }
@@ -130,6 +136,7 @@ def stale_of(
     page: str,
     digests: Mapping[str, str | None],
     planned: Mapping[str, object],
+    sources: Mapping[str, str | None] | None = None,
 ) -> Stale | None:
     """Return why `recorded` no longer describes its unit, or `None` when it still does.
 
@@ -137,6 +144,10 @@ def stale_of(
     `None` for one that will not read. `planned` holds the report's keys the
     plan is compared on — `plan`, and `kind` and `quiz` where the caller
     knows them. ⛔ A report at another version has no plan to compare.
+    `sources` is what the files the unit is copied from digest to now, by
+    path. ⭐ A report that recorded no `sources` key was authored before they
+    were tracked: it is never stale for them (`untracked`), and `sources` is
+    then ignored.
     """
     detail = _contract(recorded)
     written = recorded.get("digests")
@@ -146,11 +157,30 @@ def stale_of(
         found.append(PAGE)
     if _tests(written, page) != _tests(digests, page):
         found.append(TESTS)
+    tracked = recorded.get("sources")
+    if isinstance(tracked, dict) and sources is not None and tracked != dict(sources):
+        found.append(SOURCES)
     if not detail and any(recorded.get(key) != value for key, value in planned.items()):
         found.append(PLAN)
     if detail:
         found.append(CONTRACT)
     return Stale(unit, tuple(found), detail) if found else None
+
+
+def untracked(recorded: dict) -> bool:
+    """Whether a code unit was authored before the files it is copied from were tracked.
+
+    ⭐ Its report has no `sources` key, so a change to a try-it file cannot be seen
+    for it. A quiz copies nothing, so it is never untracked.
+    """
+    return recorded.get("kind") == "code" and "sources" not in recorded
+
+
+def untracked_summary(count: int) -> str:
+    """Return the one line that says how many units are not tracked, or `''`."""
+    if count <= 0:
+        return ""
+    return f"{count} unit(s) authored before try-it tracking; re-author to track them"
 
 
 def stale_summary(stale: Sequence[Stale]) -> str:

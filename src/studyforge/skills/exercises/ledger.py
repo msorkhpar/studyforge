@@ -193,6 +193,36 @@ def file_digest(root: Path, path: str, where: str) -> str:
     return _digest(_text(root, _source_path(path, "a recorded path", where), where))
 
 
+def source_digest(root: Path, path: str, where: str) -> str:
+    """Return what one file, or one folder of files, a unit is built from digests to.
+
+    ⭐ **For the files an exercise is copied from that are not the page or a test
+    file** — a try-it file, a starter, a reference, a statement, a check script.
+    A file digests as its bytes. A folder digests as every file under it, by
+    relative path, sorted, so an added, removed, renamed or edited file moves it.
+    ⛔ Refused when the path is not a source path or nothing is there: a
+    declaration nobody has checked.
+    """
+    target = root / _source_path(path, "a unit source path", where)
+    try:
+        if target.is_dir():
+            files = sorted(p for p in target.rglob("*") if p.is_file())
+            listing = b"".join(
+                p.relative_to(target).as_posix().encode("utf-8")
+                + b"\0"
+                + digest_of_bytes(p.read_bytes()).encode("ascii")
+                + b"\n"
+                for p in files
+            )
+            return digest_of_bytes(listing)
+        return digest_of_bytes(target.read_bytes())
+    except OSError:
+        raise LedgerError(
+            f"{where}: the unit source at '{path}' could not be read, so the unit cannot be "
+            f"tied to it. A declared file that is not there is a declaration nobody has checked."
+        ) from None
+
+
 def _digest(text: str) -> str:
     """Return the digest of one file's text, as every reading of the ledger spells it."""
     return digest_of_bytes(text.encode("utf-8"))

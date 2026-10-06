@@ -108,6 +108,7 @@ from studyforge.skills.exercises.coverage import (
     Stale,
     stale_of,
     stale_summary,
+    untracked_summary,
 )
 from studyforge.skills.exercises.deckdoc import (
     DECK_API,
@@ -203,7 +204,7 @@ from studyforge.skills.exercises.quizdoc import (
     quiz_of,
 )
 from studyforge.skills.exercises.scan import Fence, Scan, scan
-from studyforge.skills.exercises.stale import remove_stale, stale_units
+from studyforge.skills.exercises.stale import remove_stale, stale_units, untracked_units
 from studyforge.skills.exercises.writes import commit
 
 #: ⛔ The package's whole public surface. A consumer that has to import
@@ -327,7 +328,9 @@ __all__ = [
     "source_key",
     "stale_of",
     "stale_summary",
+    "untracked_summary",
     "stale_units",
+    "untracked_units",
     "take",
     "words_of",
 ]
