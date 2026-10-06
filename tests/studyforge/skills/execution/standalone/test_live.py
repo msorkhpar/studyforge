@@ -8,7 +8,7 @@ live runner starts in. ⛔ A course that declares none is byte-identical to what
 
 from __future__ import annotations
 
-import yaml
+import pytest
 
 from studyforge.skills.execution.standalone import compose, images, learner, live, split
 from tests.studyforge.skills.execution.standalone.test_bases import lock, parsed
@@ -20,13 +20,21 @@ HOST = "api.example.invalid"
 def thin(**changes) -> compose.Plan:
     locked = parsed(lock())
     names = images.names_for(
-        slug="a-course", course="c0ffee", serve="", builds=BUILDS, bases=locked)
+        slug="a-course", course="c0ffee", serve="", builds=BUILDS, bases=locked
+    )
     return plan(names=names, bases=locked, **changes)
 
 
 def services(live: bool) -> dict:
-    built, pulled = compose.render(thin(live=(HOST, "EXAMPLE_API_KEY") if live else None))
-    return yaml.safe_load(pulled)["services"]
+    """The pull file's services, as the document `compose.render` handed to `emit`."""
+    documents = []
+    real = compose.emit
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(
+            compose, "emit", lambda document: documents.append(document) or real(document)
+        )
+        compose.render(thin(live=(HOST, "EXAMPLE_API_KEY") if live else None))
+    return documents[1]["services"]
 
 
 def test_a_live_course_adds_a_runner_and_a_proxy_in_the_live_profile_only():
@@ -104,8 +112,12 @@ def test_a_manifest_names_the_directories_its_live_examples_run_from():
             self.path = path
 
     class Block:
-        examples = (Example("examples/a/b.py"), Example("examples/c/d.py"), Example("tools/e.py"),
-                    Example("loose.py"))
+        examples = (
+            Example("examples/a/b.py"),
+            Example("examples/c/d.py"),
+            Example("tools/e.py"),
+            Example("loose.py"),
+        )
 
     class Manifest:
         pass
