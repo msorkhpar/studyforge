@@ -105,6 +105,47 @@ def test_a_source_folder_is_moved_by_an_added_file(tmp_path):
     assert [one.reasons for one in stale_units(tmp_path)] == [(SOURCES,)]
 
 
+def _declare_folder(root, number):
+    from studyforge.skills.exercises.ledger import source_digest
+
+    folder = tryit_of(number).rsplit("/", 1)[0]
+    edit_report(
+        root,
+        number,
+        lambda document: document.update(
+            sources={folder: source_digest(root, folder, "the fixture")}
+        ),
+    )
+    return folder
+
+
+def test_editing_a_file_inside_a_declared_folder_makes_the_unit_stale(tmp_path):
+    _corpus(tmp_path, count=1)
+    _declare_folder(tmp_path, 1)
+    assert stale_units(tmp_path) == ()
+    _move_tryit(tmp_path, 1)  # same name, new bytes
+    assert [one.reasons for one in stale_units(tmp_path)] == [(SOURCES,)]
+
+
+def test_renaming_a_file_inside_a_declared_folder_makes_the_unit_stale(tmp_path):
+    _corpus(tmp_path, count=1)
+    folder = _declare_folder(tmp_path, 1)
+    (tmp_path / tryit_of(1)).rename(tmp_path / folder / "renamed.py")
+    assert [one.reasons for one in stale_units(tmp_path)] == [(SOURCES,)]
+
+
+def test_a_folder_digest_changes_on_a_content_edit_a_rename_and_not_otherwise(tmp_path):
+    from studyforge.skills.exercises.ledger import source_digest
+
+    write(tmp_path, "f/a.py", "one\n")
+    first = source_digest(tmp_path, "f", "the test")
+    assert source_digest(tmp_path, "f", "the test") == first
+    write(tmp_path, "f/a.py", "two\n")
+    edited = source_digest(tmp_path, "f", "the test")
+    (tmp_path / "f/a.py").rename(tmp_path / "f/b.py")
+    assert len({first, edited, source_digest(tmp_path, "f", "the test")}) == 3
+
+
 def test_a_unit_authored_before_tracking_is_counted_and_never_stale(tmp_path):
     _corpus(tmp_path)
     _unrecord_sources(tmp_path, 1)
