@@ -19,7 +19,7 @@ from studyforge.skills.exercises import (
     stale_of,
     stale_summary,
 )
-from studyforge.skills.exercises.coverage import CONTRACT, PAGE, PLAN, TESTS
+from studyforge.skills.exercises.coverage import CONTRACT, PAGE, PLAN, SOURCES, TESTS
 
 UNIT = "exercises/kata/python/unit-03"
 PAGE_PATH = "lessons/three.md"
@@ -120,7 +120,7 @@ def test_every_reason_is_named_once_in_reasons_order():
         digests={PAGE_PATH: "sha256:moved", TESTS_PATH: None},
     )
     assert stale.reasons == (PAGE, TESTS, CONTRACT)
-    assert list(REASONS) == [PAGE, TESTS, PLAN, CONTRACT]
+    assert list(REASONS) == [PAGE, TESTS, SOURCES, PLAN, CONTRACT]
     assert stale.says.startswith(f"{REASONS[PAGE]}; {REASONS[TESTS]}; {REASONS[CONTRACT]}")
 
 

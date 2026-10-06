@@ -12,8 +12,14 @@ from __future__ import annotations
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.skills.exercises import AuthoringError, remove_stale, stale_units
-from studyforge.skills.exercises.coverage import CONTRACT, PAGE, PLAN, TESTS
+from studyforge.skills.exercises import (
+    AuthoringError,
+    remove_stale,
+    stale_units,
+    untracked_summary,
+    untracked_units,
+)
+from studyforge.skills.exercises.coverage import CONTRACT, PAGE, PLAN, SOURCES, TESTS
 from tests.studyforge.skills.exercises.staleness import (
     LEAK,
     authored,
@@ -22,6 +28,7 @@ from tests.studyforge.skills.exercises.staleness import (
     page_of,
     practice_of,
     snapshot,
+    tryit_of,
     unit_of,
     write,
 )
@@ -51,6 +58,66 @@ def _move_plan(root, number):
 
 def _old_contract(root, number):
     edit_report(root, number, lambda document: document["plan"].update(plan_api=1))
+
+
+def _move_tryit(root, number):
+    write(root, tryit_of(number), "print('try it, edited')\n")
+
+
+def _unrecord_sources(root, number):
+    edit_report(root, number, lambda document: document.pop("sources"))
+
+
+def test_a_changed_tryit_file_makes_its_unit_stale_with_the_reason(tmp_path):
+    _corpus(tmp_path)
+    _move_tryit(tmp_path, 2)
+    (stale,) = stale_units(tmp_path)
+    assert (stale.unit, stale.reasons) == (unit_of(2), (SOURCES,))
+    assert "try-it" in stale.says
+
+
+def test_a_deleted_tryit_file_makes_its_unit_stale(tmp_path):
+    _corpus(tmp_path)
+    (tmp_path / tryit_of(1)).unlink()
+    assert [one.reasons for one in stale_units(tmp_path)] == [(SOURCES,)]
+
+
+def test_an_unchanged_tryit_file_leaves_every_unit_fresh(tmp_path):
+    _corpus(tmp_path)
+    write(tmp_path, tryit_of(2), "print('try it')\n")  # same bytes
+    assert stale_units(tmp_path) == ()
+
+
+def test_a_source_folder_is_moved_by_an_added_file(tmp_path):
+    from studyforge.skills.exercises.ledger import source_digest
+
+    _corpus(tmp_path, count=1)
+    folder = tryit_of(1).rsplit("/", 1)[0]
+    edit_report(
+        tmp_path,
+        1,
+        lambda document: document.update(
+            sources={folder: source_digest(tmp_path, folder, "the fixture")}
+        ),
+    )
+    assert stale_units(tmp_path) == ()
+    write(tmp_path, f"{folder}/extra.py", "x = 1\n")
+    assert [one.reasons for one in stale_units(tmp_path)] == [(SOURCES,)]
+
+
+def test_a_unit_authored_before_tracking_is_counted_and_never_stale(tmp_path):
+    _corpus(tmp_path)
+    _unrecord_sources(tmp_path, 1)
+    _unrecord_sources(tmp_path, 3)
+    _move_tryit(tmp_path, 1)  # not visible to a unit that recorded nothing
+    assert stale_units(tmp_path) == ()
+    assert untracked_units(tmp_path) == 2
+    assert untracked_summary(2) == "2 unit(s) authored before try-it tracking; re-author to track them"
+    assert untracked_summary(0) == ""
+
+
+def test_a_corpus_authored_with_tracking_has_no_untracked_unit(tmp_path):
+    assert untracked_units(_corpus(tmp_path)) == 0
 
 
 def test_a_corpus_with_nothing_stale_has_nothing_to_say(tmp_path):

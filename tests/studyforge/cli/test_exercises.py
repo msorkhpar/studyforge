@@ -16,7 +16,7 @@ from studyforge.cli import main as dispatched
 from studyforge.cli.exercises import CLEAN, main
 from studyforge.exitcodes import UNUSABLE
 from studyforge.skills.exercises import REASONS
-from studyforge.skills.exercises.coverage import CONTRACT, PAGE
+from studyforge.skills.exercises.coverage import CONTRACT, PAGE, SOURCES
 from studyforge.validate.report import INVALID, OK
 from tests.studyforge.skills.exercises.staleness import (
     LEAK,
@@ -25,6 +25,7 @@ from tests.studyforge.skills.exercises.staleness import (
     page_of,
     practice_of,
     snapshot,
+    tryit_of,
     unit_of,
     write,
 )
@@ -45,6 +46,26 @@ def _corpus(root):
 def _stale_two(root):
     write(root, page_of(1), "# Page, edited\n")
     edit_report(root, 3, lambda document: document.update(coverage_api=9))
+
+
+def test_a_changed_tryit_file_is_listed_stale_with_its_reason(tmp_path):
+    _corpus(tmp_path)
+    write(tmp_path, tryit_of(2), "print('edited')\n")
+    code, printed = _invoke("stale", str(tmp_path))
+    assert code == INVALID
+    assert printed.splitlines()[0] == f"stale  {unit_of(2)}: {REASONS[SOURCES]}"
+
+
+def test_units_authored_before_tracking_are_one_summary_line_and_not_stale(tmp_path):
+    _corpus(tmp_path)
+    for number in (1, 2):
+        edit_report(tmp_path, number, lambda document: document.pop("sources"))
+    code, printed = _invoke("stale", str(tmp_path))
+    assert code == OK
+    assert printed.splitlines() == [
+        CLEAN,
+        "2 unit(s) authored before try-it tracking; re-author to track them",
+    ]
 
 
 def test_nothing_stale_exits_zero_and_says_so(tmp_path):

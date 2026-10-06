@@ -73,7 +73,7 @@ from studyforge.skills.exercises.coverage import (
 )
 from studyforge.skills.exercises.drafts import Author, AuthoringError, Judge, Page, require_page
 from studyforge.skills.exercises.gating import Runner, json_bytes
-from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
+from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, source_digest, take
 from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices, plan_page
 from studyforge.skills.exercises.merge import Delta, merged
 from studyforge.skills.exercises.plan import plan_document
@@ -166,6 +166,7 @@ def author_corpus(
             "quiz": page.quiz,
             "case": outcome.case,
             "digests": _fingerprint(page, ledger),
+            "sources": _sources(base, page),
             "plan": plan_document(outcome.plan),
             "shipped": [gated.places.bundle for gated in outcome.shipped],
             "accounts": [
@@ -222,6 +223,13 @@ def _fingerprint(page: Page, ledger: Ledger) -> dict[str, str]:
     return {source.path: source.digest for source in ledger.sources if source.path in wanted}
 
 
+def _sources(base: Path, page: Page) -> dict[str, str]:
+    """Return what the files the page's exercises are copied from digest to, by path."""
+    return {
+        path: source_digest(base, path, f"the page '{page.path}'") for path in sorted(page.sources)
+    }
+
+
 def _reading(base: Path, page: Page, ledger: Ledger) -> tuple:
     """Read one page before anything is authored: its unit, its plan, its report, and staleness.
 
@@ -238,7 +246,9 @@ def _reading(base: Path, page: Page, ledger: Ledger) -> tuple:
             raise _moved(unit, where, "holds exercises and no coverage report")
         return page, unit, plan, None, None
     planned = {"kind": page.kind, "quiz": page.quiz, "plan": plan_document(plan)}
-    stale = stale_of(unit, recorded, page.path, _fingerprint(page, ledger), planned)
+    stale = stale_of(
+        unit, recorded, page.path, _fingerprint(page, ledger), planned, _sources(base, page)
+    )
     return page, unit, plan, recorded, stale
 
 

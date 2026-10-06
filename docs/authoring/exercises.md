@@ -1772,7 +1772,8 @@ changed but is still there.
 the author, the judge and the runner are not called for it.
 
 ⚠️ **A stale unit is refused before anything is authored.** A unit is stale
-when its page, a test file it was authored from, or its plan has changed, or
+when its page, a test file it was authored from, a file its exercises were
+copied from (see below), or its plan has changed, or
 its `coverage.json` is at a version this build does not keep. Its exercises
 were proven against material that has since moved. The refusal counts every
 stale unit among the pages you handed the pass and names the first. To author
@@ -1810,8 +1811,8 @@ anyway. List every stale unit in one run:
 studyforge exercises stale <your-corpus>
 ```
 
-Each unit is printed with its reason (its page, a test file, its plan or its
-contract version) and the `practice/` folder that goes with it, then a total
+Each unit is printed with its reason (its page, a test file, a copied source
+file, its plan or its contract version) and the `practice/` folder that goes with it, then a total
 line. It changes nothing, and it exits `1` when anything is stale, so a build
 script can stop on it. Then:
 
@@ -1821,6 +1822,26 @@ script can stop on it. Then:
    it removes nothing and says why.
 2. Run the authoring pass over those pages again.
 3. Run your adapter, then `studyforge build`.
+
+**Files a practice is copied from.** A practice's try-it file, starter,
+reference, statement and check scripts are not the page and not a test file the
+ledger reads, so declare them on the page: `Page(sources=("path/to/practice",
+"path/to/try-it.ts"))`. Each entry is a corpus-relative file or a folder (a
+folder digests every file under it, so an added, removed or edited file moves
+it). The pass records their digests in the unit's `coverage.json` under
+`sources`, and `exercises stale` reports the unit stale, reason `a file its
+exercises were copied from has since moved`, when one differs or is gone.
+Declare every file your author reads for the unit; a file you leave off is not
+tracked.
+
+**Units authored before this tracking.** A `coverage.json` of a code unit with no
+`sources` key cannot say what its copies were. Such a unit is never reported
+stale for that reason, so a corpus does not turn stale all at once. It is
+counted in one closing line, `N unit(s) authored before try-it tracking;
+re-author to track them`, which does not change the exit code. Re-author the
+unit (remove its folders, run the pass again with `sources` declared) to track
+it. A unit authored with no `sources` declared records an empty one and is
+tracked for nothing.
 
 ⚠️ The command reads only what your corpus holds. If you changed a page's
 aspects without editing the page, the pass finds that when you hand it the

@@ -123,6 +123,10 @@ class Page:
     #: ⭐ The page's exercise names in teaching order; `()` keeps name order.
     order: tuple[str, ...] = ()
     quiz: str | None = None
+    #: ⭐ Corpus paths (files or folders) the unit's exercises are copied from besides the page
+    #: and its graders: try-it files, starters, references, statements, check scripts. They
+    #: are digested into the coverage report, so a unit whose copy moved is stale.
+    sources: tuple[str, ...] = ()
 
     def kind_of(self, name: str) -> str:
         """Return the kind of the planned exercise `name`: a quiz where the page names it."""

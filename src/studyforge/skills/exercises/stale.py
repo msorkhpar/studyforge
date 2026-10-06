@@ -52,9 +52,10 @@ from studyforge.skills.exercises.coverage import (
     COVERAGE_FILENAME,
     Stale,
     stale_of,
+    untracked,
 )
 from studyforge.skills.exercises.drafts import AuthoringError
-from studyforge.skills.exercises.ledger import LedgerError, file_digest
+from studyforge.skills.exercises.ledger import LedgerError, file_digest, source_digest
 from studyforge.skills.exercises.plan import plan_document, plan_for
 from studyforge.validate.source import restorable
 
@@ -79,10 +80,30 @@ def stale_units(root: Path | str) -> tuple[Stale, ...]:
         written = written if isinstance(written, dict) else {}
         now = {name: _digest(base, name, unit) for name in written}
         planned = {"plan": _replanned(recorded, unit)}
-        stale = stale_of(unit, recorded, recorded.get("page"), now, planned)
+        tracked = recorded.get("sources")
+        copied = (
+            {name: _source(base, name, unit) for name in tracked} if isinstance(tracked, dict) else None
+        )
+        stale = stale_of(unit, recorded, recorded.get("page"), now, planned, copied)
         if stale is not None:
             found.append(stale)
     return tuple(found)
+
+
+def untracked_units(root: Path | str) -> int:
+    """Return how many code units were authored before the files they are copied from were tracked.
+
+    ⭐ Read only. Their reports carry no `sources` key, so a changed try-it file cannot be
+    seen for them; they are counted, never called stale, so a corpus authored before
+    the tracking does not suddenly report everything stale.
+    """
+    base = Path(root)
+    count = 0
+    for path in sorted(base.glob(f"{BUNDLES_DIRNAME}/**/{COVERAGE_FILENAME}")):
+        recorded = _report(path)
+        if recorded is not None and untracked(recorded):
+            count += 1
+    return count
 
 
 def remove_stale(root: Path | str, stale: Sequence[Stale]) -> tuple[str, ...]:
@@ -140,6 +161,14 @@ def _digest(base: Path, path: object, unit: str) -> str | None:
     """Return what a recorded file digests to now, `None` when gone or not a source path."""
     try:
         return file_digest(base, path, f"the unit '{unit}'")  # type: ignore[arg-type]
+    except LedgerError:
+        return None
+
+
+def _source(base: Path, path: object, unit: str) -> str | None:
+    """Return what a recorded source file or folder digests to now, `None` when gone."""
+    try:
+        return source_digest(base, path, f"the unit '{unit}'")  # type: ignore[arg-type]
     except LedgerError:
         return None
 

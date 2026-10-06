@@ -211,6 +211,22 @@ def test_a_page_that_moved_is_refused_naming_its_unit_and_nothing_is_written(tmp
     assert snapshot(tmp_path) == before, "a refused pass wrote something"
 
 
+def test_a_changed_source_file_is_refused_like_a_moved_page_and_an_unchanged_one_is_kept(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    tryit = tmp_path / "source/unit-02/try_it.py"
+    tryit.parent.mkdir(parents=True)
+    tryit.write_text("print('a')\n", encoding="utf-8")
+    pages = [replace(pages[1], sources=("source/unit-02/try_it.py",))]
+    arguments = dict(material=material, graders=graders, pages=pages, author=Scripted(CLEAN))
+    author_corpus(tmp_path, source="demo", judge=Judging(), runner=Running(), **arguments)
+    recorded = _coverage(tmp_path, pages[0].path)["sources"]
+    assert list(recorded) == ["source/unit-02/try_it.py"]
+    author_corpus(tmp_path, source="demo", judge=Judging(), runner=Running(), **arguments)
+    tryit.write_text("print('b')\n", encoding="utf-8")
+    with pytest.raises(AuthoringError, match="unit-02.*copied from"):
+        author_corpus(tmp_path, source="demo", judge=Judging(), runner=Running(), **arguments)
+
+
 def test_every_stale_unit_is_counted_up_front_before_any_page_is_authored(tmp_path):
     # ⭐ One summary line, before any work: the unauthored page that sorts first
     # is never drafted, where a refusal halfway through drafted it first.
