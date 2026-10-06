@@ -315,7 +315,12 @@ def _quiz_record(prefix):
                 "id": f"{prefix}{n}",
                 "stem": f"Which choice fits case {prefix}{n}?",
                 "options": [
-                    {"id": "a", "text": "Option one", "correct": True, "says": f"KEYTEXT {prefix}{n}"},
+                    {
+                        "id": "a",
+                        "text": "Option one",
+                        "correct": True,
+                        "says": f"KEYTEXT {prefix}{n}",
+                    },
                     {"id": "b", "text": "Option two", "correct": False, "says": "Not this one."},
                 ],
                 "origin": {"path": "basics/01.md", "section": "Idea"},
@@ -332,7 +337,9 @@ def _quiz_section(heading, record):
         {
             "type": "list",
             "ordered": True,
-            "items": [[stem, {"type": "list", "ordered": False, "items": ["a", "b"]}] for stem in stems],
+            "items": [
+                [stem, {"type": "list", "ordered": False, "items": ["a", "b"]}] for stem in stems
+            ],
         },
         {
             "type": "disclosure",
