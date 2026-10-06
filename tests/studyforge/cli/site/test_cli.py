@@ -426,3 +426,40 @@ def test_a_build_outside_the_corpus_root_names_the_file_links_it_cannot_keep(tmp
     code, printed = invoke(str(root), "--out", str(root), "--no-narration")
     assert code == OK
     assert "unreached " not in printed
+
+
+# --------------------------------------------------------------------------
+# ⭐ stale authored units are named up front
+# --------------------------------------------------------------------------
+
+
+def test_a_build_names_its_stale_authored_units_in_one_line_before_it_starts(tmp_path):
+    from studyforge.skills.exercises import stale_summary, stale_units
+    from tests.studyforge.skills.exercises.staleness import authored, page_of
+
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / "depth1", root)
+    authored(root, 1)
+    (root / page_of(1)).write_text("# Page, edited\n", encoding="utf-8")
+    (tmp_path / "site").mkdir()
+    code, printed = invoke(str(root), "--out", str(tmp_path / "site"))
+    assert code == OK, "a stale unit is said, never a stop: the command is the stop"
+    line = stale_summary(stale_units(root))
+    assert (
+        printed.splitlines()[0]
+        == line
+        == ("1 authored unit is stale; run `studyforge exercises stale`")
+    )
+    assert printed.count(line) == 1
+
+
+def test_a_build_with_nothing_stale_prints_nothing_new(tmp_path):
+    from tests.studyforge.skills.exercises.staleness import authored
+
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / "depth1", root)
+    authored(root, 1)
+    (tmp_path / "site").mkdir()
+    code, printed = invoke(str(root), "--out", str(tmp_path / "site"))
+    assert code == OK and printed.splitlines()[0].startswith("build ")
+    assert "stale" not in printed

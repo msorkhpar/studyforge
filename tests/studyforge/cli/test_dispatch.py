@@ -139,7 +139,16 @@ def test_the_verbs_the_contract_promises_but_does_not_register_are_absent():
     # `reconcile` (`serve`, `preflight` and `check` are registered).
     # Asserted so that landing `reconcile` without registering it — or
     # unregistering `serve`, `preflight` or `check` — fails here.
-    assert set(VERBS) == {"validate", "plan", "narrate", "build", "serve", "preflight", "check"}
+    assert set(VERBS) == {
+        "validate",
+        "plan",
+        "narrate",
+        "exercises",
+        "build",
+        "serve",
+        "preflight",
+        "check",
+    }
 
 
 # --------------------------------------------------------------------------

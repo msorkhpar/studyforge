@@ -15,7 +15,7 @@ ledger — into the corpus repository, additively.
     authored.ledger                     # the ledger rows kept, added, changed, dropped
 
 **Depends on.** This package's `drafts`, `gating`, `loop`, `ledger`,
-`accounting`, `merge`, `writes` and `plan`; `exercise` for an origin's two
+`accounting`, `merge`, `writes`, `plan` and `coverage`; `exercise` for an origin's two
 spellings; `exercise.bundle` for where a unit's bundles sit; `archive.scrub`
 for R7. Standard library only.
 
@@ -44,9 +44,12 @@ was not handed never loses the exercise its entries are built on.
 ⭐ **A unit whose committed coverage report matches its page's digests and its
 plan is not re-authored**, so a model is never asked again for work already
 proven, and what it said the first time stays. A ledger entry whose bytes are
-unchanged keeps the reason it was given. ⚠️ **A unit whose page moved is
-refused, naming its directory**: its bundles were proven against material that
-has changed, and generation never rewrites what it did not write.
+unchanged keeps the reason it was given. ⚠️ **A stale unit is refused,
+naming its directory**: its bundles were proven against material that has
+changed, and generation never rewrites what it did not write. ⭐ **Every page
+is read before any is authored**, so the refusal comes first and counts every
+stale unit the pass was handed (`coverage.stale_summary`), never one at a time
+after the pages before it were authored.
 """
 
 from __future__ import annotations
@@ -60,44 +63,24 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.exercise import Origin, origin_document, origin_in
 from studyforge.exercise.bundle import BUNDLES_DIRNAME, Places
 from studyforge.skills.exercises.accounting import account, accounts_for, ledger_document
+from studyforge.skills.exercises.coverage import (
+    COVERAGE_API,
+    COVERAGE_FILENAME,
+    STALE_COMMAND,
+    Stale,
+    stale_of,
+    stale_summary,
+)
 from studyforge.skills.exercises.drafts import Author, AuthoringError, Judge, Page, require_page
 from studyforge.skills.exercises.gating import Runner, json_bytes
 from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
 from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices, plan_page
 from studyforge.skills.exercises.merge import Delta, merged
-from studyforge.skills.exercises.plan import PLAN_API, plan_document
+from studyforge.skills.exercises.plan import plan_document
 from studyforge.skills.exercises.writes import commit, exclusive
-from studyforge.version import check as check_version
-
-#: Each unit's coverage report, beside its bundles and never inside one.
-COVERAGE_FILENAME = "coverage.json"
 
 #: The source ledger, at the root of the bundles' tree.
 LEDGER_PATH = f"{BUNDLES_DIRNAME}/ledger.json"
-
-#: The coverage report's version, and its key order (R10). ⚠️ **2** added
-#: `quiz`, the planned exercise a quiz checks on a code page. ⭐ A version-1
-#: report is still read, as a page that named no quiz, so a unit authored
-#: before it is kept rather than authored again (`COVERAGE_READ`).
-COVERAGE_API = 2
-COVERAGE_KEYS = (
-    "coverage_api",
-    "page",
-    "kind",
-    "quiz",
-    "case",
-    "digests",
-    "plan",
-    "shipped",
-    "accounts",
-    "shortfalls",
-)
-
-#: ⭐ The coverage reports this build reads back: every one it has written.
-COVERAGE_READ = (1, COVERAGE_API)
-
-#: The keys of one named shortfall in a coverage report, in write order.
-SHORTFALL_REPORT_KEYS = ("slot", "gate", "says", "output")
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,21 +142,16 @@ def author_corpus(
     files: list[tuple[str, bytes]] = []
     covered: list[Covered] = []
     accounts: dict[str, Origin] = {}
-    for page in _in_order(pages):
+    read = [_reading(base, page, ledger) for page in _in_order(pages)]
+    _require_fresh([stale for *_, stale in read if stale is not None])
+    for page, unit, plan, recorded, _ in read:
         where = f"the page '{page.path}'"
-        require_page(page, ledger, where)
-        unit = _unit_of(page)
-        plan = plan_page(page, ledger, where)
-        fingerprint = _fingerprint(page, ledger)
-        recorded = _read(base / unit / COVERAGE_FILENAME, where)
         reasoned = tuple(aspect.id for aspect in plan.reasoned)
         if recorded is not None:
-            kept = _reused(recorded, page, unit, fingerprint, plan_document(plan), where)
+            kept = _reused(recorded, page, unit)
             covered.append(replace(kept, reasoned=reasoned))
             accounts |= _accounts_in(recorded, where)
             continue
-        if (base / unit).exists():
-            raise _moved(unit, where, "holds exercises and no coverage report")
         carried = carried_practices(base, page, where)
         outcome = author_page(
             page, ledger, author, judge, runner, source=source, where=where, carried=carried
@@ -187,7 +165,7 @@ def author_corpus(
             "kind": page.kind,
             "quiz": page.quiz,
             "case": outcome.case,
-            "digests": fingerprint,
+            "digests": _fingerprint(page, ledger),
             "plan": plan_document(outcome.plan),
             "shipped": [gated.places.bundle for gated in outcome.shipped],
             "accounts": [
@@ -244,37 +222,43 @@ def _fingerprint(page: Page, ledger: Ledger) -> dict[str, str]:
     return {source.path: source.digest for source in ledger.sources if source.path in wanted}
 
 
-def _reused(
-    recorded: dict, page: Page, unit: str, fingerprint: dict, plan: dict, where: str
-) -> Covered:
-    """Keep a unit whose recorded report still describes it — ⛔ or refuse it, naming it.
+def _reading(base: Path, page: Page, ledger: Ledger) -> tuple:
+    """Read one page before anything is authored: its unit, its plan, its report, and staleness.
+
+    ⛔ **Every page is read before any is authored**, so a stale unit is
+    refused before an author is asked for anything.
+    """
+    where = f"the page '{page.path}'"
+    require_page(page, ledger, where)
+    unit = _unit_of(page)
+    plan = plan_page(page, ledger, where)
+    recorded = _read(base / unit / COVERAGE_FILENAME, where)
+    if recorded is None:
+        if (base / unit).exists():
+            raise _moved(unit, where, "holds exercises and no coverage report")
+        return page, unit, plan, None, None
+    planned = {"kind": page.kind, "quiz": page.quiz, "plan": plan_document(plan)}
+    stale = stale_of(unit, recorded, page.path, _fingerprint(page, ledger), planned)
+    return page, unit, plan, recorded, stale
+
+
+def _require_fresh(stale: list[Stale]) -> None:
+    """⛔ Refuse the pass up front when any unit it was handed is stale, naming the first.
 
     ⚠️ **A report written under another `coverage_api`, or planned under
-    another `plan_api`, is refused by name**, both read through
+    another `plan_api`, is stale by its contract**, both read through
     `version.check`: a plan's count set by a rule this build no longer applies
     is re-planned by its aspects, never silently kept.
     """
-    written = recorded.get("plan")
-    versions = (
-        ("coverage_api", recorded.get("coverage_api"), COVERAGE_READ),
-        ("plan_api", written.get("plan_api") if isinstance(written, dict) else None, (PLAN_API,)),
-    )
-    for contract, declared, speaks in versions:
-        try:
-            check_version(
-                contract, declared, speaks, where="its coverage report", error=AuthoringError
-            )
-        except AuthoringError as refused:
-            raise _moved(unit, where, f"cannot be kept: {refused}") from None
-    same = (
-        recorded.get("page") == page.path
-        and recorded.get("kind") == page.kind
-        and recorded.get("quiz") == page.quiz
-        and recorded.get("digests") == fingerprint
-        and recorded.get("plan") == plan
-    )
-    if not same:
-        raise _moved(unit, where, "was authored from material or a plan that has since moved")
+    if stale:
+        first = stale[0]
+        raise _moved(
+            first.unit, f"the authoring pass: {stale_summary(stale)}", f"is stale: {first.says}"
+        )
+
+
+def _reused(recorded: dict, page: Page, unit: str) -> Covered:
+    """Keep a unit whose recorded report still describes it, as it recorded itself."""
     missed = tuple(
         Shortfall(entry.get("slot"), entry.get("gate"), entry.get("says"), entry.get("output", ""))
         for entry in recorded.get("shortfalls", ())
@@ -374,7 +358,8 @@ def _read(path: Path, where: str) -> dict | None:
 def _moved(unit: str, where: str, why: str) -> AuthoringError:
     """Return the refusal for a unit whose committed exercises may not be rewritten (R3)."""
     return AuthoringError(
-        f"{where}: the unit at '{unit}' {why}. Its exercises were proven against that "
-        f"material, and generation never rewrites what it did not write. Remove '{unit}' from the "
-        f"corpus and run the pass again: the ledger keeps every other page's rows."
+        f"{where}. The unit at '{unit}' {why}. Its exercises were proven against that "
+        f"material, and generation never rewrites what it did not write. Remove '{unit}' and "
+        f"its practice counterpart from the corpus (`{STALE_COMMAND} --remove`) and run the "
+        f"pass again: the ledger keeps every other page's rows."
     )

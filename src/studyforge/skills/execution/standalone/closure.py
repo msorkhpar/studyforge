@@ -33,8 +33,8 @@ finding (`stale`), so the list cannot outlive what it excuses.
 ## ⛔ What a learner's runtime never carries
 
 `FORBIDDEN`: the skills (how a course is built), narration synthesis and its
-client and wire, packing a narration release, and the `narrate` and `build`
-verbs. ⭐ The served app is proved to import and serve from the vendored tree
+client and wire, packing a narration release, and the `narrate`, `build` and
+`exercises` verbs. ⭐ The served app is proved to import and serve from the vendored tree
 alone in `tests/studyforge/skills/execution/standalone/test_closure.py`.
 """
 
@@ -67,6 +67,7 @@ VALIDATE = (
 DEFERRED: Mapping[tuple[str, str], str] = {
     ("studyforge.cli.dispatch", "studyforge.cli.narrate.cli"): VERB,
     ("studyforge.cli.dispatch", "studyforge.cli.site.cli"): VERB,
+    ("studyforge.cli.dispatch", "studyforge.cli.exercises"): VERB,
     ("studyforge.validate.ledger", "studyforge.skills.exercises"): VALIDATE,
     ("studyforge.validate.ledger", "studyforge.skills.exercises.scan"): VALIDATE,
     ("studyforge.validate.source.curriculum", "studyforge.skills.adapter"): VALIDATE,
@@ -81,6 +82,7 @@ FORBIDDEN: Mapping[str, str] = {
     "studyforge.narrate.release": "packing a narration release is the builder's",
     "studyforge.cli.narrate": "the narrate verb synthesises",
     "studyforge.cli.site": "the build verb writes a site, and the learner's is built",
+    "studyforge.cli.exercises": "the exercises verb reads how a course was authored",
 }
 
 #: Directories a package may hold that carry nothing the runtime reads.

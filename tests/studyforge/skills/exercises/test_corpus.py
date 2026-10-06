@@ -14,6 +14,7 @@ processes, and every clause below reads the tree that pass left.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import threading
 from dataclasses import replace
@@ -207,6 +208,23 @@ def test_a_page_that_moved_is_refused_naming_its_unit_and_nothing_is_written(tmp
     before = snapshot(tmp_path)
     with pytest.raises(AuthoringError, match="exercises/kata/python/unit-02"):
         author_corpus(tmp_path, source="demo", judge=judge, runner=runner, **arguments)
+    assert snapshot(tmp_path) == before, "a refused pass wrote something"
+
+
+def test_every_stale_unit_is_counted_up_front_before_any_page_is_authored(tmp_path):
+    # ⭐ One summary line, before any work: the unauthored page that sorts first
+    # is never drafted, where a refusal halfway through drafted it first.
+    material, graders, pages = write_corpus(tmp_path)
+    arguments = dict(material=material, graders=graders, judge=Judging(), runner=Running())
+    author_corpus(tmp_path, source="demo", pages=pages[1:3], author=Scripted(CLEAN), **arguments)
+    for page in pages[1:3]:
+        edited = tmp_path / page.path
+        edited.write_text(edited.read_text(encoding="utf-8") + "\nOne more line.\n", "utf-8")
+    before, author = snapshot(tmp_path), Scripted(CLEAN)
+    says = re.escape("2 authored units are stale; run `studyforge exercises stale`")
+    with pytest.raises(AuthoringError, match=f"{says}.*unit-02.*practice counterpart"):
+        author_corpus(tmp_path, source="demo", pages=pages[:3], author=author, **arguments)
+    assert author.briefs == [], "a page was drafted before the stale units were refused"
     assert snapshot(tmp_path) == before, "a refused pass wrote something"
 
 

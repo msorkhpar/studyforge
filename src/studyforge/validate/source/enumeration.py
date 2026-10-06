@@ -5,7 +5,8 @@ than output, and every nested repository store. It gives no verdict;
 `classification` judges what it returns.
 
 **How you use it.** `source_files(root)` returns a `Scan`. `repository_ignores` is
-the one ignore reader, and `REPOSITORY_STORE` and `SKIP_DIRS` name what a walk
+the one ignore reader, `restorable` says whether git could give back what a
+removal would take, and `REPOSITORY_STORE` and `SKIP_DIRS` name what a walk
 never enters.
 
 **Depends on.** `corpus.placement`, `cli.plan` for what a build writes (deferred,
@@ -244,3 +245,49 @@ def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | 
     if result.returncode not in (0, 1):
         return None
     return frozenset(root / name for name in result.stdout.split("\0") if name)
+
+
+def restorable(root: Path, paths: list[str]) -> bool | None:
+    """Whether git could restore every file under `paths` as it is now, with nothing staged.
+
+    ⭐ **Asked before anything is removed**, so a removal is one `git restore`
+    away from undone. ⛔ `True` only when the index holds no staged change and
+    no file under `paths` is untracked, ignored, modified or staged: each of
+    those is a byte git could not give back. ⛔ **`None` means "not answered"**
+    — no git, or `root` not in a work tree — and a caller treats it as `False`.
+    """
+    git = shutil.which("git")
+    if git is None:
+        return None
+    # ⛔ `:(literal)`: a path is matched as written, never as a glob.
+    named = [f":(literal){path}" for path in paths]
+    try:
+        staged = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [git, "diff", "--cached", "--quiet"],
+            capture_output=True,
+            cwd=root,
+            check=False,
+            timeout=IGNORE_TIMEOUT,
+        )
+        changed = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [
+                git,
+                "status",
+                "--porcelain",
+                "-z",
+                "--untracked-files=all",
+                "--ignored",
+                "--",
+                *named,
+            ],
+            capture_output=True,
+            cwd=root,
+            check=False,
+            timeout=IGNORE_TIMEOUT,
+        )
+    except OSError, subprocess.SubprocessError:
+        return None
+    # `diff --quiet`: 0 nothing staged, 1 something is. Anything else is unanswered.
+    if staged.returncode not in (0, 1) or changed.returncode != 0:
+        return None
+    return staged.returncode == 0 and not changed.stdout

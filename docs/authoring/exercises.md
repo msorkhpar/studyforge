@@ -1771,10 +1771,13 @@ changed but is still there.
 `coverage.json` still matches its page and its plan is not authored again, so
 the author, the judge and the runner are not called for it.
 
-⚠️ **A page whose source changed is refused, and the refusal names its unit.**
-Its exercises were proven against material that has since moved. To author it
-again, delete that unit's directory under `exercises/`, then run the pass
-again. ⛔ **Do not delete `exercises/ledger.json`**: the pass keeps every row
+⚠️ **A stale unit is refused before anything is authored.** A unit is stale
+when its page, a test file it was authored from, or its plan has changed, or
+its `coverage.json` is at a version this build does not keep. Its exercises
+were proven against material that has since moved. The refusal counts every
+stale unit among the pages you handed the pass and names the first. To author
+them again, delete each one's directories under `exercises/` and `practice/`,
+then run the pass again. ⛔ **Do not delete `exercises/ledger.json`**: the pass keeps every row
 for a file it did not read, so deleting the ledger loses every other page's
 rows, and `validate` then names each page a pass had authored
 (`ledger-unaccounted`).
@@ -1785,15 +1788,43 @@ passes.** A page that no pass has been given yet is *pending*, not missing.
 pending pages in each module. It is not a finding. The first pass that reads a
 page ends its pending state. Pending is not an excuse. An excuse is a written
 reason that no exercise is built from an entry, and it stays that reason.
-**Delete the unit's directory under `practice/` as well.** The refusal does not mention it, but a
-new draft whose starter or tests differ would otherwise land on the old
-workspace files, and the pass refuses any file that exists with different
-bytes.
+**Delete the unit's directory under `practice/` as well.** The refusal names
+it as the unit's practice counterpart. A new draft whose starter or tests
+differ would otherwise land on the old workspace files, and the pass refuses
+any file that exists with different bytes.
 
 **Your archive still holds the practices you deleted** until the adapter runs
 again, and that is fine: the pass counts only the source's own practices, never
 one an earlier pass generated, so the unit's exercises are numbered as they
 were the first time.
+
+### Rebuilding a site after you edit pages
+
+A build copies the authored units your corpus holds. After you edit a page,
+its unit still holds exercises proven against the old page, so the site would
+show them unchanged. `studyforge build` says so in one line before it starts,
+`N authored units are stale; run studyforge exercises stale`, and builds
+anyway. List every stale unit in one run:
+
+```
+studyforge exercises stale <your-corpus>
+```
+
+Each unit is printed with its reason (its page, a test file, its plan or its
+contract version) and the `practice/` folder that goes with it, then a total
+line. It changes nothing, and it exits `1` when anything is stale, so a build
+script can stop on it. Then:
+
+1. Remove the listed folders. `--remove` does it for you, but only when your
+   corpus is a git work tree with nothing staged and every file in those
+   folders committed and unmodified, so `git restore` can undo it. Otherwise
+   it removes nothing and says why.
+2. Run the authoring pass over those pages again.
+3. Run your adapter, then `studyforge build`.
+
+⚠️ The command reads only what your corpus holds. If you changed a page's
+aspects without editing the page, the pass finds that when you hand it the
+page, and refuses the same way.
 
 ### Then the adapter, then `validate`
 

@@ -22,6 +22,14 @@ PACKAGE = "studyforge.skills.exercises"
 #: it one rather than a quiet deletion.
 PUBLIC_SURFACE = frozenset(
     {
+        "REASONS",
+        "STALE_COMMAND",
+        "Stale",
+        "file_digest",
+        "remove_stale",
+        "stale_of",
+        "stale_summary",
+        "stale_units",
         "ACCOUNTED_KEYS",
         "ADVANCED",
         "ASPECT_KEYS",
