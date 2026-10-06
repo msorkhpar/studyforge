@@ -29,7 +29,7 @@ LESSON_WHERE = "a unit's lesson document"
 
 
 def wanted(corpus: Corpus) -> bool:
-    """Does any unit carry an example whose tab names the file its code is?"""
+    """Answer whether any unit carries an example whose tab names the file its code is."""
     return any(code for code, _support in _declared(corpus))
 
 
@@ -48,7 +48,7 @@ def _declared(corpus: Corpus) -> Iterator[tuple[list[str], list[str]]]:
         for path in sorted(source.directory.glob(LESSON_GLOB)):
             try:
                 document = json.loads(path.read_text(encoding="utf-8"))
-            except (OSError, ValueError):
+            except OSError, ValueError:
                 continue
             assert_clean(document, LESSON_WHERE)
             blocks = document.get("blocks") if isinstance(document, dict) else None
@@ -58,7 +58,7 @@ def _declared(corpus: Corpus) -> Iterator[tuple[list[str], list[str]]]:
 
 
 def _paths(block: dict) -> tuple[list[str], list[str]]:
-    """The strings an example block names as `code` (per tab) and as `support`."""
+    """Return the strings an example block names as `code` (per tab) and as `support`."""
     tabs = block.get("tabs")
     code = [
         tab["code"]

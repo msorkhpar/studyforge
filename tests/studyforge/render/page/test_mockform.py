@@ -42,7 +42,7 @@ def test_only_an_opted_in_mock_wants_the_exam_form():
 
 def test_a_plain_mock_is_rendered_as_it_always_was():
     said = markup(PLAIN)
-    assert "data-mock-part=\"controls\"" in said and "data-mock-form" not in said
+    assert 'data-mock-part="controls"' in said and "data-mock-form" not in said
     assert "mock-form" not in said and "data-form-part" not in said
 
 
@@ -147,7 +147,7 @@ def test_the_key_block_carries_every_keyed_option_and_every_sentence_and_no_opti
     assert set(key) == {one["id"] for one in QUIZ["questions"]}
     for one in QUIZ["questions"]:
         assert key[one["id"]]["keys"] == [o["id"] for o in one["options"] if o["correct"]]
-    assert 'data-practice-correct' not in said
+    assert "data-practice-correct" not in said
 
 
 def test_a_mock_exam_keeps_its_own_words_and_heading_byte_for_byte():

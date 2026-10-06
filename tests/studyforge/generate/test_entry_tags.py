@@ -34,14 +34,14 @@ def test_the_index_the_rail_and_a_modules_list_carry_each_entrys_languages(tmp_p
     assert '<li data-unit="demo/unit-02" data-entry-lang="aa"' in rail
     assert '<li data-unit="demo/unit-01" data-readable' in text(out, PAGES["Aa only unit"])
     assert '<li data-entry-lang="bb" data-readable="true"><details>' in rail, "the module"
-    assert 'data-entry-label>Aa, Bb</span>' in text(out, "index.html")
+    assert "data-entry-label>Aa, Bb</span>" in text(out, "index.html")
 
 
 def test_under_open_every_link_stays_a_link_and_the_root_names_no_lock(tmp_path):
     out = build(tmp_path, "c", modes("open"))
     page = text(out, PAGES["Both languages"])
-    assert 'data-outside' not in page and "data-pager" not in page
-    assert 'aria-disabled' not in text(out, "index.html")
+    assert "data-outside" not in page and "data-pager" not in page
+    assert "aria-disabled" not in text(out, "index.html")
     assert re.search(r'<a rel="prev" href="[^"]*unit-03', page), "the bar walks through it"
 
 

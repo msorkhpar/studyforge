@@ -9,13 +9,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from studyforge.execute import CODE_COPY, ROOT_DIR, pair
-from studyforge.execute import test_runs as runs_of
-from studyforge.execute import test_workdir as workdir_of
 from studyforge.execute import test_command as command_for
 from studyforge.execute import test_commands as allowlist
+from studyforge.execute import test_runs as runs_of
+from studyforge.execute import test_workdir as workdir_of
 from studyforge.exercise import require_command
 from tests.studyforge.execute.test_codepair import JAVA, MAIN, corpus
-
 
 # ⭐ One command per kind of test: pytest, `node --test`, Maven's (unchanged) and Gradle's.
 FOUR = ("gradle", "java", "kotlin", "node", "python")
@@ -52,15 +51,31 @@ def test_every_language_of_the_four_pairs_and_names_one_command_in_the_copy(tmp_
     root = examples(tmp_path)
     # ⭐ A Python test names its file from the copy's root, which is where it starts.
     assert argv_of(root, "py/bpe.py") == [
-        "python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "py/test_bpe.py"
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "py/test_bpe.py",
     ]
     assert argv_of(root, "ts/bpe.ts") == ["node", "--test", f"{CODE_COPY}/ts/bpe.test.ts"]
     gradle = ["gradle", "--offline", "-q", "-p"]
     assert argv_of(root, "jv/src/main/java/demo/Greeter.java") == [
-        *gradle, f"{CODE_COPY}/jv", "cleanTest", "test", "--tests", "demo.GreeterTest"
+        *gradle,
+        f"{CODE_COPY}/jv",
+        "cleanTest",
+        "test",
+        "--tests",
+        "demo.GreeterTest",
     ]
     assert argv_of(root, "kt/src/test/kotlin/demo/CounterTest.kt") == [
-        *gradle, f"{CODE_COPY}/kt", "cleanTest", "test", "--tests", "demo.CounterTest"
+        *gradle,
+        f"{CODE_COPY}/kt",
+        "cleanTest",
+        "test",
+        "--tests",
+        "demo.CounterTest",
     ]
     for where in ("py/bpe.py", "ts/bpe.ts", "jv/src/main/java/demo/Greeter.java"):
         assert pair(root, where, FOUR).test is not None
@@ -99,8 +114,15 @@ def test_a_gradle_subproject_is_addressed_below_the_settings_file_that_names_it(
     root = examples(tmp_path, extra)
     argv = argv_of(root, "multi/app/src/main/kotlin/a/App.kt")
     assert argv == [
-        "gradle", "--offline", "-q", "-p", f"{CODE_COPY}/multi", ":app:cleanTest", ":app:test",
-        "--tests", "a.AppTest",
+        "gradle",
+        "--offline",
+        "-q",
+        "-p",
+        f"{CODE_COPY}/multi",
+        ":app:cleanTest",
+        ":app:test",
+        "--tests",
+        "a.AppTest",
     ]
     assert require_command(argv, "test_command", "a code test") == tuple(argv)
     # ⛔ A directory whose name Gradle would not take unchanged gets no command, never a wrong one.
@@ -117,7 +139,11 @@ def test_where_a_module_holds_a_pom_the_maven_command_is_chosen_even_beside_grad
     both = ("gradle", "java", "maven")
     path = f"{MAIN}/Types.java"
     assert command_for(root, pair(root, path, both), both)[:5] == [
-        "mvn", "-B", "-o", "-f", f"{CODE_COPY}/pom.xml"
+        "mvn",
+        "-B",
+        "-o",
+        "-f",
+        f"{CODE_COPY}/pom.xml",
     ]
     found = command_for(root, pair(root, path, both), both)
     assert found == command_for(root, pair(root, path, JAVA), JAVA)
@@ -136,8 +162,11 @@ def test_a_python_test_starts_in_the_copys_root_and_every_other_in_the_runners(t
     # copy's root, `python3 -m` puts that root first on the import path.
     root = examples(tmp_path)
     assert workdir_of(pair(root, "py/bpe.py", FOUR)) == CODE_COPY
-    for where in ("ts/bpe.ts", "jv/src/main/java/demo/Greeter.java", "kt/src/test/kotlin/demo/"
-                  "CounterTest.kt"):
+    for where in (
+        "ts/bpe.ts",
+        "jv/src/main/java/demo/Greeter.java",
+        "kt/src/test/kotlin/demo/CounterTest.kt",
+    ):
         assert workdir_of(pair(root, where, FOUR)) == ROOT_DIR
 
 

@@ -128,5 +128,5 @@ def _item(
 
 
 def _tag(placement: Placement, key: str) -> Tag | None:
-    """What a corpus with modes says of an entry that belongs to some languages only."""
+    """Return what a corpus with modes says of an entry that belongs to some languages only."""
     return None if placement.offer is None else placement.offer.tags.get(key)

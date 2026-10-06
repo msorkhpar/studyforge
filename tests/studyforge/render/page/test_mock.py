@@ -14,7 +14,6 @@ import pytest
 from studyforge.exercise import from_document
 from studyforge.render.page import mock, practice
 from tests.studyforge.exercise.quiz import mock_exam
-from tests.studyforge.render.page.pages import sample_placement
 from tests.studyforge.render.page.test_practice import QUIZ, document, panel, section
 
 ORIGIN = {"path": "basics/01.md", "section": "What a class is"}
@@ -95,9 +94,12 @@ def test_the_exam_links_its_own_two_files_relative_to_the_page():
 
 
 def test_a_title_or_a_stem_is_escaped_where_it_could_close_the_data_block():
-    hostile = {**MOCK, "mock": mock_exam.mock(domains=[
-        {"id": "D1", "title": "</script><b>x"}, *mock_exam.DOMAINS[1:]
-    ])}
+    hostile = {
+        **MOCK,
+        "mock": mock_exam.mock(
+            domains=[{"id": "D1", "title": "</script><b>x"}, *mock_exam.DOMAINS[1:]]
+        ),
+    }
     said = markup(hostile)
     assert said.count("</script>") == 3, "a title closed a script element"
     assert block(said, "plan")["domains"][0]["title"] == "</script><b>x"

@@ -38,7 +38,7 @@ LANG_ID = re.compile(r"[a-z0-9][a-z0-9_-]*")
 
 
 def languages_of(value: str) -> tuple[str, ...]:
-    """The ids a `lang` value names, in the order written: one id, or ids joined by one space."""
+    """Return the ids a `lang` value names, in written order: one id, or ids joined by a space."""
     return tuple(value.split(" "))
 
 

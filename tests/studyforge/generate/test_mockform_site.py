@@ -79,6 +79,7 @@ def test_the_page_layout_is_the_opt_out_and_draws_every_question_on_one_page(tmp
 def test_a_multiple_response_question_alone_opts_in(tmp_path):
     from tests.studyforge.exercise.quiz import mock_form
     from tests.studyforge.exercise.quiz.mock_corpus import ORIGIN
+
     pool = mock_form.questions(ORIGIN)
     only = [q for q in pool if q["id"] in ("p9", "p7")]
     for question in only:

@@ -122,7 +122,7 @@ class Placement:
         return self._shared_asset(name)
 
     def mode_slots(self) -> dict[str, str]:
-        """The reading-modes slots of the skeleton: all `''` for a corpus declaring no modes."""
+        """Return the skeleton's reading-modes slots: all `''` for a corpus declaring no modes."""
         return modes.slots(self.offer, self._shared_asset, self.entry)
 
     def media(self, kind: str, source: object) -> str:

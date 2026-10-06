@@ -21,7 +21,6 @@ from tests.studyforge.execute.transcripts_pytest import (
     PYTEST_QUIET_PASS,
 )
 
-
 # --- pytest: chosen by the command, never by being the declared runtime ----------------------
 
 CLAUDE_TOOLS = ("gradle", "java", "kotlin", "node", "python")

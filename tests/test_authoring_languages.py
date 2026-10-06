@@ -61,9 +61,7 @@ def test_the_exercises_page_and_the_readme_each_have_a_line_for_every_language()
 def test_a_removed_line_is_named_by_the_reading(language):
     for text in (exercises_section(), readme_section()):
         kept = "\n".join(
-            line
-            for line in text.splitlines()
-            if not re.match(rf"(\| |- \*\*){language}\b", line)
+            line for line in text.splitlines() if not re.match(rf"(\| |- \*\*){language}\b", line)
         )
         assert missing(kept) == [language]
 

@@ -41,8 +41,11 @@ def test_node_writes_the_serialised_index_of_the_documents():
 
 @pytest.mark.parametrize(
     ("body", "reason"),
-    [("exit 3", "node exited with status 3"), ("echo not-json", "node wrote no serialised index"),
-     ("echo '[1]'", "node wrote no serialised index")],
+    [
+        ("exit 3", "node exited with status 3"),
+        ("echo not-json", "node wrote no serialised index"),
+        ("echo '[1]'", "node wrote no serialised index"),
+    ],
 )
 def test_a_node_that_fails_names_the_reason(tmp_path, body, reason):
     with pytest.raises(Unbuilt, match=reason):

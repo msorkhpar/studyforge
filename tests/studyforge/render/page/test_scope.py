@@ -26,8 +26,9 @@ def test_cards_citing_several_pages_are_said_to_come_from_several_pages():
 def test_a_bank_is_judged_by_its_questions_citations_the_same_way():
     from tests.studyforge.skills.exercises.authoring import gauge_questions
 
-    one = Exercise(None, None, None, None, "generated", "advisory", kind="quiz",
-                   questions=gauge_questions())
+    one = Exercise(
+        None, None, None, None, "generated", "advisory", kind="quiz", questions=gauge_questions()
+    )
     assert scope.review_template(one) == scope.REVIEW_PAGE
     from dataclasses import replace
 

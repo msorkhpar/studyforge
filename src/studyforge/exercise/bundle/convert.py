@@ -127,7 +127,7 @@ def _convert_bundle(directory: Path, name: str, left: list, write: bool) -> bool
     try:
         bundle = bundle_of(_decoded(directory / BUNDLE_FILENAME, name), name)
         reference = (directory / "reference" / bundle.main_file).read_bytes().decode("utf-8")
-    except (ExerciseError, OSError, ValueError):
+    except ExerciseError, OSError, ValueError:
         left.append((name, 0, "the bundle could not be read"))
         return False
     record = _record(directory)
@@ -161,7 +161,7 @@ def _prove(full: Path, reference: str, main_file: str, position: int, name: str)
     try:
         data = full.read_bytes()
         text = data.decode("utf-8")
-    except (OSError, UnicodeDecodeError):
+    except OSError, UnicodeDecodeError:
         return "the plant could not be read as text"
     spec = derive(reference, text, main_file)
     if spec is None:
@@ -183,7 +183,7 @@ def _decoded(path: Path, name: str) -> object:
     try:
         decoded = json.loads(path.read_text("utf-8"))
         assert_clean(decoded, name)
-    except (OSError, ValueError, PersonalDataLeak):
+    except OSError, ValueError, PersonalDataLeak:
         raise ExerciseError(f"{name}: a bundle file could not be read as clean JSON.") from None
     return decoded
 
@@ -197,13 +197,13 @@ def _record(directory: Path) -> dict | None:
     try:
         decoded = json.loads(raw.decode("utf-8"))
         assert_clean(decoded, directory.name)
-    except (UnicodeDecodeError, ValueError, PersonalDataLeak):
+    except UnicodeDecodeError, ValueError, PersonalDataLeak:
         return {}
     return decoded if _encode(decoded) == raw else {}
 
 
 def _encode(document: object) -> bytes:
-    """The encoding every record is written in (see `skills.exercises.gating.json_bytes`)."""
+    """Return the encoding every record is written in (see `skills.exercises.gating.json_bytes`)."""
     return (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
 
 
@@ -251,7 +251,7 @@ def _write(directory, planned, reference, main_file, record, record_bytes, name)
             text = materialise(reference, spec_of(_decoded(spec, name), name), main_file, name)
             if text.encode("utf-8") != before[position]:
                 raise ExerciseError(f"{name}: a converted plant did not read back identical.")
-    except (ExerciseError, OSError, ValueError):
+    except ExerciseError, OSError, ValueError:
         for full, spec, data, _spec_data, _case in planned.values():
             full.write_bytes(data)
             spec.unlink(missing_ok=True)

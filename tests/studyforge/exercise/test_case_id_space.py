@@ -18,7 +18,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.exercise import (
-    CASE_ID_PERMITTED,
     EDGE,
     MAIN,
     Case,
@@ -33,7 +32,6 @@ from studyforge.exercise.cases import CASE_ID
 from studyforge.exercise.gates import G1, G2, G3, G4, G5, plant_role, require_role
 from studyforge.exercise.gates.runs import FIRST, STARTER
 from studyforge.progress.document import next_entry
-from studyforge.render.page import render
 from studyforge.serve.routes.breakdown import CASE_LINE, fold, said
 from tests.studyforge.exercise.gates.workspace import (
     EMPTY_EDGE,
@@ -265,9 +263,9 @@ def test_the_panel_carries_a_spaced_id_whole_in_its_attribute():
 def test_the_stream_line_says_a_spaced_id_unscathed_and_the_panel_s_parser_reads_it_back():
     # ⭐ The panel's own regular expression is read out of the shipped script, so
     # a change to either side that stops them meeting turns this red.
-    script = (
-        Path(__file__).parents[3] / "src/studyforge/render/assets/practice.js"
-    ).read_text(encoding="utf-8")
+    script = (Path(__file__).parents[3] / "src/studyforge/render/assets/practice.js").read_text(
+        encoding="utf-8"
+    )
     source = re.search(r"var CASE_LINE = /(.+)/;", script)
     assert source is not None
     parser = re.compile(source.group(1))

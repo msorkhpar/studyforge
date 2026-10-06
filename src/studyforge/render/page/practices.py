@@ -138,10 +138,8 @@ def card(section: dict, document: dict, placement: Placement, unit: object) -> s
     )
 
 
-def _edited_card(
-    entry: editions.Entry, document: dict, placement: Placement, unit: object
-) -> str:
-    """The one card of a practice written in several languages."""
+def _edited_card(entry: editions.Entry, document: dict, placement: Placement, unit: object) -> str:
+    """Return the one card of a practice written in several languages."""
     section = entry.first
     exercise = _exercise(section)
     graded = [

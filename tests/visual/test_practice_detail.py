@@ -1,7 +1,7 @@
 """What a run reported about each case, drawn under the case in the panel, in a browser.
 
-⛔ **WHY A BROWSER.** The claim is about a page that has just finished a run: the detail lines arrive
-on the run's own
+⛔ **WHY A BROWSER.** The claim is about a page that has just finished a run: the detail lines
+arrive on the run's own
 stream, and what a reader sees is those lines joined to the cases Python rendered — a failure
 message and a log under
 the right case, printed text kept apart from the log, and nothing at all where the server sent no
@@ -65,7 +65,7 @@ def verdicts(passed):
     return [said(case["id"], passed[case["id"]]) for case in CASES]
 
 
-def test_each_case_shows_its_message_its_log_and_its_printed_text(panel):
+def test_each_case_shows_its_message_its_log_and_its_printed_text(panel):  # noqa: F811
     page, origin = panel
     state = {"test_greets": False, "test_empty": True, "test_accent": True}
     drawn = submit(
@@ -94,7 +94,7 @@ def test_each_case_shows_its_message_its_log_and_its_printed_text(panel):
     assert "--- detail" not in drawn["output"]  # taken off the stream like a case line
 
 
-def test_text_with_markup_is_text(panel):
+def test_text_with_markup_is_text(panel):  # noqa: F811
     page, origin = panel
     state = {"test_greets": False, "test_empty": True, "test_accent": True}
     markup = line(
@@ -104,7 +104,7 @@ def test_text_with_markup_is_text(panel):
     assert drawn["rows"][0]["message"] == "<b>x</b>" and drawn["rows"][0]["log"] == "<i>y</i>"
 
 
-def test_text_the_tool_records_once_is_shown_once_and_says_so(panel):
+def test_text_the_tool_records_once_is_shown_once_and_says_so(panel):  # noqa: F811
     page, origin = panel
     state = {"test_greets": True, "test_empty": True, "test_accent": True}
     whole = line(run=True, log=[], out=["whole run text"], err=[], truncated=True, perCaseOut=False)
@@ -114,9 +114,9 @@ def test_text_the_tool_records_once_is_shown_once_and_says_so(panel):
     assert "dropped" in drawn["run"]
 
 
-def test_a_run_without_detail_draws_exactly_what_it_drew_before(panel):
-    # ⭐ The compatibility clause: a server that sends no detail line leaves no trace of this part in
-    # the panel.
+def test_a_run_without_detail_draws_exactly_what_it_drew_before(panel):  # noqa: F811
+    # ⭐ The compatibility clause: a server that sends no detail line leaves no trace of this part
+    # in the panel.
     page, origin = panel
     state = {"test_greets": True, "test_empty": False, "test_accent": True}
     drawn = submit(page, origin, verdicts(state))

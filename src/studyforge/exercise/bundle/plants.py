@@ -122,8 +122,7 @@ def spec_of(value: object, where: str) -> PlantSpec:
     """Read a spec file's decoded object, refusing every way it can be wrong."""
     if not isinstance(value, dict) or tuple(value) != SPEC_KEYS:
         raise ExerciseError(
-            f"{where}: a spec plant's file holds exactly the keys {list(SPEC_KEYS)}, in that "
-            f"order."
+            f"{where}: a spec plant's file holds exactly the keys {list(SPEC_KEYS)}, in that order."
         )
     if value["plant_version"] != PLANT_VERSION or isinstance(value["plant_version"], bool):
         raise ExerciseError(
@@ -235,7 +234,7 @@ def read_plant(base: Path, bundle: Bundle, position: int, reference: str, where:
         if full.is_file():
             return full.read_text(encoding="utf-8")
         decoded = json.loads(spec.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, ValueError):
+    except OSError, UnicodeDecodeError, ValueError:
         raise ExerciseError(f"{named} could not be read as text this build carries.") from None
     assert_clean(decoded, named)
     return materialise(reference, spec_of(decoded, named), bundle.main_file, named)

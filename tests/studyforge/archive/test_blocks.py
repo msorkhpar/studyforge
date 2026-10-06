@@ -450,11 +450,7 @@ def test_start_and_output_are_the_optional_keys_a_list_and_an_example_carry():
     # ⛔ An optional key sits after a block's fields, so the fields keep
     # their order and a block without it is unchanged.
     assert BLOCK_OPTIONAL == {
-        name: ("start",)
-        if name == "list"
-        else ("output", "support")
-        if name == "example"
-        else ()
+        name: ("start",) if name == "list" else ("output", "support") if name == "example" else ()
         for name in BLOCK_TYPES
     }
 

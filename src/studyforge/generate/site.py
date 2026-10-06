@@ -67,20 +67,20 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import scrub
 from studyforge.contents import status
+from studyforge.execute import NODE_ON_PATH, search_index_builder
 from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.entrylanguages import offer_of
-from studyforge.generate.media import unit_media
 from studyforge.generate.exampleruns import wanted as has_example_run
+from studyforge.generate.media import unit_media
 from studyforge.generate.mockexam import form_wanted as has_mock_form
-from studyforge.generate.revision import has_decks, has_reviews
 from studyforge.generate.mockexam import wanted as has_mock_exam
 from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
+from studyforge.generate.revision import has_decks, has_reviews
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
-from studyforge.execute import NODE_ON_PATH, search_index_builder
 from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents

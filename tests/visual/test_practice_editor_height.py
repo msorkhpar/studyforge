@@ -46,7 +46,7 @@ def submit(page: OpenPage, origin: served.Served) -> dict:
     origin.runs.said = tuple(panes.said(case, panes.VERDICTS[case]) for case in panes.VERDICTS)
     page.evaluate(
         "document.querySelector('section[data-practice][data-workspace-open]"
-        " [data-practice-act=\"test\"]').click()"
+        ' [data-practice-act="test"]\').click()'
     )
     origin.runs.started.wait(panes.SETTLE)
     origin.runs.release.set()

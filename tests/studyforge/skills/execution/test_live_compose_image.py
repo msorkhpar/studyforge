@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import secrets
 import shutil
 import subprocess
@@ -125,8 +124,12 @@ for line in lines:
 
 def docker(*arguments: str, check: bool = True, stdin: str | None = None) -> str:
     done = subprocess.run(  # noqa: S603 - fixed argv, no shell
-        ["docker", "--context", "desktop-linux", *arguments], capture_output=True, text=True,
-        check=False, input=stdin, stdin=None if stdin is not None else subprocess.DEVNULL,
+        ["docker", "--context", "desktop-linux", *arguments],
+        capture_output=True,
+        text=True,
+        check=False,
+        input=stdin,
+        stdin=None if stdin is not None else subprocess.DEVNULL,
         timeout=300,
     )
     if check and done.returncode:
@@ -154,8 +157,11 @@ class World:
         entries = [(".", ["python3", name]) for name in PROGRAMS]
         document = manifest_document(
             corpus_api=8,
-            live={"host": "allowed.test", "key_variable": NAME,
-                  "examples": [{"path": "sources/app/pom.xml", "command": entries[0][1]}]},
+            live={
+                "host": "allowed.test",
+                "key_variable": NAME,
+                "examples": [{"path": "sources/app/pom.xml", "command": entries[0][1]}],
+            },
         )
         manifest = parse(json.dumps(document))
         made = onboard.generate(manifest, editor_text=editor_text(), root=self.root)
@@ -174,8 +180,12 @@ class World:
         (proof / "client.py").write_text(CLIENT, encoding="utf-8")
         labels = {"labels": {"org.studyforge.proof": "live-compose"}}
         stand = {
-            "image": SITE_IMAGE, "profiles": ["live"], "command": ["python", "/p/standin.py"],
-            "volumes": ["./proof:/p:ro"], "read_only": True, **labels,
+            "image": SITE_IMAGE,
+            "profiles": ["live"],
+            "command": ["python", "/p/standin.py"],
+            "volumes": ["./proof:/p:ro"],
+            "read_only": True,
+            **labels,
         }
         override = {
             "services": {
@@ -183,55 +193,112 @@ class World:
                     "command": ["python3", "/opt/studyforge/swapped.py"],
                     "volumes": ["./proof/swapped.py:/opt/studyforge/swapped.py:ro"],
                     "environment": {
-                        "EGRESS_ALLOW_HOST": "allowed.test", "PYTHONDONTWRITEBYTECODE": "1",
+                        "EGRESS_ALLOW_HOST": "allowed.test",
+                        "PYTHONDONTWRITEBYTECODE": "1",
                     },
                     **labels,
                 },
                 "live": {"environment": {"STUDYFORGE_LIVE_TIMEOUT": "6"}, **labels},
                 "runner": dict(labels),
-                "allowed-api": {**stand, "environment": {"WHO": "ALLOWED-STANDIN"},
-                                "networks": {"live-out": {"aliases": ["allowed.test"]}}},
-                "denied-api": {**stand, "environment": {"WHO": "DENIED-STANDIN"},
-                               "networks": {"live-out": {"aliases": ["denied.test"]}}},
+                "allowed-api": {
+                    **stand,
+                    "environment": {"WHO": "ALLOWED-STANDIN"},
+                    "networks": {"live-out": {"aliases": ["allowed.test"]}},
+                },
+                "denied-api": {
+                    **stand,
+                    "environment": {"WHO": "DENIED-STANDIN"},
+                    "networks": {"live-out": {"aliases": ["denied.test"]}},
+                },
             },
             "networks": {"runs": dict(labels), "live-net": dict(labels), "live-out": dict(labels)},
         }
         (self.compose / "override.json").write_text(json.dumps(override), encoding="utf-8")
         uid = engine.host_user() or "1000:1000"
         self.environment = {
-            "STUDYFORGE_PROJECT": self.project, "STUDYFORGE_RUNNER_IMAGE": IMAGE,
-            "STUDYFORGE_SITE_IMAGE": SITE_IMAGE, "EDITOR_IMAGE": "unused",
-            "CODE_SERVER_PASSWORD": "unused", "HOST_UID": uid.split(":")[0],
+            "STUDYFORGE_PROJECT": self.project,
+            "STUDYFORGE_RUNNER_IMAGE": IMAGE,
+            "STUDYFORGE_SITE_IMAGE": SITE_IMAGE,
+            "EDITOR_IMAGE": "unused",
+            "CODE_SERVER_PASSWORD": "unused",
+            "HOST_UID": uid.split(":")[0],
             "HOST_GID": uid.split(":")[1],
         }
-        self.run_compose("--profile", "live", "up", "-d", "--wait", "live", "egress", "runner",
-                         "allowed-api", "denied-api")
+        self.run_compose(
+            "--profile",
+            "live",
+            "up",
+            "-d",
+            "--wait",
+            "live",
+            "egress",
+            "runner",
+            "allowed-api",
+            "denied-api",
+        )
 
     def run_compose(self, *arguments: str) -> str:
         done = subprocess.run(  # noqa: S603 - fixed argv, no shell
-            ["docker", "--context", "desktop-linux", "compose", "-f", "compose.yaml",
-             "-f", "override.json", *arguments],
-            cwd=self.compose, env={**os.environ, **self.environment}, capture_output=True,
-            text=True, check=False, stdin=subprocess.DEVNULL, timeout=600,
+            [
+                "docker",
+                "--context",
+                "desktop-linux",
+                "compose",
+                "-f",
+                "compose.yaml",
+                "-f",
+                "override.json",
+                *arguments,
+            ],
+            cwd=self.compose,
+            env={**os.environ, **self.environment},
+            capture_output=True,
+            text=True,
+            check=False,
+            stdin=subprocess.DEVNULL,
+            timeout=600,
         )
         if done.returncode:
             raise AssertionError(done.stderr)
         return done.stdout + done.stderr
 
     def container(self, service: str) -> str:
-        return docker("ps", "-aq", "--filter", f"label=com.docker.compose.project={self.project}",
-                      "--filter", f"label=com.docker.compose.service={service}").split()[0]
+        return docker(
+            "ps",
+            "-aq",
+            "--filter",
+            f"label=com.docker.compose.project={self.project}",
+            "--filter",
+            f"label=com.docker.compose.service={service}",
+        ).split()[0]
 
     def inspect(self, service: str) -> dict:
         return json.loads(docker("inspect", self.container(service)))[0]
 
     def client(self, mode: str, program: str, key: str | None = None) -> str:
         return docker(
-            "run", "--rm", "-i", "--network", f"{self.project}_runs", "--label", LABEL,
-            "--read-only", "--cap-drop", "ALL", "-v", f"{engine.bindable(SRC)}:/src:ro",
-            "-v", f"{engine.bindable(self.compose / 'proof')}:/p:ro",
-            "-e", "PYTHONDONTWRITEBYTECODE=1",
-            SITE_IMAGE, "python", "/p/client.py", mode, program, stdin=(key or self.key) + "\n",
+            "run",
+            "--rm",
+            "-i",
+            "--network",
+            f"{self.project}_runs",
+            "--label",
+            LABEL,
+            "--read-only",
+            "--cap-drop",
+            "ALL",
+            "-v",
+            f"{engine.bindable(SRC)}:/src:ro",
+            "-v",
+            f"{engine.bindable(self.compose / 'proof')}:/p:ro",
+            "-e",
+            "PYTHONDONTWRITEBYTECODE=1",
+            SITE_IMAGE,
+            "python",
+            "/p/client.py",
+            mode,
+            program,
+            stdin=(key or self.key) + "\n",
         )
 
     def holders(self, service: str) -> dict[str, list[str]]:

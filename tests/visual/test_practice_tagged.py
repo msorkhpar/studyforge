@@ -24,19 +24,19 @@ MODE_RULE = (
     " { display: block; }"
 )
 
-TAG = """
-(() => {
+TAG = f"""
+(() => {{
   const style = document.createElement('style');
-  style.textContent = %r;
+  style.textContent = {MODE_RULE!r};
   document.head.appendChild(style);
   document.documentElement.setAttribute('data-mode', 'python');
-  document.querySelectorAll('section[data-practice]').forEach((one) => {
+  document.querySelectorAll('section[data-practice]').forEach((one) => {{
     one.setAttribute('data-lang', 'java');
     one.setAttribute('data-linked', '');
-  });
+  }});
   return true;
-})()
-""" % MODE_RULE
+}})()
+"""
 
 
 @pytest.fixture(scope="module")
@@ -62,10 +62,13 @@ def test_the_editor_fills_the_pane_instead_of_keeping_eight_lines(
 ) -> None:
     reading = opened(open_page, origin)
     panel, editor = reading["panel"], reading["editor"]
-    assert open_page.evaluate(
-        "getComputedStyle(document.querySelector("
-        "'section[data-practice][data-workspace-open]')).display"
-    ) == "flex"
+    assert (
+        open_page.evaluate(
+            "getComputedStyle(document.querySelector("
+            "'section[data-practice][data-workspace-open]')).display"
+        )
+        == "flex"
+    )
     assert editor["height"] >= (panel["height"] - 160) * 0.7, (editor, panel)
     capture(open_page, capture_dir, "practice-tagged-fills.png")
 

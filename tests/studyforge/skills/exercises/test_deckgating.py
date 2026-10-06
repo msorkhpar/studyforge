@@ -28,10 +28,18 @@ def _brief(tmp_path):
 
 def cards() -> tuple[Card, ...]:
     return (
-        Card("c-hour", "When is the gauge read?", "At the same hour every day.",
-             Origin("notes/gauge.md", "Taking a reading")),
-        Card("c-book", "When is a reading copied into the book?", "On the same day.",
-             Origin("notes/gauge.md", "Writing it down")),
+        Card(
+            "c-hour",
+            "When is the gauge read?",
+            "At the same hour every day.",
+            Origin("notes/gauge.md", "Taking a reading"),
+        ),
+        Card(
+            "c-book",
+            "When is a reading copied into the book?",
+            "On the same day.",
+            Origin("notes/gauge.md", "Writing it down"),
+        ),
     )
 
 

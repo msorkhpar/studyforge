@@ -122,7 +122,11 @@ def test_a_spec_plant_identical_to_the_reference_is_refused(tmp_path):
     with pytest.raises(ExerciseError, match="identical to the reference"):
         gate_code(
             replace(made, plants={NEGATIVE.id: spec}),
-            brief, ledger, Running(), source="demo", where="w",
+            brief,
+            ledger,
+            Running(),
+            source="demo",
+            where="w",
         )
 
 

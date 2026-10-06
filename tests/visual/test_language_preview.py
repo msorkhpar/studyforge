@@ -51,7 +51,7 @@ def test_the_preview_of_a_corpus_of_four_languages_builds_and_replaces_every_pan
 ) -> None:
     page = (previews["modes"] / UNIT).read_text(encoding="utf-8")
     assert page.count('data-preview-note="practice"') == 4
-    assert "data-practice-part=\"editor\"" not in page, "no editor, run or submit is left"
+    assert 'data-practice-part="editor"' not in page, "no editor, run or submit is left"
     panels = re.findall(r'<section data-practice="[^"]*"[^>]*>', page)
     assert [re.search(r'data-lang="([^"]+)"', one).group(1) for one in panels] == [
         "aa bb",

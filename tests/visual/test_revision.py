@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import json
 import time
-from pathlib import Path
 
 import pytest
 
@@ -40,8 +39,11 @@ STEPS = (1, 3, 7)
 @pytest.fixture(scope="module")
 def deck_url(tmp_path_factory: pytest.TempPathFactory) -> str:
     root = mock_corpus(
-        tmp_path_factory.mktemp("deck-visual"), mock=False,
-        kind="flashcards", questions=None, cards=CARDS,
+        tmp_path_factory.mktemp("deck-visual"),
+        mock=False,
+        kind="flashcards",
+        questions=None,
+        cards=CARDS,
     )
     return "file://" + str(page_of(root))
 
@@ -102,10 +104,13 @@ def read(page: OpenPage) -> dict:
 
 
 def click(page: OpenPage, selector: str, index: int = 0) -> None:
-    assert page.evaluate(
-        f"(() => {{ const all = document.querySelectorAll({json.dumps(selector)});"
-        f" if (!all[{index}]) return false; all[{index}].click(); return true; }})()"
-    ) is True, selector
+    assert (
+        page.evaluate(
+            f"(() => {{ const all = document.querySelectorAll({json.dumps(selector)});"
+            f" if (!all[{index}]) return false; all[{index}].click(); return true; }})()"
+        )
+        is True
+    ), selector
 
 
 def test_a_deck_shows_every_front_and_hides_every_back_and_says_nothing_is_marked(deck):
@@ -153,9 +158,7 @@ def test_the_filter_shows_only_what_is_not_yet_known_and_every_card_known_says_s
 
 
 def test_a_store_that_refuses_changes_nothing_a_reader_sees(deck):
-    deck.evaluate(
-        "Storage.prototype.setItem = function () { throw new Error('refused'); }; true"
-    )
+    deck.evaluate("Storage.prototype.setItem = function () { throw new Error('refused'); }; true")
     click(deck, '[data-deck-act="known"]', 0)
     state = read(deck)
     assert state["count"] == "1 of 4 known" and state["cards"][0]["state"] == "known"

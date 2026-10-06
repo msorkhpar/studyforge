@@ -63,9 +63,7 @@ WORKDIR_IN_LIVE = "/work"
 MARKER = "[redacted]"
 
 #: The refusal's sentence. ⛔ It carries no part of the value.
-BAD_KEY = (
-    "the key is not in the form a live run accepts: 8 to 256 letters, digits, '-' and '_'"
-)
+BAD_KEY = "the key is not in the form a live run accepts: 8 to 256 letters, digits, '-' and '_'"
 
 
 def valid_key(value: object) -> bool:
@@ -140,7 +138,11 @@ def start(
     """Return the live run's handle; the first command is started before this returns."""
     launcher = LiveLauncher(service, cwd, key)
     return RunHandle(
-        [list(argv)], launcher, LineGate((WORKDIR_IN_LIVE,)), mode="live", timeout=timeout,
+        [list(argv)],
+        launcher,
+        LineGate((WORKDIR_IN_LIVE,)),
+        mode="live",
+        timeout=timeout,
         grace=grace,
     )
 

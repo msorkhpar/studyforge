@@ -109,6 +109,8 @@ about it.
 
 from __future__ import annotations
 
+from studyforge.exercise.gates.cards import C1, C2, CARDS, check_cards
+from studyforge.exercise.gates.cards import cited_role as cited_card_role
 from studyforge.exercise.gates.code import CODE, G1, G2, G3, G4, G5, check
 from studyforge.exercise.gates.derivation import D1, D2, DERIVATION, TESTS, faults, hole, holes
 from studyforge.exercise.gates.digests import (
@@ -144,8 +146,6 @@ from studyforge.exercise.gates.families import (
     register,
     registered,
 )
-from studyforge.exercise.gates.cards import C1, C2, CARDS, check_cards
-from studyforge.exercise.gates.cards import cited_role as cited_card_role
 from studyforge.exercise.gates.quiz import QUIZ
 from studyforge.exercise.gates.record import (
     RECORD_KEYS,

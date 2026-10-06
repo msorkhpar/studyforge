@@ -15,7 +15,6 @@ import pytest
 
 from studyforge.execute import published
 from studyforge.skills.execution import onboard, siteservice
-from tests.studyforge.skills.execution.contracts import manifest_document
 from tests.studyforge.skills.execution.test_instance import generated
 from tests.studyforge.skills.execution.test_siteservice import service_block
 

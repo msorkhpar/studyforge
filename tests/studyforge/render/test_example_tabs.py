@@ -40,7 +40,7 @@ def test_each_mode_lists_the_languages_that_have_a_tab_in_its_own_order():
     assert 'html[data-mode="bb-first"] div[data-example] [data-lang="bb"] { order: 0; }' in css
     assert 'html[data-mode="bb-first"] div[data-example] [data-lang="aa"] { order: 1; }' in css
     assert 'html[data-mode="bb-first"] div[data-example] [data-example-label]' not in css
-    assert f'{one_aa} [data-example-label] {{ display: none; }}' in css
+    assert f"{one_aa} [data-example-label] {{ display: none; }}" in css
 
 
 def test_the_script_is_given_each_modes_tab_order():

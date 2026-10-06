@@ -41,7 +41,7 @@ MOCK_WHERE = "a unit's practice document"
 
 
 def wanted(corpus: Corpus) -> bool:
-    """Does any unit of this corpus carry a mock exam?"""
+    """Answer whether any unit of this corpus carries a mock exam."""
     return any(_has_mock(source.directory) for source in corpus.units)
 
 
@@ -52,7 +52,7 @@ FORM_QUESTION_KEYS = ("select",)
 
 
 def form_wanted(corpus: Corpus) -> bool:
-    """Does any unit need the exam form's files (`render.page.mockform`)?
+    """Answer whether any unit needs the exam form's files (`render.page.mockform`).
 
     ⭐ Two readers use them: a mock exam that opts into the form, and a plain quiz, which is drawn
     one question at a time unless its record says `layout: page`.
@@ -69,11 +69,11 @@ PAGE_LAYOUT = "page"
 
 
 def _has_stepped_quiz(directory) -> bool:
-    """Does any practice document here declare a plain quiz that is not opted out of the stepper?"""
+    """Answer whether a practice document here has a plain quiz not opted out of the stepper."""
     for path in sorted(directory.glob(PRACTICE_GLOB)):
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except OSError, ValueError:
             continue
         assert_clean(document, MOCK_WHERE)
         record = document.get("exercise") if isinstance(document, dict) else None
@@ -102,11 +102,11 @@ def _opts_in(record: dict) -> bool:
 
 
 def _has_mock(directory, form: bool = False) -> bool:
-    """Does any practice document in this unit's directory declare `mock`?"""
+    """Answer whether any practice document in this unit's directory declares `mock`."""
     for path in sorted(directory.glob(PRACTICE_GLOB)):
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except OSError, ValueError:
             continue
         assert_clean(document, MOCK_WHERE)
         record = document.get("exercise") if isinstance(document, dict) else None

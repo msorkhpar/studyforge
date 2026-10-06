@@ -14,8 +14,15 @@ WHERE = "here"
 
 def _bank(steps: tuple[int, ...]) -> Exercise:
     return Exercise(
-        None, None, None, None, "generated", "advisory", kind="quiz",
-        questions=gauge_questions(), review=Review(steps),
+        None,
+        None,
+        None,
+        None,
+        "generated",
+        "advisory",
+        kind="quiz",
+        questions=gauge_questions(),
+        review=Review(steps),
     )
 
 

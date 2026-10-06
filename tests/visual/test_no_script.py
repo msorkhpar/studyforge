@@ -39,7 +39,7 @@ PROSE = {
 #: words, so renaming a label cannot re-admit them.
 MASTHEAD = (
     "Array.from(document.querySelector('header').children)"
-    ".filter(el => !el.matches('[data-section=\"topbar\"], [data-section=\"search\"]'))"
+    '.filter(el => !el.matches(\'[data-section="topbar"], [data-section="search"]\'))'
     ".map(el => el.innerText).join(' ').replace(/\\s+/g, ' ').trim()"
 )
 

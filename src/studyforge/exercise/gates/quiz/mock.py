@@ -102,7 +102,7 @@ def _sentences(text: str) -> int:
 
 
 def _scenario_findings(mock, questions) -> list[str]:
-    """What is wrong with the scenarios: an undeclared one, an unused one, a context too long."""
+    """Return what is wrong with the scenarios: one undeclared, one unused, a context too long."""
     declared = {one.id for one in mock.scenarios}
     findings: list[str] = []
     for question in questions:
@@ -129,7 +129,7 @@ def _scenario_findings(mock, questions) -> list[str]:
 
 
 def _difficulty_findings(mock, questions) -> list[str]:
-    """What is wrong with the difficulty labels: one nobody declared, one nobody carries."""
+    """Return what is wrong with the difficulty labels: one nobody declared, one nobody carries."""
     declared = {one.id for one in mock.difficulties}
     findings = [
         f"the question {question.stem!r} names a difficulty this exam does not declare"

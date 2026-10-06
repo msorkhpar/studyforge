@@ -125,7 +125,9 @@ def round_trip(out: dict[str, str], where: Path, queries: list[str]) -> dict:
     (where / "round-trip.js").write_text(ROUND_TRIP, encoding="utf-8")
     run = subprocess.run(
         [NODE, str(where / "round-trip.js"), str(where), json.dumps(queries)],
-        capture_output=True, text=True, timeout=300,
+        capture_output=True,
+        text=True,
+        timeout=300,
     )
     assert run.returncode == 0, run.stderr
     return json.loads(run.stdout)
@@ -257,7 +259,7 @@ def test_a_repeated_text_is_written_once_and_resolves_to_the_same_words(monkeypa
     for name in _parse(out[searchindex.INDEX_NAME])["shards"]:
         found += json.loads(out[name][out[name].index("]=[") + 2 : out[name].rindex(";")])
     assert any(isinstance(r[3], int) for r in found)
-    for record, source in zip(found, original):
+    for record, source in zip(found, original, strict=False):
         text = record[3] if isinstance(record[3], str) else found[record[3]][3]
         assert text == source[3]
 
@@ -318,7 +320,9 @@ def opened(out: dict[str, str], where: Path, query: str = "") -> dict:
     (where / "run.js").write_text(HARNESS, encoding="utf-8")
     run = subprocess.run(
         [NODE, str(where / "run.js"), str(where), str(SEARCH_JS), query],
-        capture_output=True, text=True, timeout=300,
+        capture_output=True,
+        text=True,
+        timeout=300,
     )
     assert run.returncode == 0, run.stderr
     return json.loads(run.stdout)
@@ -340,7 +344,10 @@ def test_without_node_the_search_part_builds_the_records_in_order(monkeypatch, t
     seen = opened(out, tmp_path, "Head" if big else "plugin")
     shards = [n for n in out if n.startswith("search-index-")]
     assert seen["loaded"] == [
-        searchindex.LIBRARY_NAME, searchindex.INDEX_NAME, searchindex.BUILD_NAME, *_in_order(shards)
+        searchindex.LIBRARY_NAME,
+        searchindex.INDEX_NAME,
+        searchindex.BUILD_NAME,
+        *_in_order(shards),
     ]
     assert bool(shards) is big
     assert seen["status"] == ""

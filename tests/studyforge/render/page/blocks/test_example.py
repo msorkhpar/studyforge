@@ -70,7 +70,7 @@ def test_the_tabs_are_wai_aria_tabs_with_roving_tabindex_and_linked_ids():
     assert len(pairs) == 2
     for tab, panel in pairs:
         assert f'id="{panel}" aria-labelledby="{tab}"' in page
-    assert "<div role=\"tablist\" aria-label=\"Language\" data-example-tabs hidden>" in page
+    assert '<div role="tablist" aria-label="Language" data-example-tabs hidden>' in page
 
 
 def test_ids_are_minted_from_the_section_and_the_address_so_two_examples_never_share_one():
@@ -90,7 +90,7 @@ def test_a_compiler_message_is_flagged_in_words_and_by_attribute():
 
 def test_a_corpus_that_declares_no_modes_gets_panels_under_labels_and_no_tab_bar():
     page = draw(offer=None)
-    assert "role=\"tablist\"" not in page and "role=\"tab\"" not in page
+    assert 'role="tablist"' not in page and 'role="tab"' not in page
     assert page.index('data-lang="aa"') < page.index('data-lang="bb"')
     assert "<p data-example-label>aa</p>" in page, "the id is the label when none is declared"
 

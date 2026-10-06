@@ -1,5 +1,4 @@
-"""A spaced-review bank: the section a quiz that declares `review` draws, and the two files it
-links.
+"""A spaced-review bank: the section a quiz declaring `review` draws, and the files it links.
 
 **What it does.** Renders a bank's questions as the quiz's own (stems, options), plus the schedule,
 inside one section the shared review script turns into a session: it shows the questions that are
@@ -47,8 +46,7 @@ def render(
     grader: str,
     assets: Callable[[str], str],
 ) -> str:
-    """Return one review bank's section; `assets` turns a shared file's name into this page's
-    link."""
+    """Return one review bank's section; `assets` turns a shared file's name into its link."""
     review = exercise.review
     questions = exercise.questions
     if review is None or not questions:
@@ -79,14 +77,12 @@ def _question(asked: Question, key: str) -> str:
         QUESTION_TEMPLATE,
         id=escape_attribute(asked.id),
         stem=inline(asked.stem),
-        options="".join(
-            quiz.option(one, f"{key}:{asked.id}") + quiz.JOIN for one in asked.options
-        ),
+        options="".join(quiz.option(one, f"{key}:{asked.id}") + quiz.JOIN for one in asked.options),
     )
 
 
 def _plan(exercise: Exercise) -> str:
-    """The schedule, as the text of a data block no sentence can close."""
+    """Return the schedule, as the text of a data block no sentence can close."""
     written = json.dumps(
         {"intervals_days": list(exercise.review.intervals_days)},
         ensure_ascii=False,

@@ -85,9 +85,8 @@ from studyforge.render.pageassets.grammars import (
     grammar_for,
     highlighted_languages,
 )
-from studyforge.render.pageassets.search import SEARCH_PARTS
+from studyforge.render.pageassets.search import SEARCH_PARTS, Unbuilt
 from studyforge.render.pageassets.search import files as search_files
-from studyforge.render.pageassets.search import Unbuilt
 from studyforge.render.pageassets.source import (
     ASSET_DIR,
     LICENCE_SUFFIX,

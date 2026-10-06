@@ -18,7 +18,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.exercise import ExerciseError
-from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import Places, PlantSpec, Replacement, bundle_of
 from studyforge.exercise.gates import G1, G2, G3, G4, G5
 from studyforge.skills.exercises import Brief, EditedFile, gate_code, source_case, take
@@ -56,9 +55,7 @@ def test_the_record_digests_every_edited_file_and_names_them(tmp_path):
     held = {path for path, _ in gated.files}
     ws = brief.places.workspace
     assert {f"{ws}/{practice.SETTINGS}", f"{ws}/{practice.NOTES}", f"{ws}/{practice.HOOK}"} <= held
-    bundle = bundle_of(
-        json.loads(dict(gated.files)[brief.places.document].decode("utf-8")), "w"
-    )
+    bundle = bundle_of(json.loads(dict(gated.files)[brief.places.document].decode("utf-8")), "w")
     assert bundle.files == (practice.NOTES, practice.HOOK)
     assert bundle.edited == (practice.SETTINGS, practice.NOTES, practice.HOOK)
 
@@ -97,9 +94,7 @@ def test_a_replacement_naming_a_file_the_reader_does_not_edit_is_refused(tmp_pat
     plants = dict(made.plants)
     plants[practice.GUARD.id] = PlantSpec((Replacement("test_setup.py", "exit 2", "exit 1"),))
     with pytest.raises(ExerciseError):
-        gate_code(
-            replace(made, plants=plants), brief, ledger, Running(), source="demo", where="w"
-        )
+        gate_code(replace(made, plants=plants), brief, ledger, Running(), source="demo", where="w")
 
 
 def test_a_plant_that_does_not_fail_its_own_edge_is_caught_by_g3(tmp_path):

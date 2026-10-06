@@ -180,7 +180,9 @@ def test_with_nothing_stored_the_system_setting_still_wins(
 def test_a_press_on_a_dark_system_chooses_light_and_keeps_it_against_the_system(
     no_choice: OpenPage, built_site: site.Site
 ) -> None:
-    """⭐ The other way: the press chooses the theme the page is not showing, whatever it follows."""
+    """⭐ The other way: the press chooses the theme the page is not showing, whatever it
+    follows.
+    """
     no_choice.open(built_site.url(UNIT_PAGE), scheme="dark")
     assert no_choice.evaluate(CONTROL_READING)["icons"] == ["moon"]
     dark = darkness(no_choice)

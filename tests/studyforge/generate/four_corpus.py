@@ -20,9 +20,7 @@ LANGS = ("aa", "bb", "cc", "dd")
 LABELS = {"aa": "Aa", "bb": "Bb", "cc": "Cc", "dd": "Dd"}
 
 
-def declared(
-    count: int = 4, *, absent: str | None = None, mixed: bool = False, **extra
-) -> dict:
+def declared(count: int = 4, *, absent: str | None = None, mixed: bool = False, **extra) -> dict:
     """The manifest keys for the first `count` languages: one mode each, the first the default.
 
     `absent` is the manifest's `absent_language`, left out when `None`. With `mixed` two more

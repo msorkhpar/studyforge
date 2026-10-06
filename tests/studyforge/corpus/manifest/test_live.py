@@ -54,8 +54,20 @@ def test_a_declared_block_is_read_whole():
 
 @pytest.mark.parametrize(
     "host",
-    ["", "Api.Example.test", "https://api.example.test", "api.example.test:443", "a.test/x",
-     "user@api.example.test", "127.0.0.1", "10.0.0.1", "localhost", "-a.example.test", 3, None],
+    [
+        "",
+        "Api.Example.test",
+        "https://api.example.test",
+        "api.example.test:443",
+        "a.test/x",
+        "user@api.example.test",
+        "127.0.0.1",
+        "10.0.0.1",
+        "localhost",
+        "-a.example.test",
+        3,
+        None,
+    ],
 )
 def test_a_host_that_is_not_a_bare_lower_case_name_is_refused(host):
     refused({**LIVE, "host": host}, "'live.host' must be a bare lower-case hostname")

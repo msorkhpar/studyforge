@@ -43,8 +43,6 @@ def text(out, where):
     return (out / where).read_text(encoding="utf-8")
 
 
-
-
 def block(page: str, ident: str) -> str:
     """One example block's markup: from its opening tag to the next block, or the page's end."""
     start = page.index(f'<div data-example="{ident}"')

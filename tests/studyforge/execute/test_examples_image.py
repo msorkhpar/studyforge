@@ -28,8 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.execute import CODE_COPY, sync
-from studyforge.execute import ROOT_DIR
+from studyforge.execute import CODE_COPY, ROOT_DIR, sync
 from studyforge.execute import test_runs as runs_of
 from tests.harness import engine
 
@@ -127,10 +126,29 @@ def in_container(root: Path, run: tuple[str, list[str]]) -> tuple[int, str]:
     workdir, argv = run
     where = "/w" if workdir == ROOT_DIR else f"/w/{workdir}"
     command = [
-        "docker", "--context", "desktop-linux", "run", "--rm", "--network", "none",
-        "--read-only", "--tmpfs", "/tmp:rw,size=2g", *engine.run_as(),
-        "-e", "HOME=/tmp/home", "-e", "GRADLE_USER_HOME=/tmp/gradle-home",
-        "-v", f"{engine.bindable(root)}:/w", "-w", where, "--entrypoint", argv[0], IMAGE, *argv[1:],
+        "docker",
+        "--context",
+        "desktop-linux",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "--read-only",
+        "--tmpfs",
+        "/tmp:rw,size=2g",
+        *engine.run_as(),
+        "-e",
+        "HOME=/tmp/home",
+        "-e",
+        "GRADLE_USER_HOME=/tmp/gradle-home",
+        "-v",
+        f"{engine.bindable(root)}:/w",
+        "-w",
+        where,
+        "--entrypoint",
+        argv[0],
+        IMAGE,
+        *argv[1:],
     ]
     done = subprocess.run(  # noqa: S603 - fixed argv, no shell
         command, capture_output=True, text=True, check=False, stdin=subprocess.DEVNULL

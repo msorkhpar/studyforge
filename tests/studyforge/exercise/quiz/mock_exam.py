@@ -23,18 +23,48 @@ PASS_MARK = 60
 
 #: `(question id, domain, stem, key letter)` and the three options' texts, in order.
 ROWS = [
-    ("x1", "D1", "At what hour is the gauge read?", "a",
-     ("At the same hour every day", "Whenever it rains", "At the end of the month")),
-    ("x2", "D1", "Beside what is the hour written?", "b",
-     ("Beside the date only", "Beside the number", "Beside the weather")),
-    ("x3", "D2", "On which day is a reading copied into the book?", "c",
-     ("At the end of the month", "On the next quiet day", "On the same day")),
-    ("x4", "D2", "What is a reading nobody wrote down?", "a",
-     ("A reading nobody has", "A reading kept for later", "A reading that is lost and found")),
-    ("x5", "D3", "Why can two readings at different hours not be compared?", "b",
-     ("The gauge resets daily", "The hour changes the number", "The book has no room")),
-    ("x6", "D3", "What makes readings comparable?", "c",
-     ("A bigger gauge", "A second observer", "The same hour each day")),
+    (
+        "x1",
+        "D1",
+        "At what hour is the gauge read?",
+        "a",
+        ("At the same hour every day", "Whenever it rains", "At the end of the month"),
+    ),
+    (
+        "x2",
+        "D1",
+        "Beside what is the hour written?",
+        "b",
+        ("Beside the date only", "Beside the number", "Beside the weather"),
+    ),
+    (
+        "x3",
+        "D2",
+        "On which day is a reading copied into the book?",
+        "c",
+        ("At the end of the month", "On the next quiet day", "On the same day"),
+    ),
+    (
+        "x4",
+        "D2",
+        "What is a reading nobody wrote down?",
+        "a",
+        ("A reading nobody has", "A reading kept for later", "A reading that is lost and found"),
+    ),
+    (
+        "x5",
+        "D3",
+        "Why can two readings at different hours not be compared?",
+        "b",
+        ("The gauge resets daily", "The hour changes the number", "The book has no room"),
+    ),
+    (
+        "x6",
+        "D3",
+        "What makes readings comparable?",
+        "c",
+        ("A bigger gauge", "A second observer", "The same hour each day"),
+    ),
 ]
 
 

@@ -100,8 +100,13 @@ def test_modes_parse_in_order_with_the_first_as_the_default():
     assert reading.default_mode == "alpha-only"
     assert reading.outside_mode == "open"
     assert reading.modes[1] == Mode(
-        "both", "Both", "Alpha prose, Beta tab too", "alpha", ("alpha", "beta"),
-        ("alpha", "beta"), True,
+        "both",
+        "Both",
+        "Alpha prose, Beta tab too",
+        "alpha",
+        ("alpha", "beta"),
+        ("alpha", "beta"),
+        True,
     )
     assert reading.modes[0].practice_choice is False
 
@@ -147,8 +152,12 @@ def test_a_mode_with_no_tabs_is_refused():
 
 
 def test_duplicate_language_ids_are_refused():
-    refused(manifest(languages=[LANGUAGES[0], {**LANGUAGES[1], "id": "alpha"}]),
-            "languages", "'alpha'", "twice")
+    refused(
+        manifest(languages=[LANGUAGES[0], {**LANGUAGES[1], "id": "alpha"}]),
+        "languages",
+        "'alpha'",
+        "twice",
+    )
 
 
 def test_duplicate_mode_ids_are_refused():
@@ -170,8 +179,9 @@ def test_a_fence_label_repeated_in_one_language_is_refused():
 
 @pytest.mark.parametrize("label", ["", "two words", 3, "`"])
 def test_a_malformed_fence_label_is_refused(label):
-    refused(manifest(languages=[{"id": "alpha", "label": "A", "fence_labels": [label]}]),
-            "fence_labels")
+    refused(
+        manifest(languages=[{"id": "alpha", "label": "A", "fence_labels": [label]}]), "fence_labels"
+    )
 
 
 def test_a_default_mode_that_is_not_a_mode_is_refused():

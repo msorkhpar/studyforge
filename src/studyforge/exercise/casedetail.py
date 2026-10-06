@@ -41,8 +41,8 @@ decide a line's kind where they are present.
 All text kept for one run is at most `MAX_LINES` lines and `MAX_BYTES` bytes, and a message at most
 `MAX_MESSAGE` characters; what does not fit is dropped from the FRONT of a stream's tail (the last
 lines are the
-ones a reader needs) and `truncated` says so. ⭐ A report that carries none of this (an older course)
-gives
+ones a reader needs) and `truncated` says so. ⭐ A report that carries none of this (an older
+course) gives
 messages only, and a case with nothing to show has empty tuples.
 """
 
@@ -115,8 +115,8 @@ class _Lines:
 def detail_of(exercise: Exercise, root: Path, where: str, *, started: float) -> Detail | None:
     """Return what the report says per case, or `None` where there is no report to read.
 
-    ⭐ Refuses what `breakdown_of` refuses (a stale or unreadable report, a test no case names), so a
-    reader is
+    ⭐ Refuses what `breakdown_of` refuses (a stale or unreadable report, a test no case names), so
+    a reader is
     never shown text from a run that did not write it. `None` is also the answer for a record with
     no cases.
     """
@@ -160,7 +160,7 @@ def _read(files: tuple[Path, ...], cases: tuple[Case, ...], declared: str, where
 
 
 def _message(element: ElementTree.Element) -> str:
-    """The failure's own message, as the test tool wrote it; empty where the case passed."""
+    """Return the failure's own message, as the test tool wrote it; empty where the case passed."""
     for child in element:
         if child.tag in ("failure", "error"):
             text = child.get("message") or (child.text or "").strip()

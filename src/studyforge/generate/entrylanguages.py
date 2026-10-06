@@ -14,8 +14,8 @@ A corpus that declares no modes gets `{}` and `None`, and no unit is read for it
 
 ⭐ A section may name several languages (`a b`); the unit then belongs to each of them, and
 `offer_of` tells the offer that some section does, which changes how the stylesheet matches
-a tag. ⭐ A module's languages are the union of its units'. A module with one unit that is common, or
-one that has no material yet, is not listed: an entry that may hold something every mode reads
+a tag. ⭐ A module's languages are the union of its units'. A module with one unit that is common,
+or one that has no material yet, is not listed: an entry that may hold something every mode reads
 is never greyed. ⚠️ A unit with no material is not a unit of any language, so it neither tags
 nor untags the module that holds it.
 """
@@ -29,12 +29,12 @@ from studyforge.unit.builder import build_unit
 
 
 def entry_languages(corpus: Corpus) -> dict[str, tuple[str, ...]]:
-    """`unit or group key -> language ids` for each entry that belongs to some languages only."""
+    """Return `unit or group key -> language ids` for each entry of some languages only."""
     return _read(corpus)[0]
 
 
 def _read(corpus: Corpus) -> tuple[dict[str, tuple[str, ...]], bool]:
-    """The entries that belong to some languages only, and whether any section names several."""
+    """Return the entries of some languages only, and whether any section names several."""
     reading = corpus.manifest.reading
     if reading is None or not reading.modes:
         return {}, False
@@ -60,7 +60,7 @@ def _read(corpus: Corpus) -> tuple[dict[str, tuple[str, ...]], bool]:
 
 
 def offer_of(corpus: Corpus) -> modes.Offer | None:
-    """The offer a corpus makes, with the entries that belong to some languages only."""
+    """Return the offer a corpus makes, with the entries that belong to some languages only."""
     reading = corpus.manifest.reading
     if reading is None or not reading.modes:
         return None

@@ -75,7 +75,11 @@ def review_of(value: object, where: str) -> Review:
             f"{where}: 'intervals_days' is a list of 1 to {MOST_STEPS} whole numbers of days, "
             f"and it is {describe(days)}."
         )
-    if days[0] < 1 or days[-1] > MOST_DAYS or any(a >= b for a, b in zip(days, days[1:])):
+    if (
+        days[0] < 1
+        or days[-1] > MOST_DAYS
+        or any(a >= b for a, b in zip(days, days[1:], strict=False))
+    ):
         raise ExerciseError(
             f"{where}: 'intervals_days' grows strictly, from at least 1 day to at most "
             f"{MOST_DAYS}, so a better-known item waits longer."

@@ -227,9 +227,7 @@ def between_units(links: Links | None) -> str:
     """Return the previous/index/next bar, or `''` when nothing is pointed at."""
     if links is None:
         return ""
-    parts = [
-        rendered for field, row in LINK_SLOTS if (rendered := _slot(links, field, row))
-    ]
+    parts = [rendered for field, row in LINK_SLOTS if (rendered := _slot(links, field, row))]
     if not parts:
         return ""
     return templates.fill(BETWEEN_UNITS_TEMPLATE, links="".join(parts))

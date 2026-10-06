@@ -1,5 +1,4 @@
-"""Reading modes — the `languages`, `modes`, `default_mode`, `outside_mode` and
-`absent_language` keys.
+"""Reading modes: the `languages`, `modes`, `default_mode`, `outside_mode`, `absent_language` keys.
 
 **What it does.** Validates the five optional top-level keys with which a corpus
 declares the languages its sections may be tagged with and the modes a reader

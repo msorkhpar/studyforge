@@ -31,9 +31,17 @@ PRINTED_BY = [
 PROFILE_TAG = {
     "profile_tag_api": vendor.PROFILE_TAG_API,
     "printed_by": [
-        "python3", "docker/profile_packages/package_build.py", "--profile", "<profile>",
-        "--image", "<runner|editor>", "--runtimes", vendor.SET_SLOT, "--print-tag",
-        "--platform", "<platform>",
+        "python3",
+        "docker/profile_packages/package_build.py",
+        "--profile",
+        "<profile>",
+        "--image",
+        "<runner|editor>",
+        "--runtimes",
+        vendor.SET_SLOT,
+        "--print-tag",
+        "--platform",
+        "<platform>",
     ],
 }
 

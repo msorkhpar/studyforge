@@ -15,6 +15,7 @@ from tests.studyforge.skills.execution.standalone.test_vendor import PROFILE_TAG
 
 RUNTIMES = ("java", "python")
 
+
 def checkout_of(tmp_path, block=PROFILE_TAG):
     """A synthetic toolchain whose contract carries `block` as its `profile_tag`, or none."""
     document = {"consuming_api": 1, "provides": 6, "component": "code-server-toolchain"}
@@ -36,15 +37,25 @@ def answering(asked, code=0, printed="t/{image}-example-profile:{image}-tag\n"):
 def test_the_toolchain_is_asked_for_each_image_with_the_profile_the_set_and_the_platform(tmp_path):
     asked: list = []
     tags = vendor.profile_tags(
-        checkout_of(tmp_path), "example-profile", RUNTIMES, platform="linux/amd64",
-        run=answering(asked)
+        checkout_of(tmp_path),
+        "example-profile",
+        RUNTIMES,
+        platform="linux/amd64",
+        run=answering(asked),
     )
     assert tags == {"runner": "runner-tag", "editor": "editor-tag"}
     assert [(argv[0], cwd) for argv, cwd in asked] == [(sys.executable, tmp_path)] * 2
     assert asked[0][0][1:] == [
-        "docker/profile_packages/package_build.py", "--profile", "example-profile",
-        "--image", "runner", "--runtimes", "java,python", "--print-tag",
-        "--platform", "linux/amd64",
+        "docker/profile_packages/package_build.py",
+        "--profile",
+        "example-profile",
+        "--image",
+        "runner",
+        "--runtimes",
+        "java,python",
+        "--print-tag",
+        "--platform",
+        "linux/amd64",
     ]
     assert asked[1][0][asked[1][0].index("--image") + 1] == "editor"
 
@@ -52,7 +63,10 @@ def test_the_toolchain_is_asked_for_each_image_with_the_profile_the_set_and_the_
 def test_a_profile_the_toolchain_refuses_is_refused_by_name_without_its_text(tmp_path):
     with pytest.raises(vendor.VendorRefused, match="refused profile example-profile .*exit 2"):
         vendor.profile_tags(
-            checkout_of(tmp_path), "example-profile", RUNTIMES, platform="linux/amd64",
+            checkout_of(tmp_path),
+            "example-profile",
+            RUNTIMES,
+            platform="linux/amd64",
             run=answering([], code=2, printed="refused: some text\n"),
         )
 
@@ -61,21 +75,40 @@ def test_a_profile_the_toolchain_refuses_is_refused_by_name_without_its_text(tmp
 def test_an_answer_that_is_not_one_tag_is_refused(tmp_path, printed):
     with pytest.raises(vendor.VendorRefused, match="printed no tag"):
         vendor.profile_tags(
-            checkout_of(tmp_path), "example-profile", RUNTIMES, platform="linux/amd64",
+            checkout_of(tmp_path),
+            "example-profile",
+            RUNTIMES,
+            platform="linux/amd64",
             run=answering([], printed=printed),
         )
 
 
 def test_the_command_is_the_one_the_contract_names_not_one_written_here(tmp_path):
     asked: list = []
-    named = dict(PROFILE_TAG, printed_by=["python3", "elsewhere.py", "<platform>", "<profile>",
-                                          "<runner|editor>", "<the declared set>"])
+    named = dict(
+        PROFILE_TAG,
+        printed_by=[
+            "python3",
+            "elsewhere.py",
+            "<platform>",
+            "<profile>",
+            "<runner|editor>",
+            "<the declared set>",
+        ],
+    )
     vendor.profile_tags(
-        checkout_of(tmp_path, named), "example-profile", RUNTIMES, platform="linux/arm64",
+        checkout_of(tmp_path, named),
+        "example-profile",
+        RUNTIMES,
+        platform="linux/arm64",
         run=answering(asked, printed="t/x:tag\n"),
     )
     assert asked[0][0][1:] == [
-        "elsewhere.py", "linux/arm64", "example-profile", "runner", "java,python",
+        "elsewhere.py",
+        "linux/arm64",
+        "example-profile",
+        "runner",
+        "java,python",
     ]
 
 
@@ -83,7 +116,10 @@ def test_a_toolchain_that_declares_no_profile_tag_is_refused_and_never_asked(tmp
     asked: list = []
     with pytest.raises(vendor.VendorRefused, match="declares no profile_tag"):
         vendor.profile_tags(
-            checkout_of(tmp_path, None), "example-profile", RUNTIMES, platform="linux/amd64",
+            checkout_of(tmp_path, None),
+            "example-profile",
+            RUNTIMES,
+            platform="linux/amd64",
             run=answering(asked),
         )
     assert asked == []
@@ -105,7 +141,10 @@ def without(slot):
 def test_a_profile_tag_block_this_skill_cannot_fill_is_refused(tmp_path, block, match):
     with pytest.raises(vendor.VendorRefused, match=match):
         vendor.profile_tags(
-            checkout_of(tmp_path, block), "example-profile", RUNTIMES, platform="linux/amd64",
+            checkout_of(tmp_path, block),
+            "example-profile",
+            RUNTIMES,
+            platform="linux/amd64",
             run=answering([]),
         )
 

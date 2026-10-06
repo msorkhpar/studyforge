@@ -23,7 +23,9 @@ def test_an_empty_list_a_repeat_and_a_non_list_are_refused():
 
 def test_the_main_file_comes_first_and_each_further_file_is_named_and_shown_by_suffix():
     reference, starting = shown(
-        "python", "ref = 1", "start = 0",
+        "python",
+        "ref = 1",
+        "start = 0",
         (("settings.json", "{}", '{"a": 1}'), ("tool.xyz", "x", "y")),
     )
     assert [block["type"] for block in reference] == ["code", "para", "code", "para", "code"]

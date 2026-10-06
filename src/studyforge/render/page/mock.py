@@ -109,14 +109,12 @@ def _question(asked: Question, key: str) -> str:
         id=escape_attribute(asked.id),
         domain=escape_attribute(asked.domain or ""),
         stem=inline(asked.stem),
-        options="".join(
-            quiz.option(one, f"{key}:{asked.id}") + quiz.JOIN for one in asked.options
-        ),
+        options="".join(quiz.option(one, f"{key}:{asked.id}") + quiz.JOIN for one in asked.options),
     )
 
 
 def _plan(exercise: Exercise) -> str:
-    """The pass mark and the domains, as the text of a data block no sentence can close."""
+    """Return the pass mark and the domains, as the text of a data block no sentence can close."""
     mock = exercise.mock
     document = {
         "pass_mark": mock.pass_mark,

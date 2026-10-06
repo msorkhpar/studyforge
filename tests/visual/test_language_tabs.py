@@ -14,6 +14,7 @@ only; scripts off every panel is still there.
 The first-visit question of four modes (`test_reading_languages`) and a language a block lacks
 (`test_absent_language`).
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -41,8 +42,6 @@ def origin(tmp_path_factory: pytest.TempPathFactory) -> Iterator[served.Served]:
     out = built(tmp_path_factory, "tabs", four.declared(mixed=True), units=four.UNITS[:1])
     with served_from(out) as running:
         yield running
-
-
 
 
 def test_four_tabs_open_on_the_first_language_and_each_opens_its_own_panel(

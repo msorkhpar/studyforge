@@ -12,8 +12,8 @@ from studyforge.generate import read_corpus
 from studyforge.generate.mockexam import wanted
 from studyforge.render import pageassets
 from studyforge.render.page import mock_files
-from tests.studyforge.exercise.quiz.mock_corpus import built_files, mock_corpus
 from tests.studyforge.exercise.quiz.depth1 import fixture_root
+from tests.studyforge.exercise.quiz.mock_corpus import built_files, mock_corpus
 
 ADDED = [".studyforge/assets/mock-exam.css", ".studyforge/assets/mock-exam.js"]
 
@@ -41,9 +41,7 @@ def test_a_mock_exam_adds_exactly_two_files_and_leaves_the_shared_bundle_as_it_w
 def test_only_the_page_with_the_exam_links_the_files(tmp_path):
     mocked = built_files(mock_corpus(tmp_path / "mock"))
     linking = sorted(
-        path
-        for path, body in mocked.items()
-        if path.endswith((".html")) and b"mock-exam.js" in body
+        path for path, body in mocked.items() if path.endswith(".html") and b"mock-exam.js" in body
     )
     assert len(linking) == 1 and linking[0].endswith(".unit.html"), linking
     page = mocked[linking[0]].decode("utf-8")

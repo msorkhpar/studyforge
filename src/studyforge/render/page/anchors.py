@@ -379,7 +379,7 @@ def _languages(document: dict) -> dict[str, str]:
             continue
         attribute = f' data-lang="{escape_attribute(lang)}"'
         tags[anchor(section_anchor(key))] = attribute
-        for position, block in enumerate(section.get("blocks") or ()):
+        for position, _block in enumerate(section.get("blocks") or ()):
             tags[anchor(block_anchor(key, position))] = attribute
     return tags
 

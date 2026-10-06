@@ -110,8 +110,15 @@ def test_nothing_here_knows_any_source(tmp_path):
 
 def test_the_package_depends_only_on_studyforge_and_the_standard_library():
     allowed = {
-        "studyforge", "dataclasses", "pathlib", "json", "re", "__future__", "difflib",
-        "collections", "typing",
+        "studyforge",
+        "dataclasses",
+        "pathlib",
+        "json",
+        "re",
+        "__future__",
+        "difflib",
+        "collections",
+        "typing",
     }
     for path in package_modules():
         tree = ast.parse(path.read_text(encoding="utf-8"))

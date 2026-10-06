@@ -78,7 +78,7 @@ def spells(element: ElementTree.Element, case_id: str) -> bool:
 
 
 def _is_dotted_node(case_id: str, classname: str, name: str) -> bool:
-    """Is `case_id` a pytest node id (`path.py::Class::name`) of this testcase?
+    """Answer whether `case_id` is a pytest node id (`path.py::Class::name`) of this testcase.
 
     ⭐ A report with no `file` attribute (pytest's default family) still has the
     node id in it, as the dotted `classname`: the module's path with `/` as `.`,
@@ -124,7 +124,7 @@ def asserted(element: ElementTree.Element, passing: Collection[str]) -> bool:
 
 
 def _asserts(failure: ElementTree.Element) -> bool:
-    """Does this one `failure` element say an assertion raised it?
+    """Answer whether this one `failure` element says an assertion raised it.
 
     ⭐ A `node --test` failure (`testCodeFailure`) is told by its text alone, since its
     `message` is the assertion's own words, or any error's.
@@ -138,7 +138,7 @@ def _asserts(failure: ElementTree.Element) -> bool:
 
 
 def file_level_failure(element: ElementTree.Element) -> bool:
-    """Is this testcase a whole test FILE that failed before any test ran?
+    """Answer whether this testcase is a whole test FILE that failed before any test ran.
 
     ⭐ `node --test` reports a file it could not load (an unsupported construct, a syntax error,
     an import that failed) as ONE testcase named for the file, `testCodeFailure`, with the text

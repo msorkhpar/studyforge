@@ -17,8 +17,12 @@ WHERE = "demo/unit-01/practice-1"
 
 
 def option(identifier: str, correct: bool, text: str | None = None) -> dict:
-    return {"id": identifier, "text": text or f"Option {identifier}", "correct": correct,
-            "says": f"Why {identifier}."}
+    return {
+        "id": identifier,
+        "text": text or f"Option {identifier}",
+        "correct": correct,
+        "says": f"Why {identifier}.",
+    }
 
 
 def refused(value, select=None) -> str:

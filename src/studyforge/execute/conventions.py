@@ -122,9 +122,7 @@ def other_language_suffixes(suffix: str, runtimes: tuple[str, ...] | list[str]) 
     declared = [name for name in SHARED_MODULE_RUNTIMES if name in runtimes]
     if not any(suffix in SOURCE_SUFFIXES[name] for name in declared):
         return ()
-    return tuple(
-        sorted(one for name in declared for one in SOURCE_SUFFIXES[name] if one != suffix)
-    )
+    return tuple(sorted(one for name in declared for one in SOURCE_SUFFIXES[name] if one != suffix))
 
 
 def is_a_test(where: str) -> bool:

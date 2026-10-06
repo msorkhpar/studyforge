@@ -33,11 +33,11 @@ ASK = 'assert normalise(" one two") == "one two"'
 
 #: The main ask's test, five ways of passing on a starter that returns its input.
 PYTHON_PLANTS = {
-    "asserts nothing": "    normalise(\" one two\")",
-    "asserts a truthy value": "    assert normalise(\" one two\")",
-    "asserts a tuple": "    assert (normalise(\" one two\") == \"one two\", \"never read\")",
-    "asserts in a loop that never runs": "    for got in []:\n        assert got == \"one two\"",
-    "asserts that it is not None": "    assert normalise(\" one two\") is not None",
+    "asserts nothing": '    normalise(" one two")',
+    "asserts a truthy value": '    assert normalise(" one two")',
+    "asserts a tuple": '    assert (normalise(" one two") == "one two", "never read")',
+    "asserts in a loop that never runs": '    for got in []:\n        assert got == "one two"',
+    "asserts that it is not None": '    assert normalise(" one two") is not None',
 }
 
 TS_ASK = 'assert.equal(normalise(" one two"), "one two");'

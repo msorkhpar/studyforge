@@ -328,13 +328,13 @@ def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolch
 
 
 def _word(first: str) -> str:
-    """A command's first word, without its directory or a `.cmd`/`.bat` suffix."""
+    """Return a command's first word, without its directory or a `.cmd`/`.bat` suffix."""
     word = re.split(r"[\\/]", first)[-1]
     return re.sub(r"\.(cmd|bat)$", "", word, flags=re.IGNORECASE)
 
 
 def _names(toolchain: Toolchain, argv: Sequence[str]) -> bool:
-    """Does this command run `toolchain`: its own word, or `python -m <word>`?"""
+    """Answer whether this command runs `toolchain`: its own word, or `python -m <word>`."""
     word = _word(argv[0])
     if toolchain is NODE_TEST:
         return word == "node" and "--test" in argv[1:]

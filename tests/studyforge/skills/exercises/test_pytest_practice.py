@@ -74,9 +74,11 @@ def _brief(tmp_path):
 
 
 def _solutions(draft) -> dict[str, str]:
-    return {"reference": draft.reference, "starter": draft.starter, **{
-        f"plant:{case}": text for case, text in draft.plants.items()
-    }}
+    return {
+        "reference": draft.reference,
+        "starter": draft.starter,
+        **{f"plant:{case}": text for case, text in draft.plants.items()},
+    }
 
 
 def _gated(tmp_path, **parts):
@@ -191,8 +193,16 @@ def _report(tmp_path, source: str) -> Path:
     (tmp_path / "tests").mkdir()
     (tmp_path / "tests" / "test_it.py").write_text(source, encoding="utf-8")
     done = run(
-        ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider",
-         "--junitxml=report.xml", "tests/test_it.py"],
+        [
+            "python3",
+            "-m",
+            "pytest",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--junitxml=report.xml",
+            "tests/test_it.py",
+        ],
         tmp_path,
     )
     assert done.returncode in (0, 1), done.stdout
@@ -202,14 +212,19 @@ def _report(tmp_path, source: str) -> Path:
 def _fold(root, ids, started=0.0):
     cases = tuple(Case(i, MAIN if n == 0 else EDGE, "one sentence") for n, i in enumerate(ids))
     exercise = Exercise(
-        main_path="m.py", test_path="tests/test_it.py", run_command=("python3", "m.py"),
-        test_command=("python3", "-m", "pytest"), provenance="generated", trust="advisory",
-        cases=cases, report=Report(format="junit", path="report.xml"),
+        main_path="m.py",
+        test_path="tests/test_it.py",
+        run_command=("python3", "m.py"),
+        test_command=("python3", "-m", "pytest"),
+        provenance="generated",
+        trust="advisory",
+        cases=cases,
+        report=Report(format="junit", path="report.xml"),
     )
     return breakdown_of(exercise, root, "w", started=started)
 
 
-SOURCE = '''import pytest
+SOURCE = """import pytest
 
 
 def test_plain():
@@ -224,13 +239,19 @@ class TestGroup:
 @pytest.mark.parametrize("v", ["a b", "1-2", "-1", "x.y"])
 def test_param(v):
     assert v != "x.y"
-'''
+"""
 
 
 def test_a_bare_name_and_a_spaced_parametrised_id_fold_out_of_a_real_report(tmp_path):
     root = _report(tmp_path, SOURCE)
-    ids = ["test_plain", "test_inside", "test_param[a b]", "test_param[1-2]", "test_param[-1]",
-           "test_param[x.y]"]
+    ids = [
+        "test_plain",
+        "test_inside",
+        "test_param[a b]",
+        "test_param[1-2]",
+        "test_param[-1]",
+        "test_param[x.y]",
+    ]
     folded = _fold(root, ids)
     assert folded.passed_ids == frozenset(ids) - {"test_inside", "test_param[x.y]"}
     assert folded.unasserted == frozenset()
@@ -238,8 +259,11 @@ def test_a_bare_name_and_a_spaced_parametrised_id_fold_out_of_a_real_report(tmp_
 
 def test_a_node_id_with_no_file_attribute_is_read_from_the_dotted_classname(tmp_path):
     root = _report(tmp_path, SOURCE)
-    ids = ["tests/test_it.py::test_plain", "tests/test_it.py::TestGroup::test_inside",
-           "tests/test_it.py::test_param[a b]"]
+    ids = [
+        "tests/test_it.py::test_plain",
+        "tests/test_it.py::TestGroup::test_inside",
+        "tests/test_it.py::test_param[a b]",
+    ]
     cases = ids + ["test_param[1-2]", "test_param[-1]", "test_param[x.y]"]
     folded = _fold(root, cases)
     assert folded.passed_ids >= {ids[0], ids[2]} and ids[1] not in folded.passed_ids
@@ -247,8 +271,11 @@ def test_a_node_id_with_no_file_attribute_is_read_from_the_dotted_classname(tmp_
 
 def test_a_node_id_that_spells_another_module_or_class_is_still_refused(tmp_path):
     root = _report(tmp_path, "def test_plain():\n    assert True\n")
-    for wrong in ("tests/test_other.py::test_plain", "tests/test_it.py::TestX::test_plain",
-                  "tests/test_it::test_plain"):
+    for wrong in (
+        "tests/test_other.py::test_plain",
+        "tests/test_it.py::TestX::test_plain",
+        "tests/test_it::test_plain",
+    ):
         with pytest.raises(ExerciseError, match="names a test"):
             _fold(root, [wrong])
 
@@ -262,7 +289,7 @@ def test_every_id_spelling_accepted_before_is_accepted_now(tmp_path):
 
 
 def test_what_failed_without_an_assertion_is_told_apart_from_what_failed_on_one(tmp_path):
-    source = '''import pytest
+    source = """import pytest
 
 
 def test_assert():
@@ -292,10 +319,17 @@ def test_type():
 
 def test_skipped():
     pytest.skip("s")
-'''
+"""
     root = _report(tmp_path, source)
-    ids = ["test_assert", "test_message", "test_raised", "test_did_not_raise", "test_nie",
-           "test_type", "test_skipped"]
+    ids = [
+        "test_assert",
+        "test_message",
+        "test_raised",
+        "test_did_not_raise",
+        "test_nie",
+        "test_type",
+        "test_skipped",
+    ]
     folded = _fold(root, ids)
     assert folded.passed_ids == frozenset()
     assert folded.unasserted == {"test_nie", "test_type", "test_skipped"}

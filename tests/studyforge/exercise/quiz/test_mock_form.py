@@ -20,8 +20,8 @@ from studyforge.exercise.quiz import (
     grade,
     mock_document,
     mock_of,
-    quotas,
     questions_of,
+    quotas,
     scores,
     scores_by_difficulty,
 )
@@ -82,9 +82,7 @@ def test_the_pool_reads_every_key_and_writes_it_back_byte_for_byte():
 
 
 def test_a_mock_with_none_of_the_keys_writes_the_bytes_it_always_wrote():
-    document = record(
-        questions=mock_exam.questions(ORIGIN), mock=mock_exam.mock()
-    )
+    document = record(questions=mock_exam.questions(ORIGIN), mock=mock_exam.mock())
     exercise = from_document(document, WHERE)
     written = to_document(exercise)
     assert written["mock"] == document["mock"] and written["questions"] == document["questions"]
@@ -137,12 +135,8 @@ def test_sittings_name_questions_or_scenarios_not_both_and_count_within_the_pool
     assert "13 questions" in refused(
         with_mock(sittings=[{"id": "x", "title": "X", "questions": 13}])
     )
-    assert "4 scenarios" in refused(
-        with_mock(sittings=[{"id": "x", "title": "X", "scenarios": 4}])
-    )
-    assert "minutes" in refused(
-        with_mock(sittings=[{"id": "x", "title": "X", "minutes": 0}])
-    )
+    assert "4 scenarios" in refused(with_mock(sittings=[{"id": "x", "title": "X", "scenarios": 4}]))
+    assert "minutes" in refused(with_mock(sittings=[{"id": "x", "title": "X", "minutes": 0}]))
 
 
 def test_a_pool_too_thin_in_a_domain_for_the_largest_sitting_is_refused():
@@ -219,8 +213,9 @@ def test_shuffle_is_only_ever_false(value):
         assert "shuffle" in refused(pool(questions=questions))
 
 
-@pytest.mark.parametrize("key,value", [("scenario", "x"), ("select", 2), ("shuffle", False),
-                                       ("difficulty", "applied")])
+@pytest.mark.parametrize(
+    "key,value", [("scenario", "x"), ("select", 2), ("shuffle", False), ("difficulty", "applied")]
+)
 def test_the_exam_keys_of_a_question_are_refused_on_a_quiz_with_no_mock(key, value):
     question = {k: v for k, v in mock_exam.questions(ORIGIN)[0].items() if k != "domain"}
     question[key] = value
@@ -252,6 +247,7 @@ def test_a_sitting_draws_a_count_per_domain_and_writes_it_back():
 def test_per_domain_is_refused_when_wrong():
     def attempt(**sitting):
         return refused(with_mock(sittings=[{"id": "x", "title": "X", **sitting}]))
+
     assert "more than one" in attempt(per_domain={"AS1": 1}, questions=3)
     assert "per_domain" in attempt(per_domain={})
     assert "per_domain" in attempt(per_domain={"AS1": 0})
@@ -268,9 +264,18 @@ def questions():
 
 def test_a_multiple_response_question_is_all_or_nothing():
     asked = next(q for q in questions() if q.select)
-    for chosen, right in [(["a", "b"], True), (["b", "a"], True), (["a"], False),
-                          (["a", "c"], False), (["a", "b", "c"], False), ([], False),
-                          (["a", "a"], False), (["a", "zz"], False), ("a", False), (None, False)]:
+    for chosen, right in [
+        (["a", "b"], True),
+        (["b", "a"], True),
+        (["a"], False),
+        (["a", "c"], False),
+        (["a", "b", "c"], False),
+        ([], False),
+        (["a", "a"], False),
+        (["a", "zz"], False),
+        ("a", False),
+        (None, False),
+    ]:
         row = grade((asked,), {asked.id: chosen}).answered[0]
         assert row.correct is right, chosen
 
@@ -298,16 +303,21 @@ def test_a_perfect_exam_scores_every_domain_and_difficulty_full():
 def test_quotas_follow_the_weights_and_add_up():
     exercise = from_document(pool(), WHERE)
     asked = exercise.questions
-    for drawn, want in [(10, {"AS1": 6, "AS2": 4}), (5, {"AS1": 3, "AS2": 2}),
-                        (7, {"AS1": 4, "AS2": 3}), (12, {"AS1": 7, "AS2": 5})]:
+    for drawn, want in [
+        (10, {"AS1": 6, "AS2": 4}),
+        (5, {"AS1": 3, "AS2": 2}),
+        (7, {"AS1": 4, "AS2": 3}),
+        (12, {"AS1": 7, "AS2": 5}),
+    ]:
         got = quotas(exercise.mock, drawn, asked)
         assert sum(got.values()) == drawn
         assert got == want or drawn == 12 and got == {"AS1": 7, "AS2": 5}, (drawn, got)
 
 
 def test_quotas_without_weights_follow_the_pools_shares():
-    exercise = from_document(record(questions=mock_exam.questions(ORIGIN),
-                                    mock=mock_exam.mock()), WHERE)
+    exercise = from_document(
+        record(questions=mock_exam.questions(ORIGIN), mock=mock_exam.mock()), WHERE
+    )
     assert quotas(exercise.mock, 3, exercise.questions) == {"D1": 1, "D2": 1, "D3": 1}
 
 

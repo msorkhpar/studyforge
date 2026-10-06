@@ -196,7 +196,7 @@ def from_text(text: str, *, placeholder: bool = False) -> Bases:
 
 
 def profile_image(kind: str, name: str) -> str:
-    """The name a registry sees for profile `name`'s `kind` image."""
+    """Return the name a registry sees for profile `name`'s `kind` image."""
     return profile.image(PUBLISHED, kind, name)
 
 

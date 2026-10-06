@@ -109,9 +109,7 @@ def test_four_tabs_in_four_declared_languages_are_valid_and_an_undeclared_fourth
             tmp_path / name,
             manifest={**corpora.MANIFEST, **four.declared()},
             containers={"demo": corpora.container(units)},
-            documents={
-                "demo/raw/prose/unit-01/lesson-1.json": {**document(), "blocks": [block]}
-            },
+            documents={"demo/raw/prose/unit-01/lesson-1.json": {**document(), "blocks": [block]}},
         )
         assert [f.rule for f in validate(root).findings if f.rule == "language-undeclared"] == (
             expected

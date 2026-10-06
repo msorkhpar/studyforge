@@ -46,7 +46,7 @@ EXECUTION_DIR = ".studyforge/execution"
 
 
 def networks(live: tuple[str, str] | None) -> dict[str, dict[str, object]]:
-    """The file's networks: the internal run network, and the live pair for a live course."""
+    """Return the file's networks: the internal run network, and the live pair for a live course."""
     found: dict[str, dict[str, object]] = {NETWORK: {"internal": True}}
     if live is not None:
         found |= {LIVE_NET: {"internal": True}, LIVE_OUT: {}}
@@ -54,7 +54,7 @@ def networks(live: tuple[str, str] | None) -> dict[str, dict[str, object]]:
 
 
 def started(run: Mapping[str, dict[str, object]]) -> dict[str, dict[str, object]]:
-    """The live runner and the proxy, which are started from images the file already builds."""
+    """Return the live runner and the proxy, started from images the file already builds."""
     return {name: run[name] for name in (LIVE, EGRESS) if name in run}
 
 
@@ -77,7 +77,7 @@ def services(plan, site: dict[str, object], runner: dict[str, object]):
 
 
 def directories(manifest) -> tuple[str, ...]:
-    """The top-level directories the course's live examples run from, in declared order."""
+    """Return the top-level directories the course's live examples run from, in declared order."""
     found: list[str] = []
     for example in manifest.live.examples if manifest.live else ():
         top = example.path.split("/", 1)[0]

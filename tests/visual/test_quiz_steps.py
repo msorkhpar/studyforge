@@ -121,7 +121,7 @@ def test_the_answers_and_the_place_survive_a_reload(open_page: OpenPage, stepped
     open_page.open(stepped_url)
     assert shown(open_page) == [QUESTIONS[1].id]
     checked = open_page.evaluate(
-        f"document.querySelector('{QUIZ} [data-practice-question=\"{QUESTIONS[0].id}\"] "
+        f'document.querySelector(\'{QUIZ} [data-practice-question="{QUESTIONS[0].id}"] '
         "input:checked').value"
     )
     assert checked == KEYED[QUESTIONS[0].id]
@@ -141,7 +141,7 @@ def test_finish_gives_a_verdict_per_question_and_each_verdict_jumps_back(
     assert verdicts == ["right" if i % 2 == 0 else "wrong" for i in range(len(QUESTIONS))]
     right = (len(QUESTIONS) + 1) // 2
     assert text(open_page, part("overall")).startswith(f"You answered {right} of")
-    click(open_page, f'{part("summary")} li:nth-child(5) button')
+    click(open_page, f"{part('summary')} li:nth-child(5) button")
     focused = open_page.evaluate(
         "document.activeElement.closest('li[data-practice-question]')"
         ".getAttribute('data-practice-question')"

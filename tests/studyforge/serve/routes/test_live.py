@@ -329,7 +329,9 @@ def test_a_second_live_run_while_one_is_live_is_refused(root):
         host, port = server.server_address[:2]
         first = http.client.HTTPConnection(host, port, timeout=30)
         first.request(
-            "POST", live.RUN_PATH, ask(),
+            "POST",
+            live.RUN_PATH,
+            ask(),
             {**HEADERS, "Origin": f"http://{host}:{port}"},
         )
         while not launches.calls:

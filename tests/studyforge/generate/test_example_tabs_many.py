@@ -14,6 +14,7 @@ import pytest
 
 from tests.studyforge.generate import four_corpus as corpus
 
+
 def text(out, where):
     return (out / where).read_text(encoding="utf-8")
 
@@ -31,9 +32,6 @@ def tabs(markup: str) -> list[tuple[str, bool]]:
         (m.group(1), 'aria-disabled="true"' in m.group(0))
         for m in re.finditer(r'<button[^>]*role="tab"[^>]*data-lang="([^"]+)"[^>]*>', markup)
     ]
-
-
-
 
 
 @pytest.mark.parametrize("count", [1, 2, 3, 4])

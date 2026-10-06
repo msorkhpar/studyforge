@@ -147,7 +147,10 @@ def folded(
         breakdown = breakdown_of(exercise, root, where, started=started)
     except ExerciseError as error:
         return Run(
-            role=role, attempt=attempt, exit_code=exit_code, refusal=str(error),
+            role=role,
+            attempt=attempt,
+            exit_code=exit_code,
+            refusal=str(error),
             typecheck_failed=typecheck_failed,
         )
     if breakdown is None:

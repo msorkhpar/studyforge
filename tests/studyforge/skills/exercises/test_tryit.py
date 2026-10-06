@@ -10,7 +10,7 @@ WS = "practice/p"
 
 
 def test_the_scaffold_names_every_language_and_flags_a_file_not_finished():
-    for lang, name in tryit.TRYIT_FILE.items():
+    for lang, _name in tryit.TRYIT_FILE.items():
         text = tryit.skeleton(lang, "solution", "Cart")
         assert "Cart" in text or lang in ("java", "kotlin")
         assert tryit.LOGGER_SWITCH[lang] in text

@@ -341,9 +341,10 @@ def write_settings(
     _require_ours(target)
     temporary = None
     try:
-        body = json.dumps(
-            settings(main, test, editable=editable, more=more), indent=2, sort_keys=True
-        ) + "\n"
+        body = (
+            json.dumps(settings(main, test, editable=editable, more=more), indent=2, sort_keys=True)
+            + "\n"
+        )
         (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
         # ⛔ This write's OWN name: a shared one is moved away by one

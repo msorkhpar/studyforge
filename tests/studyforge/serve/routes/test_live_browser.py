@@ -13,19 +13,17 @@ be mistaken for one the client left in the markup.
 
 from __future__ import annotations
 
-import base64
 import json
 import re
 import shutil
 import subprocess
-import urllib.parse
 from pathlib import Path
 
 import pytest
 
 from studyforge.execute.live import redactions
 from studyforge.serve.routes import live
-from tests.studyforge.serve.routes.running import SOURCE, key
+from tests.studyforge.serve.routes.running import SOURCE, key, served_copy
 from tests.studyforge.serve.routes.test_live import (
     EXAMPLE,
     Launches,
@@ -33,11 +31,13 @@ from tests.studyforge.serve.routes.test_live import (
     fake_key,
     serving_live,
 )
-from tests.studyforge.serve.routes.running import served_copy
 
 BROWSER = next(
-    (found for name in ("google-chrome", "chromium", "chromium-browser", "chrome-headless-shell")
-     if (found := shutil.which(name))),
+    (
+        found
+        for name in ("google-chrome", "chromium", "chromium-browser", "chrome-headless-shell")
+        if (found := shutil.which(name))
+    ),
     None,
 )
 pytestmark = pytest.mark.skipif(BROWSER is None, reason="no Chromium-family browser on PATH")
@@ -183,11 +183,22 @@ def drive(server, scenario: str, secret: str, tmp: Path, prelude: str = "") -> d
     profile = tmp / "profile"
     done = subprocess.run(  # noqa: S603 - fixed argv, a loopback address
         [
-            BROWSER, "--headless=new", "--no-sandbox", "--disable-gpu", "--no-first-run",
-            "--disable-background-networking", f"--user-data-dir={profile}",
-            "--virtual-time-budget=60000", "--dump-dom", f"http://{host}:{port}/live-page.html",
+            BROWSER,
+            "--headless=new",
+            "--no-sandbox",
+            "--disable-gpu",
+            "--no-first-run",
+            "--disable-background-networking",
+            f"--user-data-dir={profile}",
+            "--virtual-time-budget=60000",
+            "--dump-dom",
+            f"http://{host}:{port}/live-page.html",
         ],
-        capture_output=True, text=True, check=False, timeout=180, stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=180,
+        stdin=subprocess.DEVNULL,
     )
     dumped = done.stdout
     found = re.search(r'<pre id="result">(.*?)</pre>', dumped, re.S)

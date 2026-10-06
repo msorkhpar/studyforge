@@ -67,9 +67,7 @@ def test_a_quiz_without_the_key_is_the_quiz_it_always_was():
 
 def test_a_bank_is_never_a_mock_exam_and_a_record_that_is_not_a_quiz_has_no_schedule():
     with pytest.raises(ExerciseError):
-        from_document(
-            bank(mock={"pass_mark": 70, "domains": [{"id": "d", "title": "D"}]}), WHERE
-        )
+        from_document(bank(mock={"pass_mark": 70, "domains": [{"id": "d", "title": "D"}]}), WHERE)
     with pytest.raises(ExerciseError):
         from_document(
             {"main_path": "a.py", "run_command": ["true"], "review": {"intervals_days": [1]}}, WHERE

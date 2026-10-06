@@ -131,7 +131,6 @@ PASSING_CHILDREN = ("system-out", "system-err", "properties")
 CLOCK_SLACK = 2.0
 
 
-
 @dataclass(frozen=True, slots=True)
 class Breakdown:
     """What a run reported, folded through the cases the record declared.

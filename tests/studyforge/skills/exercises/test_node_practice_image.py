@@ -52,12 +52,24 @@ class InContainer:
             command = ("node", "/ts/bin/tsc", *command[1:])
         try:
             argv = [
-                "docker", "--context", "desktop-linux", "run", "--rm", "--network", "none",
+                "docker",
+                "--context",
+                "desktop-linux",
+                "run",
+                "--rm",
+                "--network",
+                "none",
                 *engine.run_as(),
-                "-v", f"{engine.bindable(work)}:/w",
-                "-v", f"{engine.bindable(LIBS)}:/ts:ro",
-                "-w", "/w",
-                "--entrypoint", command[0], IMAGE, *command[1:],
+                "-v",
+                f"{engine.bindable(work)}:/w",
+                "-v",
+                f"{engine.bindable(LIBS)}:/ts:ro",
+                "-w",
+                "/w",
+                "--entrypoint",
+                command[0],
+                IMAGE,
+                *command[1:],
             ]
             self.networks.append(argv[argv.index("--network") + 1])
             done = subprocess.run(  # noqa: S603 - fixed argv, no shell
@@ -108,8 +120,9 @@ def test_every_gate_holds_when_every_run_is_a_container_with_no_network(tmp_path
 def test_a_type_error_is_refused_by_name_and_a_planted_enum_by_nodes_message(tmp_path):
     brief, ledger = _brief(tmp_path)
     typed = _typed(brief, reference=practice.TYPE_ERROR_REFERENCE)
-    gated = gate_code(typed, brief, ledger, InContainer(_solutions(typed)), source="demo",
-                      where="w")
+    gated = gate_code(
+        typed, brief, ledger, InContainer(_solutions(typed)), source="demo", where="w"
+    )
     assert "type check" in _g(gated, "G1").says and not _g(gated, "G1").held
 
     plants = dict(practice.draft(brief).plants)
@@ -117,6 +130,7 @@ def test_a_type_error_is_refused_by_name_and_a_planted_enum_by_nodes_message(tmp
     planted = practice.draft(brief, plants=plants)
     runner = InContainer(_solutions(planted))
     gate_code(planted, brief, ledger, runner, source="demo", where="w")
-    assert "TypeScript enum is not supported in strip-only mode" in runner.outputs[
-        "plant:" + practice.BLANK.id
-    ]
+    assert (
+        "TypeScript enum is not supported in strip-only mode"
+        in runner.outputs["plant:" + practice.BLANK.id]
+    )

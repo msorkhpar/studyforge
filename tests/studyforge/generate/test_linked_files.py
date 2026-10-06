@@ -228,12 +228,10 @@ def test_a_page_is_handed_the_code_suffixes_only_where_it_sits_beside_the_files(
     assert {placement.pairing is not None for placement in handed} == {beside}
 
 
-KTS = {"build.gradle.kts": "plugins { kotlin(\"jvm\") }\n"}
+KTS = {"build.gradle.kts": 'plugins { kotlin("jvm") }\n'}
 
 
-@pytest.mark.parametrize(
-    ("runtimes", "marked"), [(("java", "kotlin"), True), (("java",), False)]
-)
+@pytest.mark.parametrize(("runtimes", "marked"), [(("java", "kotlin"), True), (("java",), False)])
 def test_a_link_to_a_kts_build_script_opens_as_code_only_where_kotlin_is_declared(
     tmp_path, runtimes, marked
 ):
@@ -242,6 +240,6 @@ def test_a_link_to_a_kts_build_script_opens_as_code_only_where_kotlin_is_declare
     _declares_java(root, runtimes)
     write_site(root, root, narration=False)
     body = sorted(root.rglob("*.unit.html"))[0].read_text(encoding="utf-8")
-    assert ("data-code-path=\"src/code/build.gradle.kts\"" in body) is marked
+    assert ('data-code-path="src/code/build.gradle.kts"' in body) is marked
     assert "build.gradle.kts" in body
     assert unresolved(root) == []

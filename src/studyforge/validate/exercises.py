@@ -250,7 +250,7 @@ def check_run_is_not_submit(walk: Walk) -> Iterator[Finding]:
 
 
 def _is_mock(unit: Unit) -> bool:
-    """Does this unit's exercise declare a mock exam?"""
+    """Answer whether this unit's exercise declares a mock exam."""
     try:
         exercise = exercise_of(unit.document, unit.where)
     except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first

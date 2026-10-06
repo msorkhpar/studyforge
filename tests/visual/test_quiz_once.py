@@ -35,23 +35,30 @@ TEXT = "document.body.textContent"
 def _built(root: Path, head: list[dict]) -> tuple[str, list[str]]:
     """Build `depth1` with a quiz practice; the lesson gets `head` first and the questions last."""
     shutil.copytree(fixture_root(), root)
-    plain = [
-        {k: v for k, v in one.items() if k != "domain"} for one in mock_exam.questions(ORIGIN)
-    ]
+    plain = [{k: v for k, v in one.items() if k != "domain"} for one in mock_exam.questions(ORIGIN)]
     document = practice_document(questions=plain)
     (root / PRACTICE_DOCUMENT).write_text(render(document), encoding="utf-8")
     lesson = root / "archive" / ADDRESS[0] / LESSON
     held = json.loads(lesson.read_text(encoding="utf-8"))
     stems = [one["stem"] for one in plain]
-    held["blocks"] = head + held["blocks"] + [
-        {"type": "heading", "level": 2, "text": "Check yourself"},
-        {
-            "type": "list", "ordered": True,
-            "items": [[stem, {"type": "para", "text": "a"}] for stem in stems],
-        },
-        {"type": "disclosure", "summary": "Answer key", "open": False,
-         "blocks": [{"type": "para", "text": "The key."}]},
-    ]
+    held["blocks"] = (
+        head
+        + held["blocks"]
+        + [
+            {"type": "heading", "level": 2, "text": "Check yourself"},
+            {
+                "type": "list",
+                "ordered": True,
+                "items": [[stem, {"type": "para", "text": "a"}] for stem in stems],
+            },
+            {
+                "type": "disclosure",
+                "summary": "Answer key",
+                "open": False,
+                "blocks": [{"type": "para", "text": "The key."}],
+            },
+        ]
+    )
     lesson.write_text(json.dumps(held, indent=2) + "\n", encoding="utf-8")
     manifest = root / "corpus.json"
     declared = json.loads(manifest.read_text(encoding="utf-8"))
@@ -91,7 +98,7 @@ def test_every_repeated_stem_is_in_the_page_once_and_the_quiz_stands_in_place(
         assert text.count(stem) == 1, f"{stem!r} is on the page {text.count(stem)} times"
     assert "Answer key" not in text
     inside = open_page.evaluate(
-        "document.querySelectorAll('section[data-kind=\"lesson\"] section[data-practice-quiz],"
+        'document.querySelectorAll(\'section[data-kind="lesson"] section[data-practice-quiz],'
         " section[data-practice-quiz]').length"
     )
     assert inside == 1, "the quiz is not drawn exactly once"

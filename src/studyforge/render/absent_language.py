@@ -41,12 +41,12 @@ class Mode(Protocol):
 
 
 def style(choices: Iterable[Mode]) -> str:
-    """The look, then one set of rules per mode."""
+    """Return the look, then one set of rules per mode."""
     return text(STYLE_PART) + NEWLINE.join(_rules(choice) for choice in choices) + NEWLINE
 
 
 def script() -> str:
-    """The script, which holds no per-corpus data: it reads the page."""
+    """Return the script, which holds no per-corpus data: it reads the page."""
     return text(SCRIPT_PART)
 
 

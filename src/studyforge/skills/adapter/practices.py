@@ -64,8 +64,8 @@ from studyforge.exercise.gates import drifted, record_of
 from studyforge.skills.exercises import (
     DECK_DOCUMENT,
     QUIZ_DOCUMENT,
-    DeckRefused,
     AuthoringError,
+    DeckRefused,
     QuizRefused,
     deck_of,
     practised,

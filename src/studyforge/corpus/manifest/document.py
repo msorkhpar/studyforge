@@ -64,7 +64,7 @@ from studyforge.corpus.manifest.content import (
 from studyforge.corpus.manifest.curriculum import Curriculum, parse_curriculum
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
-from studyforge.corpus.manifest.fields import (
+from studyforge.corpus.manifest.fields import (  # noqa: F401 - names callers import from here
     ONBOARDING_DOC,
     PLACEMENT_PROFILES,
     exercises_of,

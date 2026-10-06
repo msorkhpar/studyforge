@@ -24,8 +24,10 @@ EXAMPLE = {
 }
 WITH = [document(ordinal=1, blocks=[{"type": "para", "text": "Words."}, EXAMPLE])]
 WITHOUT = [document(ordinal=1)]
-BOTH = {**READING, "modes": [*READING["modes"], {**READING["modes"][0], "id": "both",
-                                                 "tabs": ["aa", "bb"]}]}
+BOTH = {
+    **READING,
+    "modes": [*READING["modes"], {**READING["modes"][0], "id": "both", "tabs": ["aa", "bb"]}],
+}
 
 
 def only_unit_page(out) -> str:

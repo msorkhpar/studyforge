@@ -46,7 +46,7 @@ class Profile:
 
 
 def image(published: Mapping[str, str], kind: str, name: str) -> str:
-    """The name a registry sees for profile `name`'s `kind` image."""
+    """Return the name a registry sees for profile `name`'s `kind` image."""
     if kind not in KINDS or not NAME.match(name):
         raise _refused("a profile image is a runner or an editor of a hyphenated profile name")
     return f"{published[kind]}-{name}"
@@ -57,7 +57,7 @@ def read(
     published: Mapping[str, str],
     base: Callable[[str, object, str], Base],
 ) -> Profile:
-    """The lock's `profile` entry; `base(kind, entry, published_name)` reads one image of it."""
+    """Return the lock's `profile` entry; `base(kind, entry, published_name)` reads one image."""
     if not isinstance(entry, Mapping):
         raise _refused("the bases lock's profile must be an object")
     extra = sorted(set(entry) - {"name", *KINDS})
@@ -78,7 +78,7 @@ def read(
 
 
 def built_on(bases: Bases) -> tuple[Base, Base]:
-    """The runner and the editor a course's layers start from: the profile's, else the base's."""
+    """Return the runner and editor a course's layers start from: the profile's, else the base's."""
     one = bases.profile
     return (
         one.runner if one and one.runner else bases.runner,
@@ -86,9 +86,7 @@ def built_on(bases: Bases) -> tuple[Base, Base]:
     )
 
 
-def check(
-    locked: Profile | None, declared: str | None, computed: Mapping[str, str] | None
-) -> None:
+def check(locked: Profile | None, declared: str | None, computed: Mapping[str, str] | None) -> None:
     """Refuse a lock whose profile is not the course's, or has tags the toolchain does not compute.
 
     `computed` maps `runner` and `editor` to the tag, after its repository, the pinned toolchain
@@ -131,7 +129,7 @@ def check(
 
 
 def _refused(message: str) -> ValueError:
-    """The refusal a lock's profile is answered with: `bases.BasesRefused`, imported late."""
+    """Return the refusal a lock's profile is answered with: `bases.BasesRefused`, imported late."""
     from studyforge.skills.execution.standalone.bases import BasesRefused  # noqa: PLC0415
 
     return BasesRefused(message)

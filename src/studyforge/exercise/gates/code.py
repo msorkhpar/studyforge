@@ -301,7 +301,7 @@ def _typecheck_refusal(gate: str, runs: tuple[Run | None, ...], role: str) -> Ve
 
 
 def _declared_report(exercise: Exercise) -> str:
-    """The workspace path the record says its report lands at, or nothing."""
+    """Return the workspace path the record says its report lands at, or nothing."""
     return exercise.report.path if exercise.report is not None else ""
 
 
@@ -315,7 +315,7 @@ def _at(report: str) -> str:
 
 
 def _not_an_assertion(count: int, role: str) -> str:
-    """The sentence for a run asked to fail only on assertions that failed otherwise."""
+    """Return the sentence for a run asked to fail only on assertions that failed otherwise."""
     return (
         f"{count} of this exercise's tests failed on the {role} with an error that is not an "
         f"assertion (an exception the code raised, such as an unimplemented starter), so the "

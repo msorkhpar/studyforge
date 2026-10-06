@@ -124,8 +124,6 @@ WORKSPACE = """
 """
 
 
-
-
 def built(tmp_path_factory: pytest.TempPathFactory, label: str, manifest: dict, **kwargs) -> Path:
     """Build the corpus of four languages with `manifest` into a fresh tree."""
     return four.build(tmp_path_factory.mktemp(label), label[:1], manifest, **kwargs)
@@ -146,9 +144,7 @@ def choose(page: OpenPage, mode: str) -> None:
     page.evaluate(f"document.querySelector('{SWITCH} [data-mode-choice=\"{mode}\"]').click()")
 
 
-def in_mode(
-    page: OpenPage, origin: served.Served, mode: str, where: str = UNIT, size=WIDE
-) -> None:
+def in_mode(page: OpenPage, origin: served.Served, mode: str, where: str = UNIT, size=WIDE) -> None:
     """Open `where` with the stores empty, then choose `mode` with the switch."""
     page.resize(*size)
     page.open(f"{origin.origin}/{where}")

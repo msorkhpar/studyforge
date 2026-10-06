@@ -32,11 +32,13 @@ def test_a_sitting_draws_questions_or_scenarios_never_both_and_counts_are_whole(
     ok = exam.sittings_of([{"id": "a", "title": "A", "questions": 3, "minutes": 5}], WHERE)[0]
     assert (ok.questions, ok.scenarios, ok.minutes) == (3, None, 5)
     assert exam.sittings_of([{"id": "a", "title": "A"}], WHERE)[0].questions is None
-    assert "both" in refused(exam.sittings_of, [{"id": "a", "title": "A", "questions": 1,
-                                                  "scenarios": 1}])
+    assert "both" in refused(
+        exam.sittings_of, [{"id": "a", "title": "A", "questions": 1, "scenarios": 1}]
+    )
     for count in (0, -1, 1.5, True, "3"):
-        assert "sitting" in refused(exam.sittings_of, [{"id": "a", "title": "A",
-                                                         "questions": count}])
+        assert "sitting" in refused(
+            exam.sittings_of, [{"id": "a", "title": "A", "questions": count}]
+        )
 
 
 def test_a_sitting_is_written_back_with_only_the_keys_it_carries():
@@ -48,8 +50,12 @@ def test_the_scale_is_linear_rounded_and_refuses_a_pass_outside_it():
     scale = exam.scale_of({"min": 200, "max": 800, "pass": 500}, WHERE)
     assert [scale.scaled(r, 4) for r in range(5)] == [200, 350, 500, 650, 800]
     assert scale.scaled(1, 3) == 400 and scale.scaled(0, 0) == 200
-    for bad in ({"min": 0, "max": 0, "pass": 0}, {"min": 1, "max": 5, "pass": 6},
-                {"min": -1, "max": 5, "pass": 2}, {"min": 1, "max": 5}):
+    for bad in (
+        {"min": 0, "max": 0, "pass": 0},
+        {"min": 1, "max": 5, "pass": 6},
+        {"min": -1, "max": 5, "pass": 2},
+        {"min": 1, "max": 5},
+    ):
         assert "scale" in refused(exam.scale_of, bad)
 
 

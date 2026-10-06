@@ -43,8 +43,6 @@ def text(out, where):
     return (out / where).read_text(encoding="utf-8")
 
 
-
-
 @pytest.mark.parametrize("count", [1, 2, 3, 4])
 def test_the_switch_the_question_and_the_rules_follow_the_declared_modes_whatever_their_number(
     tmp_path, count
@@ -74,7 +72,7 @@ def test_a_section_that_names_several_languages_is_one_section_and_a_unit_of_eac
     index = text(out, "index.html")
     row = re.search(r'<li id="demo/unit-03"[^>]*>', index)
     assert row and 'data-entry-lang="aa bb"' in row.group(0)
-    assert 'data-entry-label>Aa, Bb</span>' in index
+    assert "data-entry-label>Aa, Bb</span>" in index
 
 
 def test_sections_that_each_name_one_language_are_matched_as_they_always_were(tmp_path):
@@ -82,7 +80,7 @@ def test_sections_that_each_name_one_language_are_matched_as_they_always_were(tm
     out = corpus.build(tmp_path, "c", corpus.declared(absent=None), units=units)
     css = text(out, f"{ASSETS}/modes.css")
     assert 'section[data-lang]:not([data-lang="cc"])' in css
-    assert 'data-lang~=' not in css.replace("data-langs~=", "").replace("data-entry-lang~=", "")
+    assert "data-lang~=" not in css.replace("data-langs~=", "").replace("data-entry-lang~=", "")
 
 
 def test_a_corpus_with_a_section_for_several_languages_validates_and_each_is_listed(tmp_path):

@@ -231,7 +231,9 @@ def test_the_composed_policy_carries_exactly_one_frame_src_and_one_frame_ancesto
 
 
 NAVIGATE = {
-    "Sec_Fetch_Site": "cross-site", "Sec_Fetch_Mode": "navigate", "Sec_Fetch_Dest": "document",
+    "Sec_Fetch_Site": "cross-site",
+    "Sec_Fetch_Mode": "navigate",
+    "Sec_Fetch_Dest": "document",
 }
 
 

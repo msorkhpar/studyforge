@@ -377,7 +377,9 @@ def test_a_streamed_response_carries_the_same_composed_policy(site, source):
 
 
 NAVIGATE = {
-    "Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Site": "cross-site",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Dest": "document",
 }
 
 
@@ -387,7 +389,8 @@ def test_a_page_may_be_navigated_to_from_another_site_but_the_api_and_a_fetch_ma
         api = fetch(server, "/api/v1/content/toc", headers=NAVIGATE)
         root = fetch(server, "/api", headers=NAVIGATE)
         script = fetch(
-            server, "/index.html",
+            server,
+            "/index.html",
             headers={**NAVIGATE, "Sec-Fetch-Mode": "cors", "Sec-Fetch-Dest": "empty"},
         )
     assert page[0] == 200

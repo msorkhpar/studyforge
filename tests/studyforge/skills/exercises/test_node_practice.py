@@ -76,9 +76,11 @@ class Recording(Node):
 
 
 def _solutions(made) -> dict[str, str]:
-    return {"reference": made.reference, "starter": made.starter, **{
-        f"plant:{case}": text for case, text in made.plants.items()
-    }}
+    return {
+        "reference": made.reference,
+        "starter": made.starter,
+        **{f"plant:{case}": text for case, text in made.plants.items()},
+    }
 
 
 def _gated(tmp_path, **parts):
@@ -129,8 +131,9 @@ def test_a_plant_fails_its_own_edge_and_only_the_cases_it_names(tmp_path):
     assert failed["plant:" + practice.BLANK.id] == {practice.BLANK.id}
     assert failed["plant:" + practice.INNER.id] == {practice.INNER.id}
     assert failed["plant:" + practice.TABS.id] == {practice.TABS.id}
-    assert failed["starter"] == {c.id for c in (practice.MAIN_CASE, practice.BLANK,
-                                                practice.INNER, practice.TABS)}
+    assert failed["starter"] == {
+        c.id for c in (practice.MAIN_CASE, practice.BLANK, practice.INNER, practice.TABS)
+    }
 
 
 # --- the planted enum: Node's own message, and a finding of the gate -----------------------------
@@ -194,8 +197,11 @@ def test_the_built_in_reporter_to_a_missing_directory_leaves_no_report_and_the_g
     brief, _ = _brief(tmp_path)
     ws = brief.places.workspace
     command = (
-        "node", "--test", "--test-reporter=junit",
-        f"--test-reporter-destination={ws}/{practice.REPORT}", f"{ws}/normalise.test.ts",
+        "node",
+        "--test",
+        "--test-reporter=junit",
+        f"--test-reporter-destination={ws}/{practice.REPORT}",
+        f"{ws}/normalise.test.ts",
     )
     gated, recording = _gated(tmp_path, test_command=command, build={})
     assert not gated.clears
@@ -257,7 +263,7 @@ def test_the_same_reference_fails_by_name_when_the_type_check_is_declared(tmp_pa
 @needs_tsc
 def test_a_starter_and_a_plant_that_do_not_type_check_are_named_by_their_gates(tmp_path):
     brief, _ = _brief(tmp_path)
-    bad = 'export function normalise(text: string): string {\n  return 1;\n}\n'
+    bad = "export function normalise(text: string): string {\n  return 1;\n}\n"
     starter, _ = _typed(tmp_path, starter=bad)
     assert [verdict.id for verdict in starter.refused] == [G2]
     assert "starter" in _g(starter, G2).says
@@ -306,15 +312,29 @@ test("skipped", { skip: true }, () => {});
 describe("Group", () => { test("inside", () => { assert.equal(1, 2); }); });
 """
 
-IDS = ["plain", "assert", "assert with words", "raised assertion", "missing throw", "type error",
-       "says assertion", "skipped", "inside"]
+IDS = [
+    "plain",
+    "assert",
+    "assert with words",
+    "raised assertion",
+    "missing throw",
+    "type error",
+    "says assertion",
+    "skipped",
+    "inside",
+]
 
 
 def _report(tmp_path, source: str, name: str = "it.test.ts") -> Path:
     (tmp_path / name).write_text(source, encoding="utf-8")
     done = run(
-        ["node", "--test", "--test-reporter=junit",
-         f"--test-reporter-destination={tmp_path}/report.xml", name],
+        [
+            "node",
+            "--test",
+            "--test-reporter=junit",
+            f"--test-reporter-destination={tmp_path}/report.xml",
+            name,
+        ],
         tmp_path,
     )
     assert done.returncode in (0, 1), done.stdout + done.stderr
@@ -324,9 +344,14 @@ def _report(tmp_path, source: str, name: str = "it.test.ts") -> Path:
 def _fold(root, ids, started=0.0):
     cases = tuple(Case(i, MAIN if n == 0 else EDGE, "one sentence") for n, i in enumerate(ids))
     exercise = Exercise(
-        main_path="m.ts", test_path="it.test.ts", run_command=("node", "m.ts"),
-        test_command=("node", "--test"), provenance="generated", trust="advisory",
-        cases=cases, report=Report(format="junit", path="report.xml"),
+        main_path="m.ts",
+        test_path="it.test.ts",
+        run_command=("node", "m.ts"),
+        test_command=("node", "--test"),
+        provenance="generated",
+        trust="advisory",
+        cases=cases,
+        report=Report(format="junit", path="report.xml"),
     )
     return breakdown_of(exercise, root, "w", started=started)
 
@@ -338,8 +363,10 @@ def test_a_failure_an_assertion_raised_is_told_from_one_an_error_raised(tmp_path
 
 
 def test_a_test_file_that_did_not_load_is_a_finding_and_not_a_refusal(tmp_path):
-    root = _report(tmp_path, practice.ENUM_PLANT + 'import { test } from "node:test";\n'
-                   'test("plain", () => {});\n')
+    root = _report(
+        tmp_path,
+        practice.ENUM_PLANT + 'import { test } from "node:test";\ntest("plain", () => {});\n',
+    )
     folded = _fold(root, ["plain", "other"])
     assert folded.passed_ids == frozenset()
     assert folded.unasserted == {"plain", "other"}

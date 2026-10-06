@@ -26,7 +26,7 @@ PROFILE_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 def parse_profile(document: dict, where: str) -> str | None:
-    """The declared image profile, or `None`; it needs runtimes, as it is built on their base."""
+    """Return the declared image profile, or `None`; it needs runtimes, built on their base."""
     if "profile" not in document:
         return None
     value = document["profile"]

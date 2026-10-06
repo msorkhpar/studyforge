@@ -125,8 +125,21 @@ SILENT_TAGS = frozenset({"script", "style", "template", "noscript", "svg", "head
 
 #: Elements with no end tag, so they never open a level.
 VOID_TAGS = frozenset(
-    {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track",
-     "wbr"}
+    {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "source",
+        "track",
+        "wbr",
+    }
 )
 
 #: An attribute name that marks a region holding answers or exercises.
@@ -151,8 +164,33 @@ HEADINGS = frozenset({"h1", "h2", "h3", "h4"})
 
 #: Elements after which a space is needed so two words never fuse.
 BLOCK_TAGS = frozenset(
-    {"p", "li", "ul", "ol", "div", "section", "pre", "figure", "figcaption", "table", "tr", "td",
-     "th", "br", "dt", "dd", "blockquote", "details", "summary", "h1", "h2", "h3", "h4", "h5", "h6"}
+    {
+        "p",
+        "li",
+        "ul",
+        "ol",
+        "div",
+        "section",
+        "pre",
+        "figure",
+        "figcaption",
+        "table",
+        "tr",
+        "td",
+        "th",
+        "br",
+        "dt",
+        "dd",
+        "blockquote",
+        "details",
+        "summary",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+    }
 )
 
 SPACE = re.compile(r"\s+")
@@ -358,9 +396,7 @@ def read(html: str) -> dict:
     # no other field of it ever takes that value.
     unit = '":"unit"' in reader.identity.replace(" ", "")
     crumbs = [c for c in reader.crumbs if c]
-    sections = [
-        (s["heading"], s["anchor"], _squash(" ".join(s["parts"]))) for s in reader.sections
-    ]
+    sections = [(s["heading"], s["anchor"], _squash(" ".join(s["parts"]))) for s in reader.sections]
     return {
         "title": _squash("".join(reader.title_parts)),
         "crumb": " › ".join(crumbs[1:-1]),
@@ -412,10 +448,8 @@ def _same(text: str) -> str:
     return text
 
 
-def document(
-    pages: list[tuple[str, str]], clean: Callable[[str], str] = _same
-) -> dict:
-    """The index record for `(url, html)` pairs: one page table and one record per heading.
+def document(pages: list[tuple[str, str]], clean: Callable[[str], str] = _same) -> dict:
+    """Return the index record for `(url, html)` pairs: one page table and one record per heading.
 
     ⛔ A sentence a quiz offers as an option is cut out of the text, wherever the page's prose
     happens to say the same words: the serve gate refuses any file that holds one, and the
@@ -469,13 +503,13 @@ def _dump(value) -> str:
 
 
 def shard_name(number: int) -> str:
-    """The file name of shard `number`, beside `search-index.js`."""
+    """Return the file name of shard `number`, beside `search-index.js`."""
     stem, dot, suffix = INDEX_NAME.rpartition(".")
     return f"{stem}-{number}{dot}{suffix}"
 
 
 def snippet(text: str) -> str:
-    """The start of `text`, at most `SNIPPET_CHARS` characters, cut on a word."""
+    """Return the start of `text`, at most `SNIPPET_CHARS` characters, cut on a word."""
     if len(text) <= SNIPPET_CHARS:
         return text
     room = SNIPPET_CHARS - 1
@@ -511,7 +545,7 @@ Build = Callable[[list, dict, str], str]
 
 
 def precompile(doc: dict, build: Build | None) -> str:
-    """The serialised index of `doc`, made by `build`; raises `Unbuilt`."""
+    """Return the serialised index of `doc`, made by `build`; raises `Unbuilt`."""
     if build is None:
         raise Unbuilt("no index builder was given")
     options = {"fields": list(FIELDS), "storeFields": list(STORE_FIELDS)}
@@ -535,7 +569,7 @@ def pieces(json_text: str, limit: int) -> list[str]:
 
 
 def part_name(number: int) -> str:
-    """The file name of piece `number` of a precompiled index (the same names shards had)."""
+    """Return the file name of piece `number` of a precompiled index (the same names shards had)."""
     return shard_name(number)
 
 
@@ -562,10 +596,9 @@ def _precompiled_files(doc: dict, json_text: str) -> dict[str, str]:
 
 
 def warn(reason: str) -> str:
-    """The one line printed when the index is left to the browser to build."""
+    """Return the one line printed when the index is left to the browser to build."""
     return (
-        "studyforge: warning: the search index is built in the browser, not precompiled: "
-        + reason
+        "studyforge: warning: the search index is built in the browser, not precompiled: " + reason
     )
 
 
@@ -594,7 +627,7 @@ def files(
 
 
 def record_files(doc: dict) -> dict[str, str]:
-    """The index as the records themselves (versions 1 and 2), for the browser to build.
+    """Return the index as the records themselves (versions 1 and 2), for the browser to build.
 
     ⭐ One file, `search-index.js`, while it fits `SHARD_BYTES`; otherwise a manifest of that name
     (the page table and the shard names) plus `search-index-0.js`, `-1.js` and so on, each under
@@ -619,7 +652,7 @@ def record_files(doc: dict) -> dict[str, str]:
         chunks[-1].append(row)
         size += width
     names = [shard_name(n) for n in range(len(chunks))]
-    for name, chunk in zip(names, chunks):
+    for name, chunk in zip(names, chunks, strict=False):
         out[name] = f"{SHARD_GLOBAL}{_dump(name)}]=[" + ",".join(chunk) + "];\n"
     manifest = {"version": SHARDED_VERSION, "pages": doc["pages"], "shards": names}
     out[INDEX_NAME] = GLOBAL + _dump(manifest) + ";\n"

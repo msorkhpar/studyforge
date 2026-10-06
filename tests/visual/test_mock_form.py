@@ -68,7 +68,7 @@ def pick(page: OpenPage, question: str, option: str) -> None:
 
 def begin(page: OpenPage, sitting: str = "full") -> dict:
     page.evaluate(
-        f"document.querySelector('[data-form-part=\"start\"] input[value=\"{sitting}\"]').click()"
+        f'document.querySelector(\'[data-form-part="start"] input[value="{sitting}"]\').click()'
     )
     click(page, part("begin"))
     return read_state(page)
@@ -216,8 +216,9 @@ def test_the_exam_layout_shows_one_question_with_its_card_and_a_navigator(where,
     assert [n["state"] for n in read["nav"]] == ["open"] * 10
     assert read["nav"][0]["current"] and read["count"] == "0 of 10 answered"
     drawn = read["drawn"]
-    scenario_first = next(i for i, one in enumerate(drawn)
-                          if next(q.scenario for q in QUESTIONS if q.id == one))
+    scenario_first = next(
+        i for i, one in enumerate(drawn) if next(q.scenario for q in QUESTIONS if q.id == one)
+    )
     goto(page, scenario_first + 1)
     shown = read_state(page)
     assert shown["card"] and shown["visible"] == [drawn[scenario_first]]
@@ -257,8 +258,11 @@ def test_the_navigator_says_answered_open_and_flagged_and_filters(where, request
         f" {select}.dispatchEvent(new Event('change', {{bubbles: true}}))"
     )
     shown = [n["n"] for n in read_state(page)["nav"]]
-    expected = [str(i + 1) for i, one in enumerate(drawn)
-                if next(q.domain for q in QUESTIONS if q.id == one) == first.domain]
+    expected = [
+        str(i + 1)
+        for i, one in enumerate(drawn)
+        if next(q.domain for q in QUESTIONS if q.id == one) == first.domain
+    ]
     assert shown == expected
     click(page, FLAG)
     assert read_state(page)["flagPressed"] == "false"
@@ -351,8 +355,10 @@ def test_time_up_submits_by_itself_and_a_reload_after_time_does_too(where, reque
         read = read_state(page)
     assert read["result"] and read["again"] and not read["submit"]
     assert read["count"].startswith("1 of 10"), "only the answered question counts as answered"
-    assert json.loads(read["kept"])["exams"] and next(
-        iter(json.loads(read["kept"])["exams"].values()))["submitted"] is True
+    assert (
+        json.loads(read["kept"])["exams"]
+        and next(iter(json.loads(read["kept"])["exams"].values()))["submitted"] is True
+    )
 
 
 @pytest.mark.parametrize("where", PLACES)
@@ -400,8 +406,10 @@ def test_every_option_is_explained_with_the_key_marked_and_the_choice_shown(wher
     page = request.getfixturevalue(where)
     begin(page, "full")
     drawn = read_state(page)["drawn"]
-    wrong = {q: (["c", "d"] if isinstance(KEYED[q], list)
-                 else "a" if KEYED[q] != "a" else "c") for q in drawn}
+    wrong = {
+        q: (["c", "d"] if isinstance(KEYED[q], list) else "a" if KEYED[q] != "a" else "c")
+        for q in drawn
+    }
     read = finish(page, wrong)
     assert read["result"]
     for review in read["reviews"]:
@@ -417,8 +425,13 @@ def test_every_option_is_explained_with_the_key_marked_and_the_choice_shown(wher
 @pytest.mark.parametrize("where", PLACES)
 @pytest.mark.parametrize(
     "chosen,right",
-    [(["a", "c"], False), (["b", "d"], False), (["c", "d"], False),
-     (["a", "b"], True), (["b", "a"], True)],
+    [
+        (["a", "c"], False),
+        (["b", "d"], False),
+        (["c", "d"], False),
+        (["a", "b"], True),
+        (["b", "a"], True),
+    ],
 )
 def test_a_multiple_response_question_is_scored_all_or_nothing(where, chosen, right, request):
     page = request.getfixturevalue(where)
@@ -479,8 +492,7 @@ def test_the_review_shows_only_missed_or_only_flagged_questions(where, request):
     goto(page, 3)
     click(page, FLAG)
     wrong = {q: (["a", "b"] if q == "p9" else KEYED[q]) for q in drawn}
-    wrong[drawn[1]] = (["c", "d"] if drawn[1] == "p9"
-                       else "c" if KEYED.get(drawn[1]) != "c" else "a")
+    wrong[drawn[1]] = ["c", "d"] if drawn[1] == "p9" else "c" if KEYED.get(drawn[1]) != "c" else "a"
     read = finish(page, {**wrong})
     missed = [q for q in drawn if read["verdicts"][q] == "wrong"]
     assert len(read["visible"]) == 10 and missed
@@ -519,7 +531,7 @@ def test_the_exam_can_be_sat_by_keyboard_alone(where, request):
     page.press("Enter")
     assert read_state(page)["numbers"] == ["2"]
     assert read_state(page)["focus"] == "legend"
-    page.evaluate("document.querySelector('[data-form-part=\"number\"][data-index=\"4\"]').focus()")
+    page.evaluate('document.querySelector(\'[data-form-part="number"][data-index="4"]\').focus()')
     page.press("Enter")
     assert read_state(page)["numbers"] == ["5"]
     page.evaluate(f"document.querySelector('{FLAG}').focus()")
@@ -535,8 +547,9 @@ def test_the_exam_form_is_captured(corpus: Path, open_page: OpenPage, capture_di
     page.resize(900, 1100)
     page.capture(capture_dir / "01-start-panel.png")
     drawn = begin(page, "full")["drawn"]
-    scenario_at = next(i for i, one in enumerate(drawn)
-                       if next(q.scenario for q in QUESTIONS if q.id == one))
+    scenario_at = next(
+        i for i, one in enumerate(drawn) if next(q.scenario for q in QUESTIONS if q.id == one)
+    )
     goto(page, scenario_at + 1)
     pick(page, drawn[scenario_at], "b" if drawn[scenario_at] != "p9" else "a")
     page.capture(capture_dir / "02-exam-layout-scenario-card.png")

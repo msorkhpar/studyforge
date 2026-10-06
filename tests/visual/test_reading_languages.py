@@ -10,6 +10,7 @@ scripts off and a page whose storage is refused read the default mode and ask no
 and hides the others; a revisit does not ask and a refused store never asks; a section that
 names two languages shows in both of their modes and in no other.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -30,17 +31,15 @@ from tests.visual.four import (
     built,
     choose,
     in_mode,
-    reopen,
     served_from,
 )
 from tests.visual.page import NARROW, WIDE, OpenPage
+
 
 @pytest.fixture(scope="module")
 def pure_origin(tmp_path_factory: pytest.TempPathFactory) -> Iterator[served.Served]:
     with served_from(built(tmp_path_factory, "pure", four.declared(absent=None))) as running:
         yield running
-
-
 
 
 def reopen(page: OpenPage, origin: served.Served, where: str = UNIT, **kwargs: object) -> None:

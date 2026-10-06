@@ -50,6 +50,7 @@ from collections.abc import Callable, Iterator
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.execute import (
     LIVE_BAD_KEY,
     LIVE_MARKER,
@@ -62,7 +63,6 @@ from studyforge.execute import (
     valid_key,
     write_allowed,
 )
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import parse_practice_key
 from studyforge.serve.discovery import ServedCorpus
@@ -262,7 +262,7 @@ def practice_command(runs: Runs, corpus: ServedCorpus, key: str) -> list[str] | 
 
 
 def run_cwd() -> str:
-    """The directory every live run starts in: the corpus root, as a graded run's does."""
+    """Return the directory every live run starts in: the corpus root, as a graded run's does."""
     return "."
 
 

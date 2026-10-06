@@ -353,12 +353,16 @@ def basket(brief: Brief) -> CodeDraft:
 def basket_with_a_spec_plant(brief: Brief) -> CodeDraft:
     """The basket, its one plant written as a replacement against the reference."""
     made = basket(brief)
-    spec = PlantSpec((Replacement(
-        made.main_file,
-        '    if any(price < 0 for price in prices):\n'
-        '        raise ValueError("a price is never negative")\n',
-        "",
-    ),))
+    spec = PlantSpec(
+        (
+            Replacement(
+                made.main_file,
+                "    if any(price < 0 for price in prices):\n"
+                '        raise ValueError("a price is never negative")\n',
+                "",
+            ),
+        )
+    )
     return replace(made, plants={NEGATIVE.id: spec})
 
 

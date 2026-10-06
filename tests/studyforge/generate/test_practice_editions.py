@@ -33,9 +33,7 @@ def practices(edition: str | None) -> tuple:
         for lang in four.LANGS
     ]
     found.append(("practice", None, corpora.PRACTICE_BLOCKS, "A common practice"))
-    return (
-        (1, "Practices", [("lesson", None, [four.words("Common words.")], None), *found]),
-    )
+    return ((1, "Practices", [("lesson", None, [four.words("Common words.")], None), *found]),)
 
 
 def page(tmp_path, name: str, edition: str | None) -> str:

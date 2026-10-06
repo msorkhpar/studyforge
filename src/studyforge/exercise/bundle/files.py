@@ -20,6 +20,7 @@ from studyforge.exercise.safety import require_path
 if TYPE_CHECKING:
     from studyforge.exercise.bundle.document import Bundle
 
+
 def read_files(value: object, where: str) -> tuple[str, ...]:
     """Read the further edited files: absent is none, present is non-empty and distinct."""
     if value is None:

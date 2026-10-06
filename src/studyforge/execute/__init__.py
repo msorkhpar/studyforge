@@ -111,6 +111,10 @@ from studyforge.execute.editor import EDITOR_TTL, Editor, EditorProbe
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
 from studyforge.execute.instance import INSTANCE_FILE, Names, declares_runner, recorded
+from studyforge.execute.live import BAD_KEY as LIVE_BAD_KEY
+from studyforge.execute.live import MARKER as LIVE_MARKER
+from studyforge.execute.live import redactions, valid_key
+from studyforge.execute.live import start as start_live
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
 from studyforge.execute.preflight import problems as instance_problems
@@ -125,10 +129,6 @@ from studyforge.execute.published import (
     write_allowed,
 )
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
-from studyforge.execute.live import BAD_KEY as LIVE_BAD_KEY
-from studyforge.execute.live import MARKER as LIVE_MARKER
-from studyforge.execute.live import redactions, valid_key
-from studyforge.execute.live import start as start_live
 from studyforge.execute.remote import SERVICE_PORT, Service, ServiceProbe
 from studyforge.execute.runner import RUN_ENVIRONMENT, RUNNER_DOWN, SERVICE, Runner
 from studyforge.execute.searchnode import NODE_ON_PATH, search_index_builder

@@ -51,6 +51,7 @@ from collections.abc import Callable
 from studyforge.exercise import from_document
 from studyforge.exercise.errors import ExerciseError
 
+
 def once(document: dict, panel: Callable[[dict, dict], str]) -> dict:
     """Return `document`, with a lesson's repeat of a quiz practice replaced by that quiz."""
     sections = document.get("sections")
@@ -129,7 +130,8 @@ def _replace(blocks: list, quizzes: list, taken: set[int], sections: list, panel
 def _runs(blocks: list, stems: tuple[str, ...], drawn: set[int]) -> list[tuple[int, int]]:
     """`(first, last)` of every unbroken run of question blocks, each starting and ending on a stem.
 
-    A block already drawn as a quiz breaks a run and is never part of one."""
+    A block already drawn as a quiz breaks a run and is never part of one.
+    """
     found = []
     first = last = None
     for index, block in enumerate(blocks):

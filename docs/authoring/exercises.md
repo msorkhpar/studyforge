@@ -1120,15 +1120,17 @@ against the reference:
 ```python
 from studyforge.skills.exercises import PlantSpec, Replacement
 
-plants={
-    NEGATIVE.id: PlantSpec((
-        Replacement(
-            "total.py",
-            '    if any(price < 0 for price in prices):\n'
-            '        raise ValueError("a price is never negative")\n',
-            "",
-        ),
-    )),
+plants = {
+    NEGATIVE.id: PlantSpec(
+        (
+            Replacement(
+                "total.py",
+                "    if any(price < 0 for price in prices):\n"
+                '        raise ValueError("a price is never negative")\n',
+                "",
+            ),
+        )
+    ),
 }
 ```
 
@@ -1185,9 +1187,9 @@ unique, and materialises it again:
 ```python
 from studyforge.exercise.bundle.convert import convert_plants
 
-report = convert_plants(root)               # reads and proves, writes nothing
-report = convert_plants(root, write=True)   # then writes what was proven
-report.converted, report.left               # bundles changed; each plant left, with why
+report = convert_plants(root)  # reads and proves, writes nothing
+report = convert_plants(root, write=True)  # then writes what was proven
+report.converted, report.left  # bundles changed; each plant left, with why
 ```
 
 Without `write=True` nothing is written. With it, a plant is

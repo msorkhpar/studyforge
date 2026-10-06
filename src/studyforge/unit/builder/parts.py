@@ -62,7 +62,8 @@ SECTION_KEYS = ("key", "kind", "heading", "blocks", "video", "workspace", "attac
 LANG_KEY = "lang"
 
 #: The key a practice section carries only when its document is one language edition of a practice,
-#: after `lang`. ⭐ Absent means the practice is its own, so an unedited section is the bytes it was.
+#: after `lang`. ⭐ Absent means the practice is its own, so an unedited section is the bytes
+#: it was.
 EDITION_KEY = "edition"
 
 

@@ -49,9 +49,9 @@ from studyforge.exercise.quiz.exam import (
     difficulties_of,
     layout_of,
     minutes_of,
+    require_per_domain,
     scale_of,
     scenarios_of,
-    require_per_domain,
     sitting_document,
     sittings_of,
 )
@@ -67,7 +67,14 @@ MOCK = "mock"
 #: they existed round-trips to the same bytes: `minutes` (a timer), `layout` (`"exam"` for one
 #: question to a view with a navigator), `scenarios`, `sittings` and `scale`.
 MOCK_KEYS = (
-    "pass_mark", "domains", "minutes", "layout", "scenarios", "difficulties", "sittings", "scale",
+    "pass_mark",
+    "domains",
+    "minutes",
+    "layout",
+    "scenarios",
+    "difficulties",
+    "sittings",
+    "scale",
 )
 REQUIRED_MOCK_KEYS = ("pass_mark", "domains")
 DOMAIN_KEYS = ("id", "title")
@@ -107,7 +114,7 @@ class Mock:
 
     @property
     def opts_in(self) -> bool:
-        """Does this mock use anything the page of old does not do (a timer, a layout, ...)?"""
+        """Answer whether this mock uses what the old page does not do (a timer, a layout, ...)."""
         extras = (self.minutes, self.layout, self.scenarios, self.sittings, self.scale)
         return any(one is not None and one != () for one in extras) or bool(
             self.difficulties or any(one.weight is not None for one in self.domains)
@@ -142,9 +149,7 @@ def mock_of(value: object, where: str) -> Mock:
     return Mock(
         pass_mark=_pass_mark(value["pass_mark"], where),
         domains=_domains(value["domains"], where),
-        minutes=(
-            minutes_of(value["minutes"], where) if "minutes" in value else None
-        ),
+        minutes=(minutes_of(value["minutes"], where) if "minutes" in value else None),
         layout=layout_of(value["layout"], where) if "layout" in value else None,
         scenarios=scenarios_of(value["scenarios"], where) if "scenarios" in value else (),
         sittings=sittings_of(value["sittings"], where) if "sittings" in value else (),
@@ -175,7 +180,9 @@ def mock_document(mock: Mock) -> dict:
         written["sittings"] = [sitting_document(one) for one in mock.sittings]
     if mock.scale is not None:
         written["scale"] = {
-            "min": mock.scale.min, "max": mock.scale.max, "pass": mock.scale.pass_,
+            "min": mock.scale.min,
+            "max": mock.scale.max,
+            "pass": mock.scale.pass_,
         }
     return written
 
@@ -194,8 +201,11 @@ def quotas(mock: Mock, drawn: int, pool: tuple[Question, ...]) -> dict[str, int]
     draws by the same rule; this is the reference a test and the record's check read.
     """
     weights = {
-        domain.id: (domain.weight if domain.weight is not None else
-                    sum(1 for one in pool if one.domain == domain.id))
+        domain.id: (
+            domain.weight
+            if domain.weight is not None
+            else sum(1 for one in pool if one.domain == domain.id)
+        )
         for domain in mock.domains
     }
     total = sum(weights.values()) or 1
@@ -209,8 +219,10 @@ def quotas(mock: Mock, drawn: int, pool: tuple[Question, ...]) -> dict[str, int]
 
 
 def require_against_questions(mock: Mock, questions: tuple[Question, ...], where: str) -> None:
-    """⛔ Refuse what the page could not draw: a question under a scenario nobody declared, a
-    declared scenario with no question, and a sitting that asks for more than the exam holds.
+    """⛔ Refuse what the page could not draw.
+
+    That is a question under a scenario nobody declared, a declared scenario with no question,
+    and a sitting that asks for more than the exam holds.
 
     ⭐ The record is read whole here (`shape.mock_in`), so these are refused when a corpus
     validates and not only when an author's draft is gated; `P1` states the same facts again.
@@ -298,10 +310,7 @@ def scores_by_difficulty(
         Score(
             difficulty.id,
             sum(1 for row in rows if row.question.difficulty == difficulty.id),
-            sum(
-                1 for row in rows
-                if row.question.difficulty == difficulty.id and row.correct
-            ),
+            sum(1 for row in rows if row.question.difficulty == difficulty.id and row.correct),
         )
         for difficulty in mock.difficulties
     )

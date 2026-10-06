@@ -10,8 +10,15 @@ PAGE = b"<!doctype html><html><head><title>t</title></head><body></body></html>"
 
 
 def test_the_names_are_the_ones_assets_has_always_exported():
-    for name in ("with_client", "client_tag", "client_etag", "CLIENT_TAG", "HEAD_CLOSE",
-                 "CLIENT_ETAG_MARK", "CLIENT_PATH_FORBIDDEN"):
+    for name in (
+        "with_client",
+        "client_tag",
+        "client_etag",
+        "CLIENT_TAG",
+        "HEAD_CLOSE",
+        "CLIENT_ETAG_MARK",
+        "CLIENT_PATH_FORBIDDEN",
+    ):
         assert getattr(assets, name) is getattr(pagetag, name)
 
 

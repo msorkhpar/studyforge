@@ -85,15 +85,23 @@ class Live:
         write_allowed(self.work, self.entries, "live")
         # ⛔ The service's own environment has no key: it holds the variable's NAME only.
         env = {
-            "PATH": os.environ["PATH"], "STUDYFORGE_RUN_WORK": str(self.work),
-            "STUDYFORGE_LIVE_BIND": "127.0.0.1", "STUDYFORGE_LIVE_PORT": "0",
-            "STUDYFORGE_LIVE_KEY_NAME": NAME, "STUDYFORGE_LIVE_LOCK": str(self.scratch / "lock"),
-            "HOME": str(self.scratch), "TMPDIR": str(self.scratch), **environment,
+            "PATH": os.environ["PATH"],
+            "STUDYFORGE_RUN_WORK": str(self.work),
+            "STUDYFORGE_LIVE_BIND": "127.0.0.1",
+            "STUDYFORGE_LIVE_PORT": "0",
+            "STUDYFORGE_LIVE_KEY_NAME": NAME,
+            "STUDYFORGE_LIVE_LOCK": str(self.scratch / "lock"),
+            "HOME": str(self.scratch),
+            "TMPDIR": str(self.scratch),
+            **environment,
         }
         self.log = tmp / "service.log"
         self.process = subprocess.Popen(  # noqa: S603 - the shipped script, a fixed argv
-            ["perl", str(SCRIPT)], env=env, stdin=subprocess.DEVNULL,
-            stdout=self.log.open("wb"), stderr=subprocess.STDOUT,
+            ["perl", str(SCRIPT)],
+            env=env,
+            stdin=subprocess.DEVNULL,
+            stdout=self.log.open("wb"),
+            stderr=subprocess.STDOUT,
         )
         self.port = self._port()
         self.service = Service("127.0.0.1", self.port)
@@ -181,7 +189,8 @@ def test_what_the_program_prints_of_its_key_is_replaced_before_it_leaves(live, p
     out = texts(live.run(program, secret))
     assert not leakscan.in_bytes(out.encode(), secret) or all(
         # a character or two at the ends of a key inside a longer encoding may remain (stated)
-        form not in out.encode() for form in (secret.encode(), urllib.parse.quote(secret).encode())
+        form not in out.encode()
+        for form in (secret.encode(), urllib.parse.quote(secret).encode())
     )
     assert secret not in out and base64.b64encode(secret.encode()).decode() not in out
     assert "[redacted]" in out
@@ -246,8 +255,15 @@ def test_the_graded_verb_is_never_accepted_and_ping_answers(live):
 
 @pytest.mark.parametrize(
     "key",
-    ["", "short", "x" * 300, "has space" + "a" * 9, "nl\n" + "a" * 9, "q'uote" + "a" * 9,
-     "$(x)" + "a" * 9],
+    [
+        "",
+        "short",
+        "x" * 300,
+        "has space" + "a" * 9,
+        "nl\n" + "a" * 9,
+        "q'uote" + "a" * 9,
+        "$(x)" + "a" * 9,
+    ],
 )
 def test_a_key_of_the_wrong_shape_is_refused_and_never_echoed_by_the_service(live, key):
     token = "STUDYFORGE_RUN=" + "2" * 32

@@ -114,6 +114,7 @@ question answered correctly, recorded through the reader's state.
 
 from __future__ import annotations
 
+from studyforge.exercise.casedetail import CaseDetail, Detail, detail_of
 from studyforge.exercise.cases import (
     BREAKDOWN_KEYS,
     CASE_ID_PERMITTED,
@@ -165,7 +166,6 @@ from studyforge.exercise.record import (
     of,
     to_document,
 )
-from studyforge.exercise.casedetail import CaseDetail, Detail, detail_of
 from studyforge.exercise.report import (
     CLOCK_SLACK,
     PASSING_CHILDREN,

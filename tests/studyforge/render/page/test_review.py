@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 
 from studyforge.render.page import review
-from tests.studyforge.render.page.test_practice import QUIZ, SHIPPED, document, panel, section
+from tests.studyforge.render.page.test_practice import QUIZ, SHIPPED, panel, section
 
 BANK = {**QUIZ, "review": {"intervals_days": [1, 3, 7]}}
 

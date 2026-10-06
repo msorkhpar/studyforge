@@ -75,7 +75,17 @@ from dataclasses import dataclass
 from studyforge.describe import describe, describe_keys
 from studyforge.exercise.cases import Origin, origin_document, origin_in
 from studyforge.exercise.errors import ExerciseError
-from studyforge.exercise.quiz.options import (
+from studyforge.exercise.quiz.examkeys import (  # noqa: F401 - names callers import from here
+    DIFFICULTY_KEY,
+    EXTRA_KEYS,
+    MINIMUM_SELECT,
+    SCENARIO_KEY,
+    SELECT_KEY,
+    SHUFFLE_KEY,
+    read_select,
+    read_shuffle,
+)
+from studyforge.exercise.quiz.options import (  # noqa: F401 - names callers import from here
     KEYED_OPTIONS,
     MINIMUM_OPTIONS,
     OPTION_KEYS,
@@ -87,16 +97,6 @@ from studyforge.exercise.quiz.options import (
     read_id,
     read_text,
     require_distinct,
-)
-from studyforge.exercise.quiz.examkeys import (
-    DIFFICULTY_KEY,
-    EXTRA_KEYS,
-    MINIMUM_SELECT,
-    SCENARIO_KEY,
-    SELECT_KEY,
-    SHUFFLE_KEY,
-    read_select,
-    read_shuffle,
 )
 
 #: One question, in the order its keys are written (R10). ⛔ All four required
@@ -110,6 +110,7 @@ DOMAIN_KEY = "domain"
 
 #: ⭐ Every optional key a question of a mock exam may carry (`domain` and `examkeys.EXTRA_KEYS`).
 MOCK_QUESTION_KEYS = (DOMAIN_KEY, *EXTRA_KEYS)
+
 
 @dataclass(frozen=True, slots=True)
 class Question:

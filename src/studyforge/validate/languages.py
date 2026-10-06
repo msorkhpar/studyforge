@@ -159,7 +159,7 @@ def check_example_files_are_released(walk: Walk) -> Iterator[Finding]:
 
 
 def check_units_have_prose(walk: Walk) -> Iterator[Finding]:
-    """A unit of a corpus that declares modes holds at least one lesson, tagged or common."""
+    """Check each unit of a corpus declaring modes holds at least one lesson, tagged or common."""
     if _modes(walk) == ():
         return
     for key, documents in _by_unit(walk).items():
@@ -186,12 +186,12 @@ def check_modes_list_a_unit(walk: Walk) -> Iterator[Finding]:
 
 
 def _modes(walk: Walk) -> tuple:
-    """The declared modes, or `()` for a corpus that declares none."""
+    """Return the declared modes, or `()` for a corpus that declares none."""
     return walk.manifest.reading.modes if walk.manifest and walk.manifest.reading else ()
 
 
 def _by_unit(walk: Walk) -> dict[tuple, list[Unit]]:
-    """The walk's documents grouped by the unit they belong to, in walk order."""
+    """Return the walk's documents grouped by the unit they belong to, in walk order."""
     grouped: dict[tuple, list[Unit]] = defaultdict(list)
     for unit in walk.units:
         grouped[(tuple(unit.document.get("address") or ()), unit.document.get("unit"))].append(unit)

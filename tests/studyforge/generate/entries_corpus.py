@@ -68,9 +68,7 @@ def build(tmp_path, name, manifest):
         tmp_path / name,
         manifest={**corpora.MANIFEST, **manifest},
         containers={
-            container: corpora.container(
-                units, address=(container,), titles=[TITLES[container]]
-            )
+            container: corpora.container(units, address=(container,), titles=[TITLES[container]])
             for container, units in containers.items()
         },
         documents=documents,

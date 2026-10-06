@@ -82,14 +82,14 @@ class Scale:
     pass_: int
 
     def scaled(self, right: int, asked: int) -> int:
-        """The score on this scale, linear in the questions right, rounded to a whole number."""
+        """Return the score on this scale, linear in the questions right, rounded to a whole."""
         if asked <= 0:
             return self.min
         return self.min + ((self.max - self.min) * right * 2 + asked) // (2 * asked)
 
 
-
 def sitting_document(sitting: Sitting) -> dict:
+    """Return a sitting as the document records it, its unset keys left out."""
     written: dict = {"id": sitting.id, "title": sitting.title}
     for key in ("questions", "scenarios"):
         if getattr(sitting, key) is not None:
@@ -101,14 +101,9 @@ def sitting_document(sitting: Sitting) -> dict:
     return written
 
 
-
-
 def minutes_of(value: object, where: str, sitting: bool = False) -> int:
-    if (
-        not isinstance(value, int)
-        or isinstance(value, bool)
-        or not 1 <= value <= LONGEST_SITTING
-    ):
+    """Return the minutes an exam or a sitting allows, or refuse a value out of range."""
+    if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= LONGEST_SITTING:
         raise ExerciseError(
             f"{where}: {'a sitting' if sitting else 'a mock exam'}'s 'minutes' is a whole "
             f"number from 1 to {LONGEST_SITTING}. The value is {describe(value)}."
@@ -117,6 +112,7 @@ def minutes_of(value: object, where: str, sitting: bool = False) -> int:
 
 
 def layout_of(value: object, where: str) -> str:
+    """Return a mock exam's declared layout, or refuse one not in `LAYOUTS`."""
     if value not in LAYOUTS:
         raise ExerciseError(
             f"{where}: a mock exam's 'layout' is {list(LAYOUTS)}, and the page of old is what "
@@ -125,8 +121,9 @@ def layout_of(value: object, where: str) -> str:
     return value
 
 
-def _exact(value: object, required: tuple[str, ...], allowed: tuple[str, ...], what: str,
-           where: str) -> dict:
+def _exact(
+    value: object, required: tuple[str, ...], allowed: tuple[str, ...], what: str, where: str
+) -> dict:
     if not isinstance(value, dict) or not set(required) <= set(value) <= set(allowed):
         carried = value if isinstance(value, dict) else {}
         unknown = [key for key in carried if key not in allowed]
@@ -166,6 +163,7 @@ def _distinct(ids: list[str], what: str, where: str) -> None:
 
 
 def scenarios_of(value: object, where: str) -> tuple[Scenario, ...]:
+    """Return a mock exam's declared scenarios, each with a distinct id."""
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
             f"{where}: a mock exam's 'scenarios' is a non-empty array of {list(SCENARIO_KEYS)} "
@@ -174,11 +172,13 @@ def scenarios_of(value: object, where: str) -> tuple[Scenario, ...]:
     found = []
     for entry in value:
         entry = _exact(entry, SCENARIO_KEYS, SCENARIO_KEYS, "a scenario", where)
-        found.append(Scenario(
-            _token(entry["id"], "a scenario's", where),
-            _words(entry["title"], "a scenario's 'title' names it", where),
-            _words(entry["context"], "a scenario's 'context' is the situation it sets", where),
-        ))
+        found.append(
+            Scenario(
+                _token(entry["id"], "a scenario's", where),
+                _words(entry["title"], "a scenario's 'title' names it", where),
+                _words(entry["context"], "a scenario's 'context' is the situation it sets", where),
+            )
+        )
     _distinct([one.id for one in found], "scenario", where)
     return tuple(found)
 
@@ -227,6 +227,7 @@ def require_per_domain(sitting: Sitting, domains: tuple, questions: tuple, where
 
 
 def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
+    """Return a mock exam's declared sittings, each drawing in one way only."""
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
             f"{where}: a mock exam's 'sittings' is a non-empty array of sitting objects, or "
@@ -245,19 +246,22 @@ def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
                 f"{where}: a sitting draws a count 'per_domain' or a number of 'questions' or "
                 f"'scenarios', and this one names more than one."
             )
-        found.append(Sitting(
-            _token(entry["id"], "a sitting's", where),
-            _words(entry["title"], "a sitting's 'title' names it", where),
-            _count(entry["questions"], "questions", where) if "questions" in entry else None,
-            _count(entry["scenarios"], "scenarios", where) if "scenarios" in entry else None,
-            minutes_of(entry["minutes"], where, sitting=True) if "minutes" in entry else None,
-            _per_domain(entry["per_domain"], where) if "per_domain" in entry else None,
-        ))
+        found.append(
+            Sitting(
+                _token(entry["id"], "a sitting's", where),
+                _words(entry["title"], "a sitting's 'title' names it", where),
+                _count(entry["questions"], "questions", where) if "questions" in entry else None,
+                _count(entry["scenarios"], "scenarios", where) if "scenarios" in entry else None,
+                minutes_of(entry["minutes"], where, sitting=True) if "minutes" in entry else None,
+                _per_domain(entry["per_domain"], where) if "per_domain" in entry else None,
+            )
+        )
     _distinct([one.id for one in found], "sitting", where)
     return tuple(found)
 
 
 def scale_of(value: object, where: str) -> Scale:
+    """Return a mock exam's scale, its pass mark between its ends."""
     entry = _exact(value, SCALE_KEYS, SCALE_KEYS, "a scale", where)
     numbers = [entry[key] for key in SCALE_KEYS]
     if any(not isinstance(one, int) or isinstance(one, bool) for one in numbers):
@@ -275,6 +279,7 @@ def scale_of(value: object, where: str) -> Scale:
 
 
 def difficulties_of(value: object, where: str) -> tuple[Difficulty, ...]:
+    """Return a mock exam's declared difficulty labels, each with a distinct id."""
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
             f"{where}: a mock exam's 'difficulties' is a non-empty array of "
@@ -283,9 +288,11 @@ def difficulties_of(value: object, where: str) -> tuple[Difficulty, ...]:
     found = []
     for entry in value:
         entry = _exact(entry, DIFFICULTY_KEYS, DIFFICULTY_KEYS, "a difficulty", where)
-        found.append(Difficulty(
-            _token(entry["id"], "a difficulty's", where),
-            _words(entry["title"], "a difficulty's 'title' names it", where),
-        ))
+        found.append(
+            Difficulty(
+                _token(entry["id"], "a difficulty's", where),
+                _words(entry["title"], "a difficulty's 'title' names it", where),
+            )
+        )
     _distinct([one.id for one in found], "difficulty", where)
     return tuple(found)

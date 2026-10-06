@@ -82,7 +82,7 @@ class Entry:
 
 
 def edition_of(section: object) -> str | None:
-    """The practice id a section is an edition of, or `None` for a practice of its own.
+    """Return the practice id a section is an edition of, or `None` for a practice of its own.
 
     ⛔ Only a section that sets CODE work and names one language can be an edition: a quiz or a
     deck is not written in a language, so the key on one is not read.
@@ -128,7 +128,7 @@ def entries(document: dict) -> list[Entry]:
 
 
 def entry_of(document: dict, section: dict) -> Entry:
-    """The entry a practice section belongs to; an entry of its own for an ordinary one."""
+    """Return the entry a practice section belongs to; an entry of its own for an ordinary one."""
     for entry in entries(document):
         if any(one is section for one in entry.sections):
             return entry
@@ -136,18 +136,18 @@ def entry_of(document: dict, section: dict) -> Entry:
 
 
 def edited_with(document: dict, section: dict) -> Entry | None:
-    """The entry of a section that is one of several editions, else `None`."""
+    """Return the entry of a section that is one of several editions, else `None`."""
     entry = entry_of(document, section)
     return entry if entry.edited and any(one is section for one in entry.sections) else None
 
 
 def label(offer: modes.Offer | None, lang: str) -> str:
-    """The declared name of a language, or its id where the corpus declares no modes."""
+    """Return the declared name of a language, or its id where the corpus declares no modes."""
     return dict(offer.languages).get(lang, lang) if offer is not None else lang
 
 
 def title(heading: str, entry: Entry) -> str:
-    """The card's title: the first edition's, without the language it names last.
+    """Return the card's title: the first edition's, without the language it names last.
 
     ⭐ An adapter that titles an edition `Keep a conversation (Python)` gets one title for the
     card, `Keep a conversation`: a trailing parenthesis that names the language of one of the
@@ -163,7 +163,7 @@ def title(heading: str, entry: Entry) -> str:
 
 
 def collapsed(document: dict) -> dict:
-    """The document as the outline reads it: one practice section per practice.
+    """Return the document as the outline reads it: one practice section per practice.
 
     ⭐ A practice's language editions are listed once, at the first, under the title the card
     carries. Every other section, and a document with no editions, is returned as it came.
@@ -188,7 +188,7 @@ def collapsed(document: dict) -> dict:
 
 
 def slots(entry: Entry | None, section: dict, offer: modes.Offer | None) -> dict[str, str]:
-    """The two slots of a panel template that an edition fills: its attribute and the switch.
+    """Return the two slots of a panel template that an edition fills: its attribute and the switch.
 
     ⭐ Both `''` for a practice with no editions, so its panel is the bytes it was. The switch is
     the first thing in every edition's panel: one button per edition of the practice, each by the
@@ -213,7 +213,7 @@ def slots(entry: Entry | None, section: dict, offer: modes.Offer | None) -> dict
 
 
 def preference(offer: modes.Offer | None) -> dict:
-    """What the client needs to open a practice in a mode's language; `{}` with no modes.
+    """Return what the client needs to open a practice in a mode's language; `{}` with no modes.
 
     ⭐ `attribute` is the root attribute that holds the chosen mode, and `modes` maps each mode id
     to the languages a practice opens in, first choice first. The shared script names neither the
@@ -231,7 +231,7 @@ def preference(offer: modes.Offer | None) -> dict:
 
 
 def workspace_attribute(offer: modes.Offer | None, document: dict) -> str:
-    """The attribute the workspace carries when the page has editions and modes, else `''`."""
+    """Return the workspace's attribute when the page has editions and modes, else `''`."""
     if offer is None or not any(entry.edited for entry in entries(document)):
         return ""
     return f" {MODES_ATTRIBUTE}='{_json(preference(offer))}'"
@@ -247,5 +247,5 @@ def _json(value: object) -> str:
 
 
 def languages(entry: Entry) -> Iterable[str]:
-    """The language of each edition of an entry, in edition order."""
+    """Return the language of each edition of an entry, in edition order."""
     return (str(one.get(LANG)) for one in entry.sections)

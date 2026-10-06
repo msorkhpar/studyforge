@@ -118,7 +118,6 @@ from studyforge.exercise.deck import (
 )
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.keys import (
-    EXERCISE_KEYS,
     require_known_keys,
     require_present,
     written_keys,
@@ -199,7 +198,7 @@ class Exercise:
 
     @property
     def is_deck(self) -> bool:
-        """Is this a deck of flashcards, turned over rather than run or graded?"""
+        """Answer whether this is a deck of flashcards, turned over rather than run or graded."""
         return self.kind == FLASHCARDS
 
     @property

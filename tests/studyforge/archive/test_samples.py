@@ -20,9 +20,9 @@ from studyforge.archive.samples import (
     RESERVED_TLDS,
     SAMPLE_ACCOUNTS,
     SAMPLE_HOME,
-    sample_home,
     admitted,
     is_reserved,
+    sample_home,
 )
 from studyforge.archive.scrub import assert_clean, shape_in
 from tests.support import repository_root

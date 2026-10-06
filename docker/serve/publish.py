@@ -42,7 +42,8 @@ import build  # noqa: E402
 #: The one place the namespace is read from.
 NAMESPACE_VARIABLE = "STUDYFORGE_NAMESPACE"
 
-#: What a registry namespace may look like: lower-case path parts, with an optional host and port first.
+#: What a registry namespace may look like: lower-case path parts, with an optional host and
+#: port first.
 NAMESPACE = re.compile(r"^[a-z0-9]+(?:[._:-][a-z0-9]+)*(?:/[a-z0-9]+(?:[._-][a-z0-9]+)*)*$")
 
 
@@ -51,27 +52,37 @@ class Refused(ValueError):
 
 
 def namespace(env) -> str:
-    """The registry namespace from the environment, or `Refused`."""
+    """Return the registry namespace from the environment, or `Refused`."""
     value = (env.get(NAMESPACE_VARIABLE) or "").strip()
     if not value:
-        raise Refused(f"{NAMESPACE_VARIABLE} is not set; export it (login is yours, outside this script)")
+        raise Refused(
+            f"{NAMESPACE_VARIABLE} is not set; export it (login is yours, outside this script)"
+        )
     if not NAMESPACE.match(value):
-        raise Refused(f"{NAMESPACE_VARIABLE} is not a registry namespace: lower-case letters, digits and . _ - /")
+        raise Refused(
+            f"{NAMESPACE_VARIABLE} is not a registry namespace: "
+            "lower-case letters, digits and . _ - /"
+        )
     return value
 
 
 def commands(local: str, remote: str, platform: str | None, push: bool) -> list[list[str]]:
-    """The build, the tag, and, when asked, the push."""
+    """Return the build, the tag, and, when asked, the push."""
     script = ["python3", "docker/serve/build.py"] + (["--platform", platform] if platform else [])
     steps = [script, ["docker", "tag", local, remote]]
     return steps + ([["docker", "push", remote]] if push else [])
 
 
 def main(argv: list[str], env=None, run=subprocess.run, out=sys.stdout) -> int:
+    """Build and tag the image, push it when asked; return the exit status."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--platform", default=None)
-    parser.add_argument("--push", action="store_true", help="push the tag; without it nothing leaves this host")
-    parser.add_argument("--dry-run", action="store_true", help="print the commands and run none of them")
+    parser.add_argument(
+        "--push", action="store_true", help="push the tag; without it nothing leaves this host"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="print the commands and run none of them"
+    )
     args = parser.parse_args(argv)
     try:
         space = namespace(os.environ if env is None else env)

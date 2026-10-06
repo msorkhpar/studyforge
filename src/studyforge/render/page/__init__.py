@@ -129,21 +129,21 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
-from studyforge.render.page.document import compose
-from studyforge.render.page.errors import PageError
-from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.deck import PARTS as DECK_PARTS
 from studyforge.render.page.deck import files as deck_files
+from studyforge.render.page.document import compose
+from studyforge.render.page.errors import PageError
 from studyforge.render.page.examplerun import files as example_run_files
 from studyforge.render.page.mock import PARTS as MOCK_PARTS
+from studyforge.render.page.mock import files as mock_files
 from studyforge.render.page.mockform import PARTS as MOCK_FORM_PARTS
 from studyforge.render.page.mockform import files as mock_form_files
-from studyforge.render.page.mock import files as mock_files
-from studyforge.render.page.review import PARTS as REVIEW_PARTS
-from studyforge.render.page.review import files as review_files
+from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
 from studyforge.render.page.rail import RailContainer, RailGroup, RailUnit
 from studyforge.render.page.rail import render as rail
+from studyforge.render.page.review import PARTS as REVIEW_PARTS
+from studyforge.render.page.review import files as review_files
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
 #: a page whose bytes depend on a locale, which R10 forbids.

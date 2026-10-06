@@ -74,7 +74,7 @@ def read_plant_files(
         )
     try:
         decoded = json.loads(spec.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, ValueError):
+    except OSError, UnicodeDecodeError, ValueError:
         raise ExerciseError(f"{named} could not be read as text this build carries.") from None
     assert_clean(decoded, named)
     return materialise_files(references, spec_of(decoded, named), named)

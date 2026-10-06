@@ -76,7 +76,7 @@ def _block(block: object, at: str) -> Iterator[tuple[str, str]]:
 
 
 def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
-    """An example's id, its tabs (distinct languages whose spans cover its blocks) and output."""
+    """Check an example's id, its tabs (distinct languages covering its blocks) and its output."""
     if not isinstance(block.get("id"), str) or not block["id"]:
         yield f"{at}.id", f"is {describe(block.get('id'))}; an example is named by an id"
     if "output" in block and block["output"] not in EXAMPLE_OUTPUTS:

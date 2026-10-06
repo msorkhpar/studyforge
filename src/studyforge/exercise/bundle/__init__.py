@@ -120,28 +120,9 @@ from studyforge.exercise.bundle.emit import (
     SHIPPED_ROLES,
     Emission,
     emit,
-    require_argument_paths,
     emit_page,
+    require_argument_paths,
     write,
-)
-from studyforge.exercise.bundle.plantfiles import (
-    materialise_files,
-    materialised_files,
-    read_plant_files,
-)
-from studyforge.exercise.bundle.plants import (
-    PLANT_VERSION,
-    PlantSpec,
-    Replacement,
-    materialise,
-    materialised,
-    read_plant,
-    require_plants,
-    roles_of,
-    spec_bytes,
-    spec_file,
-    spec_from,
-    spec_of,
 )
 from studyforge.exercise.bundle.layout import (
     BUILD,
@@ -167,6 +148,25 @@ from studyforge.exercise.bundle.layout import (
     require_inside,
     require_no_gap,
     unpermitted,
+)
+from studyforge.exercise.bundle.plantfiles import (
+    materialise_files,
+    materialised_files,
+    read_plant_files,
+)
+from studyforge.exercise.bundle.plants import (
+    PLANT_VERSION,
+    PlantSpec,
+    Replacement,
+    materialise,
+    materialised,
+    read_plant,
+    require_plants,
+    roles_of,
+    spec_bytes,
+    spec_file,
+    spec_from,
+    spec_of,
 )
 
 #: ⛔ The package's whole public surface. A consumer that has to import

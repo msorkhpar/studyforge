@@ -18,16 +18,26 @@ def lesson(*tail):
         {"type": "para", "text": "Some prose."},
         {"type": "heading", "level": 2, "text": "Quiz"},
         {
-            "type": "list", "ordered": True,
+            "type": "list",
+            "ordered": True,
             "items": [[f"{stem}", {"type": "para", "text": "a"}] for stem in STEMS],
         },
-        {"type": "disclosure", "summary": "Answer key", "open": False,
-         "blocks": [{"type": "para", "text": "key"}]},
+        {
+            "type": "disclosure",
+            "summary": "Answer key",
+            "open": False,
+            "blocks": [{"type": "para", "text": "key"}],
+        },
         *tail,
     ]
     return {
-        "key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks, "video": None,
-        "workspace": None, "attachments": [],
+        "key": "prose",
+        "kind": "lesson",
+        "heading": "Lesson",
+        "blocks": blocks,
+        "video": None,
+        "workspace": None,
+        "attachments": [],
     }
 
 
@@ -79,8 +89,10 @@ def test_a_quiz_heading_over_other_questions_and_a_unit_with_no_quiz_practice_st
     other["blocks"][3] = {"type": "list", "ordered": True, "items": ["A different question?"]}
     given = unit(other)
     assert quizonce.once(given, PANEL) is given
-    no_quiz = unit(lesson(), practice=section(key="p", workspace={
-        "main_path": "w/a.py", "run_command": ["true"]}))
+    no_quiz = unit(
+        lesson(),
+        practice=section(key="p", workspace={"main_path": "w/a.py", "run_command": ["true"]}),
+    )
     assert quizonce.once(no_quiz, PANEL) is no_quiz
 
 
@@ -113,14 +125,28 @@ def mock_lesson(questions):
     blocks = [
         {"type": "heading", "level": 2, "text": "Mock exam"},
         {
-            "type": "list", "ordered": True,
+            "type": "list",
+            "ordered": True,
             "items": [[one["stem"], {"type": "para", "text": "a"}] for one in questions],
         },
-        {"type": "disclosure", "summary": "Answer key", "open": False, "blocks": [
-            {"type": "para", "text": " ".join(f"KEYTEXT {one['id']}" for one in questions)}]},
+        {
+            "type": "disclosure",
+            "summary": "Answer key",
+            "open": False,
+            "blocks": [
+                {"type": "para", "text": " ".join(f"KEYTEXT {one['id']}" for one in questions)}
+            ],
+        },
     ]
-    return {"key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks,
-            "video": None, "workspace": None, "attachments": []}
+    return {
+        "key": "prose",
+        "kind": "lesson",
+        "heading": "Lesson",
+        "blocks": blocks,
+        "video": None,
+        "workspace": None,
+        "attachments": [],
+    }
 
 
 import pytest  # noqa: E402
@@ -175,26 +201,41 @@ def one_section_lesson(stems=TWO_STEMS):
         {"type": "para", "text": PROSE[2]},
         {"type": "heading", "level": 2, "text": "Quiz"},
         {
-            "type": "list", "ordered": True,
-            "items": [[stem, {"type": "list", "ordered": False, "items": ["a", "b"]}]
-                      for stem in stems],
+            "type": "list",
+            "ordered": True,
+            "items": [
+                [stem, {"type": "list", "ordered": False, "items": ["a", "b"]}] for stem in stems
+            ],
         },
-        {"type": "disclosure", "summary": "Answer key", "open": False,
-         "blocks": [{"type": "para", "text": "KEYTEXT"}]},
+        {
+            "type": "disclosure",
+            "summary": "Answer key",
+            "open": False,
+            "blocks": [{"type": "para", "text": "KEYTEXT"}],
+        },
     ]
-    return {"key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks,
-            "video": None, "workspace": None, "attachments": []}
+    return {
+        "key": "prose",
+        "kind": "lesson",
+        "heading": "Lesson",
+        "blocks": blocks,
+        "video": None,
+        "workspace": None,
+        "attachments": [],
+    }
 
 
 def test_a_one_section_lesson_keeps_every_paragraph_and_only_the_quiz_is_replaced():
     given = one_section_lesson()
-    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)[
-        "sections"][0]["blocks"]
+    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)["sections"][
+        0
+    ]["blocks"]
     assert blocks[:6] == given["blocks"][:6], "lesson text before the quiz was lost"
     assert blocks[6] == {"type": "html", "text": "<quiz/>"}
     assert blocks[7] == {"type": "html", "text": ""}
-    page = render(document(sections=[given, section(workspace=TWO)]),
-                  sample_placement()).decode("utf-8")
+    page = render(document(sections=[given, section(workspace=TWO)]), sample_placement()).decode(
+        "utf-8"
+    )
     for text in PROSE:
         assert text in page, "a lesson paragraph is missing from the page"
     assert "data-practice-quiz=" in page and "KEYTEXT" not in page
@@ -204,8 +245,9 @@ def test_a_one_section_lesson_keeps_every_paragraph_and_only_the_quiz_is_replace
 def test_a_one_section_lesson_keeps_prose_that_follows_the_quiz():
     given = one_section_lesson()
     given["blocks"].append({"type": "para", "text": "A closing paragraph."})
-    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)[
-        "sections"][0]["blocks"]
+    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)["sections"][
+        0
+    ]["blocks"]
     assert blocks[-1] == {"type": "para", "text": "A closing paragraph."}
     assert blocks[6] == {"type": "html", "text": "<quiz/>"}
 
@@ -218,8 +260,15 @@ def test_scattered_stems_are_not_one_quiz_and_the_section_keeps_all_its_text():
         {"type": "para", "text": f"And then: {TWO_STEMS[1]}"},
         {"type": "para", "text": PROSE[1]},
     ]
-    lesson_section = {"key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks,
-                      "video": None, "workspace": None, "attachments": []}
+    lesson_section = {
+        "key": "prose",
+        "kind": "lesson",
+        "heading": "Lesson",
+        "blocks": blocks,
+        "video": None,
+        "workspace": None,
+        "attachments": [],
+    }
     given = document(sections=[lesson_section, section(workspace=TWO)])
     assert quizonce.once(given, PANEL) is given
     page = render(given, sample_placement()).decode("utf-8")
@@ -232,8 +281,11 @@ def test_a_mock_page_keeps_its_intro_and_domain_table_and_replaces_only_the_ques
     questions = mock_exam.questions(ORIGIN)
     record = {"kind": "quiz", "questions": questions, "mock": mock_exam.mock()}
     page_section = mock_lesson(questions)
-    table = {"type": "table", "headers": ["Domain", "Weight"],
-             "rows": [["DOMAINROW one", "50%"], ["DOMAINROW two", "50%"]]}
+    table = {
+        "type": "table",
+        "headers": ["Domain", "Weight"],
+        "rows": [["DOMAINROW one", "50%"], ["DOMAINROW two", "50%"]],
+    }
     page_section["blocks"] = [
         {"type": "heading", "level": 1, "text": "Mock exam one"},
         {"type": "para", "text": "INTRO The exam takes ninety minutes."},

@@ -67,7 +67,7 @@ from MODULE import CLASS
 # TODO: copy that setup here, call the class on the statement's example, then print the results:
 # print("result:", ...)
 ''',
-    "typescript": '''// Run executes this file. Change the calls and see what prints. Submit grades.
+    "typescript": """// Run executes this file. Change the calls and see what prints. Submit grades.
 import { logTo } from "./logger.ts";
 import { CLASS } from "./MODULE.ts";
 
@@ -77,8 +77,8 @@ logTo("try-it");
 // A stand-in for the collaborator, like the one the tests use for the first main case.
 // TODO: copy that setup here, call the class on the statement's example, then print the results:
 // console.log("result:", ...);
-''',
-    "java": '''import java.util.logging.ConsoleHandler;
+""",
+    "java": """import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,8 +98,8 @@ public class TryIt {
         // System.out.println("result: " + ...);
     }
 }
-''',
-    "kotlin": '''import java.util.logging.ConsoleHandler
+""",
+    "kotlin": """import java.util.logging.ConsoleHandler
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -114,7 +114,7 @@ fun main() {
     // TODO: copy that setup here, call CLASS on the statement's example, print the results:
     // println("result: ${...}")
 }
-''',
+""",
 }
 
 

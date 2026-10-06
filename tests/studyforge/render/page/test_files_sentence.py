@@ -8,6 +8,7 @@ from studyforge.exercise import of as exercise_of
 
 def test_the_practice_page_names_every_edited_file(tmp_path):
     from studyforge.render.page import practice
+
     files_sentence = practice.files_sentence
 
     record = exercise_of(
@@ -35,16 +36,19 @@ def test_the_practice_page_names_every_edited_file(tmp_path):
 
 
 def test_the_page_says_what_run_executes_only_where_there_is_a_try_file():
-    from studyforge.render.page import practice
     from studyforge.exercise import from_document, of
+    from studyforge.render.page import practice
 
     WS = "practice/p"
     WITH = {
-        "main_path": f"{WS}/solution.py", "test_path": f"{WS}/test_solution.py",
+        "main_path": f"{WS}/solution.py",
+        "test_path": f"{WS}/test_solution.py",
         "run_command": ["python3", f"{WS}/try_it.py"],
         "test_command": ["python3", "-m", "pytest", f"{WS}/test_solution.py"],
-        "provenance": "bundled", "trust": "authoritative",
-        "files": [f"{WS}/try_it.py"], "try_file": f"{WS}/try_it.py",
+        "provenance": "bundled",
+        "trust": "authoritative",
+        "files": [f"{WS}/try_it.py"],
+        "try_file": f"{WS}/try_it.py",
     }
     said = practice.files_sentence(of({"kind": "practice", "exercise": WITH}, "w"))
     assert 'data-practice-part="tryit"' in said

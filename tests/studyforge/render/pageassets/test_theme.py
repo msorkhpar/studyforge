@@ -243,9 +243,7 @@ def test_the_part_types_no_word_a_reader_sees():
     # ⛔ R13: the names are the template's. This part picks one of the two attributes the
     # button carries and types nothing else a reader can read.
     body = text(PART)
-    code_only = "\n".join(
-        line for line in body.splitlines() if not line.lstrip().startswith("*")
-    )
+    code_only = "\n".join(line for line in body.splitlines() if not line.lstrip().startswith("*"))
     for label in ("System", "Light", "Dark", "Switch"):
         assert f'"{label}' not in code_only and f"'{label}" not in code_only
 

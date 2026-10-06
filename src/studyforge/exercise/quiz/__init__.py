@@ -85,6 +85,14 @@ from studyforge.exercise.quiz.grading import (
     completes,
     grade,
 )
+from studyforge.exercise.quiz.layout import (
+    LAYOUT,
+    LAYOUTS,
+    PAGE,
+    STEPS,
+    layout_in,
+    require_no_layout,
+)
 from studyforge.exercise.quiz.mock import (
     DOMAIN_KEYS,
     HIGHEST_PASS_MARK,
@@ -101,35 +109,27 @@ from studyforge.exercise.quiz.mock import (
     scores,
     scores_by_difficulty,
 )
+from studyforge.exercise.quiz.options import read_id, read_text, require_distinct
 from studyforge.exercise.quiz.questions import (
     DIFFICULTY_KEY,
     DOMAIN_KEY,
     KEYED_OPTIONS,
+    MINIMUM_OPTIONS,
     MINIMUM_SELECT,
     MOCK_QUESTION_KEYS,
-    SCENARIO_KEY,
-    SELECT_KEY,
-    SHUFFLE_KEY,
-    MINIMUM_OPTIONS,
     OPTION_KEYS,
     QUESTION_KEYS,
     QUIZ_ID,
     QUIZ_ID_PERMITTED,
+    SCENARIO_KEY,
+    SELECT_KEY,
+    SHUFFLE_KEY,
     Option,
     Question,
     normalised,
     questions_document,
     questions_of,
 )
-from studyforge.exercise.quiz.layout import (
-    LAYOUT,
-    LAYOUTS,
-    PAGE,
-    STEPS,
-    layout_in,
-    require_no_layout,
-)
-from studyforge.exercise.quiz.options import read_id, read_text, require_distinct
 from studyforge.exercise.quiz.review import (
     MOST_DAYS,
     MOST_STEPS,
@@ -149,10 +149,10 @@ from studyforge.exercise.quiz.shape import (
     mock_in,
     questions_in,
     require_no_mock,
-    require_no_review,
-    review_in,
     require_no_questions,
+    require_no_review,
     require_quiz_shape,
+    review_in,
 )
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import

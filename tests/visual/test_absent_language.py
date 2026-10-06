@@ -10,6 +10,7 @@ does not open, and is stepped over by the workspace.
 does; a card outside the mode does not open and one inside does; the sentence is there for a block
 that lacks a listed language and absent for one that has them all; a greyed block is never hidden.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -236,7 +237,7 @@ def test_a_greyed_practice_does_not_open_and_the_workspace_steps_over_it(
     open_page: OpenPage, origin: served.Served, capture_dir: Path
 ) -> None:
     in_mode(open_page, origin, "only-aa", four.PAGES[5])
-    link = "li[data-practice-card=\"%s\"] a[data-practices-part=open]"
+    link = 'li[data-practice-card="%s"] a[data-practices-part=open]'
     open_page.evaluate(f"document.querySelector('{link % 's-practice-prose-2'}').click()")
     assert not workspace(open_page)["open"], "a greyed card does not open"
     open_page.evaluate(f"document.querySelector('{link % 's-practice-prose'}').click()")

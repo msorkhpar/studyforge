@@ -77,15 +77,14 @@ from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
 from studyforge.exercise.bundle.files import shown
-from studyforge.exercise.bundle.plants import require_plants
 from studyforge.exercise.bundle.layout import (
     BUILD,
     STATEMENT,
     TESTS,
-    edges_of,
     require_inside,
     require_no_gap,
 )
+from studyforge.exercise.bundle.plants import require_plants
 from studyforge.exercise.cases import Report, cases_document, origin_document, report_document
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates import REFERENCE, STARTER
@@ -289,7 +288,7 @@ def require_argument_paths(command: tuple[str, ...], workspace: str, where: str)
 
 
 def _path_of(argument: str) -> str:
-    """The path an argument names: the argument, or the value of a `--flag=<path>`.
+    """Return the path an argument names: the argument, or the value of a `--flag=<path>`.
 
     ⭐ `--junitxml=<workspace>/target/report.xml` is how pytest is told where its report
     lands, and the whole token is not a path (it begins with `-`), so it was refused

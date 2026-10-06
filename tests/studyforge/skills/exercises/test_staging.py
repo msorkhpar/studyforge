@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 
 from studyforge.exercise import Origin
-from studyforge.skills.exercises.staging import cited, json_bytes, lay_down
 from studyforge.skills.exercises.ledger import Ledger
+from studyforge.skills.exercises.staging import cited, json_bytes, lay_down
 
 
 def test_a_document_is_written_indented_and_newline_ended_and_reads_back():

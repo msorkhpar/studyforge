@@ -71,7 +71,7 @@ class Live:
 
 
 def parse_live(document: dict, where: str) -> Live | None:
-    """The declared live runs, or `None`; they need runtimes, as they run in the runner's image."""
+    """Return the declared live runs, or `None`; they need runtimes, run in the runner's image."""
     if "live" not in document:
         return None
     value = document["live"]

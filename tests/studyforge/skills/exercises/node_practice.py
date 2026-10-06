@@ -73,22 +73,35 @@ PLANTS = {
 
 #: ⭐ The same three plants, as replacements against `REFERENCE`.
 SPEC_PLANTS = {
-    BLANK.id: PlantSpec((Replacement(
-        "normalise.ts",
-        '  if (text.trim() === "") {\n    throw new RangeError("there is nothing to normalise");\n'
-        "  }\n",
-        "",
-    ),)),
-    INNER.id: PlantSpec((Replacement(
-        "normalise.ts",
-        '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
-        '  return text.trim().replace(/[\\t\\n]/g, " ");\n',
-    ),)),
-    TABS.id: PlantSpec((Replacement(
-        "normalise.ts",
-        '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
-        '  return text.split(/ +/).filter((word) => word !== "").join(" ").trim();\n',
-    ),)),
+    BLANK.id: PlantSpec(
+        (
+            Replacement(
+                "normalise.ts",
+                '  if (text.trim() === "") {\n'
+                '    throw new RangeError("there is nothing to normalise");\n'
+                "  }\n",
+                "",
+            ),
+        )
+    ),
+    INNER.id: PlantSpec(
+        (
+            Replacement(
+                "normalise.ts",
+                '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
+                '  return text.trim().replace(/[\\t\\n]/g, " ");\n',
+            ),
+        )
+    ),
+    TABS.id: PlantSpec(
+        (
+            Replacement(
+                "normalise.ts",
+                '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
+                '  return text.split(/ +/).filter((word) => word !== "").join(" ").trim();\n',
+            ),
+        )
+    ),
 }
 
 TESTS = """import { test } from "node:test";
@@ -131,8 +144,17 @@ REPORT = "target/report.xml"
 def type_check(ws: str) -> tuple[str, ...]:
     """The optional `tsc --noEmit` a corpus declares, over the main file only."""
     return (
-        "tsc", "--noEmit", "--strict", "--erasableSyntaxOnly", "--target", "es2022",
-        "--module", "nodenext", "--lib", "es2022", f"{ws}/normalise.ts",
+        "tsc",
+        "--noEmit",
+        "--strict",
+        "--erasableSyntaxOnly",
+        "--target",
+        "es2022",
+        "--module",
+        "nodenext",
+        "--lib",
+        "es2022",
+        f"{ws}/normalise.ts",
     )
 
 

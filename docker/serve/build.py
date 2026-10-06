@@ -63,11 +63,12 @@ class Plan:
 
     @property
     def tag(self) -> str:
+        """Return the image tag: the version and the digest of the build's inputs."""
         return f"{REPOSITORY}:{self.version}-{self.digest}"
 
 
 def _closure(root: Path):
-    """The closure module, loaded from its file so the framework itself is not imported."""
+    """Return the closure module, loaded from its file so the framework itself is not imported."""
     path = root / CLOSURE
     spec = importlib.util.spec_from_file_location("serve_closure", path)
     if spec is None or spec.loader is None or not path.is_file():
@@ -79,11 +80,15 @@ def _closure(root: Path):
 
 
 def planned(root: Path = ROOT) -> Plan:
-    """The build for this checkout, computed before any Docker is touched."""
+    """Return the build for this checkout, computed before any Docker is touched."""
     try:
-        version = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+        version = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"][
+            "version"
+        ]
     except (OSError, KeyError, tomllib.TOMLDecodeError) as error:
-        raise Refused(f"the framework's version cannot be read from pyproject.toml: {error}") from None
+        raise Refused(
+            f"the framework's version cannot be read from pyproject.toml: {error}"
+        ) from None
     closure = _closure(root)
     files = closure.vendored(root / SOURCE)
     digest = hashlib.sha256()
@@ -104,7 +109,7 @@ def stage(plan: Plan, out: Path) -> None:
 
 
 def argv(plan: Plan, context: Path, platform: str | None, pull: str) -> list[str]:
-    """The `docker build` command for a staged context."""
+    """Return the `docker build` command for a staged context."""
     command = ["docker", "build", "--tag", plan.tag, "--build-arg", f"SERVE_VERSION={plan.version}"]
     command += ["--platform", platform] if platform else []
     command += ["--pull=false"] if pull == "never" else []
@@ -112,6 +117,7 @@ def argv(plan: Plan, context: Path, platform: str | None, pull: str) -> list[str
 
 
 def main(args_in: list[str], run=subprocess.run, out=sys.stdout) -> int:
+    """Build the image, or only print its tag; return the exit status."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--print-tag", action="store_true", help="print the tag and build nothing")
     parser.add_argument("--platform", default=None)
@@ -128,7 +134,9 @@ def main(args_in: list[str], run=subprocess.run, out=sys.stdout) -> int:
         return 0
     with tempfile.TemporaryDirectory(prefix="studyforge-serve-") as scratch:
         stage(plan, Path(scratch))
-        completed = run(argv(plan, Path(scratch), args.platform, args.pull), stdin=subprocess.DEVNULL)
+        completed = run(
+            argv(plan, Path(scratch), args.platform, args.pull), stdin=subprocess.DEVNULL
+        )
     if completed.returncode == 0:
         print(plan.tag, file=out)
     return completed.returncode

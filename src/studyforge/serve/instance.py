@@ -111,6 +111,7 @@ def live_client_for(namespaces: Mapping[str, object]) -> str | None:
     """Return where a served page fetches the live client, or `None` where there is no live run."""
     return getattr(namespaces.get(live.NAMESPACE), "client", None)
 
+
 #: ⭐ Where a served page's execution client is fetched from —
 #: `serve.routes.run`'s own spelling, taken and never re-composed. ⛔ Handed to
 #: `make_server` by both forms, so the static mount adds ONE script tag to each

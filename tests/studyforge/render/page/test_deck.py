@@ -31,7 +31,7 @@ def markup(workspace) -> str:
 def test_a_deck_draws_every_card_with_both_sides_and_links_its_two_files():
     said = markup(DECK)
     assert said.count("data-deck-card=") == 2
-    assert '<code>x</code>' in said and "It means &lt;this&gt;." in said
+    assert "<code>x</code>" in said and "It means &lt;this&gt;." in said
     assert "<p>First paragraph.</p><p>Second paragraph.</p>" in said
     assert 'data-deck="2"' in said and "data-practice-quiz=" in said
     assert re.search(r'<link rel="stylesheet" href="[^"]*deck\.css">', said)
@@ -63,11 +63,16 @@ def test_a_deck_and_a_bank_have_no_status_on_their_card_and_a_plain_quiz_still_h
 
     def card(workspace):
         unit = document(sections=[section(workspace=workspace)])
-        return practices.card(unit["sections"][0], unit, __import__(
-            "tests.studyforge.render.page.pages", fromlist=["sample_placement"]
-        ).sample_placement(), "A unit")
+        return practices.card(
+            unit["sections"][0],
+            unit,
+            __import__(
+                "tests.studyforge.render.page.pages", fromlist=["sample_placement"]
+            ).sample_placement(),
+            "A unit",
+        )
 
-    assert "data-practices-part=\"state\"" not in card(DECK)
-    assert "data-practices-part=\"state\"" not in card(BANK)
-    assert "data-practices-part=\"state\"" in card(QUIZ)
+    assert 'data-practices-part="state"' not in card(DECK)
+    assert 'data-practices-part="state"' not in card(BANK)
+    assert 'data-practices-part="state"' in card(QUIZ)
     assert 'data-practice-kind="quiz"' in card(DECK)

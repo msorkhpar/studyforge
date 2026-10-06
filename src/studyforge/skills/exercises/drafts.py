@@ -57,10 +57,10 @@ from typing import Protocol
 
 from studyforge.address import Address
 from studyforge.exercise import CODE, EXERCISE_KINDS, QUIZ, Case, Origin
-from studyforge.exercise.bundle import PlantSpec, Places
+from studyforge.exercise.bundle import Places, PlantSpec
+from studyforge.exercise.deck import Card
 from studyforge.exercise.gates import Verdict
 from studyforge.exercise.gates.quiz import Judgement
-from studyforge.exercise.deck import Card
 from studyforge.exercise.quiz import Mock, Question, Review
 from studyforge.skills.exercises.aspects import Aspect
 from studyforge.skills.exercises.ledger import EXAMPLE, TESTS, Entry, Ledger

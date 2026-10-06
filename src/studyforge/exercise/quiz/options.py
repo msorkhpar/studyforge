@@ -63,7 +63,6 @@ class Option:
     says: str
 
 
-
 def normalised(text: str) -> str:
     """Return the form two options are compared in before one is a duplicate.
 
@@ -77,7 +76,6 @@ def normalised(text: str) -> str:
     it refuses what is certainly the same and never guesses.
     """
     return " ".join(unicodedata.normalize("NFKC", text).casefold().split())
-
 
 
 def options_of(value: object, where: str, select: int | None = None) -> tuple[Option, ...]:

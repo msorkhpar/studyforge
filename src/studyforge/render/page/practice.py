@@ -229,8 +229,12 @@ def render(section: dict, document: dict, placement: Placement, *, embedded: boo
         steps = mockform.wanted_for_quiz(exercise)
         more = {"assets": placement.asset} if steps else {}
         return (mockform if steps else quiz).render(
-            exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise)),
-            embedded=embedded, **more,
+            exercise,
+            key=key,
+            corpus=placement.corpus,
+            grader=_region(grader(exercise)),
+            embedded=embedded,
+            **more,
         )
     many = editions.edited_with(document, section)
     return templates.fill(

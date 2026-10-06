@@ -268,7 +268,9 @@ def test_only_the_readers_hand_gives_a_frame_focus():
 
 def test_a_link_opens_the_window_in_its_own_tab_from_the_servers_url_and_goes_with_the_frame():
     helpers = re.sub(
-        r"/\*.*?\*/", "", (ASSET_DIR / "practice-files.js").read_text(encoding="utf-8"),
+        r"/\*.*?\*/",
+        "",
+        (ASSET_DIR / "practice-files.js").read_text(encoding="utf-8"),
         flags=re.DOTALL,
     )
     assert "data-practice-popout" in helpers

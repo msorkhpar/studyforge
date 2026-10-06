@@ -37,9 +37,7 @@ def four() -> list[dict]:
 
 def offer() -> modes.Offer:
     choices = tuple(
-        modes.Choice(
-            lang, f"Read in {LABELS[lang]}", "summary", lang, tuple(LANGS), (lang,)
-        )
+        modes.Choice(lang, f"Read in {LABELS[lang]}", "summary", lang, tuple(LANGS), (lang,))
         for lang in LANGS
     )
     return modes.Offer(
@@ -120,7 +118,7 @@ def test_a_practice_with_no_edition_is_unchanged_by_the_key_existing():
     plain = [section(key="practice-a"), section(key="practice-b")]
     markup = page(plain)
     assert len(cards(markup)) == 2
-    for word in ("data-edition", "data-practice-editions", "data-practice-part=\"editions\""):
+    for word in ("data-edition", "data-practice-editions", 'data-practice-part="editions"'):
         assert word not in markup
 
 

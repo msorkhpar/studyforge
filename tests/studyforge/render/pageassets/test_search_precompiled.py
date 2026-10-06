@@ -176,7 +176,9 @@ def test_a_hit_carries_exactly_the_stored_fields_and_never_the_text(tmp_path):
         assert len(hit["snippet"]) <= searchindex.SNIPPET_CHARS
     [hit] = hits["results"]["word150"]
     assert (hit["heading"], hit["anchor"], hit["trail"]) == (
-        "The headingmarker part", "s-head", "A menulabelmarker module"
+        "The headingmarker part",
+        "s-head",
+        "A menulabelmarker module",
     )
     assert hit["snippet"].endswith("…") and "word150" not in hit["snippet"]
     assert hit["snippet"][:-1].split(" ")[-1].startswith("word"), "cut on a word"

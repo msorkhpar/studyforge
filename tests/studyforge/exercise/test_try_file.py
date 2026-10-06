@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from studyforge.exercise import ExerciseError, from_document, of, to_document
-from studyforge.exercise.bundle import bundle_of, bundle_document, emit
+from studyforge.exercise import ExerciseError, from_document, to_document
+from studyforge.exercise.bundle import bundle_document, bundle_of, emit
 from studyforge.validate.exercises import RULE_RUN_IS_SUBMIT, check_run_is_not_submit
 from tests.studyforge.exercise.bundle import bundles
 
@@ -95,8 +95,10 @@ def test_a_bundle_whose_try_file_is_not_edited_or_whose_run_grades_is_refused():
 
 
 def _walk(*records):
-    units = [SimpleNamespace(where=f"u{n}", document={"kind": "practice", "exercise": r})
-             for n, r in enumerate(records)]
+    units = [
+        SimpleNamespace(where=f"u{n}", document={"kind": "practice", "exercise": r})
+        for n, r in enumerate(records)
+    ]
     return SimpleNamespace(units=units)
 
 

@@ -195,9 +195,13 @@ def test_clicking_a_locked_row_goes_nowhere_and_it_takes_no_tab_stop(
     assert not [s for s in stops if "bb-only" in s["label"] or "Bb only" in s["label"]]
     assert [s for s in stops if "aa-only" in s["label"]], "an open row is still a tab stop"
     # ⭐ The pointer cannot reach it either.
-    assert open_page.evaluate(
-        "getComputedStyle(document.getElementById('demo/unit-03').querySelector('a'))"
-        ".pointerEvents") == "none"
+    assert (
+        open_page.evaluate(
+            "getComputedStyle(document.getElementById('demo/unit-03').querySelector('a'))"
+            ".pointerEvents"
+        )
+        == "none"
+    )
 
 
 def test_a_closed_row_opens_again_when_a_mode_that_reads_it_is_chosen(
@@ -219,10 +223,16 @@ def test_the_bar_passes_over_a_closed_neighbour_under_locked_and_walks_through_i
     assert open_page.evaluate(PAGER) == [["prev", "Aa only unit 2"], ["up", "Demo"]]
     open_page.evaluate(f"document.querySelector('{SWITCH} [data-mode-choice=\"only-bb\"]').click()")
     assert open_page.evaluate(PAGER) == [
-        ["prev", "Bb only unit 3"], ["up", "Demo"], ["next", "Bb extra one 1"]]
+        ["prev", "Bb only unit 3"],
+        ["up", "Demo"],
+        ["next", "Bb extra one 1"],
+    ]
     read(open_page, opened, both, "only-aa")
     assert open_page.evaluate(PAGER) == [
-        ["prev", "Bb only unit 3"], ["up", "Demo"], ["next", "Bb extra one 1"]]
+        ["prev", "Bb only unit 3"],
+        ["up", "Demo"],
+        ["next", "Bb extra one 1"],
+    ]
 
 
 def test_the_bar_without_scripts_is_the_default_mode_s_and_skips_what_it_cannot_open(
@@ -329,7 +339,8 @@ def test_a_link_into_a_section_the_mode_hides_shows_that_section_and_lands_on_it
     open_page.evaluate("location.hash = '#s-prose-2'")
     assert open_page.evaluate(visible) == ["aa", "bb"], "the target is shown, not nowhere"
     top = open_page.evaluate(
-        "Math.round(document.getElementById('s-prose-2').getBoundingClientRect().top)")
+        "Math.round(document.getElementById('s-prose-2').getBoundingClientRect().top)"
+    )
     assert 0 <= top < 700
     open_page.evaluate("location.hash = '#s-prose'")
     assert open_page.evaluate(visible) == ["aa"], "another target takes the extra section away"

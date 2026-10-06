@@ -28,8 +28,10 @@ from studyforge.skills.exercises.staging import cited, json_bytes, lay_down, rec
 
 
 def gate_deck(draft: DeckDraft, brief: Brief, ledger: Ledger, *, where: str) -> Gated:
-    """Answer `C1` and `C2` over one deck draft. ⭐ Needs no runner and no judge: both are
-    mechanical."""
+    """Answer `C1` and `C2` over one deck draft.
+
+    ⭐ Needs no runner and no judge: both are mechanical.
+    """
     places = brief.places
     exercise = Exercise(
         None,

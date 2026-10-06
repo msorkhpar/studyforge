@@ -29,7 +29,7 @@ from studyforge.exercise.quiz import mock_of, passed, questions_of, scores
 from tests.studyforge.exercise.quiz import mock_exam
 from tests.studyforge.exercise.quiz.mock_corpus import ORIGIN, mock_corpus
 from tests.studyforge.serve.routes.quizzing import page_of, served_instance
-from tests.visual.page import NARROW, OpenPage
+from tests.visual.page import OpenPage
 
 SETTLE = 5.0
 PLACES = ("as_file", "served")
@@ -203,7 +203,10 @@ def test_the_exam_shows_its_questions_progress_and_controls_and_nothing_to_run(w
     assert (read["questions"], read["radios"]) == (6, 18)
     assert (read["count"], read["meter"]) == ("0 of 6 answered", 0)
     assert (read["controls"], read["submit"], read["again"], read["offline"]) == (
-        True, True, False, False,
+        True,
+        True,
+        False,
+        False,
     )
     assert (read["acts"], read["frames"], read["sharedCheck"]) == (0, 0, False)
     assert read["result"] is False and read["missing"] == ""

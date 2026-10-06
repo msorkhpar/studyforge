@@ -45,16 +45,28 @@ class InContainer:
         shutil.copytree(root, work)
         try:
             argv = [
-                "docker", "--context", "desktop-linux", "run", "--rm", "--network", "none",
+                "docker",
+                "--context",
+                "desktop-linux",
+                "run",
+                "--rm",
+                "--network",
+                "none",
                 *engine.run_as(),
-                "-e", "PYTHONPATH=/libs", "-e", "PYTHONDONTWRITEBYTECODE=1",
+                "-e",
+                "PYTHONPATH=/libs",
+                "-e",
+                "PYTHONDONTWRITEBYTECODE=1",
                 "-v",
                 f"{engine.bindable(work)}:/w",
                 "-v",
                 f"{engine.bindable(LIBS)}:/libs:ro",
                 "-w",
                 "/w",
-                "--entrypoint", command[0], IMAGE, *command[1:],
+                "--entrypoint",
+                command[0],
+                IMAGE,
+                *command[1:],
             ]
             self.networks.append(argv[argv.index("--network") + 1])
             done = subprocess.run(  # noqa: S603 - fixed argv, no shell

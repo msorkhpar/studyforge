@@ -144,7 +144,14 @@ def test_the_four_keys_round_trip_through_the_record():
         for key in EXERCISE_KEYS
         if key
         not in (
-            "kind", "questions", "mock", "concepts", "files", "review", "cards", "layout",
+            "kind",
+            "questions",
+            "mock",
+            "concepts",
+            "files",
+            "review",
+            "cards",
+            "layout",
             "try_file",
         )
     )
@@ -194,8 +201,17 @@ def test_the_authored_keys_are_appended_never_inserted():
     # ⭐ The quiz shape's own key sits after the four rather
     # than inserting one among them, and what an exercise practises after it.
     assert AUTHORED_KEYS == (
-        "kind", *BREAKDOWN_KEYS, "origin", "questions", "mock", "concepts", "files",
-        "review", "cards", "layout", "try_file",
+        "kind",
+        *BREAKDOWN_KEYS,
+        "origin",
+        "questions",
+        "mock",
+        "concepts",
+        "files",
+        "review",
+        "cards",
+        "layout",
+        "try_file",
     )
 
 

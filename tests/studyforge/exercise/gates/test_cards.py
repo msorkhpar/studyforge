@@ -6,7 +6,7 @@ import pytest
 
 from studyforge.exercise import Card, Exercise, ExerciseError, Origin
 from studyforge.exercise.gates import C1, C2, CARDS, Cited, GateRecord, record_of, registered
-from studyforge.exercise.gates.cards import cited_role, check_cards, cited_for, require_deck
+from studyforge.exercise.gates.cards import check_cards, cited_for, cited_role, require_deck
 from tests.studyforge.skills.exercises.authoring import gauge_questions
 
 WHERE = "here"
@@ -15,9 +15,7 @@ LEDGER = {"notes/gauge.md": "sha256:" + "a" * 64}
 
 
 def deck(*cards: Card) -> Exercise:
-    return Exercise(
-        None, None, None, None, "generated", "advisory", kind="flashcards", cards=cards
-    )
+    return Exercise(None, None, None, None, "generated", "advisory", kind="flashcards", cards=cards)
 
 
 def good(n: int = 1) -> Card:

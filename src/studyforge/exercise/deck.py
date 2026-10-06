@@ -28,7 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.describe import describe, describe_keys
-from studyforge.exercise.cases import FLASHCARDS, Origin, origin_document, origin_in
+from studyforge.exercise.cases import Origin, origin_document, origin_in
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.quiz import read_id, read_text, require_distinct
 

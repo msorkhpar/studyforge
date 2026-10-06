@@ -25,21 +25,21 @@ WHERE = "a unit's practice document"
 
 
 def has_decks(corpus: Corpus) -> bool:
-    """Does any unit carry a deck of flashcards?"""
+    """Answer whether any unit carries a deck of flashcards."""
     return any(_records(source.directory, "flashcards") for source in corpus.units)
 
 
 def has_reviews(corpus: Corpus) -> bool:
-    """Does any unit carry a quiz that declares a review schedule?"""
+    """Answer whether any unit carries a quiz that declares a review schedule."""
     return any(_records(source.directory, None) for source in corpus.units)
 
 
 def _records(directory, kind: str | None) -> bool:
-    """Does a practice document here carry a deck (`kind`), or a `review` key (`None`)?"""
+    """Answer whether a practice document here has a deck (`kind`) or a `review` key (`None`)."""
     for path in sorted(directory.glob(PRACTICE_GLOB)):
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except OSError, ValueError:
             continue
         assert_clean(document, WHERE)
         record = document.get("exercise") if isinstance(document, dict) else None

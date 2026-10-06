@@ -13,7 +13,6 @@ page is running.
 from __future__ import annotations
 
 import copy
-import json
 import time
 from pathlib import Path
 
@@ -29,7 +28,7 @@ POOL = mock_form.questions(ORIGIN)
 DOMAIN = {one["id"]: one["domain"] for one in POOL}
 SCENARIO = {one["id"]: one.get("scenario") for one in POOL}
 KEYED = mock_form.keyed(POOL)
-EXAM = 'section[data-mock-form]'
+EXAM = "section[data-mock-form]"
 
 
 def part(name: str) -> str:
@@ -154,18 +153,23 @@ def test_a_multiple_response_item_in_a_mock_cannot_be_submitted_short(
 
 def read_quiz(page: OpenPage, question: str) -> dict:
     return page.evaluate(
-        "(() => { const q = document.querySelector('[data-practice-question=\"%s\"]');"
+        f"(() => {{ const q = document.querySelector('[data-practice-question=\"{question}\"]');"
         " const r = q.querySelector('[data-form-part=\"review\"]');"
         " return {verdict: q.getAttribute('data-practice-verdict'),"
         "  hint: (q.querySelector('[data-form-part=\"choose\"]')||{}).textContent,"
-        "  review: r ? r.textContent : ''}; })()" % question
+        "  review: r ? r.textContent : ''}; })()"
     )
 
 
 @pytest.mark.parametrize(
     "chosen,right",
-    [(["a"], None), (["a", "c"], False), (["b", "c"], False), (["a", "b"], True),
-     (["b", "a"], True)],
+    [
+        (["a"], None),
+        (["a", "c"], False),
+        (["b", "c"], False),
+        (["a", "b"], True),
+        (["b", "a"], True),
+    ],
 )
 def test_a_select_two_item_in_a_plain_quiz_is_right_only_with_the_exact_pair(
     open_page: OpenPage, plain, chosen, right, capture_dir: Path

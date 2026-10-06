@@ -84,9 +84,11 @@ def test_a_node_failure_keeps_the_assertion_the_frames_and_the_tally():
     lines = run(NODE_FAILURE, 1)
     kept = shown(lines, NODE_TEST)
     must = [
-        line for line in lines
+        line
+        for line in lines
         if line.startswith(("✖", "✔", "ℹ tests", "ℹ pass", "ℹ fail"))
-        or "AssertionError" in line or line.lstrip().startswith(("at ", "actual:", "expected:"))
+        or "AssertionError" in line
+        or line.lstrip().startswith(("at ", "actual:", "expected:"))
     ]
     assert must and [line for line in kept if line in must] == must
     assert "  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:" in kept
@@ -105,8 +107,9 @@ def test_nodes_own_message_for_an_enum_survives_whole():
 
 
 def test_a_programs_own_line_survives_the_node_rules():
-    kept = shown(run(["a program line", "ℹ this is the program's, not a tally", "ℹ tests 1"]),
-                 NODE_TEST)
+    kept = shown(
+        run(["a program line", "ℹ this is the program's, not a tally", "ℹ tests 1"]), NODE_TEST
+    )
     assert "a program line" in kept and "ℹ this is the program's, not a tally" in kept
 
 

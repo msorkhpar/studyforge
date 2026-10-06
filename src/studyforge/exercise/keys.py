@@ -24,8 +24,8 @@ from __future__ import annotations
 from studyforge.describe import describe_keys
 from studyforge.exercise import quiz
 from studyforge.exercise.cases import BREAKDOWN_KEYS, DEFAULT_KIND
-from studyforge.exercise.deck import DECK_KEYS
 from studyforge.exercise.concepts import CONCEPTS
+from studyforge.exercise.deck import DECK_KEYS
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.states import GRADER_KEY
 

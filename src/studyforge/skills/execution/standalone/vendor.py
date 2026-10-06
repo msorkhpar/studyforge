@@ -208,10 +208,8 @@ def profile_tags(
     return found
 
 
-def profile_check(
-    manifest, bases, checkout: Path, *, platform: str, run: Run
-) -> dict[str, object]:
-    """The arguments `bases.check` takes for the course's image profile: none, if it has none.
+def profile_check(manifest, bases, checkout: Path, *, platform: str, run: Run) -> dict[str, object]:
+    """Return the arguments `bases.check` takes for the course's image profile, if it has one.
 
     ⛔ A course that declares a profile is exported thin only: a profile's images are published
     bases, and a self-contained tree builds every base from the toolchain's own recipe, which holds

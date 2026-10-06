@@ -27,8 +27,11 @@ def test_a_file_the_reader_does_not_edit_and_a_plant_that_changes_nothing_are_re
 def test_every_plant_is_answered_by_case_and_a_full_plant_is_the_main_file_alone():
     spec = PlantSpec((Replacement("settings.json", "true", "false"),))
     full, specs = materialised_files(
-        {"case-a": spec, "case-b": "x = 2\n"}, REFERENCES, "main.py",
-        {"case-a": 1, "case-b": 2}, WHERE,
+        {"case-a": spec, "case-b": "x = 2\n"},
+        REFERENCES,
+        "main.py",
+        {"case-a": 1, "case-b": 2},
+        WHERE,
     )
     assert full["case-a"]["settings.json"] == '{"on": false}\n'
     assert full["case-b"] == {"main.py": "x = 2\n", "settings.json": REFERENCES["settings.json"]}

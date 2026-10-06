@@ -9,6 +9,7 @@ no namespace, no body reaching a route, no script tag and no change to a page's 
 from __future__ import annotations
 
 import json
+
 import pytest
 
 from studyforge.execute import Published, Service

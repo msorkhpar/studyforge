@@ -14,8 +14,14 @@ from __future__ import annotations
 import dataclasses
 
 from studyforge.exercise import Exercise
-from studyforge.exercise.gates.quiz import P1, Q3, Q4, check_mock, check_quiz, key_total_and_single
-from studyforge.exercise.gates.quiz import cited_for
+from studyforge.exercise.gates.quiz import (
+    P1,
+    Q3,
+    check_mock,
+    check_quiz,
+    cited_for,
+    key_total_and_single,
+)
 from studyforge.exercise.quiz import Scenario
 from tests.fixtures.claude_shape import exam_form
 from tests.studyforge.exercise.gates.quiz import material
@@ -103,7 +109,8 @@ def test_q4_holds_a_multiple_response_question_to_the_count_it_states():
         verdict = key_total_and_single((wrong,))
         assert not verdict.held and multi.stem in verdict.says, state
     no_rest = dataclasses.replace(
-        multi, options=tuple(dataclasses.replace(o, correct=True) for o in multi.options),
+        multi,
+        options=tuple(dataclasses.replace(o, correct=True) for o in multi.options),
         select=len(multi.options),
     )
     assert not key_total_and_single((no_rest,)).held

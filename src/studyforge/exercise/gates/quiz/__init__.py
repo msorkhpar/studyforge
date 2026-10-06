@@ -138,8 +138,8 @@ from studyforge.exercise.gates.quiz.mechanical import (
     key_total_and_single,
     origin_still_resolves,
 )
-from studyforge.exercise.gates.quiz.mock import P1, MOCK, check_mock
-from studyforge.exercise.gates.quiz.review import S1, REVIEW, check_review
+from studyforge.exercise.gates.quiz.mock import MOCK, P1, check_mock
+from studyforge.exercise.gates.quiz.review import REVIEW, S1, check_review
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.gates.quiz.judged` directly is a consumer this contract

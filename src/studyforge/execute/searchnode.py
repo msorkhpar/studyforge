@@ -55,14 +55,14 @@ NODE_ON_PATH = "on-path"
 
 
 def node_program(node: str | None = NODE_ON_PATH) -> str | None:
-    """The `node` to run: the one named, the one on `PATH`, or none."""
+    """Return the `node` to run: the one named, the one on `PATH`, or none."""
     return shutil.which("node") if node == NODE_ON_PATH else node
 
 
 def serialised(
     documents: list[dict], options: dict, library: str, node: str | None = NODE_ON_PATH
 ) -> str:
-    """The serialised index of `documents`, built by `library` under `node`.
+    """Return the serialised index of `documents`, built by `library` under `node`.
 
     ⛔ Raises `Unbuilt` with the reason when there is no `node`, it fails, or what it wrote is
     not a serialised index.
@@ -95,7 +95,7 @@ def serialised(
 
 
 def search_index_builder(node: str | None = NODE_ON_PATH) -> Callable[[list, dict, str], str]:
-    """The `build` that precompiles a search index under `node`."""
+    """Return the `build` that precompiles a search index under `node`."""
 
     def build(documents: list, options: dict, library: str) -> str:
         return serialised(documents, options, library, node)

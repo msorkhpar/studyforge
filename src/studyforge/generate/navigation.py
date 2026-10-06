@@ -131,7 +131,7 @@ def _chain(
     absent: frozenset[str],
     tags: Mapping[str, modes.Tag],
 ) -> tuple[Link, ...]:
-    """The neighbours from `at` in one direction, nearest first, to the first every mode reads.
+    """Return the neighbours from `at` one way, nearest first, to the first every mode reads.
 
     ⭐ A neighbour with no tag is read in every mode, so the walk ends there: whichever mode
     is chosen, the bar has somewhere to go no further along than that.

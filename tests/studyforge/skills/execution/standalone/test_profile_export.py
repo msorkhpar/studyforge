@@ -39,10 +39,14 @@ def profile_lock(**changes) -> dict:
     entry = {
         "name": NAME,
         "runner": {
-            "image": bases.profile_image("runner", NAME), "tag": RUNNER_TAG, "digest": THREES,
+            "image": bases.profile_image("runner", NAME),
+            "tag": RUNNER_TAG,
+            "digest": THREES,
         },
         "editor": {
-            "image": bases.profile_image("editor", NAME), "tag": EDITOR_TAG, "digest": FOURS,
+            "image": bases.profile_image("editor", NAME),
+            "tag": EDITOR_TAG,
+            "digest": FOURS,
         },
     }
     entry.update(changes)
@@ -226,6 +230,7 @@ def test_the_profile_entry_changes_no_file_a_course_without_one_writes(tmp_path)
         p.relative_to(profiled_out).as_posix() for p in profiled_out.rglob("*") if p.is_file()
     }
     assert kept == kept_with
-    for one in sorted(kept - {"corpus.json", "compose.yaml", "compose.pull.yaml",
-                              ".studyforge/release.json"}):
+    for one in sorted(
+        kept - {"corpus.json", "compose.yaml", "compose.pull.yaml", ".studyforge/release.json"}
+    ):
         assert (bare / one).read_bytes() == (profiled_out / one).read_bytes(), one

@@ -14,7 +14,6 @@ import pytest
 
 from studyforge.exercise import Card, Origin
 from studyforge.exercise.bundle import Places
-from studyforge.exercise.gates import C1, C2
 from studyforge.exercise.gates.quiz import Q5, S1
 from studyforge.exercise.quiz import Review
 from studyforge.skills.adapter.practices import PracticeRefused, authored
@@ -23,7 +22,6 @@ from studyforge.skills.exercises import (
     Brief,
     DeckDraft,
     QuizDraft,
-    deck_of,
     gate_deck,
     gate_quiz,
     source_case,
@@ -44,10 +42,18 @@ def _brief(tmp_path, ordinal: int = 1):
 
 def cards() -> tuple[Card, ...]:
     return (
-        Card("c-hour", "When is the gauge read?", "At the same hour every day.",
-             Origin("notes/gauge.md", "Taking a reading")),
-        Card("c-book", "When is a reading copied into the book?", "On the same day.",
-             Origin("notes/gauge.md", "Writing it down")),
+        Card(
+            "c-hour",
+            "When is the gauge read?",
+            "At the same hour every day.",
+            Origin("notes/gauge.md", "Taking a reading"),
+        ),
+        Card(
+            "c-book",
+            "When is a reading copied into the book?",
+            "On the same day.",
+            Origin("notes/gauge.md", "Writing it down"),
+        ),
     )
 
 
@@ -82,19 +88,29 @@ def test_a_quiz_without_a_schedule_has_no_r1_and_is_the_record_it_was(tmp_path):
     assert [v.id for v in gated.record.verdicts][-1] == Q5 and S1 not in [
         v.id for v in gated.record.verdicts
     ]
-    assert "review" not in json.loads(
-        dict(gated.files)[brief.places.in_bundle("tests/quiz.json")]
-    )["exercise"]
+    assert (
+        "review"
+        not in json.loads(dict(gated.files)[brief.places.in_bundle("tests/quiz.json")])["exercise"]
+    )
 
 
 def test_the_adapter_reads_a_committed_deck_and_a_committed_bank_into_practice_documents(tmp_path):
     brief, ledger, *_ = _brief(tmp_path)
     root = tmp_path / "corpus"
     _commit(gate_deck(DeckDraft("Gauge cards", cards()), brief, ledger, where="w"), root)
-    second = replace(brief, places=Places(brief.places.address, brief.places.variant,
-                                          brief.places.unit, 2))
-    _commit(gate_quiz(QuizDraft("Gauge review", gauge_questions(), review=Review((1, 3))),
-                      second, ledger, Judging(), where="w"), root)
+    second = replace(
+        brief, places=Places(brief.places.address, brief.places.variant, brief.places.unit, 2)
+    )
+    _commit(
+        gate_quiz(
+            QuizDraft("Gauge review", gauge_questions(), review=Review((1, 3))),
+            second,
+            ledger,
+            Judging(),
+            where="w",
+        ),
+        root,
+    )
     found = authored(root)
     (one, two) = next(iter(found.pages.values()))
     assert one.fields["exercise"]["kind"] == "flashcards" and one.fields["title"] == "Gauge cards"

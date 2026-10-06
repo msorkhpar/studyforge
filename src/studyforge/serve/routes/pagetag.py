@@ -33,7 +33,6 @@ LIVE_ETAG_MARK = "+live"
 CLIENT_PATH_FORBIDDEN = "\"'<>& \t\r\n"
 
 
-
 def client_tag(client: str) -> bytes:
     """Return the one script tag a served page gains, or raise on an unusable path."""
     if not client.startswith("/") or any(char in client for char in CLIENT_PATH_FORBIDDEN):

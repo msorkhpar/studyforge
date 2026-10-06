@@ -145,7 +145,7 @@ def offer(
     *,
     several: bool = False,
 ) -> Offer | None:
-    """The offer a corpus makes, or `None` when it declares no modes (today's page).
+    """Return the offer a corpus makes, or `None` when it declares no modes (today's page).
 
     `entries` is `key -> language ids` for each unit or group with nothing common to every mode.
     """
@@ -186,7 +186,7 @@ def offer(
 
 
 def carriers(made: Offer | None, tag: str) -> str:
-    """The declared names of the languages a tag lists, in declared order, joined by commas.
+    """Return the declared names of the languages a tag lists, in declared order, joined by commas.
 
     ⭐ Generated from the corpus's own data: nothing here knows how many languages there are.
     """
@@ -196,22 +196,24 @@ def carriers(made: Offer | None, tag: str) -> str:
 
 
 def card_attributes(made: Offer | None, lang: object) -> str:
-    """What a practice card carries when the corpus greys what a mode lacks; else `''`."""
+    """Return what a practice card carries when the corpus greys what a mode lacks; else `''`."""
     if made is None or not made.grey or not isinstance(lang, str) or not lang:
         return ""
     return f' {PRACTICE_ATTRIBUTE}="{escape_attribute(lang)}"'
 
 
 def card_note(made: Offer | None, lang: object) -> str:
-    """The sentence of a tagged practice card naming the languages that carry it, or `''`."""
+    """Return the sentence of a tagged practice card naming the languages that carry it, or `''`."""
     if made is None or not made.grey or not isinstance(lang, str) or not lang:
         return ""
     return templates.fill("practice-carriers.html", carriers=carriers(made, lang)) + NEWLINE
 
 
 def tag_panel(made: Offer | None, lang: object, panel: str) -> str:
-    """A practice's panel with the languages it is written in, so a mode that hides its statement
-    hides it too; `panel` unchanged unless the corpus greys what a mode lacks.
+    """Return a practice's panel with the languages it is written in.
+
+    A mode that hides its statement then hides the panel too; `panel` is unchanged unless the
+    corpus greys what a mode lacks.
 
     ⭐ The attribute goes last in the opening tag, so the preview's reading of a panel (a tag that
     opens `<section data-practice=`) still finds it.
@@ -223,14 +225,14 @@ def tag_panel(made: Offer | None, lang: object, panel: str) -> str:
 
 
 def attributes(tag: Tag | None) -> str:
-    """The attribute an entry's row carries to say which languages it belongs to, or `''`."""
+    """Return the attribute an entry's row carries to say which languages it belongs to, or `''`."""
     if tag is None:
         return ""
     return f' {ENTRY_ATTRIBUTE}="{escape_attribute(" ".join(tag.languages))}"'
 
 
 def label(tag: Tag | None) -> str:
-    """The words naming an entry's languages, shown by the stylesheet only outside the mode."""
+    """Return the words naming an entry's languages, shown outside the mode only."""
     if tag is None:
         return ""
     return f"<span {LABEL_ATTRIBUTE}>{escape(tag.label)}</span>"
@@ -242,7 +244,7 @@ def openable(tag: Tag | None) -> bool:
 
 
 def link(tag: Tag | None, target: str, body: str) -> str:
-    """An entry's link; for a locked entry an anchor with no `href`, out of the tab order.
+    """Return an entry's link; for a locked entry an anchor with no `href`, out of the tab order.
 
     ⭐ The address stays in `data-href`, so the client gives the link back when a mode
     that reads the entry is chosen.
@@ -254,7 +256,7 @@ def link(tag: Tag | None, target: str, body: str) -> str:
 
 
 def pager_attributes(tag: Tag | None, target: str, rel: str, shown: bool) -> str:
-    """The attributes of one neighbour in a bar that holds a chain of them.
+    """Return the attributes of one neighbour in a bar that holds a chain of them.
 
     ⭐ The one shown has `rel`; each of the others is `hidden`. A neighbour that belongs to some
     languages only says which, so the client can show it in a mode that reads it.
@@ -269,7 +271,7 @@ def pager_attributes(tag: Tag | None, target: str, rel: str, shown: bool) -> str
 def slots(
     made: Offer | None, href: Callable[[str], str], entry: Tag | None = None
 ) -> dict[str, str]:
-    """The four skeleton slots; every one is `''` for a corpus that declares no modes.
+    """Return the four skeleton slots; every one is `''` for a corpus that declares no modes.
 
     `href` turns a shared file's name into the address this page uses for it, and `entry`
     is the tag of the page's own unit or module, which adds the note a page outside a mode shows.
@@ -339,7 +341,7 @@ def _switch(made: Offer) -> str:
 
 
 def _note(made: Offer, entry: Tag | None) -> str:
-    """The note a page outside a mode shows, in the header; the stylesheet shows it when it applies.
+    """Return the note a page outside a mode shows in its header, where the stylesheet shows it.
 
     ⭐ It names the modes that read the page; under `locked` it also holds one control for
     each, which the client answers like the switch.
@@ -358,7 +360,7 @@ def _note(made: Offer, entry: Tag | None) -> str:
 
 
 def _rule(choice: Choice, locks: bool, several: bool = False) -> str:
-    """The rules for one mode: what it hides, and how an entry outside it looks.
+    """Return the rules for one mode: what it hides, and how an entry outside it looks.
 
     ⭐ A section tagged with another language is not displayed, and an outline line with it.
     A row that belongs to other languages only is greyed and shows its label; a page that does
@@ -385,7 +387,5 @@ def _rule(choice: Choice, locks: bool, several: bool = False) -> str:
         f'{root}{outside} aside[data-section="mode-outside"] {{ display: block; }}',
     ]
     if locks:
-        rules.append(
-            f"{root}{outside} body > :not(header):not(script) {{ display: none; }}"
-        )
+        rules.append(f"{root}{outside} body > :not(header):not(script) {{ display: none; }}")
     return NEWLINE.join(rules)

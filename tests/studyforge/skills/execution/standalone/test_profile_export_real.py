@@ -72,7 +72,7 @@ tasks.test {
     useJUnitPlatform()
 }
 """
-GREETING = "fun greeting(name: String): String = \"hello, $name\"\n"
+GREETING = 'fun greeting(name: String): String = "hello, $name"\n'
 GREETING_TEST = """import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -89,7 +89,11 @@ def run(argv, cwd):
     """The caller's one way in: a real process, `python3` being this interpreter."""
     done = subprocess.run(
         [sys.executable if one == "python3" else one for one in argv],
-        cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True, check=False,
+        cwd=cwd,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        check=False,
         env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
     )
     return done.returncode, done.stdout
@@ -121,8 +125,17 @@ def real_course(where: Path, declared: Path = DECLARED) -> Path:
         ("editor", "editor.env", "EDITOR_IMAGE"),
     ):
         code, printed = run(
-            ["python3", "consuming/builds.py", image, "--runtimes", RUNTIMES, "--prime",
-             str(root / ".studyforge" / "execution" / "prime"), "--platform", "linux/amd64"],
+            [
+                "python3",
+                "consuming/builds.py",
+                image,
+                "--runtimes",
+                RUNTIMES,
+                "--prime",
+                str(root / ".studyforge" / "execution" / "prime"),
+                "--platform",
+                "linux/amd64",
+            ],
             Path(CHECKOUT),
         )
         assert code == 0, image
@@ -138,8 +151,19 @@ def real_course(where: Path, declared: Path = DECLARED) -> Path:
 
 def computed(image: str) -> str:
     code, printed = run(
-        ["python3", "docker/profile_packages/package_build.py", "--profile", NAME, "--image", image,
-         "--runtimes", RUNTIMES, "--platform", "linux/amd64", "--print-tag"],
+        [
+            "python3",
+            "docker/profile_packages/package_build.py",
+            "--profile",
+            NAME,
+            "--image",
+            image,
+            "--runtimes",
+            RUNTIMES,
+            "--platform",
+            "linux/amd64",
+            "--print-tag",
+        ],
         Path(CHECKOUT),
     )
     assert code == 0
@@ -199,8 +223,12 @@ def test_the_real_toolchain_refuses_an_unknown_profile_and_a_tag_it_does_not_com
     unknown.write_text(json.dumps({**declared, "profile": "no-such-profile"}), encoding="utf-8")
     with pytest.raises(vendor.VendorRefused, match="refused profile no-such-profile"):
         write.release(
-            real_course(tmp_path / "a", unknown), tmp_path / "out-a", toolchain=Path(CHECKOUT),
-            platform="linux/amd64", bases=base_lock(), run=run,
+            real_course(tmp_path / "a", unknown),
+            tmp_path / "out-a",
+            toolchain=Path(CHECKOUT),
+            platform="linux/amd64",
+            bases=base_lock(),
+            run=run,
         )
     stale = base_lock()
     stale = parsed(
@@ -210,14 +238,20 @@ def test_the_real_toolchain_refuses_an_unknown_profile_and_a_tag_it_does_not_com
             profile={
                 "name": NAME,
                 "runner": {
-                    "image": bases.profile_image("runner", NAME), "tag": "stale", "digest": DIGEST,
+                    "image": bases.profile_image("runner", NAME),
+                    "tag": "stale",
+                    "digest": DIGEST,
                 },
             },
         )
     )
     with pytest.raises(bases.BasesRefused, match="is locked at tag stale"):
         write.release(
-            real_course(tmp_path / "b"), tmp_path / "out-b", toolchain=Path(CHECKOUT),
-            platform="linux/amd64", bases=stale, run=run,
+            real_course(tmp_path / "b"),
+            tmp_path / "out-b",
+            toolchain=Path(CHECKOUT),
+            platform="linux/amd64",
+            bases=stale,
+            run=run,
         )
     assert not (tmp_path / "out-b").exists()

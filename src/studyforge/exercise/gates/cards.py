@@ -18,8 +18,8 @@ compared in. Standard library otherwise.
 ## ⛔ BOTH ARE MECHANICAL, AND `validate` CAN RE-TAKE BOTH
 
 ⭐ Unlike a quiz's `Q1` to `Q3`, no judgement is taken once and shipped: a card's rule is its shape,
-and its passage is a digest. ⛔ A card is named by its front, never by its id (R7: an id is a value a
-record has no reason to copy into a sentence).
+and its passage is a digest. ⛔ A card is named by its front, never by its id (R7: an id is a value
+a record has no reason to copy into a sentence).
 """
 
 from __future__ import annotations

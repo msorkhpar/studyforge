@@ -68,5 +68,5 @@ def links(body: str, placement: object) -> str:
 
 
 def files() -> dict[str, str]:
-    """The two shared files, by name, for a corpus whose pages link them."""
+    """Return the two shared files, by name, for a corpus whose pages link them."""
     return {STYLESHEET_NAME: text(STYLESHEET_NAME), SCRIPT_NAME: text(SCRIPT_NAME)}

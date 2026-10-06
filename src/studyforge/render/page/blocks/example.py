@@ -144,7 +144,7 @@ def render(
 
 
 def _in_mode_order(tabs: list, offer: object) -> list:
-    """The tabs in the default mode's order: its languages first, then the others as written."""
+    """Return the tabs in the default mode's order: its languages, then the rest as written."""
     default = getattr(offer, "default", None)
     mode = next((c for c in getattr(offer, "choices", ()) if c.id == default), None)
     if mode is None:
@@ -154,7 +154,7 @@ def _in_mode_order(tabs: list, offer: object) -> list:
 
 
 def _missing(offer: object, tabs: list) -> list[str]:
-    """The declared languages the block has no tab for, when the corpus greys them.
+    """Return the declared languages the block has no tab for, when the corpus greys them.
 
     ⭐ In declared order, and empty unless the corpus says `absent_language: grey`, so the block
     of every other corpus is the panels and the tabs it has. ⛔ An example with no tab at all has

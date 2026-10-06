@@ -17,8 +17,8 @@ from studyforge.exercise import Exercise, ExerciseError
 from studyforge.exercise.gates import GateRecord, record_document, record_of
 from studyforge.exercise.gates.families import declared_order, family_of
 from studyforge.exercise.gates.quiz import (
-    P1,
     MOCK,
+    P1,
     Q4,
     Q5,
     QUIZ,
@@ -69,9 +69,7 @@ def gates(plant: str = SOUND):
     exercise = exam(plant)
     ledger = material.ledger(material.DRIFTED_PAGE if plant == SPREAD else material.NONE)
     origins = cited_for(exercise.questions, material.ledger(), WHERE)
-    quiz = check_quiz(
-        exercise, material.judgements(exercise.questions), origins, ledger, WHERE
-    )
+    quiz = check_quiz(exercise, material.judgements(exercise.questions), origins, ledger, WHERE)
     return exercise, quiz, check_mock(exercise, WHERE)
 
 
@@ -127,6 +125,7 @@ def test_q4_is_red_on_the_question_that_keys_two_options_and_names_it_in_an_exam
 
 def test_q4_reads_every_question_of_a_larger_exam_and_counts_the_ones_that_fail():
     many = [dataclasses.replace(material.exercise().questions[1], id=f"x{n}") for n in range(30)]
+
     def keyed_twice(q):
         return dataclasses.replace(
             q, options=tuple(dataclasses.replace(o, correct=True) for o in q.options)

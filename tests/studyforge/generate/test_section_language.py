@@ -36,8 +36,7 @@ def build(tmp_path, name, documents, manifest):
 
 def pages(out):
     return {
-        path.relative_to(out).as_posix(): path.read_bytes()
-        for path in sorted(out.rglob("*.html"))
+        path.relative_to(out).as_posix(): path.read_bytes() for path in sorted(out.rglob("*.html"))
     }
 
 
@@ -57,7 +56,7 @@ def test_the_page_holds_every_section_and_tags_only_the_tagged_ones(tmp_path):
     sections = [(m.group(1), m.group(3)) for m in SECTION.finditer(body)]
     assert sections == [("prose", None), ("prose-2", "aa"), ("prose-3", "bb")]
     # ⭐ Two sections, and the outline lines that point at them.
-    assert body.count("<section id=\"s-prose-") == 2
+    assert body.count('<section id="s-prose-') == 2
     assert len(re.findall(r"<section [^>]*data-lang=", body)) == 2
 
 

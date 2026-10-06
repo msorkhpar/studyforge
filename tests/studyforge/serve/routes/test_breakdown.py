@@ -297,8 +297,8 @@ def test_detail_says_one_line_per_declared_case_then_one_for_the_run(tmp_path):
 
 
 def test_detail_is_a_run_as_well_as_a_submit(tmp_path):
-    # ⭐ Unlike the fold, the detail does not wait for a Submit: a Run whose command wrote the report
-    # is told.
+    # ⭐ Unlike the fold, the detail does not wait for a Submit: a Run whose command wrote the
+    # report is told.
     write_report(tmp_path, LOGGED.format(name=ASK) + PASSING.format(name=EDGE))
     assert detail(workspace(), tmp_path, time.time() - 5)
 

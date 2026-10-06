@@ -45,7 +45,7 @@ PLANTS = {
     GUARD.id: PlantSpec((Replacement(HOOK, "exit 2", "exit 1"),)),
 }
 
-TESTS = '''import json
+TESTS = """import json
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -67,7 +67,7 @@ def test_the_memory_names_the_test_command():
 
 def test_the_guard_blocks_with_exit_two():
     assert "exit 2" in (HERE / "hooks" / "guard.sh").read_text()
-'''
+"""
 
 REPORT = "target/report.xml"
 

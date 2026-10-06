@@ -105,6 +105,14 @@ from studyforge.skills.exercises.corpus import (
     Covered,
     author_corpus,
 )
+from studyforge.skills.exercises.deckdoc import (
+    DECK_API,
+    DECK_DOCUMENT,
+    Deck,
+    DeckRefused,
+    deck_of,
+)
+from studyforge.skills.exercises.deckgating import gate_deck
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
     AUTHORED_PROVENANCE,
@@ -129,7 +137,6 @@ from studyforge.skills.exercises.drafts import (
     source_case,
     words_of,
 )
-from studyforge.skills.exercises.deckgating import gate_deck
 from studyforge.skills.exercises.gating import (
     OUTPUT_LINES,
     Gated,
@@ -138,13 +145,6 @@ from studyforge.skills.exercises.gating import (
     gate_code,
     gate_quiz,
     json_bytes,
-)
-from studyforge.skills.exercises.deckdoc import (
-    DECK_API,
-    DECK_DOCUMENT,
-    Deck,
-    DeckRefused,
-    deck_of,
 )
 from studyforge.skills.exercises.ledger import (
     ENTRY_KEYS,

@@ -58,7 +58,12 @@ def test_a_mock_exam_reads_its_mock_and_each_questions_domain():
     assert exercise.is_quiz and exercise.mock.pass_mark == mock_exam.PASS_MARK
     assert [domain.id for domain in exercise.mock.domains] == ["D1", "D2", "D3"]
     assert [question.domain for question in exercise.questions] == [
-        "D1", "D1", "D2", "D2", "D3", "D3"
+        "D1",
+        "D1",
+        "D2",
+        "D2",
+        "D3",
+        "D3",
     ]
 
 
@@ -101,7 +106,15 @@ def test_mock_on_a_record_that_is_not_a_quiz_is_refused_naming_the_key():
 @pytest.mark.parametrize(
     "value",
     [
-        0, 101, -5, 70.5, "70", True, None, [70], {"a": 1},
+        0,
+        101,
+        -5,
+        70.5,
+        "70",
+        True,
+        None,
+        [70],
+        {"a": 1},
     ],
 )
 def test_a_pass_mark_that_is_not_a_whole_percent_from_1_to_100_is_refused(value):
@@ -118,10 +131,17 @@ def test_the_bounds_and_the_middle_are_accepted(value):
 @pytest.mark.parametrize(
     "domains",
     [
-        [], "D1", None, [{"id": "D1"}], [{"title": "x"}], ["D1"],
+        [],
+        "D1",
+        None,
+        [{"id": "D1"}],
+        [{"title": "x"}],
+        ["D1"],
         [{"id": "D1", "title": "x", "weight": 3}],
-        [{"id": "D 1", "title": "x"}], [{"id": "", "title": "x"}],
-        [{"id": "D1", "title": "  "}], [{"id": "D1", "title": 3}],
+        [{"id": "D 1", "title": "x"}],
+        [{"id": "", "title": "x"}],
+        [{"id": "D1", "title": "  "}],
+        [{"id": "D1", "title": 3}],
     ],
 )
 def test_a_domain_list_that_is_not_ids_and_titles_is_refused(domains):
@@ -163,7 +183,9 @@ def test_every_question_right_scores_the_whole_exam_and_every_domain_full():
     whole, per_domain = scores(asked(), mocked(), mock_exam.keyed())
     assert (whole.asked, whole.right, whole.percent) == (6, 6, 100)
     assert [(s.domain, s.asked, s.right) for s in per_domain] == [
-        ("D1", 2, 2), ("D2", 2, 2), ("D3", 2, 2)
+        ("D1", 2, 2),
+        ("D2", 2, 2),
+        ("D3", 2, 2),
     ]
     assert passed(whole, mocked())
 

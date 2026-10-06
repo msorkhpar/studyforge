@@ -154,8 +154,8 @@ MODES = COMMANDS
 #: Which workspace key each mode reads. ⛔ The only commands this route can start.
 COMMAND_OF = {RUN: "run_command", TEST: "test_command"}
 
-#: ⭐ The request header with which a page asks for each case's message and captured text. ⛔ Absent,
-#: the stream
+#: ⭐ The request header with which a page asks for each case's message and captured text. ⛔
+#: Absent, the stream
 #: is exactly what it was before the header existed. A header is not a command: it selects nothing
 #: to run.
 DETAIL_HEADER = "X-Studyforge-Detail"

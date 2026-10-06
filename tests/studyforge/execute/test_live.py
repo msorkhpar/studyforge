@@ -15,7 +15,7 @@ import urllib.parse
 import pytest
 
 from studyforge.execute import RunRefused, Service, redactions, start_live, valid_key
-from studyforge.execute.live import LIVE_PORT, LiveLauncher
+from studyforge.execute.live import LiveLauncher
 from studyforge.execute.remote import NUL, request
 
 
@@ -31,9 +31,20 @@ def test_a_key_of_the_accepted_shape_is_valid(good):
 @pytest.mark.parametrize(
     "bad",
     [
-        "", "short", "x" * 257, "a b" + "c" * 8, "a" * 8 + "\n", "a" * 8 + "\x00",
-        "k;" + "a" * 8, "k$(" + "a" * 8, "k'" + "a" * 8, "k`" + "a" * 8, "k é" + "a" * 8,
-        None, 5, b"a" * 9,
+        "",
+        "short",
+        "x" * 257,
+        "a b" + "c" * 8,
+        "a" * 8 + "\n",
+        "a" * 8 + "\x00",
+        "k;" + "a" * 8,
+        "k$(" + "a" * 8,
+        "k'" + "a" * 8,
+        "k`" + "a" * 8,
+        "k é" + "a" * 8,
+        None,
+        5,
+        b"a" * 9,
     ],
 )
 def test_a_key_of_any_other_shape_is_not(bad):

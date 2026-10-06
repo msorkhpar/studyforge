@@ -11,7 +11,7 @@ import dataclasses
 from studyforge.render.page import part
 from studyforge.render.page.narration import SILENT
 from tests.studyforge.render.page.pages import sample_placement
-from tests.studyforge.render.page.test_editions import LANGS, edition, four, offer
+from tests.studyforge.render.page.test_editions import LANGS, four, offer
 from tests.studyforge.render.page.test_practice import document, section
 
 

@@ -67,8 +67,13 @@ def test_each_image_of_a_profile_is_optional_but_one_is_needed():
         ({"runner": entry()["runner"]}, "must hold a 'name'"),
         ({**entry(), "name": "Bad Name"}, "must hold a 'name'"),
         ({**entry(), "extra": 1}, "unread \\['extra'\\]"),
-        ({**entry(), "runner": {**entry()["runner"], "image": "studyforge-code-toolchain-runner"}},
-         "profile runner image must be"),
+        (
+            {
+                **entry(),
+                "runner": {**entry()["runner"], "image": "studyforge-code-toolchain-runner"},
+            },
+            "profile runner image must be",
+        ),
         (
             {**entry(), "editor": {**entry()["editor"], "image": "acct/" + IMAGE_EDITOR}},
             "not a bare name",
@@ -122,8 +127,12 @@ def test_a_course_that_declares_a_profile_and_a_lock_without_one_is_refused():
 
 def test_the_profile_is_checked_beside_the_unchanged_checks_of_the_base():
     with pytest.raises(bases.BasesRefused, match="runner base is locked at tag a"):
-        check(locked(), profile_declared=NAME, profile_tags=COMPUTED,
-              toolchain={"runner": "z", "editor": EDITOR_TAG})
+        check(
+            locked(),
+            profile_declared=NAME,
+            profile_tags=COMPUTED,
+            toolchain={"runner": "z", "editor": EDITOR_TAG},
+        )
     assert RUNNER_TAG == "a"
 
 

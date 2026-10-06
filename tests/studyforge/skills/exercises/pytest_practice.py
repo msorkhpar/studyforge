@@ -23,19 +23,17 @@ BLANK = Case("test_blank_text_is_refused", EDGE, "blank text is refused")
 INNER = Case("test_collapses[inner spaces]", EDGE, "a run of spaces inside is one space")
 TABS = Case("test_collapses[tabs and newlines]", EDGE, "tabs and newlines count as spaces")
 
-REFERENCE = '''def normalise(text):
+REFERENCE = """def normalise(text):
     if not text.strip():
         raise ValueError("there is nothing to normalise")
     return " ".join(text.split())
-'''
+"""
 
 #: Returns a wrong value, so every test fails on an assertion and none on an error.
 STARTER = "def normalise(text):\n    return text\n"
 
 #: What an author writes first and a pass of these gates must not let through.
-RAISING_STARTER = (
-    "def normalise(text):\n    raise NotImplementedError('write normalise')\n"
-)
+RAISING_STARTER = "def normalise(text):\n    raise NotImplementedError('write normalise')\n"
 
 PLANTS = {
     BLANK.id: 'def normalise(text):\n    return " ".join(text.split())\n',
@@ -53,7 +51,7 @@ PLANTS = {
     ),
 }
 
-TESTS = '''import pytest
+TESTS = """import pytest
 
 from normalise import normalise
 
@@ -77,7 +75,7 @@ def test_blank_text_is_refused():
 )
 def test_collapses(raw, want):
     assert normalise(raw) == want
-'''
+"""
 
 REPORT = "target/report.xml"
 

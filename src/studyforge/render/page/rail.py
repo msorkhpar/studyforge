@@ -310,9 +310,7 @@ def _readable(href: str | None, current: bool, tag: modes.Tag | None = None) -> 
     and marking it *"listed, not openable"* would be a false sentence rendered
     in italics.
     """
-    openable = current or (
-        href is not None and safe_href(href) is not None and modes.openable(tag)
-    )
+    openable = current or (href is not None and safe_href(href) is not None and modes.openable(tag))
     return f'{READABLE_ATTRIBUTE}="{"true" if openable else "false"}"'
 
 

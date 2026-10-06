@@ -148,7 +148,7 @@ def wanted_for_quiz(exercise: Exercise) -> bool:
 
 
 def wanted_for(exercise: Exercise) -> bool:
-    """Does this mock exam use the exam form? ⭐ Only when it opts in; else it is the page of old."""
+    """Answer whether this mock exam uses the exam form: only when it opts in, else the old page."""
     mock = exercise.mock
     if mock is None:
         return False
@@ -290,7 +290,8 @@ def _key_block(questions: tuple[Question, ...]) -> str:
 def _plan(exercise: Exercise) -> dict:
     mock = exercise.mock
     if mock is None:
-        # ⭐ A plain quiz: one pool, no domains, no clock, no sittings; complete only when all right.
+        # ⭐ A plain quiz: one pool, no domains, no clock, no sittings; complete only when all
+        # right.
         return {"pass_mark": QUIZ_PASS_MARK, "domains": [], "layout": "exam"}
     plan: dict = {
         "pass_mark": mock.pass_mark,

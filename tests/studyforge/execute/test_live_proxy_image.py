@@ -42,7 +42,10 @@ pytestmark = pytest.mark.skipif(not STAGE, reason="set STUDYFORGE_PROOF_STAGE")
 def docker(*arguments: str, check: bool = True) -> str:
     done = subprocess.run(  # noqa: S603 - fixed argv, no shell
         ["docker", "--context", "desktop-linux", *arguments],
-        capture_output=True, text=True, check=False, stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        check=False,
+        stdin=subprocess.DEVNULL,
     )
     if check and done.returncode:
         raise AssertionError(done.stderr)
@@ -58,7 +61,7 @@ def remove(names: list[str], networks: list[str]) -> None:
 
 def ip_of(network: str) -> str:
     """A `docker inspect` template for a container's address on `network`."""
-    return "{{(index .NetworkSettings.Networks \"" + network + "\").IPAddress}}"
+    return '{{(index .NetworkSettings.Networks "' + network + '").IPAddress}}'
 
 
 def run(tag: str) -> dict[str, str]:
@@ -71,8 +74,15 @@ def run(tag: str) -> dict[str, str]:
     internal, outer = f"e18-int-{tag}", f"e18-out-{tag}"
     names = [f"e18-{role}-{tag}" for role in ("allowed", "denied", "proxy-a", "proxy-b", "client")]
     safe = [
-        "--label", LABEL, "--read-only", "--cap-drop", "ALL",
-        "--security-opt", "no-new-privileges", "-v", f"{engine.bindable(stage)}:/p:ro",
+        "--label",
+        LABEL,
+        "--read-only",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "-v",
+        f"{engine.bindable(stage)}:/p:ro",
     ]
     remove(names, [internal, outer])
     try:
@@ -80,19 +90,59 @@ def run(tag: str) -> dict[str, str]:
         docker("network", "create", "--label", LABEL, outer)
         for who, name in (("ALLOWED-STANDIN", names[0]), ("DENIED-STANDIN", names[1])):
             alias = "allowed.test" if who.startswith("ALLOWED") else "denied.test"
-            docker("run", "-d", "--name", name, "--network", outer, "--network-alias", alias,
-                   "-e", f"WHO={who}", *safe, IMAGE, "python", "/p/standin.py")
+            docker(
+                "run",
+                "-d",
+                "--name",
+                name,
+                "--network",
+                outer,
+                "--network-alias",
+                alias,
+                "-e",
+                f"WHO={who}",
+                *safe,
+                IMAGE,
+                "python",
+                "/p/standin.py",
+            )
         for name, script in ((names[2], "/p/swapped.py"), (names[3], "/p/egress.py")):
-            docker("run", "-d", "--name", name, "--network", outer,
-                   "-e", "EGRESS_ALLOW_HOST=allowed.test", *safe, IMAGE, "python", script)
+            docker(
+                "run",
+                "-d",
+                "--name",
+                name,
+                "--network",
+                outer,
+                "-e",
+                "EGRESS_ALLOW_HOST=allowed.test",
+                *safe,
+                IMAGE,
+                "python",
+                script,
+            )
             docker("network", "connect", internal, name)
         address = docker("inspect", "-f", ip_of(outer), names[0])
         seen = {}
         for variant, name in (("swapped", names[2]), ("shipped", names[3])):
             proxy = docker("inspect", "-f", ip_of(internal), name)
             seen[variant] = docker(
-                "run", "--rm", "--name", names[4], "--network", internal, "--label", LABEL,
-                "--cap-drop", "ALL", *safe[2:], IMAGE, "python", "/p/client.py", proxy, address,
+                "run",
+                "--rm",
+                "--name",
+                names[4],
+                "--network",
+                internal,
+                "--label",
+                LABEL,
+                "--cap-drop",
+                "ALL",
+                *safe[2:],
+                IMAGE,
+                "python",
+                "/p/client.py",
+                proxy,
+                address,
             )
         return seen
     finally:
@@ -112,7 +162,9 @@ def test_the_allowed_host_is_reached_through_the_proxy_and_no_other_destination_
     for variant in ("swapped", "shipped"):
         out = seen[variant]
         for label in (
-            "direct allowed.test:443", "direct stand-in ip:443", "direct 1.1.1.1:443 (internet)"
+            "direct allowed.test:443",
+            "direct stand-in ip:443",
+            "direct 1.1.1.1:443 (internet)",
         ):
             assert "CONNECTED" not in line(out, label), (variant, label, out)
         assert "403" in line(out, "via proxy denied.test:443"), out
