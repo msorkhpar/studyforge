@@ -46,6 +46,8 @@ runner is the caller's.
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |
 | `corpus` | the whole pass: the ledger once, every page, the reasons, the merge and the commit |
+| `coverage` | a unit's coverage report: its name, its versions, and whether it went stale |
+| `stale` | every stale unit in a corpus, read from the corpus alone, and their removal |
 
 ⚠️ **`ledger.py` as one module was refused by R11 at 502
 lines**, and the authoring loop is four modules for the same reason: the remedy
@@ -95,15 +97,17 @@ from studyforge.skills.exercises.aspects import (
     require_aspects,
     require_read,
 )
-from studyforge.skills.exercises.corpus import (
+from studyforge.skills.exercises.corpus import LEDGER_PATH, Authored, Covered, author_corpus
+from studyforge.skills.exercises.coverage import (
     COVERAGE_API,
     COVERAGE_FILENAME,
     COVERAGE_KEYS,
-    LEDGER_PATH,
+    REASONS,
     SHORTFALL_REPORT_KEYS,
-    Authored,
-    Covered,
-    author_corpus,
+    STALE_COMMAND,
+    Stale,
+    stale_of,
+    stale_summary,
 )
 from studyforge.skills.exercises.deckdoc import (
     DECK_API,
@@ -157,6 +161,7 @@ from studyforge.skills.exercises.ledger import (
     LedgerError,
     Source,
     digests,
+    file_digest,
     key_of,
     take,
 )
@@ -198,6 +203,7 @@ from studyforge.skills.exercises.quizdoc import (
     quiz_of,
 )
 from studyforge.skills.exercises.scan import Fence, Scan, scan
+from studyforge.skills.exercises.stale import remove_stale, stale_units
 from studyforge.skills.exercises.writes import commit
 
 #: ⛔ The package's whole public surface. A consumer that has to import
@@ -233,12 +239,14 @@ __all__ = [
     "QUIZ_API",
     "QUIZ_DOCUMENT",
     "QUIZ_KEYS",
+    "REASONS",
     "REASON_DESCRIBED",
     "SECTION",
     "SHORTFALL_KEYS",
     "SHORTFALL_REPORT_KEYS",
     "SOURCE_CASES",
     "SOURCE_KEYS",
+    "STALE_COMMAND",
     "TESTS",
     "TIERS",
     "Accounted",
@@ -279,6 +287,7 @@ __all__ = [
     "Scan",
     "Shortfall",
     "Source",
+    "Stale",
     "account",
     "accounts_for",
     "aspect_document",
@@ -287,6 +296,7 @@ __all__ = [
     "carried_practices",
     "commit",
     "digests",
+    "file_digest",
     "deck_of",
     "gate_code",
     "gate_deck",
@@ -307,6 +317,7 @@ __all__ = [
     "require_draft",
     "require_no_retreat",
     "require_page",
+    "remove_stale",
     "require_read",
     "row_key",
     "scan",
@@ -314,6 +325,9 @@ __all__ = [
     "shortfall_document",
     "source_case",
     "source_key",
+    "stale_of",
+    "stale_summary",
+    "stale_units",
     "take",
     "words_of",
 ]

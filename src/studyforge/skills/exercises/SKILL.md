@@ -376,10 +376,14 @@ recorded coverage matches its page's digests and its plan is not re-authored,
 so the author, the judge and the runner are never called for it. A ledger
 entry keeps the reason it was given while its bytes are unchanged.
 
-⚠️ **A page whose source changed is refused, naming its unit's directory.**
-Its bundles were proven against material that has moved, and rewriting them
-is exactly what R3 forbids. Remove that directory from the corpus, and run
-the pass again. ⛔ **Never remove `exercises/ledger.json`** to get past a
+⚠️ **A stale unit is refused before anything is authored, naming its unit's
+directory.** Its page, a test file or its plan moved, or its report is at a
+version this build does not keep. Its bundles were proven against material
+that has moved, and rewriting them is exactly what R3 forbids. The refusal
+counts every stale unit among the pages handed to the pass. `studyforge
+exercises stale <corpus>` lists every one in the corpus with its reason and
+its `practice/` counterpart, and changes nothing. Remove both folders of each
+(`--remove` does, only when git can restore them), and run the pass again. ⛔ **Never remove `exercises/ledger.json`** to get past a
 refusal: it holds every other page's rows.
 
 ⭐ **To change one exercise that already shipped, re-author its unit.** A

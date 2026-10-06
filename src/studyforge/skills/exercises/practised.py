@@ -11,7 +11,7 @@ writes the answer into the exercise record's `concepts`:
     practised(root, places)          # ('a negative index counts back', …) or None
 
 **Depends on.** `archive.scrub` for the personal-data gate every decoded
-document passes (R7), this package's `corpus` for the report's name and the
+document passes (R7), this package's `coverage` for the report's name and the
 versions it is read at, and `loop.quiz_last` for the drafting order;
 `studyforge.version`.
 Standard library otherwise. ⛔ No write.
@@ -33,7 +33,7 @@ from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.exercise.bundle import Places
-from studyforge.skills.exercises.corpus import COVERAGE_FILENAME, COVERAGE_READ
+from studyforge.skills.exercises.coverage import COVERAGE_FILENAME, COVERAGE_READ
 from studyforge.skills.exercises.drafts import AuthoringError
 from studyforge.skills.exercises.loop import quiz_last
 from studyforge.skills.exercises.plan import PLAN_API

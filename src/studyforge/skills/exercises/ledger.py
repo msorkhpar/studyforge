@@ -7,10 +7,11 @@ file it read.
 
 **How you use it.**
 
-    from studyforge.skills.exercises.ledger import digests, key_of, take
+    from studyforge.skills.exercises.ledger import digests, file_digest, key_of, take
 
     ledger = take(root, sources=("guide.md",), tests=("check_it.py",), where="the ledger")
     digests(ledger)              # {path: 'sha256:…'} — the mapping gate G5 asks
+    file_digest(root, "guide.md", where="the unit")    # one file, read the same way
     key_of(ledger.entries[0])    # the token a written reason is filed under
 
 ⭐ **Whether each entry is accounted for is `accounting`'s**, which reads what
@@ -164,7 +165,7 @@ def take(root: Path, sources: Iterable[str], tests: Iterable[str], where: str) -
     recorded: list[Source] = []
     for path in sorted(material | graders):
         text = _text(root, path, where)
-        digest = digest_of_bytes(text.encode("utf-8"))
+        digest = _digest(text)
         read = _scanned(text, path, where) if path in material else Scan((), (), False)
         recorded.append(Source(path=path, digest=digest, sections=read.headings))
         if path in graders:
@@ -181,6 +182,20 @@ def take(root: Path, sources: Iterable[str], tests: Iterable[str], where: str) -
             for fence in read.fences
         )
     return Ledger(tuple(recorded), tuple(sorted(entries, key=_order)))
+
+
+def file_digest(root: Path, path: str, where: str) -> str:
+    """Return what one declared file digests to, read as `take` reads it.
+
+    ⭐ **The one reading**, so a unit's recorded digests can be compared with
+    the file as it is now without taking a whole ledger.
+    """
+    return _digest(_text(root, _source_path(path, "a recorded path", where), where))
+
+
+def _digest(text: str) -> str:
+    """Return the digest of one file's text, as every reading of the ledger spells it."""
+    return digest_of_bytes(text.encode("utf-8"))
 
 
 def digests(ledger: Ledger) -> dict[str, str]:

@@ -1,4 +1,4 @@
-"""The framework's entry points: build, serve, plan, reconcile, validate, check.
+"""The framework's entry points: build, serve, plan, reconcile, validate, check, exercises.
 
 **What it does.** The command line is the framework's public surface. A corpus
 is configuration passed to these commands; it is never a caller of framework
@@ -10,6 +10,7 @@ imports a consumer, and a consumer never imports past this seam.
     studyforge validate <archive>   an adapter's definition of done (R2)
     studyforge plan <corpus>        what would be written, before it is
     studyforge narrate <corpus> --voice <voice>
+    studyforge exercises stale <corpus>   authored units whose page moved
     studyforge build <corpus> --out <directory>
     studyforge serve <root>         every built corpus under it
     studyforge reconcile <corpus>   artifacts whose source is gone
@@ -29,7 +30,7 @@ inside one corpus is a framework with one consumer (R19); what a corpus
 contributes is its configuration.
 
 ⛔ **Every verb above but one is REGISTERED.**
-`validate`, `plan`, `narrate`, `build`, `serve` and `check` are in
+`validate`, `plan`, `narrate`, `exercises`, `build`, `serve` and `check` are in
 `dispatch.VERBS` and run today. ⚠️ `reconcile` is named here as the shape the command line will
 have and is deliberately absent from the table, because
 a verb registered against a callable that does not exist yet makes an installed

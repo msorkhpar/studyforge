@@ -164,3 +164,44 @@ def test_a_candidate_outside_the_root_is_refused_naming_neither_path(tmp_path):
         enumeration.repository_ignores(root, [stray])
     assert str(tmp_path) not in str(refused.value)
     assert refused.value.__suppress_context__, "the chained message still quotes the root"
+
+
+# --- restorable: whether git could give back what a removal takes -------------
+
+
+def _tracked(root):
+    init_repository(root)
+    (root / "kept").mkdir()
+    (root / "kept" / "a.txt").write_text("a\n", encoding="utf-8")
+    run([git(), "add", "-A"], cwd=root)
+    identity = ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.org"]
+    run([git(), *identity, "commit", "-q", "-m", "tracked"], cwd=root)
+    return root
+
+
+def test_restorable_is_true_only_for_tracked_unmodified_files_and_nothing_staged(tmp_path):
+    assert enumeration.restorable(_tracked(tmp_path), ["kept"]) is True
+
+
+def test_restorable_is_unanswered_outside_a_work_tree(tmp_path):
+    assert enumeration.restorable(tmp_path, ["kept"]) is None
+
+
+@pytest.mark.parametrize(
+    ("path", "staged"),
+    [("kept/a.txt", False), ("kept/new.txt", False), ("elsewhere.txt", True)],
+    ids=["modified", "untracked", "staged-elsewhere"],
+)
+def test_restorable_is_false_for_a_byte_git_could_not_give_back(tmp_path, path, staged):
+    root = _tracked(tmp_path)
+    (root / path).write_text("changed\n", encoding="utf-8")
+    if staged:
+        run([git(), "add", path], cwd=root)
+    assert enumeration.restorable(root, ["kept"]) is False
+
+
+def test_restorable_reads_a_path_as_written_never_as_a_glob(tmp_path):
+    root = _tracked(tmp_path)
+    (root / "kXpt").mkdir()
+    (root / "kXpt" / "b.txt").write_text("untracked\n", encoding="utf-8")
+    assert enumeration.restorable(root, ["k?pt"]) is True, "a glob matched another folder"

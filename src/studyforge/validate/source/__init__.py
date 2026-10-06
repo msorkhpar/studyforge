@@ -71,6 +71,7 @@ from studyforge.validate.source.enumeration import (
     SKIP_DIRS,
     Scan,
     repository_ignores,
+    restorable,
     source_files,
 )
 from studyforge.validate.source.membership import (
@@ -126,5 +127,6 @@ __all__ = [
     "check_declared_files",
     "check_unclassified",
     "repository_ignores",
+    "restorable",
     "source_files",
 ]

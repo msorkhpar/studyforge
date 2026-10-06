@@ -10,7 +10,16 @@ cannot disagree about what the command does.
 
 **Depends on.** `generate.write_site` and its `RAISES`, `cli.site.report`,
 `cli.plan` for the plan and the media measurement it takes, `corpus.media` for
-`require_committable`, `validate.cli` for `UNUSABLE`, and `argparse`.
+`require_committable`, `skills.exercises` for the stale units it names up
+front, `validate.cli` for `UNUSABLE`, and `argparse`.
+
+## ⭐ Stale authored units are named before anything is built
+
+⚠️ **A course that edits its pages leaves its authored units stale**, and a
+build copies those units unchanged, so the edit never reaches the reader.
+⭐ `stale_notice` says so in one line, before the build starts, and points
+at `studyforge exercises stale`. ⛔ It does not stop the build: a script that
+must stop runs that command first, which exits `1`.
 
 ## ⛔ `--out` is REQUIRED and has NO DEFAULT
 
@@ -61,11 +70,13 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.cli.plan import MediaProjection, plan_for
 from studyforge.cli.site.report import exit_code, lines
 from studyforge.corpus.media import MediaError, require_committable
 from studyforge.generate import RAISES, write_site
 from studyforge.narrate import narration_on
+from studyforge.skills.exercises import AuthoringError, stale_summary, stale_units
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.paths import RULE_DUPLICATE_PATH
 from studyforge.validate.report import INVALID
@@ -127,6 +138,9 @@ def main(argv: list[str] | None = None, out=None) -> int:
         # the corpus root must not leave a directory tree behind to clean up.
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
+    stale = stale_notice(root)
+    if stale:
+        print(stale, file=stream)
     plan = plan_for(root)
     claimed = [r for r in plan.refusals if r.rule == RULE_DUPLICATE_PATH]
     if claimed:
@@ -167,6 +181,18 @@ def main(argv: list[str] | None = None, out=None) -> int:
         print(f"build stopped: after this build, {OVER}; commit nothing yet", file=stream)
         return INVALID
     return exit_code(written)
+
+
+def stale_notice(root: Path) -> str:
+    """Return the one line a build says up front when authored units are stale, or `''`.
+
+    ⭐ **Said, never a stop**: the site is built from the units the corpus
+    holds, and a corpus with nothing stale prints nothing new.
+    """
+    try:
+        return stale_summary(stale_units(root))
+    except (AuthoringError, PersonalDataLeak) as refused:
+        return str(refused)
 
 
 def media_stop(media: MediaProjection | None, *, measured: bool) -> str:
