@@ -453,3 +453,101 @@ def test_the_script_holds_no_owner_repository_or_host_and_builds_from_location()
     for note in (preview.PRACTICE_NOTE, preview.EXAMPLE_NOTE, preview.NARRATION_NOTE):
         assert "locally with Docker" in note
         assert preview.RUN_LINK in note
+
+
+# The search's script-loaded files, and the Run strip beside a code example.
+
+INDEX = (
+    'window.studyforgeSearch={"pages":["../g/units/u1.unit.html","../g/units/u2.unit.html"],'
+    '"parts":["search-index-1.js","search-index-2.js"]};'
+)
+RUN_STRIP = (
+    '<p data-example-run="src/A.java" hidden><button type="button">Run</button></p>\n'
+    '<pre data-example-part="output" hidden></pre>\n'
+)
+
+
+def searchable(root: Path, index: str = INDEX, parts: tuple[str, ...] = ("1", "2")) -> Path:
+    hidden_tree(root)
+    for name in ("minisearch.js", "search-index.js"):
+        write(root / ".studyforge/assets" / name, index if "index" in name else "var m;")
+    for one in parts:
+        write(root / f".studyforge/assets/search-index-{one}.js", f"var p{one};")
+    return root
+
+
+def asset_dir(out: Path) -> Path:
+    return (out / next(one for one in files(out) if one.endswith("/page.js"))).parent
+
+
+def test_the_search_files_are_copied_beside_the_script_that_loads_them(tmp_path):
+    out = made(tmp_path, searchable)
+    here = asset_dir(out)
+    for name in ("minisearch.js", "search-index.js", "search-index-1.js", "search-index-2.js"):
+        assert (here / name).is_file(), name
+    assert (here / "search-index-2.js").read_text(encoding="utf-8") == "var p2;"
+    pages = {p.relative_to(out).as_posix() for p in out.rglob("*.html")}
+    for page_name in ("g/units/u1.unit.html", "g/units/u2.unit.html"):
+        reached = (here / ".." / page_name).resolve().relative_to(out.resolve()).as_posix()
+        assert reached in pages
+    assert dangling(out) == []
+
+
+def test_an_index_that_names_a_page_the_walk_missed_is_refused_by_name(tmp_path):
+    tree = searchable(tmp_path / "tree", INDEX.replace("u2.unit.html", "ghost.unit.html"))
+    with pytest.raises(preview.PreviewRefused, match="ghost.unit.html"):
+        preview.preview(tree, tmp_path / "out")
+
+
+def test_an_index_that_names_a_missing_piece_is_refused_by_name(tmp_path):
+    tree = searchable(tmp_path / "tree", parts=("1",))
+    with pytest.raises(preview.PreviewRefused, match="search-index-2.js"):
+        preview.preview(tree, tmp_path / "out")
+
+
+def test_a_tree_without_a_search_index_copies_no_search_file(tmp_path):
+    out = made(tmp_path)
+    assert not [one for one in files(out) if "search" in one or "minisearch" in one]
+
+
+def with_run(root: Path) -> Path:
+    hidden_tree(root)
+    unit = root / ".studyforge/g/units/u1.unit.html"
+    text = unit.read_text(encoding="utf-8")
+    text = text.replace("</main>", RUN_STRIP + "</main>", 1)
+    text = text.replace(
+        "</head>",
+        '<link rel="stylesheet" href="../../assets/example-run.css">\n</head>',
+    ).replace(
+        "</body>", '<script src="../../assets/example-run.js" defer></script>\n</body>'
+    )
+    write(unit, text)
+    write(root / ".studyforge/assets/example-run.css", "p{}")
+    write(root / ".studyforge/assets/example-run.js", "var r;")
+    return root
+
+
+def test_the_run_beside_a_code_example_is_replaced_by_a_note_and_its_assets_stay_out(tmp_path):
+    out = made(tmp_path, with_run)
+    text = (out / "course/g/units/u1.unit.html").read_text(encoding="utf-8")
+    assert "data-example-run" not in text and "data-example-part" not in text
+    assert text.count("Running this example's test is available") == 1
+    assert text.index("Running this example's test") < text.index("</main>")
+    assert "example-run" not in text
+    assert not [one for one in files(out) if "example-run" in one]
+    assert dangling(out) == []
+
+
+def test_a_page_with_neither_feature_is_byte_identical_to_the_earlier_output(tmp_path):
+    out = made(tmp_path)
+    text = (out / "course/g/units/u2.unit.html").read_text(encoding="utf-8")
+    assert 'data-preview-note="example"' not in text
+    plain, narrated = preview.remove_server_parts(PAGE)
+    assert narrated is True
+    assert plain == (
+        '<!doctype html><html><head><title>T</title></head><body>'
+        '<a href="#content">Skip to the content</a><header><h1>T</h1></header>\n'
+        '<p data-preview-note="narration">' + preview.NARRATION_NOTE + '</p>'
+        '<main id="content"><p>Text</p></main>'
+        '<script src="page.js" defer></script></body></html>'
+    )
