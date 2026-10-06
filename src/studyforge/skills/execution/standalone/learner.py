@@ -21,6 +21,7 @@ machine that wrote it: the namespace is a placeholder until a publisher sets it.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
@@ -74,6 +75,9 @@ class Course:
     #: generated features and comparison. Empty: the README is the one it always was.
     top: tuple[str, ...] = ()
     body: tuple[str, ...] = ()
+    #: The Docker Hub account the course's images are published under, named in the README's
+    #: start section only. Empty: the README tells the reader to use the account they were given.
+    account: str = ""
 
 
 def settings(course: Course) -> str:
@@ -110,6 +114,11 @@ def settings(course: Course) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def is_account(name: str) -> bool:
+    """Whether `name` has the shape of a Docker Hub account: 4 to 30 lowercase letters, digits."""
+    return re.fullmatch(r"[a-z0-9]{4,30}", name) is not None
 
 
 def _link(name: str, exists: bool) -> str:
@@ -153,7 +162,11 @@ def readme(course: Course) -> str:
         "1. Install Docker, and start it.",
         "2. Clone this repository and open a terminal in its directory.",
         f"3. Copy `{SETTINGS}` to `.env`, and set `{NAMESPACE_VARIABLE}` in it to the Docker Hub",
-        "   account you were given: the images are published under that account.",
+        *(
+            [f"   account `{course.account}`: the images are published under that account."]
+            if course.account
+            else ["   account you were given: the images are published under that account."]
+        ),
         "",
         "   ```",
         f"   cp {SETTINGS} .env",

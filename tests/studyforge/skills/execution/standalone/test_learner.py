@@ -295,3 +295,15 @@ def test_a_thin_readme_and_settings_say_the_account_is_needed_to_build_too():
     assert f"`{images.NAMESPACE_VARIABLE}` first: the shared base images" in readme
     whole_readme, whole_env = learner.readme(COURSE), learner.settings(COURSE)
     assert "needs no account" in whole_readme and "needs it too" not in whole_env
+
+
+def test_a_published_account_is_named_in_the_start_section_only():
+    from dataclasses import replace
+
+    plain = learner.readme(COURSE)
+    named = learner.readme(replace(COURSE, account="example-account".replace("-", "")))
+    assert "to the Docker Hub\n   account `exampleaccount`: the images are published" in named
+    assert "account you were given" not in named
+    assert "account you were given" in plain
+    assert named.count("exampleaccount") == 1
+    assert "exampleaccount" not in learner.settings(replace(COURSE, account="exampleaccount"))

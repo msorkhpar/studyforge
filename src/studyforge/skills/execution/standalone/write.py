@@ -114,6 +114,7 @@ def release(
     screenshots: Path | None = None,
     preview_to: Path | None = None,
     bases: locked.Bases | None = None,
+    published_account: str | None = None,
     run: split.Run,
 ) -> Released:
     """Write the learner tree of the course at `root` into `out`, or refuse by name.
@@ -127,7 +128,13 @@ def release(
     base and the runner and editor from the published toolchain bases, or the course's image
     profile's, each by tag and digest, and the tree keeps only the course's own layers. Without
     it the tree is self-contained, byte for byte as it always was.
+
+    `published_account` names the Docker Hub account the images are published under (lowercase
+    letters and digits, 4 to 30 characters, else refused). Only the README's start section names
+    it; compose files, the settings file and `namespace` are unchanged. `None`: as it always was.
     """
+    if published_account is not None and not learner.is_account(published_account):
+        raise ReleaseRefused("published_account is not a Docker Hub account (4 to 30 a-z, 0-9)")
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
     if out.exists() and any(out.iterdir()):
         raise ReleaseRefused("the target directory is not empty; name a new or empty one")
@@ -230,6 +237,7 @@ def release(
         live=plan.live,
         top=mine.top,
         body=mine.body,
+        account=published_account or "",
     )
     texts = {
         f"{compose.IMAGES}/site/Dockerfile": images.site_dockerfile(
