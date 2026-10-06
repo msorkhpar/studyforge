@@ -34,6 +34,7 @@ builds them.
 | `compose` | `compose.yaml` and `compose.pull.yaml`, and the rules they keep |
 | `facts` | the counts a README states, read from the course's own records |
 | `tour` | the README's sections on what the course is, what it gives, and its two ways to be used |
+| `own` | a course's optional own README sections and pictures (`docs/learner-readme/`) |
 | `learner` | the learner's `README.md` and `course.env` |
 | `preview` | the read-only static tree for GitHub Pages: words, script, page edits; one file |
 | `pages` | the workflow that deploys the preview on every push to `main`, and its builder |
