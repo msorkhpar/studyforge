@@ -16,8 +16,9 @@ folds in.
     clean = judged.verdict("gate", lambda: passes(judged.bytes()))
     digest = build_digest(root, path, memo)        # or None, for a root no build recorded
 
-**Depends on.** `os`, `threading`, `time`, `json`, `collections`, `corpus.placement.profile`
-for the generated directory's name and `corpus.placement` for the record's.
+**Depends on.** `os`, `threading`, `time`, `collections`, `corpus.placement.profile`
+for the generated directory's name, `corpus.placement` for the record's, and
+`corpus.discovery.cache` to read it, gate included.
 
 ## ⭐ Why a verdict is held at all
 
@@ -46,7 +47,6 @@ carries its version, and `serve.app` refuses to send a file whose open handle ha
 
 from __future__ import annotations
 
-import json
 import os
 import threading
 import time
@@ -54,6 +54,7 @@ from collections import OrderedDict
 from collections.abc import Callable, Hashable
 from pathlib import Path
 
+from studyforge.corpus.discovery.cache import read as read_record
 from studyforge.corpus.placement import SITE_CACHE_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 
@@ -217,10 +218,8 @@ def build_digest(base: Path, path: Path, memo: Versions = UNHELD) -> str | None:
 
 
 def _digest_in(record: Path) -> str | None:
-    """Return a discovery record's digest when it is a plain hexadecimal string."""
-    try:
-        digest = json.loads(record.read_text(encoding="utf-8")).get(DIGEST_KEY)
-    except OSError, ValueError, AttributeError:
-        return None
+    """Return a discovery record's digest, read by its own reader, when it is plain hexadecimal."""
+    cached = read_record(record)
+    digest = None if cached is None or not cached.supported else cached.scan_sha256
     ok = isinstance(digest, str) and digest.isascii() and digest.isalnum() and len(digest) <= 128
     return digest if ok else None
