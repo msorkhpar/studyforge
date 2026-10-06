@@ -59,10 +59,18 @@ THIS_ROW = frozenset(
 #: ⛔ The five modules of this package that may import the runner: the
 #: namespace and, split from it at its seams, what a started run is, a
 #: lesson's code in the editor and whether a corpus can run now, and the
-#: published form's runner and editor.
+#: published form's runner and editor, and the live route, which starts a live run through the
+#: execute package's own launcher and reads a corpus's records for what may run live.
 EXECUTE = "studyforge.execute"
 RUNNER_IMPORTERS = frozenset(
-    {"routes/run.py", "routes/runs.py", "routes/code.py", "routes/reachable.py", "published.py"}
+    {
+        "routes/run.py",
+        "routes/runs.py",
+        "routes/code.py",
+        "routes/reachable.py",
+        "routes/live.py",
+        "published.py",
+    }
 )
 
 

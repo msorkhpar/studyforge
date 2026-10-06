@@ -128,8 +128,10 @@ def test_build_reproduces_every_committed_document_byte_for_byte():
         assert render(build(**parts_of(document))) == text, path.name
         seen.update(key for key in OPTIONAL_KEYS if key in document)
     # ⛔ "Including every optional key" is part of the acceptance, so the
-    # sweep asserts it actually met all three rather than none.
-    assert seen == set(OPTIONAL_KEYS)
+    # sweep asserts it actually met all three rather than none. ⭐ `lang` and
+    # `edition` are the exceptions: a tagged document is built by the tests that tag one, and no
+    # committed fixture carries either, so every fixture stays the bytes it was.
+    assert seen == set(OPTIONAL_KEYS) - {"lang", "edition"}
 
 
 def test_the_key_order_is_what_reaches_disk():
@@ -164,6 +166,8 @@ def test_optional_keys_are_appended_after_the_digest():
         assets_sha256="a" * 64,
         media_skipped=True,
         exercise=GRADED_EXERCISE,
+        lang="aa",
+        edition="a",
     )
     assert tuple(document)[: len(DOCUMENT_KEYS)] == DOCUMENT_KEYS
     assert tuple(document)[len(DOCUMENT_KEYS) :] == OPTIONAL_KEYS
@@ -418,3 +422,28 @@ def test_an_address_object_and_a_list_build_the_same_document():
     from_address = build(**{**BASE, "address": Address.of("solo")})
     assert from_list == from_address
     assert from_list["address"] == ["solo"]
+
+
+def test_lang_is_appended_after_every_other_key_and_only_when_given():
+    # ⭐ Absent means common to every reading: the document is the bytes it was.
+    assert "lang" not in build(**BASE)
+    tagged = build(**BASE, lang="aa")
+    assert tagged["lang"] == "aa"
+    assert tuple(tagged)[: len(DOCUMENT_KEYS)] == DOCUMENT_KEYS
+    assert tuple(tagged)[-1] == "lang"
+    assert render({k: v for k, v in tagged.items() if k != "lang"}) == render(build(**BASE))
+
+
+@pytest.mark.parametrize("bad", ["", "Aa", "a  b", "a a", 3, True, ["aa"]])
+def test_a_lang_that_is_not_an_id_is_refused_on_the_way_in_and_the_way_out(bad):
+    with pytest.raises(ArchiveError, match="invalid 'lang'"):
+        build(**BASE, lang=bad)
+    document = {**build(**BASE), "lang": bad}
+    with pytest.raises(ArchiveError, match="invalid 'lang'"):
+        parse(render(document), "lesson-1.json")
+
+
+def test_a_tagged_document_reads_back_and_a_lang_is_a_known_key():
+    assert "lang" in OPTIONAL_KEYS
+    tagged = build(**BASE, lang="aa")
+    assert parse(render(tagged), "lesson-1.json") == tagged

@@ -103,8 +103,12 @@ CODE = "code"
 #: what lands here is the token, so a record can carry it and round-trip.
 QUIZ = "quiz"
 
+#: ⭐ A deck of flashcards: cards the reader turns over, with no run and no grade. The shape is
+#: `exercise.deck`'s; what lands here is the token, so a record can carry it and round-trip.
+FLASHCARDS = "flashcards"
+
 #: ⛔ Closed. A kind this build does not define is refused rather than carried.
-EXERCISE_KINDS = (CODE, QUIZ)
+EXERCISE_KINDS = (CODE, QUIZ, FLASHCARDS)
 
 #: What a record that writes no `kind` is.
 DEFAULT_KIND = CODE
@@ -149,15 +153,21 @@ BREAKDOWN_KEYS = ("cases", "report")
 #: What a case `id` may be. ⛔ A permitted set, and wider than a
 #: path or an argv token on purpose: this value is compared byte for byte with
 #: what a test report spells, so it carries a Java `Class#method`, a pytest
-#: `file::test[param]` and a parameterised `name(int, int)`. ⚠️ It carries no
-#: whitespace, so it stays one token wherever it is printed or matched.
-CASE_ID = re.compile(r"\A[A-Za-z0-9._:#$()\[\],+=@/-]+\Z")
+#: `file::test[param]`, a parameterised `name(int, int)` and a backticked
+#: Kotlin sentence. ⚠️ **One ASCII space may sit between two characters of the
+#: set** — Gradle spells `adds(int, int)` and a backticked name with it — and
+#: no more than one in a row: a leading, trailing or doubled space, a tab and a
+#: newline are refused, so an id never begins or ends in whitespace and never
+#: holds a run of it that a printer or a matcher could fold.
+CASE_ID = re.compile(r"\A[A-Za-z0-9._:#$()\[\],+=@/-]+(?: [A-Za-z0-9._:#$()\[\],+=@/-]+)*\Z")
 
 #: Said in a refusal instead of the value (R7), for the reason `safety` states:
 #: the message tells an author what to write, and the value is corpus data.
 CASE_ID_PERMITTED = (
     "the test's own id as the report spells it, carrying only ASCII letters, "
-    "digits and '. _ - : # $ / @ + = , ( ) [ ]', with no whitespace"
+    "digits and '. _ - : # $ / @ + = , ( ) [ ]', and at most single spaces "
+    "between two of those characters (never leading, trailing or doubled, "
+    "and no tab or newline)"
 )
 
 

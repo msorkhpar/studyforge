@@ -12,6 +12,11 @@ test needs to say can be said without a filesystem.
 (R1) — `tests/studyforge/corpus/manifest/test_document.py` asserts that of the
 whole of `src/`, not just of this module.
 
+Size exception: this module is the manifest's one closed declaration of its keys. The key
+map, the key order and the required keys are read against one another by the key-version gate and
+by onboarding's promote step, and a split would put a key in one file and its version in another,
+so that adding a key could update the one and forget the other.
+
 ## The three questions that are three answers
 
 ⚠️ **`variants` is a filing and presentation key and nothing more.** It says
@@ -71,7 +76,9 @@ from studyforge.corpus.manifest.fields import (
     title_of,
     variants_of,
 )
+from studyforge.corpus.manifest.live import Live, parse_live
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.corpus.manifest.profile import parse_profile
 from studyforge.corpus.manifest.reading import Reading, parse_reading
 from studyforge.corpus.manifest.runtimes import NO_RUNTIMES, parse_runtimes
 from studyforge.describe import describe_keys
@@ -130,12 +137,15 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "onboarding_doc"): 6,
     (None, "curriculum"): 7,
     ("curriculum", "linked"): 8,
-    # ⭐ The reading-modes keys are optional and add no bump: they are gated at the version
-    # this build already writes, so an older declaration cannot carry them.
+    # ⭐ The reading-modes and profile keys are optional and add no bump: they are gated at the
+    # version this build already writes, so an older declaration cannot carry them.
     (None, "languages"): 8,
     (None, "modes"): 8,
     (None, "default_mode"): 8,
     (None, "outside_mode"): 8,
+    (None, "profile"): 8,
+    (None, "live"): 8,
+    (None, "absent_language"): 8,
 }
 
 #: Every key a manifest may carry, in the order §4 writes them.
@@ -148,12 +158,15 @@ MANIFEST_KEYS = (
     "curriculum",
     "exercises",
     "runtimes",
+    "profile",
+    "live",
     "narration",
     "onboarding_doc",
     "languages",
     "modes",
     "default_mode",
     "outside_mode",
+    "absent_language",
     "placement",
     "content",
     "media",
@@ -203,6 +216,10 @@ class Manifest:
     #: The declared languages and reading modes. ⭐ **Absent is `None`**: no
     #: tagging, no question, today's behaviour.
     reading: Reading | None = None
+    #: The toolchain image profile the runner and editor are built on; absent is `None`.
+    profile: str | None = None
+    #: The live runs the corpus offers against a reader's own key; absent is `None`.
+    live: Live | None = None
     corpus_api: int = CORPUS_API
 
     @property
@@ -306,6 +323,8 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
             else None
         ),
         reading=parse_reading(document, where),
+        profile=parse_profile(document, where),
+        live=parse_live(document, where),
         corpus_api=corpus_api,
     )
 
@@ -313,16 +332,14 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 def _gate(document: dict, where: str) -> None:
     """Refuse a manifest carrying personal data, naming the shape and not the value.
 
-    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (R7). ⚠️ A
-    module that cites a neighbour's translation as its justification spreads
-    one translating site into many.
-    ⭐ *A promise with one exception is not a promise* is answered where it
-    belongs: `manifest/errors.py` names what crosses, rather than swallowing it.
+    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (R7). ⚠️ A module that cites
+    a neighbour's translation as its justification spreads one translating site into many.
+    ⭐ *A promise with one exception is not a promise* is answered where it belongs:
+    `manifest/errors.py` names what crosses, rather than swallowing it.
 
-    ⛔ It is already load-bearing. `validate/corpus.py` catches `ManifestError`
-    and **then** `PersonalDataLeak`; while this translated, the second arm
-    could never fire, and a home path in `corpus.json` was filed under
-    `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA`.
+    ⛔ It is already load-bearing. `validate/corpus.py` catches `ManifestError` and **then**
+    `PersonalDataLeak`; while this translated, the second arm could never fire, and a home
+    path in `corpus.json` was filed under `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA`.
     """
     assert_clean(document, where)
 
@@ -330,16 +347,15 @@ def _gate(document: dict, where: str) -> None:
 def _check_version(document: dict, where: str) -> int:
     """Return the `corpus_api` declared, refusing one this build cannot speak (R9).
 
-    ⛔ The test itself is `studyforge.version`'s, not this module's: R9
-    versions several contracts, and a second copy is the one people forget. What stays here is
-    the set — `KNOWN_CORPUS_API` — because which versions a manifest may
-    declare is this contract's business and nobody else's.
+    ⛔ The test itself is `studyforge.version`'s, not this module's: R9 versions several
+    contracts, and a second copy is the one people forget. What stays here is the set,
+    `KNOWN_CORPUS_API`, because which versions a manifest may declare is this contract's
+    business and nobody else's.
 
-    ⚠️ **The checked version is returned rather than discarded**: a
-    `Manifest` that always reported the default would report the truth only
-    while `KNOWN_CORPUS_API` held one number. ⛔ A manifest declaring `1` must
-    say `1`, because the
-    field records what the corpus declared and not what this build writes.
+    ⚠️ **The checked version is returned rather than discarded**: a `Manifest` that always
+    reported the default would report the truth only while `KNOWN_CORPUS_API` held one number.
+    ⛔ A manifest declaring `1` must say `1`, because the field records what the corpus declared
+    and not what this build writes.
     """
     return check_version(
         "corpus_api",
@@ -353,16 +369,14 @@ def _check_version(document: dict, where: str) -> int:
 def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
     """Refuse a key from a version this manifest does not declare (R9).
 
-    ⛔ **The version is the corpus's statement of which contract it was written
-    to, and it is never inferred from the keys present.** A manifest using
-    `not_material` under a `1` is unreadable to exactly the build it claims to
-    be readable by, which is the whole thing R9 versions — and the refusal is
-    a raise naming both numbers, never a quiet upgrade of the declaration.
+    ⛔ **The version is the corpus's statement of which contract it was written to, and it is
+    never inferred from the keys present.** A manifest using `not_material` under a `1` is
+    unreadable to exactly the build it claims to be readable by, which is the whole thing R9
+    versions — and the refusal is a raise naming both numbers, never a quiet upgrade.
 
-    ⚠️ **Every gated block, not one of them.** The check ran over `content`
-    alone while `content` was the only block that had grown a key; a key added
-    under `media` would have shipped ungated and the omission would have looked
-    exactly like a decision.
+    ⚠️ **Every gated block, not one of them.** The check ran over `content` alone while
+    `content` was the only block that had grown a key; a key added under `media` would have
+    shipped ungated and the omission would have looked exactly like a decision.
     """
     for name, needed in versions_needed(document):
         if corpus_api < needed:
@@ -377,11 +391,10 @@ def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
 def versions_needed(document: dict) -> list[tuple[str, int]]:
     """Every key and form `document` uses that a later version added, with that version.
 
-    ⭐ **One answer for the gate and for the writer**: `parse` refuses by it
-    and onboarding's `promote` writes the version it needs, so no key or form a
-    version adds can be written under a version that refuses it.
-    ⚠️ A form is not a key: rule 1b's `*/name` glob is a value under
-    `content.not_material`, and an older build refuses it just the same.
+    ⭐ **One answer for the gate and for the writer**: `parse` refuses by it and onboarding's
+    `promote` writes the version it needs, so no key or form a version adds can be written
+    under a version that refuses it. ⚠️ A form is not a key: rule 1b's `*/name` glob is a value
+    under `content.not_material`, and an older build refuses it just the same.
     """
     needed = []
     for (block, key), version in KEY_VERSIONS.items():

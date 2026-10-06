@@ -84,6 +84,25 @@ def test_the_course_runner_bakes_the_run_service_and_runs_it():
     assert '"perl"' in text
 
 
+def test_a_course_with_its_own_npm_packages_installs_them_offline_in_its_runner_at_build_time():
+    # ⚠️ Measured: an example's Run failed with "Cannot find package '@anthropic-ai/sdk'": the
+    # copy of the course's code holds no node_modules, and the runner has no network.
+    text = images.runner_dockerfile("a-course", packages=True)
+    lines = text.splitlines()
+    copy = lines.index("COPY package.json package-lock.json /work/")
+    install = lines.index(f"RUN cd /work && {images.PACKAGE_INSTALL}")
+    assert copy < install < lines.index("WORKDIR /work")
+    assert "--offline" in images.PACKAGE_INSTALL.split()
+    assert "--ignore-scripts" in images.PACKAGE_INSTALL.split()
+
+
+def test_a_course_without_npm_packages_has_the_runner_it_had():
+    # ⛔ Byte for byte: no package line, and the default is the file it always was.
+    text = images.runner_dockerfile("a-course")
+    assert text == images.runner_dockerfile("a-course", packages=False)
+    assert "npm" not in text and "package.json" not in text
+
+
 def test_the_site_context_leaves_out_the_build_files_and_the_learners_state_and_keeps_clips():
     ignored = images.DOCKERIGNORE.splitlines()
     for gone in (".git", ".env", ".studyforge/images", ".studyforge/progress", "compose.yaml"):

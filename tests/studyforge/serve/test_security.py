@@ -228,3 +228,37 @@ def test_the_composed_policy_carries_exactly_one_frame_src_and_one_frame_ancesto
             "frame-ancestors 'none'"
         ]
         assert "connect-src 'self'" in composed
+
+
+NAVIGATE = {
+    "Sec_Fetch_Site": "cross-site", "Sec_Fetch_Mode": "navigate", "Sec_Fetch_Dest": "document",
+}
+
+
+def test_a_cross_site_navigation_to_a_page_is_accepted_when_the_caller_says_it_is_a_page():
+    assert refusal("127.0.0.1", headers(**NAVIGATE), navigation=True) is None
+
+
+def test_a_cross_site_navigation_is_refused_unless_the_caller_says_it_is_a_page():
+    assert refusal("127.0.0.1", headers(**NAVIGATE)) == REFUSED_SITE
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        {"Sec_Fetch_Mode": "cors"},
+        {"Sec_Fetch_Mode": "no-cors"},
+        {"Sec_Fetch_Dest": "iframe"},
+        {"Sec_Fetch_Dest": "script"},
+        {"Sec_Fetch_Dest": "empty"},
+    ],
+)
+def test_a_cross_site_load_that_is_not_a_document_navigation_is_still_refused(other):
+    assert refusal("127.0.0.1", headers(**{**NAVIGATE, **other}), navigation=True) == REFUSED_SITE
+
+
+def test_a_navigation_does_not_excuse_a_foreign_host_or_origin():
+    evil = headers(Host="evil.example", **NAVIGATE)
+    assert refusal("127.0.0.1", evil, navigation=True) == REFUSED_HOST
+    foreign = headers(Origin="http://evil.example", **NAVIGATE)
+    assert refusal("127.0.0.1", foreign, navigation=True) == REFUSED_ORIGIN

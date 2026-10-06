@@ -57,7 +57,6 @@ tail is kept.
 
 from __future__ import annotations
 
-import json
 import tempfile
 import time
 from dataclasses import dataclass
@@ -65,7 +64,13 @@ from pathlib import Path
 from typing import Protocol
 
 from studyforge.archive.scrub import scrub
-from studyforge.exercise import QUIZ, Exercise, Origin, origin_document, to_document
+from studyforge.exercise import (
+    QUIZ,
+    Exercise,
+    Origin,
+    origin_document,
+    to_document,
+)
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import (
     BUILD,
@@ -75,11 +80,16 @@ from studyforge.exercise.bundle import (
     Places,
     bundle_of,
     emit,
+    materialised,
+    materialised_files,
     plant_dirname,
+    roles_of,
+    spec_bytes,
+    spec_file,
+    require_argument_paths,
 )
 from studyforge.exercise.gates import (
     ORIGIN_ROLE,
-    Cited,
     Evidence,
     GateRecord,
     Run,
@@ -87,11 +97,9 @@ from studyforge.exercise.gates import (
     check,
     folded,
     plant_role,
-    record_document,
-    record_of,
     taken_over,
 )
-from studyforge.exercise.gates.quiz import check_quiz, cited_role
+from studyforge.exercise.gates.quiz import check_mock, check_quiz, check_review, cited_role
 from studyforge.exercise.quiz import QUIZ_PROVENANCE, QUIZ_TRUST
 from studyforge.skills.exercises.drafts import (
     AUTHORED_PROVENANCE,
@@ -103,6 +111,7 @@ from studyforge.skills.exercises.drafts import (
     QuizDraft,
 )
 from studyforge.skills.exercises.ledger import Ledger, digests
+from studyforge.skills.exercises.staging import cited, json_bytes, lay_down, record_bytes
 from studyforge.skills.exercises.quizdoc import QUIZ_API, QUIZ_DOCUMENT, quiz_of
 
 #: How many lines of a run's output a coverage report keeps.
@@ -154,11 +163,6 @@ class Gated:
         return tuple(verdict for verdict in self.record.verdicts if not verdict.held)
 
 
-def json_bytes(document: object) -> bytes:
-    """Encode a document the one way this skill writes one: indented, newline-ended (R10)."""
-    return (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
-
-
 def gate_code(
     draft: CodeDraft, brief: Brief, ledger: Ledger, runner: Runner, *, source: str, where: str
 ) -> Gated:
@@ -172,38 +176,59 @@ def gate_code(
             f"this one's plants do not match its edge cases. G3 is read per edge, "
             f"so a missing plant is a gate nobody could read."
         )
+    # ⛔ The type check is a command like the others: a path it names is inside the workspace.
+    require_argument_paths(draft.typecheck_command, places.workspace, f"{where}: 'typecheck'")
     main = draft.main_file
+    # ⭐ Every file the reader edits, as each role has it. One file (`files` empty) reads exactly
+    # as it always did: the plant's text is the main file's and nothing else is staged.
+    references = {main: draft.reference} | {p: f.reference for p, f in draft.files.items()}
+    starters = {main: draft.starter} | {p: f.starter for p, f in draft.files.items()}
+    if draft.files:
+        edited, specs = materialised_files(draft.plants, references, main, positions, where)
+        full = {case: texts[main] for case, texts in edited.items()}
+    else:
+        full, specs = materialised(draft.plants, draft.reference, main, positions, where)
+        edited = {case: {main: text} for case, text in full.items()}
     held = {
         BUNDLE_FILENAME: json_bytes(_bundle_document(draft, places)),
         STATEMENT_FILENAME: draft.statement.encode("utf-8"),
         f"starter/{main}": draft.starter.encode("utf-8"),
         f"reference/{main}": draft.reference.encode("utf-8"),
+        **{f"starter/{p}": f.starter.encode("utf-8") for p, f in draft.files.items()},
+        **{f"reference/{p}": f.reference.encode("utf-8") for p, f in draft.files.items()},
         f"tests/{draft.test_file}": draft.tests.encode("utf-8"),
         **{places.build_path(path): text.encode("utf-8") for path, text in draft.build.items()},
         **{
             f"plants/{plant_dirname(positions[case])}/{main}": text.encode("utf-8")
             for case, text in draft.plants.items()
+            if case not in specs
+        },
+        **{
+            f"plants/{plant_dirname(positions[case])}/{spec_file(main)}": spec_bytes(spec)
+            for case, spec in specs.items()
         },
     }
-    solutions = {"reference": draft.reference, "starter": draft.starter}
-    solutions |= {plant_role(case): draft.plants[case.id] for case in _edges(bundle.cases)}
+    solutions = {"reference": references, "starter": starters}
+    solutions |= {plant_role(case): edited[case.id] for case in _edges(bundle.cases)}
     with tempfile.TemporaryDirectory(prefix="studyforge-stage-") as staged:
         stage = Path(staged)
-        _lay_down(stage, {places.in_bundle(path): data for path, data in held.items()})
+        lay_down(stage, {places.in_bundle(path): data for path, data in held.items()})
         emission = emit(stage, bundle, source=source, ingested=_NEVER_WRITTEN)
         exercise = exercise_of(emission.document, where)
         runs = _Runs(exercise, draft, places, solutions, runner, where)
         evidence = Evidence.taken(exercise, runs.attempt, where)
-        origins = _cited(((ORIGIN_ROLE, bundle.origin),), ledger)
+        origins = cited(((ORIGIN_ROLE, bundle.origin),), ledger)
         record = GateRecord(
-            inputs=taken_over(stage / places.bundle, _roles(bundle, positions), where),
+            inputs=taken_over(
+                stage / places.bundle, roles_of(bundle, positions, set(specs)), where
+            ),
             origins=origins,
             verdicts=check(exercise, evidence, origins, digests(ledger), where),
         )
     files = (
         *((places.in_bundle(path), data) for path, data in held.items()),
         *emission.files,
-        (places.gates, _record_bytes(record, where)),
+        (places.gates, record_bytes(record, where)),
     )
     return Gated(places, record, files, ((places.bundle, bundle.origin),), runs.last)
 
@@ -212,13 +237,32 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
     """Answer `Q1`–`Q5` over one quiz draft, its judgements taken by the independent pass."""
     places = brief.places
     exercise = Exercise(
-        None, None, None, None, QUIZ_PROVENANCE, QUIZ_TRUST, kind=QUIZ, questions=draft.questions
+        None,
+        None,
+        None,
+        None,
+        QUIZ_PROVENANCE,
+        QUIZ_TRUST,
+        kind=QUIZ,
+        questions=draft.questions,
+        mock=draft.mock,
+        review=draft.review,
+        layout=draft.layout,
     )
     judgements = judge(brief, draft.questions)
-    origins = _cited(
+    origins = cited(
         tuple((cited_role(question.id), question.origin) for question in draft.questions), ledger
     )
     verdicts = check_quiz(exercise, judgements, origins, digests(ledger), where)
+    if draft.mock is not None:
+        # ⭐ A mock exam answers the mock family's gate as well, and only a mock exam does.
+        # ⛔ A record writes its verdicts in the order the families declare them (family by
+        # name, then gate), which puts `mock` before `quiz`.
+        verdicts = (check_mock(exercise, where), *verdicts)
+    if draft.review is not None:
+        # ⭐ A review bank answers the review family's gate as well, and only a bank does. The
+        # record writes families by name, which puts `review` after `quiz`.
+        verdicts = (*verdicts, check_review(exercise, where))
     document = {
         "quiz_api": QUIZ_API,
         "address": list(places.address.segments),
@@ -230,7 +274,7 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
     }
     with tempfile.TemporaryDirectory(prefix="studyforge-stage-") as staged:
         stage = Path(staged)
-        _lay_down(stage, {places.in_bundle(QUIZ_DOCUMENT): json_bytes(document)})
+        lay_down(stage, {places.in_bundle(QUIZ_DOCUMENT): json_bytes(document)})
         inputs = taken_over(stage / places.bundle, (("tests", QUIZ_DOCUMENT),), where)
     record = GateRecord(inputs=inputs, origins=origins, verdicts=verdicts)
     if record.clears:
@@ -239,7 +283,7 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
         quiz_of(document, places.bundle)
     files = (
         (places.in_bundle(QUIZ_DOCUMENT), json_bytes(document)),
-        (places.gates, _record_bytes(record, where)),
+        (places.gates, record_bytes(record, where)),
     )
     accounts = tuple(
         (f"{places.bundle}:{question.id}", question.origin) for question in draft.questions
@@ -259,22 +303,40 @@ class _Runs:
         """Stage the tests and `role`'s solution in a fresh root, run them, and fold the report."""
         with tempfile.TemporaryDirectory(prefix="studyforge-run-") as staged:
             root = Path(staged)
-            _lay_down(
+            lay_down(
                 root,
                 {
                     self.places.in_workspace(self.draft.test_file): self.draft.tests.encode(),
-                    self.places.in_workspace(self.draft.main_file): self.solutions[role].encode(),
+                    **{
+                        self.places.in_workspace(path): text.encode()
+                        for path, text in self.solutions[role].items()
+                    },
                     **{
                         self.places.in_workspace(path): text.encode()
                         for path, text in self.draft.build.items()
                     },
                 },
             )
+            failed = None
+            if self.draft.typecheck_command:
+                checked = self.runner(root, self.draft.typecheck_command)
+                if checked.exit_code != 0:
+                    failed = checked.exit_code
+                    self.last = _relative(checked.output, root)
             started = time.time()
             ran = self.runner(root, tuple(self.exercise.test_command or ()))
-            self.last = _relative(ran.output, root)
+            if failed is None:
+                self.last = _relative(ran.output, root)
             return folded(
-                self.exercise, root, role, number, ran.exit_code, self.where, started=started
+                self.exercise,
+                root,
+                role,
+                number,
+                ran.exit_code,
+                self.where,
+                started=started,
+                assertions_only=self.draft.assertions_only,
+                typecheck_failed=failed,
             )
 
 
@@ -285,6 +347,8 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
     draft that needs none writes exactly the document it always did.
     """
     build = {"build": list(draft.build)} if draft.build else {}
+    files = {"files": list(draft.files)} if draft.files else {}
+    tried = {"try_file": draft.try_file} if draft.try_file else {}
     return {
         "bundle_api": BUNDLE_API,
         "address": list(places.address.segments),
@@ -294,6 +358,8 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
         "title": draft.title,
         "lang": draft.lang,
         "main_file": draft.main_file,
+        **files,
+        **tried,
         "test_file": draft.test_file,
         **build,
         "run_command": list(draft.run_command),
@@ -309,53 +375,6 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
 def _edges(cases):
     """Return the edge cases, in the order the draft declares them."""
     return tuple(case for case in cases if not case.ask)
-
-
-def _roles(bundle, positions: dict[str, int]) -> tuple[tuple[str, str], ...]:
-    """Every input a code gate record digests, in the bundle's order, bundle-relative."""
-    main = bundle.main_file
-    return (
-        ("statement", STATEMENT_FILENAME),
-        ("starter", f"starter/{main}"),
-        ("reference", f"reference/{main}"),
-        ("tests", f"tests/{bundle.test_file}"),
-        *(
-            (plant_role(case), f"plants/{plant_dirname(positions[case.id])}/{main}")
-            for case in _edges(bundle.cases)
-        ),
-        *((f"{BUILD}:{path}", bundle.places.build_path(path)) for path in bundle.build),
-    )
-
-
-def _cited(named: tuple[tuple[str, Origin], ...], ledger: Ledger) -> tuple[Cited, ...]:
-    """Cite what each origin's file digested to when the ledger read it — ⛔ never `digests()`.
-
-    ⚠️ **Read off the `Source` rows, deliberately not off the gate-facing
-    mapping**, so the one thing the gates are handed is the one thing they are
-    tested against. An origin the ledger never read is cited by nothing, and
-    `G5`/`Q5` refuse it as a verdict.
-    """
-    read = {source.path: source.digest for source in ledger.sources}
-    return tuple(
-        Cited(role=role, path=origin.path, section=origin.section, digest=read[origin.path])
-        for role, origin in named
-        if origin.path in read
-    )
-
-
-def _record_bytes(record: GateRecord, where: str) -> bytes:
-    """Encode the gate record as it ships, re-read through `record_of` before it is believed."""
-    written = record_document(record)
-    record_of(written, where)
-    return json_bytes(written)
-
-
-def _lay_down(root: Path, files: dict[str, bytes]) -> None:
-    """Write every file under a staging root — ⛔ never the corpus."""
-    for path, data in files.items():
-        target = root / path
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(data)
 
 
 def _relative(output: str, root: Path) -> str:

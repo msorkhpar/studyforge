@@ -54,6 +54,7 @@ from studyforge.corpus.placement import relative_href
 from studyforge.execute import is_a_test, pairing
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
+from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
 from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
@@ -98,6 +99,8 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     code = link_suffixes(corpus.manifest.runtimes)
     # ⭐ Which source a linked test stands beside: the corpus's code walked once.
     pairs = _pairs(corpus) if code else None
+    offer = offer_of(corpus)
+    tags = offer.tags if offer is not None else None
     for source in corpus.units:
         at = unit_location(corpus, source)
         document = build_unit(
@@ -111,11 +114,13 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             shared=shared,
             code=code if source.mentions.beside else (),
             pairing=pairs if source.mentions.beside else None,
+            offer=offer,
+            entry=tags.get(source.key) if tags else None,
         )
         body = render(
             document,
             placement,
-            bar(corpus.contents, source.key, absent),
+            bar(corpus.contents, source.key, absent, offer),
             trail(
                 corpus.contents,
                 source.key,
@@ -130,6 +135,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
                 container=source.container.address.key,
                 unit=source.key,
                 absent=absent,
+                tags=tags,
             ),
         )
         yield at.page, body

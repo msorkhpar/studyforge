@@ -84,7 +84,13 @@ AFTER = {
             "origin": "docs/01-getting-started.md",
         }
     ],
+    "mock": {"pass_mark": 70, "domains": [{"id": "d-1", "title": "A greeter"}]},
     "concepts": ["A greeter returns a greeting."],
+    "files": ["practice/basics-01/notes.md"],
+    "review": {"intervals_days": [1, 3, 7]},
+    "cards": [{"id": "c-1", "front": "What does a greeter return?", "back": "A greeting."}],
+    "layout": "page",
+    "try_file": "practice/basics-01/notes.md",
 }
 
 #: ⭐ A whole quiz as the quiz shape shipped it — the shape the previous reader cannot

@@ -122,3 +122,20 @@ def test_the_assets_a_block_already_shows_are_not_carried():
     document["assets"] = [dict(support.ATTACHMENT)]
     built = section(key="prose", kind="lesson", heading="H", blocks=[], document=document)
     assert built["attachments"] == []
+
+
+def test_a_tagged_document_gives_a_section_a_lang_after_every_other_key():
+    document = support.lesson(lang="aa")
+    built = section(
+        key="prose", kind="lesson", heading="H", blocks=document["blocks"], document=document
+    )
+    assert tuple(built) == (*SECTION_KEYS, "lang")
+    assert built["lang"] == "aa"
+
+
+def test_an_untagged_document_gives_a_section_no_lang_key_at_all():
+    document = support.lesson()
+    built = section(
+        key="prose", kind="lesson", heading="H", blocks=document["blocks"], document=document
+    )
+    assert "lang" not in built

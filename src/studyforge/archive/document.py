@@ -73,6 +73,7 @@ from pathlib import Path
 from studyforge.address import Address
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.errors import ArchiveError
+from studyforge.archive.language import require_tags
 from studyforge.archive.scrub import assert_clean
 from studyforge.describe import describe, describe_keys
 from studyforge.exercise import Exercise, ExerciseError
@@ -113,7 +114,7 @@ DOCUMENT_KEYS = (
 #: ⚠️ **Appended, never inserted.** `exercise` joined later and went on the
 #: end for that reason: every document written before it existed still renders
 #: the bytes it always did.
-OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped", "exercise")
+OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped", "exercise", "lang", "edition")
 
 #: Every key this format defines. ⛔ A document carrying anything else is
 #: **refused** — see `parse`, and the measurement in its docstring.
@@ -182,6 +183,8 @@ def build(
     starting_code: str | None = None,
     media_skipped: bool = False,
     exercise: object = None,
+    lang: str | None = None,
+    edition: str | None = None,
 ) -> dict:
     """Assemble one archive document — every gate run, nothing written.
 
@@ -236,6 +239,9 @@ def build(
         # values reach a file a runner executes against, and R5's pair is
         # refused here so no consumer has to remember to ask (spec §7).
         document["exercise"] = _exercise_document(exercise, document, where)
+    tags = {"lang": lang, "edition": edition}
+    document.update({name: value for name, value in tags.items() if value is not None})
+    require_tags(document, where)
 
     # ⛔ The second gate, over every string in the WHOLE document. This is the
     # one that reaches the metadata — a `source`, an asset's remote address —
@@ -316,6 +322,7 @@ def parse(text: str, where: str) -> dict:
     assert_clean(document, where)
     _require_known_keys(document, where)
     _require_valid_exercise(document, where)
+    require_tags(document, where)
     return document
 
 

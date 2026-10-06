@@ -117,7 +117,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import mark, quiz
+from studyforge.render.page import deck, editions, mark, mock, mockform, quiz, review, scope
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -128,6 +128,8 @@ PRACTICE = "practice"
 #: The panel itself: the editor slot, the controls, the status line and the
 #: output region — a whole element with attributes, so a file (R13).
 PANEL_TEMPLATE = "practice-panel.html"
+FILE_TEMPLATE = "practice-file.html"
+FILES_TEMPLATE = "practice-files.html"
 
 #: The two windows, and the tab that reaches each. ⭐ The Tests tab is emitted
 #: only where the record NAMES a test — the same honesty Submit already gets
@@ -169,7 +171,7 @@ CASE_TEMPLATE = "practice-case.html"
 JOIN = "\n"
 
 
-def render(section: dict, document: dict, placement: Placement) -> str:
+def render(section: dict, document: dict, placement: Placement, *, embedded: bool = False) -> str:
     """Return one practice section's panel, or `''` where the unit sets no work.
 
     ⛔ Empty is the ordinary answer and it is the whole product decision: §7's
@@ -185,6 +187,15 @@ def render(section: dict, document: dict, placement: Placement) -> str:
         return ""
     exercise = _exercise(workspace)
     key = key_of(document, section)
+    if exercise.is_deck:
+        # ⭐ A deck of flashcards: cards turned over and marked, with no run and no grade.
+        return deck.render(
+            exercise,
+            key=key,
+            corpus=placement.corpus,
+            grader=_region(templates.fill(scope.deck_template(exercise))),
+            assets=placement.asset,
+        )
     if exercise.is_quiz:
         # ⛔ **A quiz is not work at a file**: it carries questions in
         # place of a workspace, so there is no file to name, nothing to open in
@@ -192,19 +203,62 @@ def render(section: dict, document: dict, placement: Placement) -> str:
         # shapes share this one surface and this one renders its questions with
         # no frame and no dead control — which is the same rule a reading-only
         # unit gets two lines above, applied to the other shape.
-        return quiz.render(
-            exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise))
+        if exercise.review is not None:
+            # ⭐ A quiz that declares a review schedule is a bank revisited over time
+            # (`page.review`); every other quiz is rendered below exactly as it always was.
+            return review.render(
+                exercise,
+                key=key,
+                corpus=placement.corpus,
+                grader=_region(templates.fill(scope.review_template(exercise))),
+                assets=placement.asset,
+            )
+        if exercise.mock is not None:
+            # ⭐ A quiz that declares a mock exam is scored per domain (`page.mock`); every
+            # other quiz is rendered below exactly as it always was.
+            return mock.render(
+                exercise,
+                key=key,
+                corpus=placement.corpus,
+                grader=_region(templates.fill("practice-grader-mock.html")),
+                assets=placement.asset,
+                embedded=embedded,
+            )
+        # ⭐ A plain quiz is drawn one question at a time by the exam form's own parts, unless its
+        # record opts out with `layout: page` (`exercise.quiz.layout`).
+        steps = mockform.wanted_for_quiz(exercise)
+        more = {"assets": placement.asset} if steps else {}
+        return (mockform if steps else quiz).render(
+            exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise)),
+            embedded=embedded, **more,
         )
+    many = editions.edited_with(document, section)
     return templates.fill(
         PANEL_TEMPLATE,
         key=escape_attribute(key),
         corpus=escape_attribute(placement.corpus),
-        main=escape(exercise.main_path),
+        **editions.slots(many, section, placement.offer),
+        file=files_sentence(exercise),
         grader=_region(grader(exercise)),
         tabs=_region(tabs(exercise)),
         controls=controls(exercise),
         breakdown=_region(breakdown(exercise)),
     )
+
+
+def files_sentence(exercise: Exercise) -> str:
+    """Return the sentence naming the file or files the reader edits.
+
+    ⭐ One file is the sentence it always was; a practice with `files` names every one, the
+    main file first, so a reader of a configuration practice knows what they are to change.
+    """
+    if not exercise.files:
+        return templates.fill(FILE_TEMPLATE, main=escape(exercise.main_path))
+    named = [f"<code>{escape(path)}</code>" for path in (exercise.main_path, *exercise.files)]
+    said = templates.fill(FILES_TEMPLATE, list=f"{', '.join(named[:-1])} and {named[-1]}")
+    if exercise.try_file:
+        said += JOIN + templates.fill("practice-tryit.html", file=escape(exercise.try_file))
+    return said
 
 
 def key_of(document: dict, section: dict) -> str:

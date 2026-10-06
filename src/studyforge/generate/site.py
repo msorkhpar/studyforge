@@ -62,24 +62,46 @@ a page, which is a reading of the *reader's* disk and not of the corpus.
 
 from __future__ import annotations
 
+import posixpath
 from pathlib import Path, PurePosixPath
 
+from studyforge.archive.scrub import scrub
 from studyforge.contents import status
 from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
+from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.media import unit_media
+from studyforge.generate.exampleruns import wanted as has_example_run
+from studyforge.generate.mockexam import form_wanted as has_mock_form
+from studyforge.generate.revision import has_decks, has_reviews
+from studyforge.generate.mockexam import wanted as has_mock_exam
 from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
+from studyforge.execute import NODE_ON_PATH, search_index_builder
+from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents
 from studyforge.render.index import render as render_index
-from studyforge.render.pageassets import written_files
+from studyforge.render.page import (
+    deck_files,
+    example_run_files,
+    mock_files,
+    mock_form_files,
+    review_files,
+)
+from studyforge.render.pageassets import search_files, written_files
 
 
-def write_site(root: Path | str, into: Path | str, *, narration: bool | None = None) -> Written:
+def write_site(
+    root: Path | str,
+    into: Path | str,
+    *,
+    narration: bool | None = None,
+    node: str | None = NODE_ON_PATH,
+) -> Written:
     """Build one corpus's whole reading floor under `into`.
 
     ⛔ `into` is separate from `root` and required, for the reason
@@ -87,14 +109,14 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
     decision and not the framework's, and no default may take it silently.
     ⭐ `narration` overrides `corpus.json`'s `narration` for this build;
     `None` keeps the corpus's own answer. Off copies no clip and
-    deletes none.
+    deletes none. ⭐ `node` is the program the search index is precompiled with: by default
+    the one on `PATH`; `None`, or one that fails, leaves it to the browser and warns.
     """
     corpus = for_output(voiced(read_corpus(root), narration), into)
+    pages = unit_pages(corpus, into) + container_pages(corpus, into) + root_index(corpus, into)
     return (
-        unit_pages(corpus, into)
-        + container_pages(corpus, into)
-        + root_index(corpus, into)
-        + assets(corpus, into)
+        pages
+        + assets(corpus, into, pages.pages, node=node)
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
         + files_unreached(corpus)
@@ -125,7 +147,8 @@ def retired(corpus: Corpus, into: Path | str) -> Written:
 
 def root_index(corpus: Corpus, into: Path | str) -> Written:
     """Write the single page a reader opens by double-clicking it."""
-    where = IndexPlacement(shared=corpus.shared)
+    offer = offer_of(corpus)
+    where = IndexPlacement(shared=corpus.shared, offer=offer)
     local = status(corpus.contents, corpus.present)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
@@ -142,6 +165,7 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
                 where.shared.root_index,
                 page_paths(corpus),
                 absent=corpus.absent,
+                tags=offer.tags if offer is not None else None,
             ),
         ),
         written,
@@ -152,7 +176,26 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
     return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
 
 
-def assets(corpus: Corpus, into: Path | str) -> Written:
+def search_pages(
+    corpus: Corpus, into: Path | str, pages: tuple[PurePosixPath, ...]
+) -> list[tuple[str, str]]:
+    """`(address from the asset directory, html)` for every page this build wrote, to be indexed."""
+    found = []
+    for page in pages:
+        if page.suffix != ".html":
+            continue
+        address = posixpath.relpath(str(page), str(corpus.shared.assets))
+        found.append((address, (Path(into) / Path(str(page))).read_text(encoding="utf-8")))
+    return found
+
+
+def assets(
+    corpus: Corpus,
+    into: Path | str,
+    pages: tuple[PurePosixPath, ...] = (),
+    *,
+    node: str | None = NODE_ON_PATH,
+) -> Written:
     """Write the shared stylesheet and script every page of the site links.
 
     ⛔ **Asked of `render.pageassets` as one call**, never assembled here: the
@@ -164,7 +207,35 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
-    for filename, body in sorted(written_files().items()):
+    shared = {**written_files(), **modes.files(offer_of(corpus))}
+    if pages:
+        # ⭐ The search index is read back off the pages just written: it says only what they say.
+        # ⛔ Scrubbed: flattened out of its markup, prose that describes a secret's shape (a page on
+        # redaction saying "`Bearer` followed by ...") reads as the secret itself to the serve
+        # gate's personal-data check, which would refuse the whole index file. The pages keep
+        # their words.
+        # ⭐ Twice: each text before it is indexed, so no term or snippet holds the shape, and each
+        # file as written. Scrubbing only changes text of a secret's shape, so a precompiled
+        # index's JSON is left whole.
+        build = search_index_builder(node)
+        found = search_files(search_pages(corpus, into, pages), build=build, clean=scrub)
+        shared.update({n: scrub(b) for n, b in found.items()})
+    if has_mock_exam(corpus):
+        # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
+        shared.update(mock_files())
+    if has_mock_form(corpus):
+        # ⭐ And the exam form's four only for a corpus whose mock opts into it.
+        shared.update(mock_form_files())
+    if has_decks(corpus):
+        # ⭐ A deck of flashcards writes its two; a corpus with none builds the files it did.
+        shared.update(deck_files())
+    if has_reviews(corpus):
+        # ⭐ And a spaced-review bank its two.
+        shared.update(review_files())
+    if has_example_run(corpus):
+        # ⭐ And the Run strip's two only for a corpus whose examples name their code.
+        shared.update(example_run_files())
+    for filename, body in sorted(shared.items()):
         place(
             out,
             directory / filename,

@@ -154,6 +154,12 @@ MODES = COMMANDS
 #: Which workspace key each mode reads. ⛔ The only commands this route can start.
 COMMAND_OF = {RUN: "run_command", TEST: "test_command"}
 
+#: ⭐ The request header with which a page asks for each case's message and captured text. ⛔ Absent,
+#: the stream
+#: is exactly what it was before the header existed. A header is not a command: it selects nothing
+#: to run.
+DETAIL_HEADER = "X-Studyforge-Detail"
+
 #: The path that stops the live run.
 STOP = "stop"
 
@@ -210,7 +216,7 @@ def route(runs: Runs, request: Request, rest: str) -> Response:
         return error(403, NOT_FROM_A_FILE)
     if rest == STOP:
         return json_response(200, {"resource": "run-stop", "stopped": runs.stop()})
-    return start(runs, rest)
+    return start(runs, rest, wants_detail(request))
 
 
 def index(runs: Runs) -> dict:
@@ -240,7 +246,12 @@ def index(runs: Runs) -> dict:
     }
 
 
-def start(runs: Runs, rest: str) -> Response:
+def wants_detail(request: Request) -> bool:
+    """Did the page ask for per-case detail? ⭐ Only the exact value `1` does."""
+    return str(request.headers.get(DETAIL_HEADER, "")).strip() == "1"
+
+
+def start(runs: Runs, rest: str, detail: bool = False) -> Response:
     """Answer `<corpus>/<mode>/<practice key>`: a run, or that practice's editor.
 
     ⭐ **One parse, because the three parts are the same three** — a corpus, an
@@ -287,7 +298,9 @@ def start(runs: Runs, rest: str) -> Response:
         return error(422, REFUSED)
     if live is None:
         return error(409, BUSY)
-    outcome = Outcome(runs, corpus, (address, ordinal, section), mode, argv, workspace, started)
+    outcome = Outcome(
+        runs, corpus, (address, ordinal, section), mode, argv, workspace, started, detail
+    )
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
     return Response(200, headers, stream=Stream(runs, live, outcome))
 
@@ -312,9 +325,11 @@ def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
         for argument in workspace[key]
         if isinstance(argument, str)
     )
+    files = workspace.get("files")
+    more = tuple(one for one in files if isinstance(one, str)) if isinstance(files, list) else ()
     try:
         where = runs.practice_editor(
-            corpus, main, test if isinstance(test, str) and test else None, named
+            corpus, main, test if isinstance(test, str) and test else None, named, more
         )
     except WorkbenchRefused:
         # ⛔ The refusal's own sentence names a file inside somebody else's

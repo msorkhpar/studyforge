@@ -203,6 +203,8 @@
     var acts = [].slice.call(panel.querySelectorAll('[' + ACT + ']'));
     if (!key || !corpus || !controls || !status || !output || !acts.length) { return; }
     var cases = breakdown(panel);
+    /* ⭐ What each case's message and captured text will be drawn by (`practice-detail.js`), or nothing. */
+    var detail = window.studyforge && window.studyforge.practiceDetail ? window.studyforge.practiceDetail.collect(panel) : null;
 
     /* ⭐ The editor slot is shown, and what it shows is the sentence saying the
        editor is not running. Hiding it instead would be the blank panel this
@@ -259,6 +261,7 @@
       handedBack = false;
       status.textContent = text;
       if (cases && said) { cases.draw(said); }
+      if (detail) { detail.draw(); }
       live(false);
       /* ⛔ AFTER `live(false)`: the button that was pressed is disabled while
          the run is live, and focusing a disabled control does nothing at all. */
@@ -276,6 +279,7 @@
         show(output, true);
         status.textContent = 'Running…';
         if (cases) { cases.clear(); }
+        if (detail) { detail.clear(); }
         live(true);
         if (keyboard && stop) { stop.focus(); }
         run.start(corpus, key, mode, function (line) {
@@ -285,8 +289,15 @@
              already takes the exit line. ⚠️ Every other line, the breakdown's
              own refusal included, reaches the reader unchanged. */
           var found = said ? CASE_LINE.exec(line) : null;
-          if (found) { said[found[1]] = found[2] === PASSED; } else { append(output, line); }
-        }).then(
+          /* ⭐ A detail line is asked for and taken off the stream too; a Run that wrote a report is told what
+             each case said, so it draws the same breakdown (never recorded) and the same text. */
+          var record = !found && detail ? detail.add(line) : null;
+          if (record && !record.run && typeof record.case === 'string') {
+            said = said || {};
+            said[record.case] = record.passed === true;
+          }
+          if (found) { said[found[1]] = found[2] === PASSED; } else if (!record) { append(output, line); }
+        }, { detail: true }).then(
           function (answer) { settle(verdict(answer, mode), said); },
           function (answer) { settle(refusal(answer), null); }
         );

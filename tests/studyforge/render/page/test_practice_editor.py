@@ -94,8 +94,8 @@ def test_each_window_is_shown_from_its_own_url_and_neither_is_the_other_s():
     selecting = body[
         body.index("function select(name)") : body.index("function select(name)") + 600
     ]
-    assert "var url = where[name].url;" in selecting
-    assert "frame(slot, url, TITLES[name]);" in selecting
+    assert "var url = files.windowOf(where, name).url;" in selecting
+    assert "frame(slot, url, files.titleOf(where, name));" in selecting
     assert "built.src = url;" in selecting
 
 
@@ -156,7 +156,7 @@ def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between
     # choice, and a tab over a file the material does not have is a dead
     # control — the same honesty that offers no Submit there.
     body = behaviour()
-    assert "show(part(panel, 'tabs'), tested);" in body
+    assert "show(part(panel, 'tabs'), tested || more);" in body
     assert "var tested = !!(where.test && where.test.url);" in body
 
 
@@ -264,3 +264,15 @@ def test_only_the_readers_hand_gives_a_frame_focus():
     assert "(pointed === built && active) || Date.now() - tabbed < TAB_GRACE" in given
     assert "built.addEventListener('pointerenter'" in body
     assert "if (event.key === 'Tab') { tabbed = Date.now(); }" in body
+
+
+def test_a_link_opens_the_window_in_its_own_tab_from_the_servers_url_and_goes_with_the_frame():
+    helpers = re.sub(
+        r"/\*.*?\*/", "", (ASSET_DIR / "practice-files.js").read_text(encoding="utf-8"),
+        flags=re.DOTALL,
+    )
+    assert "data-practice-popout" in helpers
+    assert "pop.target = '_blank';" in helpers and "noopener" in helpers
+    body = behaviour()
+    assert "pop.href = url;" in body
+    assert "files.clear(panel);" in body

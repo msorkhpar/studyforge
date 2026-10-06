@@ -15,7 +15,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from studyforge.execute import CODE_COPY, IGNORE_TEXT, Editor
+from studyforge.execute import CODE_COPY, IGNORE_TEXT, Editor, Runner
 from studyforge.execute.workbench import READONLY_EXCLUDE, SETTINGS_DIR, SETTINGS_FILE
 from studyforge.serve.routes import code
 from tests.studyforge.serve.routes.running import (
@@ -86,8 +86,12 @@ def test_the_page_is_told_the_file_a_run_names_only_where_a_command_is_known(roo
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
         _, _, body = post(server, at(code.CODE, LESSON))
-    # ⛔ This corpus declares python, and no command is known for it: no Run.
-    assert json.loads(body)["runs"] is None and json.loads(body)["opened"] == "main"
+    # ⭐ This corpus declares python, and pytest runs a python test: the Run names the test.
+    assert json.loads(body)["runs"] == TEST and json.loads(body)["opened"] == "main"
+    # ⛔ A source no test names has nothing to run: no Run.
+    with serving(live, discovered) as server:
+        _, _, body = post(server, at(code.CODE, ALONE))
+    assert json.loads(body)["runs"] is None
 
 
 def test_a_source_no_test_names_opens_alone_and_stays_editable_in_the_copy(root):
@@ -146,19 +150,17 @@ def test_a_missing_copy_is_refused_and_nothing_is_made(root):
     assert not (root / CODE_COPY).exists()
 
 
-def test_a_test_with_no_known_command_runs_nothing(root):
+def test_a_file_that_names_no_test_runs_nothing(root):
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
-        status, _, body = post(server, at(code.CODE_TEST, TEST))
+        status, _, body = post(server, at(code.CODE_TEST, ALONE))
     assert status == 409 and code.NO_TEST in body and live.live is None
 
 
 def test_a_test_runs_in_the_copy_is_streamed_and_is_recorded_nowhere(root, monkeypatch):
     # ⭐ The command is the tool's; here a host `python3` stands in for it, run
-    # against the COPY's test, which is exactly where `test_command` points.
-    monkeypatch.setattr(
-        code, "test_command", lambda where, found, runtimes: ["python3", f"{CODE_COPY}/{TEST}"]
-    )
+    # against the COPY's test from the copy's root, which is where a Python test starts.
+    monkeypatch.setattr(code, "test_command", lambda where, found, runtimes: ["python3", TEST])
     before = authors(root)
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
@@ -169,3 +171,101 @@ def test_a_test_runs_in_the_copy_is_streamed_and_is_recorded_nowhere(root, monke
     assert authors(root) == before
     assert discovered.corpora[0].progress().read()["practices"] == {}
     assert live.live is None
+
+
+EXAMPLE_FILES = {
+    "ex/py/bpe.py": "def encode(text):\n    return text\n",
+    "ex/py/test_bpe.py": "from bpe import encode\n",
+    "ex/ts/bpe.ts": "export const encode = (text: string) => text;\n",
+    "ex/ts/bpe.test.ts": "import { encode } from './bpe.ts';\n",
+    "ex/jv/settings.gradle": "rootProject.name = 'jv'\n",
+    "ex/jv/build.gradle": "plugins { id 'java' }\n",
+    "ex/jv/src/main/java/d/Greeter.java": "package d;\npublic class Greeter {}\n",
+    "ex/jv/src/test/java/d/GreeterTest.java": "package d;\nclass GreeterTest { Greeter g; }\n",
+    "ex/kt/settings.gradle.kts": 'rootProject.name = "kt"\n',
+    "ex/kt/build.gradle.kts": "// build\n",
+    "ex/kt/src/main/kotlin/d/Counter.kt": "package d\nclass Counter\n",
+    "ex/kt/src/test/kotlin/d/CounterTest.kt": (
+        "package d\nclass CounterTest { val c: Counter? = null }\n"
+    ),
+}
+
+
+def test_an_example_in_each_of_four_languages_is_told_the_test_a_run_names(root):
+    from tests.studyforge.serve.routes.test_runs import declare_runtimes
+
+    for where, text in EXAMPLE_FILES.items():
+        (root / where).parent.mkdir(parents=True, exist_ok=True)
+        (root / where).write_text(text, encoding="utf-8")
+    declare_runtimes(root, ["gradle", "java", "kotlin", "node", "python"])
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    named = {
+        "ex/py/bpe.py": "ex/py/test_bpe.py",
+        "ex/ts/bpe.ts": "ex/ts/bpe.test.ts",
+        "ex/jv/src/main/java/d/Greeter.java": "ex/jv/src/test/java/d/GreeterTest.java",
+        "ex/kt/src/main/kotlin/d/Counter.kt": "ex/kt/src/test/kotlin/d/CounterTest.kt",
+    }
+    with serving(live, discovered) as server:
+        for source, test in named.items():
+            status, _, body = post(server, at(code.CODE, source))
+            assert status == 200 and json.loads(body)["runs"] == test, source
+
+
+def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support(
+    tmp_path, monkeypatch
+):
+    # ⭐ The release's learner tree is built by the split, copied to a fresh folder, and an
+    # example's test that imports a shared support folder is run from it, by the route a Run
+    # strip posts to, with the framework's own command. Without the support folder in the tree
+    # the same run fails to import it.
+    # ⚠️ Measured: the test imports `shared` with no path set up by hand; started outside the
+    # copy's root the run failed with "No module named", so this also proves the import root.
+    # ⭐ The runner's root is shaped as the served runner's `/work`: it holds the copy at its
+    # usual place and nothing of the course's own tree, so `shared` is reachable only from the
+    # copy's root, as in a served Run.
+    import json
+    import shutil
+
+    from studyforge.generate import write_site
+    from studyforge.skills.execution.standalone import split
+    from tests.studyforge.execute.runnable import fixture_copy
+
+    source = fixture_copy(tmp_path / "author")
+    lesson = source / "archive/kata/raw/python/unit-03/lesson-1.json"
+    document = json.loads(lesson.read_text(encoding="utf-8"))
+    document["blocks"].append(
+        {
+            "type": "example",
+            "id": "demo",
+            "tabs": [{"lang": "python", "span": 1, "code": "samples/demo/test_demo.py"}],
+            "blocks": [{"type": "code", "lang": "python", "text": "print(1)"}],
+            "support": ["shared"],
+        }
+    )
+    lesson.write_text(json.dumps(document), encoding="utf-8")
+    (source / "samples/demo").mkdir(parents=True)
+    (source / "samples/demo/test_demo.py").write_text(
+        "import shared\n\n\ndef test_shared():\n    assert shared.VALUE == 7\n",
+        encoding="utf-8",
+    )
+    (source / "shared").mkdir()
+    (source / "shared/__init__.py").write_text("VALUE = 7\n", encoding="utf-8")
+    write_site(source, source)
+    files = tuple(
+        sorted(p.relative_to(source).as_posix() for p in source.rglob("*") if p.is_file())
+    )
+    kept = split.kept(split.classify(source, files), files)
+    release = tmp_path / "release" / source.name
+    for one in kept:
+        (release / one).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / one, release / one)
+    (release / CODE_COPY).mkdir(parents=True, exist_ok=True)
+    (release / CODE_COPY / ".gitignore").write_text(IGNORE_TEXT, encoding="utf-8")
+    work = tmp_path / "work"
+    (work / CODE_COPY).parent.mkdir(parents=True)
+    (work / CODE_COPY).symlink_to(release / CODE_COPY, target_is_directory=True)
+    live, discovered = runs_over(release, runner=lambda corpus: Runner(work, None, grace=0.5))
+    with serving(live, discovered) as server:
+        status, _, body = post(server, at(code.CODE_TEST, "samples/demo/test_demo.py"))
+    assert status == 200, body
+    assert "1 passed" in body and body.splitlines()[-1] == "--- exit 0 ---", body

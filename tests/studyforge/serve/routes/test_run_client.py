@@ -248,3 +248,48 @@ def test_a_units_practice_status_is_read_from_the_state_route_and_nothing_else()
     assert "held[section].passed === true" in asking
     assert "!CORPUS.test(corpus) || !KEY.test(unit)" in asking
     assert "practices: practices," in body
+
+
+# --------------------------------------------------------------------------
+# The detail header: asked for by a page that draws it, and by nothing else
+# --------------------------------------------------------------------------
+
+
+def test_the_client_sends_the_detail_header_only_when_the_page_asks():
+    # ⭐ The header's name and the one value the server reads are the route's own (never retyped
+    # here), and a start
+    # without the option sends no header at all, so a page built before the option existed gets the
+    # stream it always did.
+    source = uncommented()
+    assert f"'{run.DETAIL_HEADER}': '1'" in source
+    assert "options && options.detail === true" in source
+    assert "headers: detail ?" in source and ": {}" in source
+
+
+@pytest.mark.parametrize(
+    ("headers", "asked"),
+    [
+        ({}, False),
+        ({run.DETAIL_HEADER: "1"}, True),
+        ({run.DETAIL_HEADER: " 1 "}, True),
+        ({run.DETAIL_HEADER: "0"}, False),
+        ({run.DETAIL_HEADER: "yes"}, False),
+    ],
+)
+def test_only_the_exact_value_asks_for_detail(headers, asked):
+    from studyforge.serve.response import Request
+
+    assert run.wants_detail(Request("POST", "/api/v1/run/x/test/y", headers)) is asked
+
+
+def test_the_panel_asks_and_the_detail_part_precedes_it():
+    from studyforge.render.pageassets import bundle
+
+    panel = (ASSET_DIR / "practice.js").read_text(encoding="utf-8")
+    assert "{ detail: true }" in panel
+    # ⛔ A built page may name no API, no origin and no client header (R8): the header's spelling
+    # lives in the client only.
+    detail = (ASSET_DIR / "practice-detail.js").read_text(encoding="utf-8")
+    assert run.DETAIL_HEADER not in panel and run.DETAIL_HEADER not in detail
+    parts = list(bundle.SCRIPT_PARTS)
+    assert parts.index("practice-detail.js") < parts.index("practice.js")

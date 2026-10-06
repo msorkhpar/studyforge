@@ -42,8 +42,10 @@ __all__ = [
     "SOURCE_SUFFIXES",
     "TEST_DIRECTORIES",
     "TEST_PREFIX",
+    "SHARED_MODULE_RUNTIMES",
     "TEST_STEMS",
     "is_a_test",
+    "other_language_suffixes",
     "source_suffixes",
     "tested_stem",
 ]
@@ -102,6 +104,27 @@ TEST_STEMS = ("Test", "Tests", "_test", ".test", "Spec", ".spec", "_spec")
 
 #: The prefix a test stem may carry instead.
 TEST_PREFIX = "test_"
+
+
+#: Languages one build module may hold side by side and compile together, so a test
+#: written in one may test a source written in another (a Java test of a Kotlin class).
+#: ⛔ A *toolchain* fact, never a corpus's: only these pair across suffixes, so a corpus
+#: declaring Python beside Java still pairs a test with a source of its own suffix only.
+SHARED_MODULE_RUNTIMES = ("java", "kotlin")
+
+
+def other_language_suffixes(suffix: str, runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
+    """Return the source suffixes of the OTHER shared-module languages the corpus declares.
+
+    ⭐ Empty unless `suffix` is one a shared-module language writes and at least one other
+    such language is declared, so a one-language corpus has nothing to fall back to.
+    """
+    declared = [name for name in SHARED_MODULE_RUNTIMES if name in runtimes]
+    if not any(suffix in SOURCE_SUFFIXES[name] for name in declared):
+        return ()
+    return tuple(
+        sorted(one for name in declared for one in SOURCE_SUFFIXES[name] if one != suffix)
+    )
 
 
 def is_a_test(where: str) -> bool:

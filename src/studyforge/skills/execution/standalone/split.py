@@ -31,6 +31,13 @@ sentence saying so, because a path moved by mistake is one checkout of
 `studyforge/build` away; what a learner or the engine could use is named here,
 so it is never left to that default.
 
+## ⭐ What an example's Run needs is KEPT, and why
+
+⚠️ An example tab may name `code`, and an example block may declare `support` (a folder its code
+imports, such as a shared harness). The top-level entry holding any such path is kept, whole,
+because the served page's Run copies the learner tree and finds nothing of an entry that moved.
+The entries are read from the archive's lesson documents (`generate.exampleruns.needed`).
+
 ## ⭐ The authored exercises are KEPT, and why
 
 ⚠️ The bundle root (`exercises/`) holds every statement, starter, test, reference
@@ -60,7 +67,7 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.manifest.content.policy import Classification
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, GENERATED_ROOT, PRACTICE_DIRNAME
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
-from studyforge.generate import read_corpus
+from studyforge.generate import example_files, read_corpus
 
 KEEP = "keep"
 MOVE = "move"
@@ -93,6 +100,8 @@ EXECUTION_KEPT = {
     "prime": "the course's build files the runner and editor images are warmed from",
     "code": "where the server copies the course's code for the editor; only its ignore file",
     "allowed": "where the server writes the runner's allowlist; only its ignore file",
+    "liverun.pl": "the live runner's script, baked into the course's runner image",
+    "egress.py": "the live runs' egress proxy, started from the course's site image",
 }
 
 #: ⭐ Top-level entries used to work with the course, kept by name (or by stem, lower-cased):
@@ -175,12 +184,13 @@ def classify(root: Path, files: Sequence[str]) -> tuple[Verdict, ...]:
     built = _built(corpus.footprint.files, corpus.footprint.directories)
     code = _code(files)
     lessons = _lessons(corpus.manifest, files)
+    examples = frozenset(PurePosixPath(one).parts[0] for one in example_files(corpus))
     verdicts: list[Verdict] = []
     for entry in _entries(files, ()):
         if entry == GENERATED_ROOT:
             verdicts.extend(_generated(files, built))
         else:
-            verdicts.append(_top(entry, built, code, lessons))
+            verdicts.append(_top(entry, built, code, lessons, examples))
     return tuple(verdicts)
 
 
@@ -198,7 +208,11 @@ def table(verdicts: Iterable[Verdict]) -> str:
 
 
 def _top(
-    entry: str, built: frozenset[str], code: frozenset[str], lessons: frozenset[str]
+    entry: str,
+    built: frozenset[str],
+    code: frozenset[str],
+    lessons: frozenset[str],
+    examples: frozenset[str] = frozenset(),
 ) -> Verdict:
     """Return the verdict for one top-level entry of the course."""
     if entry == MANIFEST_FILENAME:
@@ -234,6 +248,13 @@ def _top(
         )
     if entry in lessons:
         return Verdict(entry, KEEP, "the course's own lessons")
+    if entry in examples:
+        return Verdict(
+            entry,
+            KEEP,
+            "holds a file an example's Run strip names as its code, or a folder the example "
+            "declares as support: the served page's Run needs it beside the lesson",
+        )
     if PurePosixPath(entry).stem.lower() in LICENCES:
         return Verdict(entry, KEEP, "the course's licence")
     if entry == ".gitignore":
@@ -304,6 +325,20 @@ def _code(files: Sequence[str]) -> frozenset[str]:
         parts = PurePosixPath(one).parts
         if parts[: len(prime)] == prime and len(parts) > len(prime) + 1:
             found.add(parts[len(prime) + 1])
+    # ⭐ A build that does not sit at the course root is re-rooted in the prime, so its
+    # entries are not the course's top-level names. ⭐ The top-level entry that holds the
+    # same file below a directory of its own is the course's code too.
+    inside = {
+        "/".join(PurePosixPath(one).parts[len(prime) + 1 :])
+        for one in files
+        if PurePosixPath(one).parts[: len(prime)] == prime
+    }
+    for one in files:
+        parts = PurePosixPath(one).parts
+        if len(parts) < 3 or parts[0] == GENERATED_ROOT or parts[0] in KNOWN_MOVES:
+            continue
+        if any("/".join(parts[index:]) in inside for index in range(1, len(parts) - 1)):
+            found.add(parts[0])
     return frozenset(found)
 
 

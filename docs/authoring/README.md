@@ -74,7 +74,8 @@ remembers where you got to is a complete product. See
 **3. An address is recorded, never computed from a title.** Slugifying a title
 to get a URL looks obviously fine and is wrong in practice: real catalogues
 serve many units at a slug their title does not produce. See
-[What an adapter must produce](archive.md).
+[What an adapter must produce](archive.md). Exam-style quizzes and mocks ("Select two" items,
+question pools) are in [Multiple-response items and question pools](pools-and-multiple-response.md).
 
 **4. You say where the output goes.** Under one generated root, or in a
 `study/` directory beside each source file it came from. It is a field in the
@@ -102,6 +103,8 @@ compared by `tests/test_authoring_geography.py`. On [Exercises](exercises.md), t
 authoring procedure is read by `tests/test_authoring_exercises.py`, the steps
 before you author are run by `tests/test_authoring_before_you_author.py`, and
 the file-only exercise record is read by `tests/test_fixture_exercise_rule.py`.
+The language, profile, mock-exam and live-example lines on the same page are read against the
+code by `tests/test_authoring_languages.py`.
 Every link on these pages is resolved by `tests/test_readme.py`. A claim of
 that kind that stops being true fails a test rather than misleading you.
 

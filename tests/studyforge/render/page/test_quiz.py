@@ -35,7 +35,12 @@ JSON_KEY = re.compile(r'"correct"\s*:')
 KEY = practice.key_of(document(), section())
 
 
-def markup(workspace=QUIZ) -> str:
+#: ⭐ The opt-out: a plain quiz is drawn one question at a time unless its record says `page`, and
+#: this module is about the all-on-one-page layout.
+QUIZ_PAGE = {**QUIZ, "layout": "page"}
+
+
+def markup(workspace=QUIZ_PAGE) -> str:
     """One quiz's section, rendered the way `page.practice` renders it."""
     return panel(sections=[section(workspace=workspace)])
 
@@ -94,7 +99,7 @@ def test_a_sentence_can_never_close_the_key_block():
     # `</script>` would end the element and open whatever followed. ⭐ Written
     # as `\u` escapes, and read back as itself.
     hostile = "It ends </script><script>alert(1)</script> & starts <b>"
-    record = json.loads(json.dumps(QUIZ))
+    record = json.loads(json.dumps(QUIZ_PAGE))
     record["questions"][0]["options"][0]["says"] = hostile
     said = markup(record)
     block = said[said.index('data-practice-part="key">') :]
@@ -292,7 +297,7 @@ def test_every_word_the_quiz_says_is_read_off_the_markup():
 def test_inline_code_in_a_stem_an_option_and_a_sentence_renders_as_code():
     # ⛔ The Java pilot's quiz showed "`switch`" with its backticks. ⭐ A stem, an
     # option and a sentence go through the prose's own inline renderer.
-    record = json.loads(json.dumps(QUIZ))
+    record = json.loads(json.dumps(QUIZ_PAGE))
     first = record["questions"][0]
     first["stem"] = "Which types may a `switch` take?"
     first["options"][0]["text"] = "an `int` and its wrapper"

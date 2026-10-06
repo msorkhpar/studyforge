@@ -168,10 +168,15 @@ def _laid_out(reading: dict, shape: str, *, quiz: bool = False) -> None:
     statement, panel, bar = reading["statementBox"], reading["panelBox"], reading["bar"]
     width, height = reading["viewport"]["w"], reading["viewport"]["h"]
     assert statement and panel and bar, f"the workspace shows no statement or no panel: {reading}"
-    assert abs(statement["top"] - bar["bottom"]) <= 1, (
-        f"the statement is not under the bar: {reading}"
-    )
-    assert panel["bottom"] <= height + 1 and statement["bottom"] <= height + 1
+    if quiz:
+        # ⭐ A quiz is a page that scrolls as one, so it starts under the bar and may run past
+        # the window's foot.
+        assert statement["top"] >= bar["bottom"] - 1, f"the statement is under the bar: {reading}"
+    else:
+        assert abs(statement["top"] - bar["bottom"]) <= 1, (
+            f"the statement is not under the bar: {reading}"
+        )
+        assert panel["bottom"] <= height + 1 and statement["bottom"] <= height + 1
     if quiz:
         assert statement["bottom"] <= panel["top"] + 1, f"not one column: {reading}"
         assert abs(statement["left"] - panel["left"]) <= 1, f"not one column: {reading}"
@@ -361,3 +366,88 @@ def test_with_no_editor_a_practice_says_why_and_asks_nothing_that_fails(
     assert frames == 0
     assert asked == [], f"the page asked an editor the index does not name: {asked}"
     assert failed == [], f"the console is not clean: {failed}"
+
+
+def test_a_link_beside_the_tabs_opens_the_shown_window_in_a_tab_of_its_own(
+    open_page: OpenPage, origin: served.Served, capture_dir: Path
+) -> None:
+    open_page.resize(*WIDTHS["desktop"])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    link = (
+        "(() => { const a = document.querySelector('a[data-practice-popout]');"
+        " return a && {href: a.getAttribute('href'), target: a.target, rel: a.rel,"
+        " frame: document.querySelector('iframe').getAttribute('src'),"
+        " shown: a.checkVisibility()}; })()"
+    )
+    first = dict(open_page.evaluate(link))  # type: ignore[call-overload]
+    assert first["shown"] and first["target"] == "_blank" and "noopener" in first["rel"]
+    assert first["href"] == first["frame"], "the link does not open the window the frame shows"
+    open_page.capture(capture_dir / "editor-popout-link.png", whole=False)
+    open_page.evaluate("document.querySelector('[data-practice-tab=\"test\"]').click()")
+    second = dict(open_page.evaluate(link))  # type: ignore[call-overload]
+    assert second["href"] == second["frame"] and second["href"] != first["href"]
+
+
+def test_a_practice_of_several_files_has_a_tab_for_each_and_each_tab_its_own_window(
+    open_page: OpenPage, origin: served.Served, capture_dir: Path
+) -> None:
+    origin.runs.windows["files"] = [
+        {"path": "practice/config/settings.json", "url": "about:blank#settings"},
+        {"path": "practice/config/NOTES.md", "url": "about:blank#notes"},
+    ]
+    open_page.resize(*WIDTHS["desktop"])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    tabs = (
+        "Array.from(document.querySelectorAll('[data-practice-tab]'))"
+        ".filter((t) => t.checkVisibility()).map((t) => t.textContent.trim())"
+    )
+    assert open_page.evaluate(tabs) == ["Your code", "settings.json", "NOTES.md", "Tests"]
+    open_page.capture(capture_dir / "multi-file-tabs.png", whole=False)
+    open_page.evaluate("document.querySelectorAll('[data-practice-tab]')[2].click()")
+    where = (
+        "[document.querySelector('iframe').getAttribute('src'),"
+        " document.querySelector('a[data-practice-popout]').getAttribute('href')]"
+    )
+    assert open_page.evaluate(where) == ["about:blank#notes", "about:blank#notes"]
+    assert _state(open_page)["frames"] == 1, "a file tab built a second editor"
+
+
+FILES = [
+    {"path": "practice/config/settings.json", "url": "about:blank#settings"},
+    {"path": "practice/config/NOTES.md", "url": "about:blank#notes"},
+]
+
+
+@pytest.mark.parametrize("width", ["desktop", "phone"])
+@pytest.mark.parametrize(
+    "windows",
+    [
+        {"main": {"url": "about:blank#a"}, "files": FILES},
+        {"main": {"url": "about:blank#a"}, "test": {"url": "about:blank#t"}, "files": FILES},
+        {"main": {"url": "about:blank#a"}},
+    ],
+    ids=["files-no-test", "files-and-test", "one-file"],
+)
+def test_the_editor_link_shows_whenever_the_workspace_shows_the_editor(
+    open_page: OpenPage, origin: served.Served, windows: dict, width: str
+) -> None:
+    # ⭐ A configuration practice has several files and may have no test window, so the tablist
+    # may be hidden; the link to the editor in its own tab is shown all the same, in view.
+    origin.runs.windows = windows
+    open_page.resize(*WIDTHS[width])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    seen = open_page.evaluate(
+        "(() => { const a = document.querySelector('a[data-practice-popout]');"
+        " if (!a) return null; const b = a.getBoundingClientRect();"
+        " const f = document.querySelector('iframe').getBoundingClientRect();"
+        " return {shown: a.checkVisibility(), inside: b.width > 0 && b.height > 0 &&"
+        " b.bottom <= innerHeight && b.right <= innerWidth && b.top >= 0,"
+        " above: b.bottom <= f.top + 1}; })()"
+    )
+    assert seen == {"shown": True, "inside": True, "above": True}

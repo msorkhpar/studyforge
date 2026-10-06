@@ -53,6 +53,7 @@ from typing import Protocol
 from studyforge.describe import describe
 from studyforge.exercise.cases import Case
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.gates.digests import PLANT
 from studyforge.exercise.record import Exercise
 from studyforge.exercise.report import breakdown_of
 
@@ -63,9 +64,9 @@ REFERENCE = "reference"
 #: What the reader starts from. ⭐ `G2` runs it once.
 STARTER = "starter"
 
-#: The prefix of a planted solution's role: `plant:<case id>`. ⭐ `G3` runs one
-#: per edge case, which is what makes the gate as fine as the claim it backs.
-PLANT = "plant"
+#: ⭐ `PLANT`, the prefix of a planted solution's role (`plant:<case id>`), is
+#: `digests`' spelling, which decides the role's shape. `G3` runs one per edge
+#: case, which is what makes the gate as fine as the claim it backs.
 
 #: ⛔ The two runs `G1` takes, numbered, because *the same outcome each time* is
 #: a claim about two readings and a caller must be able to tell them apart.
@@ -85,6 +86,15 @@ class Run:
     exit_code: int
     passed_ids: frozenset[str] | None = None
     refusal: str | None = None
+    #: ⭐ Optional, and read only when `assertions_only` is set: the cases that failed with
+    #: something other than an assertion, and whether the caller asked that every failure
+    #: of a starter and a plant be one.
+    unasserted: frozenset[str] = frozenset()
+    assertions_only: bool = False
+    #: ⭐ Optional: the exit code of a type check (`tsc --noEmit`) that was run before the tests
+    #: and failed, or `None` when none was declared or it passed. ⛔ Never a test case: a gate
+    #: names it as its own finding.
+    typecheck_failed: int | None = None
 
     @property
     def reported(self) -> bool:
@@ -123,6 +133,8 @@ def folded(
     where: str,
     *,
     started: float,
+    assertions_only: bool = False,
+    typecheck_failed: int | None = None,
 ) -> Run:
     """Fold the report a run left behind into the evidence a gate reads.
 
@@ -134,14 +146,22 @@ def folded(
     try:
         breakdown = breakdown_of(exercise, root, where, started=started)
     except ExerciseError as error:
-        return Run(role=role, attempt=attempt, exit_code=exit_code, refusal=str(error))
+        return Run(
+            role=role, attempt=attempt, exit_code=exit_code, refusal=str(error),
+            typecheck_failed=typecheck_failed,
+        )
     if breakdown is None:
-        return Run(role=role, attempt=attempt, exit_code=exit_code)
+        return Run(
+            role=role, attempt=attempt, exit_code=exit_code, typecheck_failed=typecheck_failed
+        )
     return Run(
         role=role,
         attempt=attempt,
         exit_code=exit_code,
         passed_ids=breakdown.passed_ids,
+        unasserted=breakdown.unasserted,
+        assertions_only=assertions_only,
+        typecheck_failed=typecheck_failed,
     )
 
 

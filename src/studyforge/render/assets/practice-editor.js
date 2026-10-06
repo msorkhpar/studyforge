@@ -73,10 +73,9 @@
   var CLOSED = 'studyforge:practice-closed';
   var OPEN = 'data-workspace-open';
 
-  /* The two windows, and what the frame is called to a screen reader. ⚠️ These
-     are the framework's own words for its own controls, not the material's
-     (R1) — the same status the panel's 'Running…' and 'Passed.' already have. */
-  var TITLES = { main: 'Your code', test: 'Tests' };
+  /* ⭐ The further files of a practice, and the link that opens its editor on its own, come from
+     `practice-files.js`, which is before this part. */
+  var files = window.studyforge.editorFiles;
 
   /* The directive a blocked editor frame is refused by, in the browser's own
      spelling. ⚠️ Compared as a PREFIX rather than for equality, because the
@@ -280,6 +279,9 @@
     var slot = panel.querySelector('[' + FRAME + '="main"]');
     if (!slot) { return; }
     var tested = !!(where.test && where.test.url);
+    var more = (where.files || []).length > 0;
+    var bar = part(panel, 'tabs');
+    files.tabs(where, bar, bar ? bar.querySelector('[' + TAB + '="test"]') : null);
     var buttons = [].slice.call(panel.querySelectorAll('[' + TAB + ']')).filter(
       function (button) {
         var keep = tested || button.getAttribute(TAB) !== 'test';
@@ -288,6 +290,7 @@
       }
     );
     var built = null;
+    var pop = files.link(bar, slot);
 
     function select(name) {
       buttons.forEach(function (button) {
@@ -295,12 +298,13 @@
         button.setAttribute('aria-selected', mine ? 'true' : 'false');
         button.tabIndex = mine ? 0 : -1;
       });
-      var url = where[name].url;
+      var url = files.windowOf(where, name).url;
+      pop.href = url;
       if (!built) {
-        frame(slot, url, TITLES[name]);
+        frame(slot, url, files.titleOf(where, name));
         built = slot.lastElementChild;
       } else if (built.src !== url) {
-        built.title = TITLES[name];
+        built.title = files.titleOf(where, name);
         built.src = url;
       }
       show(slot, true);
@@ -326,7 +330,7 @@
     select('main');
     /* ⭐ One tab is no choice, so the tablist stays hidden where the material
        names no test — the same honesty as offering no Submit. */
-    show(part(panel, 'tabs'), tested);
+    show(part(panel, 'tabs'), tested || more);
     show(part(panel, 'no-editor'), false);
   }
 
@@ -362,10 +366,12 @@
     var slot = panel.querySelector('[' + FRAME + '="main"]');
     if (slot) { while (slot.firstChild) { slot.removeChild(slot.firstChild); } show(slot, false); }
     [].slice.call(panel.querySelectorAll('[' + TAB + ']')).forEach(function (button) {
+      if (files.extra(button)) { return; }
       var fresh = button.cloneNode(true);
       fresh.hidden = false;
       button.parentNode.replaceChild(fresh, button);
     });
+    files.clear(panel);
     show(part(panel, 'tabs'), false);
     show(part(panel, 'no-editor'), true);
   }

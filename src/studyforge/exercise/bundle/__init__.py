@@ -93,6 +93,14 @@ segment could put a plant outside its own bundle. ⭐ The directory is
 the case id reaches the gate record's **role**, where `gates.require_role`
 already bounds it.
 
+## ⭐ A PLANT IS A FULL SOLUTION OR A LIST OF REPLACEMENTS
+
+⭐ `plants/edge-N/<main file>` is a full plant; `plants/edge-N/<main file>.plant.json`
+is a spec plant, an ordered list of exact replacements against the reference
+(`plants`). The gate record digests whichever file is on disk, a bundle files one
+or the other for an edge, and the full text of a spec plant is derived at
+gate time and never stored.
+
 **Scope.** The exercises skill writes bundles into a corpus;
 the quiz has no workspace and is a shape of its own.
 """
@@ -112,8 +120,28 @@ from studyforge.exercise.bundle.emit import (
     SHIPPED_ROLES,
     Emission,
     emit,
+    require_argument_paths,
     emit_page,
     write,
+)
+from studyforge.exercise.bundle.plantfiles import (
+    materialise_files,
+    materialised_files,
+    read_plant_files,
+)
+from studyforge.exercise.bundle.plants import (
+    PLANT_VERSION,
+    PlantSpec,
+    Replacement,
+    materialise,
+    materialised,
+    read_plant,
+    require_plants,
+    roles_of,
+    spec_bytes,
+    spec_file,
+    spec_from,
+    spec_of,
 )
 from studyforge.exercise.bundle.layout import (
     BUILD,
@@ -158,7 +186,10 @@ __all__ = [
     "GATES_FILENAME",
     "OPTIONAL_KEYS",
     "PLANTS_DIRNAME",
+    "PLANT_VERSION",
     "PLANT_DIRNAME",
+    "PlantSpec",
+    "Replacement",
     "Places",
     "REFERENCE_SUMMARY",
     "ROLE_DIRNAMES",
@@ -172,8 +203,21 @@ __all__ = [
     "bundle_of",
     "edges_of",
     "emit",
+    "require_argument_paths",
     "is_run_output",
     "emit_page",
+    "materialise",
+    "materialised",
+    "materialised_files",
+    "materialise_files",
+    "read_plant",
+    "read_plant_files",
+    "require_plants",
+    "roles_of",
+    "spec_bytes",
+    "spec_file",
+    "spec_from",
+    "spec_of",
     "ordinals",
     "plant_dirname",
     "plant_positions",

@@ -413,6 +413,103 @@ MAVEN_QUIET_COMPILE_ERROR = (
 )
 
 
+#: ⚠️ NOT captures: two Gradle runs written in the shape of `GRADLE_FAILURE`'s real
+#: capture (a passing test run, and a Kotlin compile error), for the corpus that
+#: declares both build tools. The real readings of the Gradle filter are the
+#: image tests'.
+GRADLE_PASS = (
+    "> Task :jvm:kotlin:checkKotlinGradlePluginConfigurationErrors SKIPPED",
+    "> Task :jvm:kotlin:compileKotlin UP-TO-DATE",
+    "> Task :jvm:kotlin:compileJava NO-SOURCE",
+    "> Task :jvm:kotlin:processResources NO-SOURCE",
+    "> Task :jvm:kotlin:classes UP-TO-DATE",
+    "> Task :jvm:kotlin:jar UP-TO-DATE",
+    "> Task :jvm:kotlin:compileTestKotlin UP-TO-DATE",
+    "> Task :jvm:kotlin:testClasses UP-TO-DATE",
+    "> Task :jvm:kotlin:test",
+    "",
+    "BasketTest > totalsABasket() PASSED",
+    "BasketTest > anEmptyBasketIsZero() PASSED",
+    "",
+    "BUILD SUCCESSFUL in 1s",
+    "5 actionable tasks: 1 executed, 4 up-to-date",
+)
+
+GRADLE_COMPILE_ERROR = (
+    "> Task :jvm:kotlin:checkKotlinGradlePluginConfigurationErrors SKIPPED",
+    "> Task :jvm:kotlin:compileKotlin FAILED",
+    "e: file:///path/to/project/src/main/kotlin/Basket.kt:3:12 Unresolved reference 'prices'.",
+    "w: file:///path/to/project/src/main/kotlin/Basket.kt:9:5 Variable 'x' is never used",
+    "",
+    "FAILURE: Build failed with an exception.",
+    "",
+    "* What went wrong:",
+    "Execution failed for task ':jvm:kotlin:compileKotlin'.",
+    (
+        "> A failure occurred while executing "
+        "org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers"
+    ),
+    "",
+    "* Try:",
+    "> Run with --stacktrace option to get the stack trace.",
+    "> Run with --info or --debug option to get more log output.",
+    "> Run with --scan to get full insights from a Build Scan (powered by Develocity).",
+    "> Get more help at https://help.gradle.org.",
+    "",
+    "BUILD FAILED in 1s",
+    "2 actionable tasks: 1 executed, 1 up-to-date",
+)
+
+
+#: ⚠️ NOT captures: a failing and a passing Gradle run written in the shape Gradle prints
+#: with `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in `tasks.test`: the
+#: exception type and its whole message under each FAILED test, stack intact.
+GRADLE_FULL_FAILURE = (
+    "> Task :compileKotlin UP-TO-DATE",
+    "> Task :test FAILED",
+    "",
+    "BasketTest > totalsABasket() FAILED",
+    "    org.opentest4j.AssertionFailedError: basket total ==> expected: <10> but was: <3>",
+    "        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(Builder.java:151)",
+    "        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)",
+    "        at app//BasketTest.totalsABasket(BasketTest.kt:12)",
+    "",
+    "BasketTest > explainsItself() FAILED",
+    "    java.lang.IllegalStateException: the discount was applied twice",
+    "    see https://docs.gradle.org/current/userguide/x.html for why",
+    "    Consider enabling the second discount only once",
+    "        at app//Basket.total(Basket.kt:9)",
+    "        at app//BasketTest.explainsItself(BasketTest.kt:20)",
+    "",
+    "2 tests completed, 2 failed",
+    "",
+    "FAILURE: Build failed with an exception.",
+    "",
+    "* What went wrong:",
+    "Execution failed for task ':test'.",
+    (
+        "> There were failing tests. See the report at: "
+        "file:///path/to/project/build/reports/tests/test/index.html"
+    ),
+    "",
+    "* Try:",
+    "> Run with --scan to get full insights from a Build Scan (powered by Develocity).",
+    "",
+    "BUILD FAILED in 2s",
+    "3 actionable tasks: 1 executed, 2 up-to-date",
+)
+
+GRADLE_FULL_PASS = (
+    "> Task :compileKotlin UP-TO-DATE",
+    "> Task :test",
+    "",
+    "BasketTest > totalsABasket() PASSED",
+    "",
+    "BUILD SUCCESSFUL in 1s",
+    "3 actionable tasks: 1 executed, 2 up-to-date",
+)
+
+
 #: Every transcript, by name, for the properties that hold of all of them.
 ALL = {
     "MAVEN_PASS": MAVEN_PASS,
@@ -421,6 +518,10 @@ ALL = {
     "JVM_TRACE": JVM_TRACE,
     "JAVAC_ERROR": JAVAC_ERROR,
     "GRADLE_FAILURE": GRADLE_FAILURE,
+    "GRADLE_PASS": GRADLE_PASS,
+    "GRADLE_COMPILE_ERROR": GRADLE_COMPILE_ERROR,
+    "GRADLE_FULL_FAILURE": GRADLE_FULL_FAILURE,
+    "GRADLE_FULL_PASS": GRADLE_FULL_PASS,
     "MAVEN_QUIET_TEST_FAILURE": MAVEN_QUIET_TEST_FAILURE,
     "MAVEN_QUIET_COMPILE_ERROR": MAVEN_QUIET_COMPILE_ERROR,
 }

@@ -373,8 +373,8 @@ The required 15 are, in the order they reach disk: `raw_api`, `source`,
 `video`, `assets`, `attachments`, `counts`, `content_sha256`.
 
 ⛔ **The order is the format** (R10): the document is serialised with
-`sort_keys=False`, so two runs are comparable byte for byte. The optional four
-— `assets_sha256`, `starting_code`, `media_skipped`, `exercise` — are
+`sort_keys=False`, so two runs are comparable byte for byte. The optional five
+— `assets_sha256`, `starting_code`, `media_skipped`, `exercise`, `lang` — are
 **appended, never inserted**, so every document written before one existed
 still renders the bytes it always did.
 
@@ -382,6 +382,17 @@ still renders the bytes it always did.
 runs every gate — the personal-data gate among them — and computes the digest
 and the counts. A hand-built dict skips all of it and validates until it does
 not.
+
+### ⛔ One adapter, one tool of each kind, per course
+
+⭐ **A course has one adapter and one copy of each tool it writes**: one `read.py`, one
+emitter, one check, one generator for the files that follow a pattern. ⛔ A batch of the
+corpus is that tool's argument, never a reason to copy it: a copy per batch is a second place
+to fix, and the copies stop agreeing. ⭐ Tests that need the same helper import it from one
+module. ⛔ **Never hand-copy a generated file to vary it**; a variation is manifest data or a
+change to the generator (R19). ⚠️ **Keep a duplicate only where removing it would hurt the
+material**: a learner's own workspace file, a page's visible example, or a language's own
+idiomatic version of an idea stay whole.
 
 ### A4 — what a scaffold is, and the one file that is yours
 

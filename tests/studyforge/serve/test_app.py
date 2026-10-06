@@ -374,3 +374,22 @@ def test_a_streamed_response_carries_the_same_composed_policy(site, source):
     with running(site, source, namespaces={"s": stream}, frames=lambda: [EDITOR]) as server:
         headers = fetch(server, "/api/v1/s/")[1]
     assert policy_sent(headers)["frame-src"] == EDITOR
+
+
+NAVIGATE = {
+    "Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Dest": "document",
+}
+
+
+def test_a_page_may_be_navigated_to_from_another_site_but_the_api_and_a_fetch_may_not(site, source):
+    with running(site, source) as server:
+        page = fetch(server, "/index.html", headers=NAVIGATE)
+        api = fetch(server, "/api/v1/content/toc", headers=NAVIGATE)
+        root = fetch(server, "/api", headers=NAVIGATE)
+        script = fetch(
+            server, "/index.html",
+            headers={**NAVIGATE, "Sec-Fetch-Mode": "cors", "Sec-Fetch-Dest": "empty"},
+        )
+    assert page[0] == 200
+    assert api[0] == root[0] == script[0] == 403
+    assert REFUSED_SITE.encode() in api[2]

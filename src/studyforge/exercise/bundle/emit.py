@@ -76,6 +76,8 @@ from studyforge.archive.document import build
 from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
+from studyforge.exercise.bundle.files import shown
+from studyforge.exercise.bundle.plants import require_plants
 from studyforge.exercise.bundle.layout import (
     BUILD,
     STATEMENT,
@@ -139,7 +141,16 @@ def emit(
     starter = _text_at(base, bundle.places.in_bundle(_role_file(bundle, STARTER)), where)
     reference = _text_at(base, bundle.places.in_bundle(_role_file(bundle, REFERENCE)), where)
     tests = _text_at(base, bundle.places.in_bundle(_role_file(bundle, TESTS)), where)
-    _require_plants(base, bundle, where)
+    require_plants(base, bundle, where)
+    place = bundle.places
+    more = tuple(
+        (
+            path,
+            _text_at(base, place.in_bundle(place.role_path(STARTER, path)), where),
+            _text_at(base, place.in_bundle(place.role_path(REFERENCE, path)), where),
+        )
+        for path in bundle.files
+    )
     built = tuple(
         (path, _bytes_at(base, bundle.places.in_bundle(bundle.places.build_path(path)), where))
         for path in bundle.build
@@ -153,12 +164,13 @@ def emit(
         ordinal=bundle.ordinal,
         ingested=ingested,
         title=bundle.title,
-        blocks=_blocks(bundle, statement, reference, starter, lesson, lesson_title, where),
+        blocks=_blocks(bundle, statement, reference, starter, lesson, lesson_title, where, more),
         starting_code=starter,
         exercise=_record(bundle, where),
     )
     files = (
         (bundle.places.in_workspace(bundle.main_file), starter.encode("utf-8")),
+        *((bundle.places.in_workspace(path), text.encode("utf-8")) for path, text, _ in more),
         (bundle.places.in_workspace(bundle.test_file), tests.encode("utf-8")),
         *((bundle.places.in_workspace(path), data) for path, data in built),
     )
@@ -230,8 +242,10 @@ def _record(bundle: Bundle, where: str) -> dict:
     and not by a second spelling of it here.
     """
     places = bundle.places
-    record = {
-        "main_path": places.in_workspace(bundle.main_file),
+    record = {"main_path": places.in_workspace(bundle.main_file)}
+    if bundle.files:
+        record["files"] = [places.in_workspace(path) for path in bundle.files]
+    record |= {
         "test_path": places.in_workspace(bundle.test_file),
         "run_command": list(_arguments(bundle, bundle.run_command, "run_command", where)),
         "test_command": list(_arguments(bundle, bundle.test_command, "test_command", where)),
@@ -240,10 +254,10 @@ def _record(bundle: Bundle, where: str) -> dict:
     if bundle.trust is not None:
         record["trust"] = bundle.trust
     record["cases"] = cases_document(bundle.cases)
-    record["report"] = report_document(
-        Report(format=bundle.report.format, path=places.in_workspace(bundle.report.path))
-    )
+    report = Report(format=bundle.report.format, path=places.in_workspace(bundle.report.path))
+    record["report"] = report_document(report)
     record["origin"] = origin_document(bundle.origin)
+    record |= {"try_file": places.in_workspace(bundle.try_file)} if bundle.try_file else {}
     return record
 
 
@@ -260,8 +274,37 @@ def _arguments(bundle: Bundle, command: tuple[str, ...], field: str, where: str)
     """
     for argument in command:
         if "/" in argument:
-            require_inside(argument, bundle.places.workspace, f"{where}: '{field}'")
+            require_inside(_path_of(argument), bundle.places.workspace, f"{where}: '{field}'")
     return command
+
+
+def require_argument_paths(command: tuple[str, ...], workspace: str, where: str) -> None:
+    """Refuse a path in `command` that is not inside `workspace`, as `_arguments` does.
+
+    ⭐ For a command this module does not emit (a draft's authoring-time type check).
+    """
+    for argument in command:
+        if "/" in argument:
+            require_inside(_path_of(argument), workspace, where)
+
+
+def _path_of(argument: str) -> str:
+    """The path an argument names: the argument, or the value of a `--flag=<path>`.
+
+    ⭐ `--junitxml=<workspace>/target/report.xml` is how pytest is told where its report
+    lands, and the whole token is not a path (it begins with `-`), so it was refused
+    whatever it named. The part after the first `=` of an option is read as the path
+    instead, and it must be inside the workspace like any other. ⛔ Everything that was
+    refused is still refused unless it is such an option naming a path inside the
+    workspace; a value that is not inside it, or not a safe path, is refused as before.
+    """
+    if argument.startswith("-") and "=" in argument:
+        value = argument.partition("=")[2]
+        # ⭐ `--test-reporter=./<workspace>/reporter.mjs`: Node reads a reporter without a
+        # leading `./` as a package name, so the option's path may spell it. ⛔ Only an
+        # option's value, one `./`, and then it is checked as any other path.
+        return value.removeprefix("./")
+    return argument
 
 
 def _blocks(
@@ -272,9 +315,16 @@ def _blocks(
     lesson: tuple[dict, ...],
     lesson_title: str | None,
     where: str,
+    more: tuple[tuple[str, str, str], ...] = (),
 ) -> list[dict]:
-    """Return the practice's blocks, laid out the way `archive.blocks` reads one."""
+    """Return the practice's blocks, laid out the way `archive.blocks` reads one.
+
+    ⭐ `more` is the further files the reader edits, as `(path, starter, reference)`: each is
+    shown after the main file's own, under a line naming it, in the reference and in the
+    starting code. An exercise of one file passes none and gets the blocks it always did.
+    """
     heading = LESSON_HEADING if lesson_title is None else f"{LESSON_HEADING}: {lesson_title}"
+    reference_blocks, starting_blocks = shown(bundle.lang, reference, starter, more)
     return [
         {"type": "heading", "level": 2, "text": STATEMENT_HEADING},
         *_statement_blocks(bundle, statement, where),
@@ -284,10 +334,10 @@ def _blocks(
             "type": "disclosure",
             "summary": REFERENCE_SUMMARY,
             "open": False,
-            "blocks": [{"type": "code", "lang": bundle.lang, "text": reference}],
+            "blocks": reference_blocks,
         },
         {"type": "heading", "level": 2, "text": STARTING_CODE_HEADING},
-        {"type": "code", "lang": bundle.lang, "text": starter},
+        *starting_blocks,
     ]
 
 
@@ -305,25 +355,6 @@ def _role_file(bundle: Bundle, role: str) -> str:
     """Return the bundle-relative path one role's copy of a workspace file sits at."""
     name = bundle.test_file if role == TESTS else bundle.main_file
     return bundle.places.role_path(role, name)
-
-
-def _require_plants(base: Path, bundle: Bundle, where: str) -> None:
-    """Every edge case has the planted solution `G3` was run over.
-
-    ⛔ **Refused rather than shipped short.** A gate is as fine as the claim it
-    backs (one gate per case, as per method), so an edge case whose plant is absent
-    is an edge case nothing was ever proved against.
-    """
-    for position, _case in enumerate(edges_of(bundle.cases), start=1):
-        path = bundle.places.in_bundle(bundle.places.plant_path(position, bundle.main_file))
-        if not (base / path).is_file():
-            raise ExerciseError(
-                f"{where}: the solution planted to fail edge case {position} is not "
-                f"at '{path}'. Every edge case ships with the plant 'G3' was run "
-                f"over, and an edge case with none is one nothing was ever proved "
-                f"against. ⚠️ The gate record names it by its case id, which is why "
-                f"its directory is numbered instead."
-            )
 
 
 def _require_one_page(bundles: tuple[Bundle, ...], where: str) -> None:

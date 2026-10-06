@@ -33,6 +33,8 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
+import time
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -40,7 +42,7 @@ import pytest
 
 from studyforge.render.pageassets.faces import FACES
 from tests.studyforge.cli.serving import LISTENING, build, pages_of
-from tests.support import ProcessOutput, repository_root
+from tests.support import repository_root
 from tests.visual.page import OpenPage
 
 #: The fixture served. ⭐ `depth2` because its pages sit below the site root,
@@ -78,29 +80,54 @@ FACE_STATES = """
 
 @contextlib.contextmanager
 def serving(root: Path, site: Path) -> Iterator[str]:
-    """`python3 -m studyforge.cli serve` over `site` on a free port; yield its origin."""
-    with subprocess.Popen(  # noqa: S603 - fixed argv, no shell
-        [sys.executable, "-m", "studyforge.cli", "serve", str(root), "--site", str(site)]
-        + ["--port", "0"],
-        cwd=repository_root(),
-        env={**os.environ, "PYTHONPATH": "src"},
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    ) as process:
-        output = ProcessOutput(process)
-        try:
-            first = output.line(timeout=30)
-            found = LISTENING.match(first)
-            if found is None:
-                process.kill()
-                _, stderr = output.rest(timeout=10)
-                pytest.fail(f"the verb did not start listening: {first!r} {stderr[-400:]!r}")
-            yield f"http://127.0.0.1:{found.group(1)}"
-        finally:
-            if process.poll() is None:
-                process.send_signal(signal.SIGINT)
-            output.rest(timeout=30)
-            process.wait(timeout=30)
+    """`python3 -m studyforge.cli serve` over `site` on a free port; yield its origin.
+
+    ⛔ **Both streams go to files, never to pipes nobody reads.** The verb logs every request, and
+    a pipe that is read only for the first line fills at 64 KiB: the server then blocks on its
+    own log write, the page it was serving never loads, and the check waits for ever. The
+    listening line is found by polling the file, with a deadline.
+    """
+    with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
+        with subprocess.Popen(  # noqa: S603 - fixed argv, no shell
+            [sys.executable, "-m", "studyforge.cli", "serve", str(root), "--site", str(site)]
+            + ["--port", "0"],
+            cwd=repository_root(),
+            env={**os.environ, "PYTHONPATH": "src"},
+            stdout=out,
+            stderr=err,
+        ) as process:
+            try:
+                deadline = time.monotonic() + 30
+                while time.monotonic() < deadline and process.poll() is None:
+                    out.seek(0)
+                    if b"\n" in out.read():
+                        break
+                    time.sleep(0.05)
+                out.seek(0)
+                first = out.read().decode(errors="replace").split("\n", 1)[0] + "\n"
+                found = LISTENING.match(first)
+                if found is None:
+                    process.kill()
+                    err.seek(0)
+                    pytest.fail(
+                        f"the verb did not start listening: {first!r} "
+                        f"{err.read()[-400:].decode(errors='replace')!r}"
+                    )
+                yield f"http://127.0.0.1:{found.group(1)}"
+            finally:
+                if process.poll() is None:
+                    process.send_signal(signal.SIGINT)
+                # ⛔ A bounded stop, in three steps. A process started from a background shell
+                # inherits SIGINT as ignored, so the interrupt can be a no-op, and the `with`
+                # above would then wait for ever: terminate, then kill, each with a deadline.
+                for stop in (None, process.terminate, process.kill):
+                    if stop is not None:
+                        stop()
+                    try:
+                        process.wait(timeout=5)
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
 
 
 def test_every_vendored_face_loads_on_a_served_page_and_no_policy_is_violated(

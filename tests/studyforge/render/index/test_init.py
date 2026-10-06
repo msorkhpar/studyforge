@@ -179,8 +179,10 @@ def test_the_page_carries_no_script_of_its_own(case):
     # `prefers-color-scheme`.
     page = case.render().decode(index.ENCODING)
     scripts = _SCRIPTS.findall(page)
-    assert len(scripts) == 2, f"{case.name} carries {len(scripts)} script tags: {scripts}"
-    assert f'src="{case.placement.script()}"' in scripts[1]
+    # ⭐ Three: the head boot, the rail's saved scroll position put back as the page is parsed
+    # (so the rail never paints at the top for a frame), and the page script.
+    assert len(scripts) == 3, f"{case.name} carries {len(scripts)} script tags: {scripts}"
+    assert f'src="{case.placement.script()}"' in scripts[2]
     assert scripts[0] == "", f"{case.name}'s boot carries attributes: {scripts[0]}"
     assert _HANDLER.search(page) is None, f"{case.name} carries an inline event handler"
 
@@ -192,8 +194,9 @@ def test_the_head_boot_names_no_address_and_is_the_only_inline_script(case):
     # behind it.
     page = case.render().decode(index.ENCODING)
     inline = re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)
-    assert len(inline) == 1, f"{case.name} carries {len(inline)} inline scripts"
-    assert "://" not in inline[0] and "src" not in inline[0]
+    assert len(inline) == 2, f"{case.name} carries {len(inline)} inline scripts"
+    assert all("://" not in body and "src" not in body for body in inline)
+    assert "studyforge.boot.theme.v1" in inline[0] and "studyforge.boot.rail.v1" in inline[1]
 
 
 def test_the_disclosures_are_real_elements_a_browser_opens_without_a_script(case):

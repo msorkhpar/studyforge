@@ -141,11 +141,11 @@ raw_api  source  address  variant  unit  kind  ordinal  ingested
 title  blocks  video  assets  attachments  counts  content_sha256
 ```
 
-**Four more, written only when they have something to say, always after the
+**Six more, written only when they have something to say, always after the
 digest:**
 
 ```
-assets_sha256  starting_code  media_skipped  exercise
+assets_sha256  starting_code  media_skipped  exercise  lang  edition
 ```
 
 **A document carrying any other key is refused.** A key nothing reads is how a
@@ -157,6 +157,33 @@ excluded from `content_sha256`, so it cannot make unchanged content look
 edited. Two runs of a correct adapter differ in `ingested` and in nothing else,
 and that is the sentence to use when you claim reproducibility: *identical
 bytes apart from `ingested`*.
+
+**`lang` tags a document with one language, or with several.** It is an id of lowercase letters,
+digits, `-` and `_`, and it names a language `corpus.json` declares under
+`languages`; a document that belongs to several writes their ids, each once, joined by single
+spaces (`a b`); `validate` refuses one it does not declare, by rule
+`language-undeclared`. A lesson, a practice and a quiz are all documents, so
+one key tags all three. **A document without it is common to every reading**
+and re-renders to the same bytes as before the key existed. A unit that holds
+a Kotlin lesson and a Java lesson is two lesson documents, each tagged, and the
+page holds both: a tagged section carries `data-lang="<id>"` and an untagged
+one carries nothing.
+
+**`edition` says a practice document is one language edition of a practice.** It is an id of
+lowercase letters, digits, `-` and `_`, the same on the practice documents of one unit that are one
+practice written in several languages, and each of them carries its own single `lang`. A document
+that names an `edition` without exactly one `lang` is refused when it is built or read. The site
+shows the documents of one `edition` as one card with a language switch in the panel
+(`exercises.md`, *One practice in several languages*); a document without it re-renders to the
+same bytes as before the key existed.
+
+**An adapter that reads Markdown can mark the regions.** `studyforge.archive.markdown.regions(text)`
+cuts a page at `<!-- lang: <id> -->` (or `<!-- lang: <id>,<id> -->` for a section of several
+languages) … `<!-- /lang -->` sections and
+`<!-- example: <id> tabs: <id>,<id>[,<id>...] [output: <word>] -->` … `<!-- /example -->`
+blocks of one to eight tabs (a marker inside a code fence is code). Text outside every marker is
+common. The adapter parses each region with `parse` and writes the tagged ones
+as documents of their own.
 
 ---
 
@@ -194,9 +221,9 @@ original in order to place one.
 
 ---
 
-## `blocks` — the vocabulary is closed at eleven types
+## `blocks` — the vocabulary is closed at twelve types
 
-**A unit's body is a sequence of typed blocks. There are eleven types and that
+**A unit's body is a sequence of typed blocks. There are twelve types and that
 list is a contract, not a convenience.**
 
 | Type | Carries |
@@ -212,9 +239,40 @@ list is a contract, not a convenience.**
 | `quote` | `blocks` — it holds other blocks |
 | `html` | `text` — raw markup the reader wants preserved |
 | `disclosure` | `summary`, `open`, `blocks` — it holds other blocks |
+| `example` | `id`, `tabs`, `blocks`, and `output` when written — it holds other blocks |
 
-**`quote` and `disclosure` hold other blocks**, so anything that walks a
-document recurses on that property rather than naming those two by hand.
+**`quote`, `disclosure` and `example` hold other blocks**, so anything that walks a
+document recurses on that property rather than naming those three by hand.
+
+**An example is one run of code fences with a tab per language.** Its `blocks` are
+`code` blocks only, flat, and its `tabs` cut them into consecutive spans, one per
+language: `{"lang": "<id>", "span": <how many blocks>}`. A tab's first block is the
+program and the blocks after it are what it printed. The languages are distinct and
+declared in `corpus.json`, the spans cover every block exactly once, and `output` is
+`compiler` or `warning` where the point of the block is a message the compiler gave
+(the page then says the code is refused or warned about, on purpose). An example is
+counted under `examples` only in a document that holds one, so every other document
+keeps its `counts` and its digest. `archive.markdown.blocks_of(regions(text),
+fence_labels)` writes the block from an `<!-- example: ... -->` region: a fence whose
+label belongs to a language opens its tab and any other fence is that tab's output.
+`validate` reads the shape (rule `document`) and a tab naming an undeclared language
+(rule `language-undeclared`). **A tab may also carry `code`**, the corpus-relative path of the
+file its code is (`{"lang": "python", "span": 2, "code": "examples/x/python/x.py"}`), which an
+adapter sets from the example projects it knows. A served page then offers Run beside that
+tab's code when the corpus pairs the file with a test and its runner is up; a tab without
+`code` is drawn as it always was, and a `code` that is no file of the corpus is the finding
+`example-code-missing`.
+
+**An example block may declare `support`**: `"support": ["harness"]`, a non-empty array of
+corpus-relative files or folders its code imports to run (a shared harness folder beside the
+example projects). The key follows `output` when both are present. A release of the course
+(the standalone split) keeps the top-level entry holding every tab's `code` and every `support`
+path in the learner tree, whole, and the runner copies that tree, so a served Run finds the
+example and what it imports. A corpus that declares no `support` and no `code` is unchanged;
+a `code` without `support` keeps only the entry that holds the code. `validate` refuses a
+`support` that is not a safe path (rule `document`) or that names no file or folder of the
+corpus or one a Run cannot reach (`example-support-missing`), and a `code` under a hidden,
+build-output or framework folder (`example-code-unreleased`).
 
 **A list item is a string, or an array of its parts in reading order**: runs of
 text, nested `list` blocks, and `code` blocks. Keep a step's snippet inside its
@@ -233,7 +291,7 @@ records the number it starts at as `start`.
 **`html` exists because real material contains raw markup**, and a reader that
 raised on anything it did not recognise would stop an ingest dead.
 
-**A construct that fits none of the eleven is a finding about the vocabulary,
+**A construct that fits none of the twelve is a finding about the vocabulary,
 not a block to throw away.** Report what you cannot read; never drop it. A
 dropped block is absent from the digest *and* from the counts, so nothing
 downstream can notice it went missing.

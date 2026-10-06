@@ -197,9 +197,8 @@ def generate(
     workspaces = workspaces_bind(block, sources)
     extra = tuple(one for one in (workspaces, code_bind(block, sources)) if one is not None)
     unkeyed(sources, *(directory for directory, _ in extra))
-    # ⭐ The prime is selected for what the image will CARRY, not for everything
-    # the corpus declared: an image without a runtime cannot compile a specimen
-    # in it, and the withheld ones are named in the reader's document instead.
+    # ⭐ The prime is selected for what the image will CARRY, not for all the corpus declared: an
+    # image without a runtime cannot compile a specimen in it; the rest are named in the document.
     seeds = contract.optional(editor, "runner", "prime", "seeds", default={})
     seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
     primed = _primed(root, selection.carried, seeded)
@@ -223,6 +222,7 @@ def generate(
         sources=sources,
         extra=extra,
         runner=(runnerservice.SERVICE, runner.service),
+        live=manifest.live and (manifest.live.host, manifest.live.key_variable),
     )
     compose = composefile.render(
         project=composefile.interpolated(instance.PROJECT, names[instance.PROJECT]),
@@ -264,7 +264,7 @@ def generate(
             (COMPOSE_FILE, compose),
             (TOOLCHAIN_FILE, selection.render()),
             (f"{CODE_COPY}/.gitignore", IGNORE_TEXT),
-            *siteservice.files(DIRECTORY, ALLOWED_IGNORE),
+            *siteservice.files(DIRECTORY, ALLOWED_IGNORE, manifest.live is not None),
             (READER_DOC, document),
         ),
         copies=tuple((f"{PRIME_DIR}/{inside}", origin) for inside, origin in primed.copies()),

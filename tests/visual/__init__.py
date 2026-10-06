@@ -163,6 +163,19 @@ ACCEPTANCE = {
     #: `file://` — a check that needed an origin would prove the opposite of it.
     "shows a quiz's questions over file://, grades them with no server and no "
     "request, and offers nothing to run": "test_practice_quiz",
+    #: ⭐ A row of its own: *a mock exam counts what is answered, names what is not, scores
+    #: per domain against its pass mark, keeps the answers for a returning reader and fits a
+    #: phone* is a claim about a quiz page that is a whole exam rather than a few questions, and
+    #: it is read over `file://` and a served origin alike, with no request from scoring.
+    "scores a mock exam per domain in the page, keeps the answers of a reader who leaves, "
+    "and fits a phone": "test_mock_exam",
+    #: ⭐ A row of its own: *a mock exam that sits like a certification exam* (a timer that
+    #: survives a reload and submits at zero, an exam layout with a navigator and flags, scenario
+    #: cards, multiple response scored all or nothing, sittings drawn from a pool by a stored seed,
+    #: and a results page that explains every option) is a claim about a running page, read over
+    #: `file://` and a served origin alike, with no request from anything it does.
+    "sits a mock exam with a timer, a navigator, flags, scenario cards, multiple response and "
+    "sittings drawn from a pool, and explains every option in its results": "test_mock_form",
     #: ⭐ A row of its own for the reason the one above is: its origin is the
     #: opposite one. ⛔ *A Submit shows the breakdown, naming each failed edge
     #: case* is a claim about a page that has just finished a run, and the
@@ -170,6 +183,10 @@ ACCEPTANCE = {
     #: and needs the server to say the lines.
     "draws what a Submit reported — main ask, edge cases n/m, each failed case "
     "named — beside a run verdict it never changes": "test_practice_breakdown",
+    #: ⭐ Beside the breakdown, and for the same reason: what each case said — its failure message
+    #: and the lines the reader's code logged — arrives on the run's own stream, only when asked.
+    "draws each case's failure message and logged lines under that case, keeps printed text "
+    "apart, and draws nothing where the server sent none": "test_practice_detail",
     #: ⭐ The served-faces clause, and it is a row of its own because its ORIGIN and its
     #: POLICY are the subject: `file://` carries no policy, so no clause above
     #: can see a policy that blocks the faces on a served page.
@@ -210,4 +227,89 @@ ACCEPTANCE = {
     #: browser logs a violation for, and only over an origin that answers as the editor.
     "frames a cold published site's configured editor from the first response, with "
     "no Content-Security-Policy violation": "test_cold_published_frame",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus declaring languages
+    #: and modes, which no committed fixture does. *The first visit asks, the choice
+    #: survives a reload and a page of another kind, a mode shows its sections, scripts
+    #: off read the default* is a claim about one origin's storage and the pages above it.
+    "asks a first visit for a reading mode, remembers the choice across a reload and "
+    "another page, shows the sections of the mode, and reads the default mode with "
+    "scripts off or storage refused": "test_modes",
+    #: ⭐ A row of its own for the same reason: a corpus with a unit of each language only
+    #: is the subject, built under both settings of `outside_mode`.
+    "greys an entry with nothing for the chosen mode in the index and the rail, closes it "
+    "under locked, passes over it in the bar, counts the mode's pages only and notes a "
+    "page outside the mode": "test_entries",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus of two languages and
+    #: four modes whose page holds an example with a tab per language and a block that is a
+    #: compiler message, shapes no committed fixture has. *The mode opens the first tab and
+    #: lists the tabs, a one-language mode hides an example with nothing in it, a compiler
+    #: message is flagged, code draws no ligature, a phone's width holds and the keys are the
+    #: tabs pattern's* are claims about the computed page.
+    "opens an example on the first tab of the reading mode, lists only the mode's tabs, hides "
+    "an example with nothing in the mode's language, flags a compiler message and a warning, "
+    "draws no ligature, holds 360 px and answers the arrow keys of the tabs pattern": (
+        "test_example_tabs"
+    ),
+    #: ⭐ A row of its own because its CORPUS is the subject: four declared languages, whose page
+    #: holds an example with a tab for each, a shape no committed fixture has. *Four tabs open on
+    #: the first, a mode reorders them, a one-language mode shows one and no bar, the bar wraps at
+    #: a phone's width and the keys walk and wrap* are claims about the computed page.
+    "lists a tab for each of four languages, opens the first or the one the mode orders first, "
+    "shows one tab and no bar for a one-language mode, wraps the bar inside the block at 360 px "
+    "and answers the keys of the tabs pattern over four tabs": "test_language_tabs",
+    #: ⭐ A row of its own for the same reason: four languages and one mode for each.
+    #: *The question lists exactly the four and fits a phone, a choice is remembered across
+    #: pages, the switch moves between the four, scripts off read the default* are claims about
+    #: one origin's storage.
+    "asks a first visit which of four languages to read, lists exactly the declared modes at "
+    "360 px, remembers the choice across pages, moves between the four in place, and reads the "
+    "default mode with scripts off or storage refused": "test_reading_languages",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus that greys what a
+    #: language lacks, whose blocks are in some languages only and whose practices are tagged.
+    "greys the tab of a language an example block lacks and names the languages that carry it, "
+    "keeps the keys on a disabled tab without selecting it, greys an entry in two of four "
+    "languages, and greys a practice outside the mode that does not open and is stepped over": (
+        "test_absent_language"
+    ),
+    #: ⭐ A row of its own because its CORPUS is the subject: an example whose tabs name the file
+    #: each is, with a test beside it. *The strip shows only where a runner is up, a press
+    #: streams the run into the block and says how it ended, and over a file it stays hidden* are
+    #: claims about one served origin and the same page opened as a file.
+    "shows an example's Run only where a runner is up, streams its output beside the code and "
+    "leaves it hidden over file://": "test_example_run",
+    #: ⭐ A row of its own because its CORPUS is the subject: a lesson that copies its own quiz.
+    "shows a quiz the lesson repeats once, as the interactive quiz in place": "test_quiz_once",
+    #: ⭐ A row of its own because a plain quiz's SHAPE is the subject: one question at a time.
+    "draws a plain quiz one question at a time, explains each answer and ends in a summary": (
+        "test_quiz_steps"
+    ),
+    #: ⭐ A row of its own: a sitting that draws an exact count per domain from a pool, a fresh form
+    #: each attempt and the same one after a reload, and a "Select two" item that cannot be
+    #: submitted short and is right only with its exact pair.
+    "draws an exact count per domain from a pool, and scores a select-two item all or nothing": (
+        "test_mock_pools_select"
+    ),
+    #: ⭐ A row of its own: a practice tagged for a language keeps its editor filling the pane.
+    "opens a language-tagged practice with its editor filling the pane and the handles working": (
+        "test_practice_tagged"
+    ),
+    #: ⭐ A row of its own: the editor fills the pane on open, at desktop and phone width.
+    "opens a practice with its editor at least 70% of the pane, the report only a strip until a "
+    "run reports, and keeps the split the reader chose for that practice": (
+        "test_practice_editor_height"
+    ),
+    #: ⭐ A row of its own because its CORPUS is the subject: a practice written in four languages.
+    "shows a practice written in four languages as one card, opens its panel in the reading "
+    "mode's language, switches the statement, panel and Submit target to another edition, and "
+    "marks each edition passed": "test_practice_editions",
+    #: ⭐ A row of its own because its ORIGIN is the subject: the preview of that corpus read from
+    #: a static server and from a file.
+    "opens the read-only preview of a corpus of four languages from a static server and from a "
+    "file in the default mode, with every panel replaced and the banner unchanged": (
+        "test_language_preview"
+    ),
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus that opts in to a deck of
+    #: flashcards and a spaced-review bank, whose state is kept in the reader's own browser.
+    "turns a deck's cards and keeps what is known across reloads, and shows what a review bank "
+    "has due by its stated rule, over file:// with no request": "test_revision",
 }

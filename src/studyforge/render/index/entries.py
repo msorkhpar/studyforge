@@ -53,6 +53,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.describe import describe
+from studyforge.render.modes import Tag
 from studyforge.render.page import PageError
 
 
@@ -70,6 +71,8 @@ class Item:
     numbering: str
     title: str
     href: str | None = None
+    #: ⭐ Set only for a unit of a corpus with modes that has nothing common to every mode.
+    tag: Tag | None = None
 
     def __post_init__(self) -> None:
         """Refuse an item that would render as an unnamed or unreachable row."""
@@ -115,6 +118,8 @@ class Section:
     title: str
     sections: tuple[Section, ...] = ()
     items: tuple[Item, ...] = ()
+    #: ⭐ The same, for a module whose every unit belongs to some languages only.
+    tag: Tag | None = None
 
     def __post_init__(self) -> None:
         """Refuse a section that holds both kinds of child, or that has no name."""

@@ -20,7 +20,7 @@ from studyforge.execute import (
     exit_line,
     instance,
 )
-from studyforge.execute.quiet import MAVEN, filter_lines
+from studyforge.execute.quiet import GRADLE, MAVEN, filter_lines
 from studyforge.generate import write_site
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
@@ -28,7 +28,7 @@ from studyforge.serve.routes.runs import editor_for, runner_for, verdict
 from studyforge.serve.withheld import WITHHELD_LINE, marks_in
 from tests.studyforge.execute.runnable import RAW
 from tests.studyforge.execute.test_mode import fake_docker
-from tests.studyforge.execute.transcripts import MAVEN_QUIET_COMPILE_ERROR
+from tests.studyforge.execute.transcripts import GRADLE_FAILURE, MAVEN_QUIET_COMPILE_ERROR
 from tests.studyforge.serve.routes.quizzing import QUESTIONS
 from tests.studyforge.serve.routes.running import (
     SOURCE,
@@ -137,6 +137,20 @@ def test_a_corpus_declaring_no_build_tool_with_rules_is_streamed_unfiltered(root
     # every line reaches the page, because nothing is guessed.
     body = streamed(root, MAVEN_QUIET_COMPILE_ERROR, 1)
     assert body == [*MAVEN_QUIET_COMPILE_ERROR, exit_line(1)]
+
+
+@pytest.mark.parametrize(
+    ("argv", "toolchain"),
+    [(["./gradlew", "test"], GRADLE), (["mvn", "-B", "test"], MAVEN), (["python3", "t.py"], None)],
+    ids=["gradle", "maven", "unknown"],
+)
+def test_a_two_tool_corpus_filters_each_run_by_its_commands_first_word(root, argv, toolchain):
+    declare_runtimes(root, ["gradle", "java", "kotlin", "maven"])
+    plant_command(root, 1, "run_command", argv)
+    body = streamed(root, GRADLE_FAILURE, 1)
+    expected = [*filter_lines(GRADLE_FAILURE, toolchain), exit_line(1)]
+    assert body == expected
+    assert (len(body) < len(GRADLE_FAILURE) + 1) is (toolchain is GRADLE)
 
 
 @pytest.mark.parametrize(
@@ -418,3 +432,25 @@ def test_a_run_that_prints_a_bundle_hands_the_reader_no_key(root):
     assert '"correct"' not in body and WITHHELD_LINE in body
     assert all(option["says"] not in body for one in QUESTIONS for option in one["options"])
     assert body.endswith(exit_line(0) + "\n")
+
+
+def test_a_practice_of_several_files_answers_a_window_for_each_further_file(root):
+    # ⭐ The further files the reader edits sit in the practice's own folder, are editable
+    # beside the main file, and each is answered as a window of its own with its own URL.
+    (root / "practice" / "passes" / "notes.md").write_text("# notes\n", encoding="utf-8")
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    answer = live.practice_editor(
+        discovered.corpora[0],
+        "practice/passes/greet.py",
+        None,
+        files=("practice/passes/notes.md", "practice/passes/absent.md"),
+    )
+    assert answer is not None
+    assert [one["path"] for one in answer["files"]] == ["notes.md"]
+    assert answer["files"][0]["url"] != answer["main"]["url"]
+    held = json.loads(
+        (root / "practice" / "passes" / ".vscode" / "settings.json").read_text(encoding="utf-8")
+    )
+    assert held["files.readonlyExclude"] == {"greet.py": True, "notes.md": True}
+    plain = live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
+    assert "files" not in plain

@@ -44,7 +44,13 @@ from studyforge.skills.execution import rulings
 from studyforge.skills.execution.composefile import interpolated, service, volumes_for
 from studyforge.skills.execution.contract import optional, require
 from studyforge.skills.execution.emit import emit
-from studyforge.skills.execution.siteservice import CORPUS, NETWORK, answered, health_url
+from studyforge.skills.execution.siteservice import (
+    CORPUS,
+    NETWORK,
+    answered,
+    health_url,
+)
+from studyforge.skills.execution.standalone import live
 from studyforge.skills.execution.standalone.bases import Bases
 from studyforge.skills.execution.standalone.images import (
     NAMESPACE_DEFAULT,
@@ -102,6 +108,9 @@ class Plan:
     editor_port: int
     #: ⭐ Thin: the published bases, by tag and digest. With none, every base is built here.
     bases: Bases | None = None
+    #: ⭐ `(API host, key variable name)` of a course that declares live runs; `None` (every
+    #: other course) adds no live runner, no proxy, no network and no variable.
+    live: tuple[str, str] | None = None
 
 
 def volume_of(directory: str) -> str:
@@ -122,7 +131,7 @@ def render(plan: Plan) -> tuple[str, str]:
         document = {
             "name": interpolated(PROJECT_VARIABLE, plan.slug),
             "services": services,
-            "networks": {NETWORK: {"internal": True}},
+            "networks": live.networks(plan.live),
             "volumes": {name: {} for name in _volumes(services)},
         }
         text = emit(document)
@@ -160,6 +169,7 @@ def _whole(plan: Plan, run: Mapping[str, dict[str, object]]) -> dict[str, dict[s
             "build": _toolchain(plan.builds["editor-prime"], PRIME, ("editor-base",)),
             **run["editor"],
         },
+        **live.started(run),
     }
 
 
@@ -185,6 +195,7 @@ def _thin(plan: Plan, run: Mapping[str, dict[str, object]]) -> dict[str, dict[st
             "build": _toolchain(plan.builds["editor-prime"], PRIME, (), pinned),
             **run["editor"],
         },
+        **live.started(run),
     }
 
 
@@ -262,7 +273,10 @@ def _running(plan: Plan) -> dict[str, dict[str, object]]:
     editor[str(require(plan.editor, "runs_as", "compose_key"))] = RUNS_AS
     editor["ports"] = [_port(one, plan.editor_port) for one in editor["ports"]]
     editor["depends_on"] = healthy
-    return {"site": site, "runner": runner, "editor": editor}
+    found = {"site": site, "runner": runner, "editor": editor}
+    if plan.live is not None:
+        found.update(live.services(plan, site, runner))
+    return found
 
 
 def _port(published_port: str, default: int) -> str:

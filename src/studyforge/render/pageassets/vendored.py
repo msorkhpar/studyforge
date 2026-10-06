@@ -40,6 +40,7 @@ VENDORED = {
     "plyr.js": "plyr.LICENSE",
     "plyr.css": "plyr.LICENSE",
     "plyr.svg": "plyr.LICENSE",
+    "minisearch.js": "minisearch.LICENSE",
 }
 
 #: Every vendored header must say all three, or "unedited" is unverifiable:
@@ -50,15 +51,15 @@ HEADER_MARKERS = ("MIT", "VENDORED, UNMODIFIED", "re-vendor")
 #: bundle is one enormous line, so this is a character count and not a line
 #: count — reading "the first five lines" of `plyr.js` reads the whole file.
 #:
-#: ⛔ **900 rather than 600.** A bundle declares every name its grammars carry on one
-#: `Languages:` line, and at eleven Prism components that line alone is 170
+#: ⛔ **1100 rather than 600.** A bundle declares every name its grammars carry on one
+#: `Languages:` line, and at sixteen Prism components that line alone is 250
 #: characters: inside a 600-character window the header had **2** characters of
 #: margin left, which strands the next grammar and buys the reproduce recipe
 #: nothing. ⭐ It is safe because the invariant was never the window — it is
 #: `grammars.declared_languages`, which REFUSES a header carrying two
 #: `Languages:` lines — and no Prism 1.30.0 component vendored here carries
 #: that marker at all.
-HEADER_CHARS = 900
+HEADER_CHARS = 1100
 
 
 def is_vendored(name: str) -> bool:

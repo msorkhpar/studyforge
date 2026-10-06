@@ -357,3 +357,23 @@ and a golden sitting in that root is a file the plan would have to explain.
 the page assets' outputs are designed but not pinned here, and a golden for output
 nobody has designed is a fixture that will be wrong and will be trusted. A
 golden lands with the design of the output it pins.
+
+## `sdk-profile/` — a corpus that names an image profile
+
+A copy of `runnable/` whose manifest declares the runtimes `python`, `node`, `java`, `gradle` and
+`kotlin` and names a toolchain image profile in `profile`. The profile's name is data the
+corpus declares: no framework module names one, and the tests that export this corpus
+(`tests/studyforge/skills/execution/standalone/test_profile_export.py`, and `_real.py` against a
+real toolchain checkout) read the name from this manifest.
+
+
+## `claude_shape/` — the shape of a course on language SDKs, built by code
+
+A Python package, not a tree of files: `python3 -m tests.fixtures.claude_shape` writes a
+four-language course (Python, TypeScript, Java and Kotlin) with a profile and a live block,
+authors its four graded practices and a two-domain mock exam in the profile's runner under
+`--network none`, exports it thin on the profile, and reads the served result in headless Chrome
+(first-visit language question, four-language tabs with a greyed language, each practice graded
+in the browser, Run on an example, the mock exam scored, the live-run field with and without the
+`live` compose profile against a host that does not resolve). It lives here, not beside the
+tests, because it is a fixture builder; `test_shape.py` checks only what needs no container.

@@ -24,21 +24,48 @@ ONE_LINE = (
     "breadcrumb.html",
     "code.html",
     "crumb-separator.html",
+    "example.html",
+    "example-bar.html",
+    "example-flag-compiler.html",
+    "example-flag-warning.html",
+    "example-missing.html",
+    "example-panel.html",
+    "example-tab.html",
+    "example-tab-missing.html",
     "image.html",
     "link-index.html",
+    "link-next-chain.html",
     "link-next.html",
+    "link-previous-chain.html",
     "link-previous.html",
+    "mode-button.html",
+    "mode-option.html",
+    "mode-outside-button.html",
     "outline.html",
     "practice-case.html",
     "practice-state.html",
+    "practice-state-editions.html",
+    "practice-editions.html",
+    "practice-edition.html",
+    "practice-switch.html",
+    "practice-switch-button.html",
     "practices-title.html",
+    "practice-carriers.html",
+    "practice-file.html",
+    "practice-grader-deck.html",
+    "practice-grader-deck-several.html",
+    "practice-files.html",
+    "practice-tryit.html",
     "practice-grader-bundled.html",
     "practice-grader-generated.html",
     "practice-grader-none.html",
     "practice-grader-quiz.html",
+    "practice-grader-quiz-several.html",
+    "practice-grader-mock.html",
     "practice-grader-shipped.html",
     "practice-grader-user.html",
     "practice-option.html",
+    "practice-mockform-option.html",
     "practice-run.html",
     "practice-submit.html",
     "practice-tab-tests.html",
@@ -53,6 +80,10 @@ ONE_LINE = (
 #: template cannot be added without somebody deciding which kind it is.
 MULTI_LINE = (
     "attachments.html",
+    "mode-head.html",
+    "mode-outside-locked.html",
+    "mode-outside-open.html",
+    "mode-switch.html",
     "code-example.html",
     "code-examples.html",
     "page.html",
@@ -60,12 +91,21 @@ MULTI_LINE = (
     "pending-practices.html",
     "player.html",
     "narration-gap.html",
+    "example-run.html",
+    "practice-deck-card.html",
+    "practice-deck.html",
+    "practice-review-question.html",
+    "practice-review.html",
     "practice-breakdown.html",
     "practice-panel.html",
     "practice-card.html",
     "practice-concepts.html",
     "practice-workspace.html",
     "practices.html",
+    "practice-mock-question.html",
+    "practice-mock.html",
+    "practice-mockform-question.html",
+    "practice-mockform.html",
     "practice-question.html",
     "practice-quiz.html",
     "practice-tabs.html",
@@ -112,7 +152,7 @@ def test_no_template_ends_in_a_newline_once_loaded(name):
 def test_an_unfilled_placeholder_raises_and_never_reaches_the_page():
     # ⛔ The rendering acceptance clause, at the mechanism that keeps it.
     with pytest.raises(templates.TemplateError) as raised:
-        templates.fill("section.html", id="a", key="b", kind="c", label="d")
+        templates.fill("section.html", id="a", key="b", kind="c", label="d", lang="")
     assert "body" in str(raised.value)
     assert "heading" in str(raised.value)
 
@@ -121,7 +161,7 @@ def test_the_same_call_with_every_placeholder_filled_succeeds():
     # ⭐ The negative control run negatively: the failure above is the missing
     # value and not the call.
     markup = templates.fill(
-        "section.html", id="a", key="b", kind="c", label="d", heading="", body="x"
+        "section.html", id="a", key="b", kind="c", label="d", lang="", heading="", body="x"
     )
     assert markup.startswith('<section id="a"')
 
@@ -136,6 +176,7 @@ def test_a_value_with_no_placeholder_raises():
             key="b",
             kind="c",
             label="d",
+            lang="",
             heading="",
             body="x",
             pills="gone",

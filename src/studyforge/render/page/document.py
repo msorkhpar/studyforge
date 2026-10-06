@@ -74,13 +74,11 @@ from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors, navigation
+from studyforge.render.page import anchors, editions, examplerun, navigation, part, quizonce
 from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
-from studyforge.render.page import practice as practice_region
 from studyforge.render.page import practices as practices_region
 from studyforge.render.page import rail as rail_region
-from studyforge.render.page import section as section_module
 from studyforge.render.page.anchors import TITLE_POSITION
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
@@ -140,16 +138,18 @@ def compose(
     synthesised renders exactly as a corpus that will never have any (R6), and
     the transport is absent in both cases rather than present and dead.
     """
+    document = quizonce.once(document, lambda s, d: practices_region.embedded(s, d, placement))
     title = _title(document)
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
     parts = [
-        _part(section, placement, narration, document, heads_page=heads and index == 0)
+        part.render(section, placement, narration, document, heads_page=index == 0 and heads)
         for index, section in enumerate(sections)
     ]
     joined = practices_region.joined(parts, sections, document, placement)
     body = code_region.examples(*code_region.mark(joined, placement), placement)
+    body += examplerun.links(body, placement)
     return (
         templates.fill(
             SKELETON,
@@ -162,7 +162,7 @@ def compose(
             meta=_region(meta(document)),
             breadcrumb=_region(navigation.breadcrumb(trail)),
             rail=_region(rail_region.render(rail)),
-            outline=_region(anchors.outline(document)),
+            outline=_region(anchors.outline(editions.collapsed(document))),
             body=body,
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
@@ -172,34 +172,10 @@ def compose(
             # to play it.
             player=_region(player(attributes + body, narration)),
             nav=_region(navigation.between_units(links)),
+            **placement.mode_slots(),
         )
         + TRAILING_NEWLINE
     )
-
-
-def _part(
-    section: dict, placement: Placement, narration: Narration, document: dict, *, heads_page: bool
-) -> str:
-    """Return one section and, where it sets work, the panel the reader acts in.
-
-    ⛔ **The panel sits AFTER the section rather than inside it**, which is the
-    shape `section`'s own attachments region already has: the statement, the
-    hint and the starting code are the material's blocks and belong to the
-    material; the editor slot, Run, Submit and the result are this framework's
-    controls and belong beside it. ⭐ Keeping it outside `<section>` also keeps
-    it out of the outline, exactly as the narrated deck above the section is.
-
-    ⚠️ **Joined here rather than given a slot of its own**, because a unit may
-    carry SEVERAL practices and a slot is one region per page: a panel has to
-    follow the practice it is about, or a reader reads two statements and then
-    two sets of controls with nothing saying which is which.
-
-    ⚠️ `heads_page` is `section.render`'s own word, passed STRAIGHT through
-    and REQUIRED: `compose` is its only caller and the only holder of the page.
-    """
-    rendered = section_module.render(section, placement, narration, heads_page=heads_page)
-    panel = practice_region.render(section, document, placement)
-    return f"{rendered}{JOIN}{panel}" if panel else rendered
 
 
 def identity(document: dict, placement: Placement) -> str:
@@ -366,8 +342,7 @@ def _region(markup: str) -> str:
     ⭐ The conditional newline lives here and nowhere else. Spread across the
     slots it is one chance per slot to emit a page that differs from its golden
     file by one blank line, which is the least interesting diff a reviewer can be
-    handed. ⛔ A count here would be a second statement of `page.html`'s slot
-    list, wrong the next time the skeleton grows — which it has.
+    handed. ⛔ A count here would be a second statement of `page.html`'s slot list.
     """
     return f"{markup}{JOIN}" if markup else ""
 
@@ -383,10 +358,9 @@ def _title(document: dict) -> str:
 def _sections(document: dict) -> list:
     """Return the sections to render, in the order the document records them.
 
-    ⛔ **The document's order is used, never re-derived.** `unit.builder` splits
-    derived ordering from authored ordering into two modules precisely so that
-    nothing downstream re-computes it; a renderer that sorted would be the
-    second orderer that module exists to prevent.
+    ⛔ **The document's order is used, never re-derived.** `unit.builder` owns
+    ordering, so nothing downstream re-computes it; a renderer that sorted would be
+    the second orderer that module exists to prevent.
     """
     sections = document.get("sections")
     if not isinstance(sections, list) or not sections:

@@ -54,6 +54,30 @@ DRAFTS = {
         "modes": [READING_MODE],
         "outside_mode": "locked",
     },
+    (None, "live"): {
+        **corpora.DRAFT,
+        "exercises": True,
+        "runtimes": ["java", "python"],
+        "live": {
+            "host": "api.example.test",
+            "key_variable": "EXAMPLE_API_KEY",
+            "examples": [
+                {"path": "examples/a/run.py", "command": ["python3", "examples/a/run.py"]}
+            ],
+        },
+    },
+    (None, "profile"): {
+        **corpora.DRAFT,
+        "exercises": True,
+        "runtimes": ["java"],
+        "profile": "example-profile",
+    },
+    (None, "absent_language"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+        "absent_language": "grey",
+    },
     ("curriculum", "linked"): {
         **corpora.DRAFT,
         "levels": ["section", "module"],

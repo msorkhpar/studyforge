@@ -6,9 +6,12 @@ import re
 
 import pytest
 
+from studyforge.render import modes
+from studyforge.render.page import DECK_PARTS, MOCK_FORM_PARTS, MOCK_PARTS, REVIEW_PARTS
 from studyforge.render.pageassets import (
     SCRIPT_NAME,
     SCRIPT_PARTS,
+    SEARCH_PARTS,
     SPRITE_PART,
     SPRITE_PLACEHOLDER,
     STYLE_PARTS,
@@ -36,7 +39,21 @@ def test_every_part_on_disk_is_in_exactly_one_bundle_or_is_the_sprite():
     # bundle reads is dead weight nobody notices, and a part in two bundles
     # ships twice. The sprite is the one exception and it is named — it is
     # substituted into the script rather than concatenated.
-    used = list(STYLE_PARTS) + list(SCRIPT_PARTS) + [SPRITE_PART]
+    # ⭐ The two files a corpus declaring modes writes beside the bundle are parts on
+    # disk too, composed by `render.modes` and never into the shared bundle, and so are the two a
+    # corpus with a mock exam writes (`render.page.mock`).
+    # ⭐ And the Run strip's two, a deck's two and a review bank's two, each written only for a
+    # corpus that has one.
+    exam_parts = [
+        *MOCK_PARTS,
+        *MOCK_FORM_PARTS,
+        *DECK_PARTS,
+        *REVIEW_PARTS,
+        "example-run.css",
+        "example-run.js",
+        *SEARCH_PARTS,
+    ]
+    used = list(STYLE_PARTS) + list(SCRIPT_PARTS) + [SPRITE_PART, *modes.PARTS, *exam_parts]
     assert sorted(used) == sorted(names()), "the directory and the bundles disagree"
     assert len(used) == len(set(used)), "a part is composed into more than one bundle"
 

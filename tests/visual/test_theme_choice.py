@@ -58,7 +58,8 @@ WIDER = (1600, WIDE[1])
 
 #: The control, its buttons, and the one attribute the palette guards on.
 THEME_CONTROL = '[data-section="theme"]'
-THEME_BUTTON = '[data-theme-choice="%s"]'
+#: ⭐ One icon button in the top bar: pressing it chooses the theme the page is NOT showing.
+PRESS = f"document.querySelector('{THEME_CONTROL}').click()"
 CHOSEN = "document.documentElement.getAttribute('data-theme')"
 
 #: What the control looks like to a reader and to assistive technology, in one
@@ -66,20 +67,18 @@ CHOSEN = "document.documentElement.getAttribute('data-theme')"
 #: unhides it by assigning the property.
 CONTROL_READING = """
 (() => {
-  const group = document.querySelector('<control>');
-  if (!group) return null;
-  const buttons = Array.from(group.querySelectorAll('button'));
-  const box = group.getBoundingClientRect();
+  const button = document.querySelector('<control>');
+  if (!button) return null;
+  const box = button.getBoundingClientRect();
   return {
-    name: group.getAttribute('aria-label'),
-    role: group.getAttribute('role'),
-    hidden: group.hidden,
+    name: button.getAttribute('aria-label'),
+    tag: button.tagName,
+    hidden: button.hidden,
     width: box.width,
     height: box.height,
-    pressed: buttons.filter(b => b.getAttribute('aria-pressed') === 'true')
-                    .map(b => b.getAttribute('data-theme-choice')),
-    choices: buttons.map(b => b.getAttribute('data-theme-choice')),
-    words: buttons.map(b => b.textContent.trim())
+    icons: Array.from(button.querySelectorAll('svg'))
+                .filter(i => getComputedStyle(i).display !== 'none')
+                .map(i => i.getAttribute('data-icon'))
   };
 })()
 """.replace("<control>", THEME_CONTROL)
@@ -122,16 +121,14 @@ def test_the_theme_control_is_on_every_page_kind(
     reading = no_choice.evaluate(CONTROL_READING)
     assert reading is not None, f"{case} carries no theme control"
     assert reading["hidden"] is False and reading["width"] > 0 and reading["height"] > 0
-    assert reading["role"] == "group" and reading["name"]
-    assert reading["choices"] == ["system", "light", "dark"]
-    assert all(reading["words"]), reading["words"]
-    assert reading["pressed"] == ["system"], reading["pressed"]
+    assert reading["tag"] == "BUTTON" and reading["name"]
+    assert reading["icons"] == ["sun"], reading["icons"]
 
 
 def test_the_control_takes_keyboard_focus_like_every_other_control(no_choice: OpenPage) -> None:
     """⛔ A control the keyboard cannot reach is not a control."""
     focused = no_choice.evaluate(
-        "(() => { const b = document.querySelector('" + (THEME_BUTTON % "dark") + "');"
+        "(() => { const b = document.querySelector('" + THEME_CONTROL + "');"
         " b.focus(); return document.activeElement === b; })()"
     )
     assert focused is True
@@ -140,8 +137,9 @@ def test_the_control_takes_keyboard_focus_like_every_other_control(no_choice: Op
 def test_choosing_dark_on_a_light_system_paints_the_dark_ground(no_choice: OpenPage) -> None:
     """⛔ The clause itself, in a browser whose system says light."""
     before = darkness(no_choice)
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'dark'}').click()")
+    no_choice.evaluate(PRESS)
     assert no_choice.evaluate(CHOSEN) == "dark"
+    assert no_choice.evaluate(CONTROL_READING)["icons"] == ["moon"]
     after = darkness(no_choice)
     assert after < before, f"the ground did not darken: {before} then {after}"
     astray = outside_the_band(
@@ -160,12 +158,12 @@ def test_the_choice_survives_a_reload_on_a_light_system(
     no_choice: OpenPage, built_site: site.Site
 ) -> None:
     """⛔ *"remembers the reader's choice"* — read after a fresh navigation."""
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'dark'}').click()")
+    no_choice.evaluate(PRESS)
     chosen = darkness(no_choice)
     no_choice.open(built_site.url(INDEX_PAGE), scheme="light")
     assert no_choice.evaluate(CHOSEN) == "dark"
     assert darkness(no_choice) == chosen
-    assert no_choice.evaluate(CONTROL_READING)["pressed"] == ["dark"]
+    assert no_choice.evaluate(CONTROL_READING)["icons"] == ["moon"]
 
 
 def test_with_nothing_stored_the_system_setting_still_wins(
@@ -179,28 +177,28 @@ def test_with_nothing_stored_the_system_setting_still_wins(
     assert darkness(no_choice) < light
 
 
-def test_choosing_system_again_hands_the_page_back_to_the_system(
+def test_a_press_on_a_dark_system_chooses_light_and_keeps_it_against_the_system(
     no_choice: OpenPage, built_site: site.Site
 ) -> None:
-    """⭐ The other way for the third state: it is not a synonym for light."""
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'light'}').click()")
+    """⭐ The other way: the press chooses the theme the page is not showing, whatever it follows."""
+    no_choice.open(built_site.url(UNIT_PAGE), scheme="dark")
+    assert no_choice.evaluate(CONTROL_READING)["icons"] == ["moon"]
+    dark = darkness(no_choice)
+    no_choice.evaluate(PRESS)
+    assert no_choice.evaluate(CHOSEN) == "light"
+    assert darkness(no_choice) > dark
     no_choice.open(built_site.url(UNIT_PAGE), scheme="dark")
     assert no_choice.evaluate(CHOSEN) == "light"
-    forced = darkness(no_choice)
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'system'}').click()")
-    assert no_choice.evaluate(CHOSEN) is None
-    assert darkness(no_choice) < forced
+    assert no_choice.evaluate(CONTROL_READING)["icons"] == ["sun"]
 
 
 def test_the_browser_chrome_colour_follows_the_chosen_theme(no_choice: OpenPage) -> None:
     """⛔ *"the `theme-color` pair must stay honest for whichever theme is showing"*."""
     system = no_choice.evaluate(LIVE_THEME_COLOUR)
     assert len(system) == 1, system
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'dark'}').click()")
+    no_choice.evaluate(PRESS)
     forced = no_choice.evaluate(LIVE_THEME_COLOUR)
     assert len(forced) == 1 and forced != system, (system, forced)
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'system'}').click()")
-    assert no_choice.evaluate(LIVE_THEME_COLOUR) == system
 
 
 def test_with_scripts_off_the_control_is_not_shown_and_the_system_still_decides(
@@ -262,19 +260,17 @@ FIRST_TOUCH = "JSON.stringify(window.__firstTouch || {})"
 def test_choosing_a_theme_caches_it_where_the_head_boot_can_read_it(
     no_choice: OpenPage,
 ) -> None:
-    """⛔ The cache the boot reads, and *system* clearing it — both ways.
+    """⛔ The cache the boot reads, kept in step with each press.
 
     ⭐ The durable answer stays in the display record; this is the one string
     the boot may act on, and an absent cache is how *system* is said, because an
     absent cache and a stored word must not be two answers to one question.
     """
     assert no_choice.evaluate(BOOT_CACHE) is None
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'dark'}').click()")
+    no_choice.evaluate(PRESS)
     assert no_choice.evaluate(BOOT_CACHE) == "dark"
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'light'}').click()")
+    no_choice.evaluate(PRESS)
     assert no_choice.evaluate(BOOT_CACHE) == "light"
-    no_choice.evaluate(f"document.querySelector('{THEME_BUTTON % 'system'}').click()")
-    assert no_choice.evaluate(BOOT_CACHE) is None
 
 
 def test_the_head_never_binds_the_store_the_readers_marks_live_in(

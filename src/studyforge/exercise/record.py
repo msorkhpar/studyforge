@@ -94,8 +94,8 @@ from dataclasses import dataclass
 
 from studyforge.exercise import quiz
 from studyforge.exercise.cases import (
-    BREAKDOWN_KEYS,
     DEFAULT_KIND,
+    FLASHCARDS,
     QUIZ,
     Case,
     Origin,
@@ -109,13 +109,19 @@ from studyforge.exercise.cases import (
     report_of,
 )
 from studyforge.exercise.concepts import CONCEPTS, concepts_in
+from studyforge.exercise.deck import (
+    Card,
+    cards_document,
+    cards_in,
+    require_deck_shape,
+    require_no_cards,
+)
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.keys import (
-    AUTHORED_KEYS,
     EXERCISE_KEYS,
-    REQUIRED_KEYS,
     require_known_keys,
     require_present,
+    written_keys,
 )
 from studyforge.exercise.safety import require_command, require_path
 from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
@@ -152,8 +158,24 @@ class Exercise:
     report: Report | None = None
     origin: Origin | None = None
     questions: tuple[quiz.Question, ...] | None = None
+    #: ⭐ A quiz that is a mock exam: its pass mark and the domains it is scored under
+    #: (`exercise.quiz.mock`). `None` is every quiz that is not one.
+    mock: quiz.Mock | None = None
     #: ⭐ What it practises, in the plan's order (`exercise.concepts`).
     concepts: tuple[str, ...] | None = None
+    #: ⭐ The further files the reader edits beside `main_path`; `None` is a practice of one file.
+    files: tuple[str, ...] | None = None
+    #: ⭐ A quiz that is a spaced-review bank: the schedule its questions are revisited on
+    #: (`exercise.quiz.review`). `None` is every quiz that is not one.
+    review: quiz.Review | None = None
+    #: ⭐ The cards of a deck of flashcards (`exercise.deck`); `None` for every other record.
+    cards: tuple[Card, ...] | None = None
+    #: ⭐ How a plain quiz is drawn (`exercise.quiz.layout`): `None` is the default, one question at
+    #: a time; `"page"` is the opt-out that draws every question on one page.
+    layout: str | None = None
+    #: ⭐ The "try it" file, one of `files`: the reader's own small entry point, which `run_command`
+    #: executes (no tests, no grade). `None` is a practice whose Run is whatever `run_command` says.
+    try_file: str | None = None
 
     @property
     def graded(self) -> bool:
@@ -174,6 +196,11 @@ class Exercise:
     def is_quiz(self) -> bool:
         """Is this graded by its own key rather than by running anything? ⭐ Spec §7 §7."""
         return self.kind == QUIZ
+
+    @property
+    def is_deck(self) -> bool:
+        """Is this a deck of flashcards, turned over rather than run or graded?"""
+        return self.kind == FLASHCARDS
 
     @property
     def authoritative(self) -> bool:
@@ -226,7 +253,16 @@ def from_document(value: object, where: str) -> Exercise:
         # included; this branch of the reader chooses the shape and nothing else.
         provenance, trust = quiz.require_quiz_shape(value, where)
         return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
+    if kind == FLASHCARDS:
+        provenance, trust = require_deck_shape(value, where)
+        return Exercise(
+            None, None, None, None, provenance, trust, **_authored(value, FLASHCARDS, where)
+        )
     quiz.require_no_questions(value, where)
+    quiz.require_no_mock(value, where)
+    quiz.require_no_review(value, where)
+    quiz.require_no_layout(value, where)
+    require_no_cards(value, where)
     require_present(value, where)
     authored = _authored(value, kind, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
@@ -264,6 +300,7 @@ def to_document(exercise: Exercise) -> dict:
     """
     values = {
         "main_path": exercise.main_path,
+        "files": list(exercise.files or ()),
         "test_path": exercise.test_path,
         "run_command": list(exercise.run_command or ()),
         "test_command": list(exercise.test_command or ()),
@@ -274,27 +311,14 @@ def to_document(exercise: Exercise) -> dict:
         "report": report_document(exercise.report) if exercise.report else None,
         "origin": origin_document(exercise.origin) if exercise.origin else None,
         quiz.QUESTIONS: quiz.questions_document(exercise.questions or ()),
+        quiz.MOCK: quiz.mock_document(exercise.mock) if exercise.mock else None,
         CONCEPTS: list(exercise.concepts or ()),
+        "review": quiz.review_document(exercise.review) if exercise.review else None,
+        "cards": cards_document(exercise.cards or ()),
+        quiz.LAYOUT: exercise.layout,
+        "try_file": exercise.try_file,
     }
-    return {key: values[key] for key in _written_keys(exercise)}
-
-
-def _written_keys(exercise: Exercise) -> tuple[str, ...]:
-    """Which keys this record writes — chosen by its shape, never by which values are `None`."""
-    concepts = {CONCEPTS} if exercise.concepts is not None else set()
-    if exercise.is_quiz:
-        carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
-        carried = (carried - {CONCEPTS}) | concepts
-        return tuple(key for key in EXERCISE_KEYS if key in carried)
-    carried = set(concepts)
-    if exercise.kind != DEFAULT_KIND:
-        carried.add("kind")
-    if exercise.breaks_down:
-        carried.update(BREAKDOWN_KEYS)
-    if exercise.origin is not None:
-        carried.add("origin")
-    shape = set(EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS) - set(AUTHORED_KEYS)
-    return tuple(key for key in EXERCISE_KEYS if key in shape or key in carried)
+    return {key: values[key] for key in written_keys(exercise)}
 
 
 def _authored(value: dict, kind: str, where: str) -> dict:
@@ -308,8 +332,52 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         "report": report_of(value["report"], where) if "report" in value else None,
         "origin": origin_in(value, where),
         quiz.QUESTIONS: quiz.questions_in(value, where),
+        quiz.MOCK: quiz.mock_in(value, where) if kind == QUIZ else None,
         CONCEPTS: concepts_in(value, where),
+        "files": _files(value, where) if kind == DEFAULT_KIND else None,
+        "try_file": _try_file(value, where) if kind == DEFAULT_KIND else None,
+        "review": quiz.review_in(value, where) if kind == QUIZ else None,
+        "cards": cards_in(value, where) if kind == FLASHCARDS else None,
+        quiz.LAYOUT: quiz.layout_in(value, where) if kind == QUIZ else None,
     }
+
+
+def _files(value: dict, where: str) -> tuple[str, ...] | None:
+    """Read `files`: absent is none; present is a non-empty list of distinct workspace paths."""
+    if "files" not in value:
+        return None
+    listed = value["files"]
+    if not isinstance(listed, list) or not listed:
+        raise ExerciseError(
+            f"{where}: 'files' lists the further files the reader edits, as a non-empty array "
+            f"of paths. A practice of one file leaves the key out."
+        )
+    paths = tuple(require_path(one, "a file the reader edits", where) for one in listed)
+    taken = {value.get("main_path"), value.get("test_path")}
+    if len(set(paths)) != len(paths) or any(path in taken for path in paths):
+        raise ExerciseError(
+            f"{where}: 'files' names a file twice, or one that is already the main file or "
+            f"the test file."
+        )
+    return paths
+
+
+def _try_file(value: dict, where: str) -> str | None:
+    """Read `try_file`: absent is none; present is one of `files`, and Run is not the grader."""
+    if "try_file" not in value:
+        return None
+    path = require_path(value["try_file"], "try_file", where)
+    if path not in (value.get("files") or ()):
+        raise ExerciseError(
+            f"{where}: 'try_file' names a file that 'files' does not list. The try-it file is one "
+            f"of the files the reader edits, so it is listed there too."
+        )
+    if "test_command" in value and value.get("run_command") == value["test_command"]:
+        raise ExerciseError(
+            f"{where}: 'try_file' is set but 'run_command' equals 'test_command'. Run executes "
+            f"the try-it file and Submit grades; the two commands are different."
+        )
+    return path
 
 
 def _trust(value: dict, where: str) -> tuple[str, str]:

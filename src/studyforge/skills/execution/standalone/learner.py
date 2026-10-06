@@ -68,6 +68,8 @@ class Course:
     licence: bool = False
     #: ⭐ Thin: the images start from published bases, so a build needs the account too.
     thin: bool = False
+    #: ⭐ `(API host, key variable name)` of a course that declares live runs, else `None`.
+    live: tuple[str, str] | None = None
 
 
 def settings(course: Course) -> str:
@@ -237,6 +239,21 @@ def readme(course: Course) -> str:
             "starter, tests and reference solution. `practice/` holds your working copy of",
             "each: the files you edit and submit live there, and "
             f"`{BUNDLES_DIRNAME}/` is only read.",
+            "",
+        ]
+    if course.live:
+        host, variable = course.live
+        parts += [
+            "## Live runs (optional)",
+            "",
+            f"Some examples can also be run live against {host} with your own API key. Live",
+            "runs are off: nothing in the default start can reach that host. To turn them on,",
+            "add the live profile to the start command, for example",
+            "`docker compose --profile live up -d` (with `-f compose.pull.yaml` for the pulled",
+            "course), then type your key into the site. The key stays in your browser and is",
+            "sent only to the live runner, as the environment variable "
+            f"`{variable}` of the one program that run starts; it is written to no file.",
+            "A live run is never graded, and the page that offers it lists what it risks.",
             "",
         ]
     parts += [

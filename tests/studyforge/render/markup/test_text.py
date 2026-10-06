@@ -246,3 +246,47 @@ def test_an_underscore_inside_a_word_is_not_emphasis():
     # ⚠️ `snake_case_name` is an identifier, not italics, and the corpus is full
     # of them.
     assert text.inline("snake_case_name") == "snake_case_name"
+
+
+def test_a_code_span_that_is_the_whole_strong_text_is_code_inside_strong():
+    assert text.inline("**`assemble(events)`**") == (
+        "<strong><code>assemble(events)</code></strong>"
+    )
+
+
+def test_a_code_span_inside_strong_words_is_code_between_the_words():
+    assert text.inline("**the `stop_reason` field**") == (
+        "<strong>the <code>stop_reason</code> field</strong>"
+    )
+
+
+def test_a_code_span_inside_emphasis_is_code_inside_em():
+    assert text.inline("*see `x`*") == "<em>see <code>x</code></em>"
+    assert text.inline("_see `x`_") == "<em>see <code>x</code></em>"
+
+
+def test_a_link_inside_strong_stays_a_link_and_a_code_label_stays_code():
+    assert text.inline("**[a](b.html)**") == (
+        '<strong><a href="b.html" rel="noopener noreferrer">a</a></strong>'
+    )
+    assert text.inline("[`c`](https://x)") == (
+        '<a href="https://x" rel="noopener noreferrer"><code>c</code></a>'
+    )
+
+
+def test_strong_and_emphasis_nest_in_each_other():
+    assert text.inline("a **b *c* d** e") == "a <strong>b <em>c</em> d</strong> e"
+    assert text.inline("*a **b** c*") == "<em>a <strong>b</strong> c</em>"
+
+
+def test_a_star_inside_a_code_span_does_not_close_the_emphasis_around_it():
+    assert text.inline("*glob `src/**` here*") == "<em>glob <code>src/**</code> here</em>"
+
+
+def test_an_escaped_backtick_stays_literal():
+    assert text.inline(r"\`x\`") == "`x`"
+    assert "<code>" not in text.inline(r"**a \`b\` c**")
+
+
+def test_a_code_span_nested_in_strong_still_escapes_its_body():
+    assert text.inline("**`<b>`**") == "<strong><code>&lt;b&gt;</code></strong>"

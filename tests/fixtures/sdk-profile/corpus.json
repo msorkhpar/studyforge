@@ -1,0 +1,34 @@
+{
+  "corpus_api": 8,
+  "source": "runnable-demo",
+  "title": "Runnable Demo",
+  "levels": [
+    "course"
+  ],
+  "variants": [
+    "python"
+  ],
+  "exercises": true,
+  "runtimes": [
+    "gradle",
+    "java",
+    "kotlin",
+    "node",
+    "python"
+  ],
+  "profile": "claude-sdks",
+  "placement": "sibling",
+  "content": {
+    "include": [
+      "kata/*.md"
+    ],
+    "exclude": [
+      {
+        "path": "kata/README.md",
+        "why": "the container's own introduction: its origin places the container page, and no unit reads it"
+      }
+    ],
+    "not_material": []
+  },
+  "permitted_edits": []
+}

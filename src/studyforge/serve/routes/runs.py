@@ -58,7 +58,8 @@ configured origin seeds the record, so a learner's first page load frames the ed
 ## ⛔ Output is filtered, then gated on the wire
 
 Every line `execute` yields is already relative to the source root and scrubbed. ⭐
-`execute.quiet` drops what the corpus's one declared build tool says about itself
+`execute.quiet` drops what the run's build tool says about itself (the corpus's one
+declared tool, or with two declared, the one the command's first word names)
 (Maven's rerun advice names switches the page cannot pass), never an error, a frame
 or the exit line. A kept line is scrubbed again as it leaves the process (R7;
 `scrub` is idempotent), ⛔ after `withheld.OutputGate` replaced any quiz-key line.
@@ -84,16 +85,15 @@ from studyforge.execute import (
     Runner,
     declares_runner,
     exit_line,
-    open_url,
     practice_folder,
+    prepared,
     recorded,
     select,
-    write_settings,
 )
 from studyforge.progress import CASES_KEY
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
-from studyforge.serve.routes.breakdown import fold
+from studyforge.serve.routes.breakdown import detail, fold
 from studyforge.serve.routes.content import ContentSource
 from studyforge.serve.routes.reachable import Reachable
 from studyforge.serve.withheld import OutputGate, marks_of
@@ -210,7 +210,12 @@ class Runs:
         return where
 
     def practice_editor(
-        self, corpus: ServedCorpus, main: str, test: str | None, named: tuple[str, ...] = ()
+        self,
+        corpus: ServedCorpus,
+        main: str,
+        test: str | None,
+        named: tuple[str, ...] = (),
+        files: tuple[str, ...] = (),
     ) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.
 
@@ -223,24 +228,17 @@ class Runs:
         ⛔ **Each practice opens its OWN folder, and its settings are its own**:
         one shared folder was one lock naming one file, so opening a
         practice locked every other and two at once refused one. `named` is the
-        files the practice's commands name. Raises `WorkbenchRefused`.
+        files the practice's commands name. ⭐ `files` is the further files the reader edits:
+        they weigh in the folder, are editable beside `main`, and are answered as windows of
+        their own. Raises `WorkbenchRefused`.
         """
         asked = self._probe(corpus).editor()
         if asked is None:
             return None
-        where = practice_folder(self._remember(asked), main, test, root=corpus.root, named=named)
-        inside_main = None if where is None else where.inside(main)
-        if where is None or inside_main is None:
-            return None
-        inside_test = where.inside(test) if test else None
-        write_settings(corpus.root / where.base, inside_main, inside_test)
-        return {
-            "origin": where.origin,
-            "main": {"path": inside_main, "url": open_url(where, main)},
-            "test": None
-            if inside_test is None or test is None
-            else {"path": inside_test, "url": open_url(where, test)},
-        }
+        where = practice_folder(
+            self._remember(asked), main, test, root=corpus.root, named=(*named, *files)
+        )
+        return None if where is None else prepared(where, corpus.root, main, test, files)
 
     def _probe(self, corpus: ServedCorpus) -> EditorProbe:
         """Return the one probe held for `corpus`, made on first ask."""
@@ -289,6 +287,8 @@ class Outcome:
     #: read BEFORE the run started — omitted by a caller with no breakdown.
     workspace: dict | None = None
     started: float | None = None
+    #: ⭐ Whether the client asked for each case's message and captured text.
+    wants_detail: bool = False
 
     def record(self, verdict: int | str) -> tuple[str, ...]:
         """Record the run's verdict and breakdown; return the lines to say, if any.
@@ -297,6 +297,8 @@ class Outcome:
         report that cannot be read honestly costs the breakdown, not the run.
         """
         cases, said = fold(self.mode, self.workspace, self.corpus.root, self.started)
+        if self.wants_detail:
+            said = (*said, *detail(self.workspace, self.corpus.root, self.started))
         address, ordinal, section = self.practice
         try:
             self.corpus.progress().record_run(
@@ -335,7 +337,7 @@ class Stream:
         self._outcome = outcome
         self._lines = live.handle.lines()
         self._gate = OutputGate(marks_of(runs.sources.get(outcome.corpus.source)))
-        self._quiet = Quiet(select(outcome.corpus.corpus.manifest.runtimes))
+        self._quiet = Quiet(select(outcome.corpus.corpus.manifest.runtimes, outcome.argv))
         self._chunks = self._generate()
         self._recorded = False
         self._finished = False

@@ -144,6 +144,8 @@ from studyforge.exercise.gates.families import (
     register,
     registered,
 )
+from studyforge.exercise.gates.cards import C1, C2, CARDS, check_cards
+from studyforge.exercise.gates.cards import cited_role as cited_card_role
 from studyforge.exercise.gates.quiz import QUIZ
 from studyforge.exercise.gates.record import (
     RECORD_KEYS,
@@ -173,6 +175,9 @@ from studyforge.exercise.gates.runs import (
 __all__ = [
     "ALGORITHMS",
     "Attempt",
+    "C1",
+    "C2",
+    "CARDS",
     "CITED_KEYS",
     "CODE",
     "Cited",
@@ -208,6 +213,8 @@ __all__ = [
     "VERDICT_KEYS",
     "Verdict",
     "check",
+    "check_cards",
+    "cited_card_role",
     "declared_cases",
     "declared_order",
     "digest_of_bytes",

@@ -41,11 +41,13 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `conventions` | what a build tool and a language call their build files, sources and tests |
 | `codetree` | the copy of a corpus's code its editor opens and its runner tests |
 | `codepair` | a code file's source and test, and the command that runs that test in the copy |
+| `testargv` | the command that runs one test file in the copy: pytest, `node`, Maven, Gradle |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
 | `browser` | a headless browser this machine has, asked for one page's screenshot and DOM |
 | `errors` | `RunRefused`, the one exception |
+| `searchnode` | the site's search index, precompiled once under `node` at build time |
 
 ## The seam: the reader starts the runner
 
@@ -83,8 +85,17 @@ from studyforge.execute.browser import (
     capture_page,
     find_browser,
 )
-from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command, test_commands
-from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, sync
+from studyforge.execute.codepair import (
+    Pair,
+    is_code,
+    pair,
+    pairing,
+    test_command,
+    test_commands,
+    test_runs,
+    test_workdir,
+)
+from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, mirrored, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
     EDITOR_CONTAINER_TEMPLATE,
@@ -114,8 +125,13 @@ from studyforge.execute.published import (
     write_allowed,
 )
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
-from studyforge.execute.remote import SERVICE_PORT, Service
+from studyforge.execute.live import BAD_KEY as LIVE_BAD_KEY
+from studyforge.execute.live import MARKER as LIVE_MARKER
+from studyforge.execute.live import redactions, valid_key
+from studyforge.execute.live import start as start_live
+from studyforge.execute.remote import SERVICE_PORT, Service, ServiceProbe
 from studyforge.execute.runner import RUN_ENVIRONMENT, RUNNER_DOWN, SERVICE, Runner
+from studyforge.execute.searchnode import NODE_ON_PATH, search_index_builder
 from studyforge.execute.workbench import (
     MAIN_KEY,
     SETTINGS_DIR,
@@ -124,6 +140,7 @@ from studyforge.execute.workbench import (
     WorkbenchRefused,
     open_url,
     practice_folder,
+    prepared,
     settings,
     write_settings,
 )
@@ -144,8 +161,11 @@ __all__ = [
     "HOST",
     "IGNORE_TEXT",
     "INSTANCE_FILE",
+    "LIVE_BAD_KEY",
+    "LIVE_MARKER",
     "MAIN_KEY",
     "MODES",
+    "NODE_ON_PATH",
     "ROOT_DIR",
     "RUNNER_DOWN",
     "RUN_ENVIRONMENT",
@@ -173,6 +193,7 @@ __all__ = [
     "RunRefused",
     "Runner",
     "Service",
+    "ServiceProbe",
     "Toolchain",
     "WorkbenchRefused",
     "capture_page",
@@ -187,21 +208,29 @@ __all__ = [
     "instance_problems",
     "is_a_test",
     "is_code",
+    "mirrored",
     "open_url",
+    "prepared",
     "pair",
     "pairing",
     "practice_folder",
     "recorded",
+    "redactions",
     "refuse_instance",
     "require_commands",
     "require_container",
     "require_workdir",
+    "search_index_builder",
     "select",
     "settings",
     "source_suffixes",
+    "start_live",
     "sync",
     "test_command",
     "test_commands",
+    "test_runs",
+    "test_workdir",
+    "valid_key",
     "write_allowed",
     "write_settings",
 ]

@@ -84,13 +84,32 @@ from studyforge.serve.addressing import CorporaContent
 from studyforge.serve.app import DEFAULT_PORT, Frames, ServingServer, make_server
 from studyforge.serve.discovery import Discovered, ServedCorpus, discover
 from studyforge.serve.response import Request, Response
-from studyforge.serve.routes import run, runs, state
+from studyforge.serve.routes import live, run, runs, state
 from studyforge.serve.routes.content import CorpusContent
 
 #: The namespaces that also answer `POST`: `run`, whose starts and stop are acts
 #: a prefetch must never take. ⛔ A quiz is not among them: it is graded in its
 #: own page, and nothing about it is a server's.
 WRITERS = (run.NAMESPACE,)
+
+
+def writers_for(namespaces: Mapping[str, object]) -> tuple[str, ...]:
+    """Return the writer namespaces registered: `run`, and `live` only where it is registered.
+
+    ⛔ The live namespace answers `POST` and exists only in an instance whose compose started the
+    live runner for a corpus that declares live runs.
+    """
+    return (*WRITERS, *(name for name in (live.NAMESPACE,) if name in namespaces))
+
+
+def bodies_for(namespaces: Mapping[str, object]) -> tuple[str, ...]:
+    """Return the paths whose `POST` body reaches a route: the live run's, where registered."""
+    return tuple(getattr(namespaces.get(live.NAMESPACE), "bodies", ()))
+
+
+def live_client_for(namespaces: Mapping[str, object]) -> str | None:
+    """Return where a served page fetches the live client, or `None` where there is no live run."""
+    return getattr(namespaces.get(live.NAMESPACE), "client", None)
 
 #: ⭐ Where a served page's execution client is fetched from —
 #: `serve.routes.run`'s own spelling, taken and never re-composed. ⛔ Handed to
@@ -137,10 +156,12 @@ def instance_of(
         port=port,
         namespaces=namespaces,
         log=log,
-        writers=WRITERS,
+        writers=writers_for(namespaces),
         client=client_for(namespaces),
         frames=frames_for(namespaces),
         published=published is not None,
+        bodies=bodies_for(namespaces),
+        live=live_client_for(namespaces),
         **({} if private is None else {"private": private}),
     )
 
@@ -186,10 +207,16 @@ def namespaces_of(
         }
     )
     declared = () if published is None or published.origin is None else (published.origin,)
-    return {
+    served = runs.Runs(discovered, sources, declared=declared, **seams)
+    found: dict = {
         state.NAMESPACE: partial(state.route, discovered),
-        run.NAMESPACE: RunNamespace(runs.Runs(discovered, sources, declared=declared, **seams)),
+        run.NAMESPACE: RunNamespace(served),
     }
+    if published is not None and published.live is not None:
+        offered = live.LiveRuns(served, published.live)
+        if offered.declared():
+            found[live.NAMESPACE] = offered
+    return found
 
 
 def frames_for(namespaces: Mapping[str, object]) -> Frames | None:

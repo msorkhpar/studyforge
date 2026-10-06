@@ -88,11 +88,27 @@ section[data-practices] li[data-practice-state="passed"] p[data-practices-part="
   color: var(--done);
 }
 
+/* ⭐ A practice written in several languages is ONE card: the sentence naming its editions, each
+   marked once it is passed, and a status that says how many are. ⛔ A mark is a word first
+   (*passed*), never colour alone. */
+section[data-practices] p[data-practices-part="editions"] {
+  margin: .35rem 0 0;
+  max-width: none;
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+section[data-practices] [data-edition-mark] { color: var(--done); font-weight: 700; }
+
+section[data-practices] li[data-practice-state="partial"] p[data-practices-part="state"] {
+  color: var(--fg-soft);
+}
+
 /* --- the workspace -------------------------------------------------------- */
 
 /* ⛔ The page under the workspace does not scroll while it is up: the reader
    scrolls the statement and the panel, each inside itself. */
-html[data-workspace-open] { overflow: hidden; }
+html[data-workspace-open]:not([data-workspace-quiz]) { overflow: hidden; }
 
 /* ⭐ The shell is the ground and the bar. ⛔ Above BOTH of the page's other
    raised layers — the skip link at 2 and the narration transport at 1 — or the
@@ -179,6 +195,17 @@ section:is([data-practice], [data-practice-quiz])[data-workspace-open] {
   flex-direction: column;
 }
 
+/* ⛔ **A language-tagged practice stays a flex column when it opens.** The reading modes' generated
+   rules show a tagged section the reader is linked to with `display: block`
+   (a section carrying `data-lang` and `data-linked` under a reading mode), which outweighs the rule above and
+   turned the open panel into a block: the editor kept its natural height, about eight lines, with
+   the rest of the pane empty, and no divider could change it. Repeating the attribute raises this
+   rule over those without naming a mode or a language. A quiz is excluded: it is a page in flow. */
+html[data-workspace-open]:not([data-workspace-quiz])
+  section:is([data-practice], [data-practice-quiz])[data-workspace-open][data-workspace-open][data-workspace-open] {
+  display: flex;
+}
+
 /* ⭐ The editor slot takes the room: the note, the controls, the status and the
    output keep the size they had, and what a reader needs more of is the CODE.
    ⚠️ `min-height` holds a usable editor when the output grows. */
@@ -191,39 +218,112 @@ section[data-practice][data-workspace-open] div[data-practice-part="editor"] {
 section[data-practice][data-workspace-open] div[data-practice-frame] {
   flex: 1 1 auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 section[data-practice][data-workspace-open] div[data-practice-part="editor"] iframe {
+  flex: 1 1 auto;
   height: 100%;
   min-height: 16rem;
 }
 
-/* ⭐ **A QUIZ OPENS IN ONE COLUMN.** It has no editor to set beside its intro,
-   so a split would leave the left pane holding a heading and one line. The
-   intro sits at the top, at its own height (`--workspace-intro`, measured by
-   `practice-workspace.js`), and the questions, the check and its explanations
-   fill the rest below it, one reading measure wide. ⚠️ These selectors
-   outweigh the phone's stacked halves below, so a quiz keeps its one column
-   at every width. */
+/* ⭐ **The editor is the surface the reader types in, so its frame fills its box.** The box
+   was drawn for the sentence that says the editor is not running: a dashed border, padding and
+   a gap below, which together held the frame about a tenth of the pane away from the edges of the
+   box that was already most of it. ⚠️ Once the workspace is open and a frame is showing, the box
+   is only a column for the tabs and the frame: no border, no padding, no margin, and the frame
+   takes everything the tabs leave, down to the 16rem a usable editor needs: in a short window
+   it runs past the pane's foot and the pane scrolls, as it did before. */
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(16rem, 1fr);
+  align-items: center;
+  column-gap: .75rem;
+}
+
+/* ⭐ **One row above the frame, not two**: the tabs on the left and the link that opens the
+   editor in a tab of its own on the right, so the link stays visible without a line to itself.
+   ⚠️ The link keeps its column when the tablist is hidden, so it never sits over the frame. */
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] div[data-practice-part="tabs"] {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0 0 .25rem;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] a[data-practice-popout] {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 0 .25rem;
+  white-space: nowrap;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] > p {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] div[data-practice-frame] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: stretch;
+}
+
+/* ⭐ The two notes above the editor take a line each at a small size and little room, so the
+   frame under them keeps the height. */
+html[data-workspace-open] section[data-practice][data-workspace-open] p[data-practice-part="grader"],
+html[data-workspace-open] section[data-practice][data-workspace-open] p[data-practice-part="file"] {
+  margin: 0 0 .25rem;
+  font-size: .85rem;
+  line-height: 1.35;
+}
+
+/* ⭐ **A QUIZ OPENS AS A PAGE THAT SCROLLS AS ONE.** It has no editor to set beside its intro, and a
+   fixed box of its own with its own scrollbar, drawn in a narrow column in the middle of a wide
+   screen, is a page inside a page. So a quiz's intro and questions are LEFT IN THE PAGE'S FLOW, at
+   the page's own reading width: `practice-workspace.js` marks everything else on the page
+   `data-workspace-away` while the quiz is up, the bar stays fixed over the top, and the one
+   scrollbar is the window's, at the edge of the screen. ⛔ Nothing is moved: the sections are
+   simply no longer fixed. ⚠️ These selectors outweigh the editor layout above and the phone's
+   stacked halves below, so a quiz keeps its one column at every width. */
 html[data-workspace-quiz] section[data-kind][data-workspace-open],
 html[data-workspace-quiz] section[data-practice-quiz][data-workspace-open] {
-  left: max(0px, calc((100% - 52rem) / 2));
-  right: max(0px, calc((100% - 52rem) / 2));
+  position: static;
+  display: block;
+  box-sizing: border-box;
   width: auto;
-  border-right: 0;
-}
-
-html[data-workspace-quiz] section[data-kind][data-workspace-open] {
-  bottom: auto;
-  max-height: 40%;
-  padding-bottom: .5rem;
-}
-
-html[data-workspace-quiz] section[data-practice-quiz][data-workspace-open] {
-  top: calc(3.25rem + var(--workspace-intro, 0px));
-  margin: 0;
+  max-width: 52rem;
+  max-height: none;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  overflow: visible;
+  border: 0;
   background: var(--bg);
 }
+
+html[data-workspace-quiz] section[data-kind][data-workspace-open] { padding-bottom: .5rem; }
+
+html[data-workspace-quiz] div[data-workspace] {
+  bottom: auto;
+  height: 3.25rem;
+}
+
+html[data-workspace-quiz] body { padding-top: 3.25rem; }
+html[data-workspace-quiz] [data-workspace-away] { display: none; }
 
 /* ⭐ At phone width the workspace STACKS: the statement over the editor, each
    scrolled inside itself. */
@@ -247,3 +347,20 @@ html[data-workspace-quiz] section[data-practice-quiz][data-workspace-open] {
   }
 }
 
+
+/* ⭐ The language switch at the top of an edition's panel: the practice's editions, the open one
+   told apart by ink and weight as well as by its ground. `hidden` is honoured over `display`. */
+section[data-practice] p[data-practice-part="editions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .6rem;
+}
+
+section[data-practice] p[data-practice-part="editions"][hidden] { display: none; }
+
+section[data-practice] button[data-edition-switch][aria-pressed="true"] {
+  color: var(--practice);
+  background: var(--practice-soft);
+  border-color: var(--practice);
+}

@@ -139,7 +139,15 @@ def test_the_four_keys_round_trip_through_the_record():
     # and the default is not written out — and `questions`, which only a QUIZ
     # carries. The rest are in the record's own order, appended after
     # the six an untested unit's record carries.
-    written = tuple(key for key in EXERCISE_KEYS if key not in ("kind", "questions", "concepts"))
+    written = tuple(
+        key
+        for key in EXERCISE_KEYS
+        if key
+        not in (
+            "kind", "questions", "mock", "concepts", "files", "review", "cards", "layout",
+            "try_file",
+        )
+    )
     assert tuple(again) == written, "the authored keys are not in the record's order"
     assert from_document(again, WHERE) == exercise
 
@@ -185,7 +193,10 @@ def test_the_authored_keys_are_appended_never_inserted():
     assert EXERCISE_KEYS[-len(AUTHORED_KEYS) :] == AUTHORED_KEYS
     # ⭐ The quiz shape's own key sits after the four rather
     # than inserting one among them, and what an exercise practises after it.
-    assert AUTHORED_KEYS == ("kind", *BREAKDOWN_KEYS, "origin", "questions", "concepts")
+    assert AUTHORED_KEYS == (
+        "kind", *BREAKDOWN_KEYS, "origin", "questions", "mock", "concepts", "files",
+        "review", "cards", "layout", "try_file",
+    )
 
 
 # --------------------------------------------------------------------------
@@ -378,7 +389,9 @@ def test_an_id_is_read_as_the_report_spells_it(spelling):
     assert cases_of([{**CASES[0], "id": spelling}], WHERE)[0].id == spelling
 
 
-@pytest.mark.parametrize("spelling", ["", "   ", "a test", "a\ttest", None, 7, "Test#x\n"])
+@pytest.mark.parametrize(
+    "spelling", ["", "   ", "a  test", " a test", "a\ttest", None, 7, "Test#x\n"]
+)
 def test_an_id_no_report_could_spell_is_refused(spelling):
     # ⚠️ The trailing newline is in the population deliberately: `$` matches
     # before one, so an id ending in a newline is exactly the shape a pattern
@@ -389,7 +402,7 @@ def test_an_id_no_report_could_spell_is_refused(spelling):
 def test_a_refused_id_is_not_reproduced():
     # ⛔ R7: an id is corpus data, and a refusal that echoed it would put the
     # one shape being refused into a build log.
-    assert "janedoe" not in refuse(cases_of, [case(id="a test by janedoe")], WHERE)
+    assert "janedoe" not in refuse(cases_of, [case(id="a  test by janedoe")], WHERE)
 
 
 # --------------------------------------------------------------------------

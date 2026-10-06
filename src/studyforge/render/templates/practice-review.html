@@ -1,0 +1,13 @@
+<section data-practice-quiz="${key}" data-review="${steps}" data-corpus="${corpus}" aria-label="Review" tabindex="-1">
+<div data-practice-part="head"><h2>Review</h2>
+<p data-review-part="summary" role="status" aria-live="polite" data-review-due="{due} of {total} due now" data-review-none="Nothing is due now. The next question is due in {days} day(s)." data-review-new="{total} questions, none seen yet">${total} questions</p></div>
+${grader}<ol data-review-part="questions">
+${questions}</ol>
+<script type="application/json" data-review-part="key">${answers}</script>
+<script type="application/json" data-review-part="plan">${plan}</script>
+<p data-review-part="offline">Scheduling needs this page's script, and it is not running here. Every question is shown below; read them and choose your answers, and nothing here can check or schedule them.</p>
+<p data-review-part="controls" hidden><button type="button" data-review-act="check">Check answers</button><button type="button" data-review-act="again" hidden>Review what is due now</button><button type="button" data-review-act="reset">Forget my schedule</button></p>
+<p data-review-part="status" role="status" aria-live="polite" data-review-right="{right} of {asked} answered correctly." data-review-blank="Choose an answer first."></p>
+<link rel="stylesheet" href="${stylesheet}">
+<script src="${script}" defer></script>
+</section>

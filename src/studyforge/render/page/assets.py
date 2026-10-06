@@ -68,6 +68,7 @@ from studyforge.corpus.placement import (
     relative_href,
 )
 from studyforge.describe import describe
+from studyforge.render import modes
 from studyforge.render.page.errors import PageError
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
@@ -104,6 +105,9 @@ class Placement:
     shared: CorpusLocations
     code: tuple[str, ...] = ()
     pairing: Callable[[str], tuple[str | None, str | None]] | None = None
+    offer: modes.Offer | None = None
+    #: ⭐ The page's own tag, when its unit belongs to some languages only: it adds the note.
+    entry: modes.Tag | None = None
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""
@@ -112,6 +116,14 @@ class Placement:
     def script(self) -> str:
         """How this page addresses the shared script."""
         return self._shared_asset(SCRIPT_NAME)
+
+    def asset(self, name: str) -> str:
+        """How this page addresses one file of the shared asset directory by its name."""
+        return self._shared_asset(name)
+
+    def mode_slots(self) -> dict[str, str]:
+        """The reading-modes slots of the skeleton: all `''` for a corpus declaring no modes."""
+        return modes.slots(self.offer, self._shared_asset, self.entry)
 
     def media(self, kind: str, source: object) -> str:
         """How this page addresses one of its own media files.

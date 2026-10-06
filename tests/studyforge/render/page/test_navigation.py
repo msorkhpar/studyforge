@@ -53,7 +53,10 @@ def test_a_label_is_escaped():
 
 def test_the_slots_are_the_fields_of_links():
     fields = {field for field, _ in navigation.LINK_SLOTS}
-    assert fields == set(navigation.Links.__dataclass_fields__)
+    # ⭐ `before` and `after` are the chain of neighbours a corpus with `outside_mode: locked`
+    # hands in; they are not slots of their own, and `LINK_SLOTS` is still the bar's order.
+    chains = {"before", "after"}
+    assert fields | chains == set(navigation.Links.__dataclass_fields__)
 
 
 def test_every_slot_of_the_bar_is_authored_in_a_template_that_wants_exactly_two_values():
@@ -277,3 +280,28 @@ def test_a_trail_of_fewer_than_two_crumbs_is_no_trail_at_all(trail):
 def test_the_trail_is_byte_for_byte_stable_across_calls():
     # ⛔ R10, at the region that reads a template file once per crumb.
     assert navigation.breadcrumb(A_TRAIL) == navigation.breadcrumb(A_TRAIL)
+
+
+def test_a_chain_of_neighbours_shows_the_first_the_default_can_open_and_hides_the_rest():
+    from studyforge.render import modes
+
+    closed = modes.Tag(("bb",), "Bb", (("m", "M"),), locked=True)
+    kept = modes.Tag(("aa",), "Aa", (("n", "N"),), locked=False)
+    links = navigation.Links(
+        index=navigation.Link("i.html", "Index"),
+        after=(
+            navigation.Link("a.html", "Closed", "a", closed),
+            navigation.Link("b.html", "Kept", "b", kept),
+            navigation.Link("c.html", "End", "c"),
+        ),
+    )
+    bar = navigation.between_units(links)
+    assert '<a data-pager="next" data-pager-lang="bb" href="a.html" hidden>' in bar
+    assert '<a data-pager="next" data-pager-lang="aa" rel="next" href="b.html">' in bar
+    assert '<a data-pager="next" href="c.html" hidden>' in bar
+    assert bar.count('rel="next"') == 1 and 'rel="prev"' not in bar
+
+
+def test_the_chain_templates_want_exactly_the_attributes_and_the_label():
+    for row in navigation.CHAIN_SLOTS.values():
+        assert templates.placeholders(row) == frozenset({"attributes", "label"}), row

@@ -1,0 +1,177 @@
+/* The reading-modes switch and the first-visit question, then one rule per mode.
+
+   ⛔ WRITTEN ONLY FOR A CORPUS THAT DECLARES MODES. It is its own file, linked
+   after `page.css`, so the shared stylesheet keeps its bytes for every other
+   corpus. The rules after the look are generated per corpus (`render/modes.py`):
+   they key on the `data-mode` attribute the markup carries with the default
+   mode as its value, so a page with scripts off reads the default mode.
+
+   ⭐ The switch has the theme control's look, on its own line below it, reached
+   by its role and label. The question is a card over the page, in palette
+   tokens only, so both schemes and both themes read it. ⛔ No ligature: the
+   words are UI text, and nothing here sets the mono face. */
+
+body > header div[role="group"][aria-label="Reading mode"] {
+  display: flex;
+  flex-wrap: wrap;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+
+body > header div[role="group"][aria-label="Reading mode"][hidden],
+body > header div[role="dialog"][data-section="mode-question"][hidden] {
+  display: none;
+}
+
+body > header div[role="group"][aria-label="Reading mode"] button {
+  font-family: var(--font-ui);
+  font-size: .78rem;
+  line-height: 1.7;
+  padding: .05rem .55rem;
+  border: 0;
+  border-radius: var(--radius-tight);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+body > header div[role="group"][aria-label="Reading mode"] button:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+}
+
+body > header div[role="group"][aria-label="Reading mode"] button[aria-pressed="true"] {
+  color: var(--fg);
+  background: var(--accent-soft);
+  box-shadow: inset 0 -2px 0 var(--accent);
+  font-weight: 700;
+}
+
+body > header div[role="dialog"][data-section="mode-question"] {
+  position: fixed;
+  z-index: 20;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(32rem, calc(100vw - 2 * var(--gutter)));
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--panel);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .35);
+}
+
+body > header div[role="dialog"][data-section="mode-question"] h2 {
+  margin: 0 0 .4rem;
+  font-size: 1.1rem;
+}
+
+body > header div[role="dialog"][data-section="mode-question"] p {
+  margin: 0 0 .75rem;
+  font-size: .9rem;
+  color: var(--fg-soft);
+}
+
+body > header div[role="dialog"][data-section="mode-question"] ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body > header div[role="dialog"][data-section="mode-question"] li { margin: 0 0 .5rem; }
+
+body > header div[role="dialog"][data-section="mode-question"] button {
+  display: block;
+  width: 100%;
+  padding: .55rem .75rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+body > header div[role="dialog"][data-section="mode-question"] button:hover {
+  background: var(--accent-soft);
+}
+
+body > header div[role="dialog"][data-section="mode-question"] button strong {
+  display: block;
+  font-size: .98rem;
+}
+
+body > header div[role="dialog"][data-section="mode-question"] button span {
+  display: block;
+  font-size: .85rem;
+  color: var(--fg-soft);
+}
+
+/* --- an entry that belongs to the other language only ---------------------- *
+   A row of the index, the rail or a module's list, and a page, that has nothing for the
+   chosen mode. The generated rules below grey the row and show its label; these are the
+   parts that do not depend on the mode. A closed entry is an anchor with no `href`, so it is
+   not a link, and it takes no pointer either. */
+
+[data-entry-label] {
+  display: none;
+  margin-left: .5rem;
+  padding: 0 .4rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+  font-family: var(--font-ui);
+  font-size: .72rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+a[aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+  text-decoration: none;
+}
+
+body > header aside[data-section="mode-outside"] {
+  display: none;
+  margin: 0 0 .75rem;
+  padding: .6rem .8rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--fg-soft);
+  font-family: var(--font-ui);
+  font-size: .9rem;
+}
+
+body > header aside[data-section="mode-outside"] p { margin: 0 0 .5rem; }
+body > header aside[data-section="mode-outside"] p:last-child { margin: 0; }
+
+body > header aside[data-section="mode-outside"] button {
+  margin: 0 .4rem .3rem 0;
+  padding: .3rem .7rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+body > header aside[data-section="mode-outside"] button:hover { background: var(--accent-soft); }
+
+/* --- what each mode shows: generated per corpus, below --------------------- */

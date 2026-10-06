@@ -67,13 +67,14 @@ root every trail starts from, and the rail still reaches that group's page.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import PurePosixPath
 
 from studyforge.contents import Contents, Entry, Group, links, order
 from studyforge.corpus.placement import relative_href
 from studyforge.describe import describe
 from studyforge.generate.declarations import BuildError
+from studyforge.render import modes
 from studyforge.render.page import Crumb, Link, Links, RailContainer, RailGroup, RailUnit
 
 #: The two bar slots whose target is a neighbouring unit. ⛔ `index` is not one
@@ -81,8 +82,18 @@ from studyforge.render.page import Crumb, Link, Links, RailContainer, RailGroup,
 NEIGHBOUR_SLOTS = ("previous", "next")
 
 
-def bar(contents: Contents, key: str, absent: frozenset[str] = frozenset()) -> Links:
-    """Return the between-units bar for one unit, with declared absences declared."""
+def bar(
+    contents: Contents,
+    key: str,
+    absent: frozenset[str] = frozenset(),
+    offer: modes.Offer | None = None,
+) -> Links:
+    """Return the between-units bar for one unit, with declared absences declared.
+
+    ⭐ With an `offer` whose `outside_mode` is `locked`, a neighbour that the mode cannot open
+    is passed over: each direction carries the neighbours up to the first that every mode
+    reads (`Links.before`, `Links.after`), and the bar shows the first the default mode opens.
+    """
     computed = links(contents, key)
     walked = [entry.key for entry in order(contents)]
     if key not in walked:
@@ -97,7 +108,45 @@ def bar(contents: Contents, key: str, absent: frozenset[str] = frozenset()) -> L
         href = None if target in absent else computed[field]["href"]
         slots[field] = Link(href, computed[field]["label"], target)
     slots["index"] = Link(computed["index"]["href"], computed["index"]["label"])
+    if offer is not None and offer.locks and offer.tags:
+        entries = list(order(contents))
+        page = entries[at].page
+        before = _chain(entries, at, -1, page, absent, offer.tags)
+        after = _chain(entries, at, 1, page, absent, offer.tags)
+        if any(len(chain) > 1 or _tagged(chain) for chain in (before, after)):
+            return Links(**slots, before=before, after=after)
     return Links(**slots)
+
+
+def _tagged(chain: tuple[Link, ...]) -> bool:
+    """Whether any neighbour in a chain belongs to some languages only."""
+    return any(link.tag is not None for link in chain)
+
+
+def _chain(
+    entries: Sequence[Entry],
+    at: int,
+    step: int,
+    page: PurePosixPath,
+    absent: frozenset[str],
+    tags: Mapping[str, modes.Tag],
+) -> tuple[Link, ...]:
+    """The neighbours from `at` in one direction, nearest first, to the first every mode reads.
+
+    ⭐ A neighbour with no tag is read in every mode, so the walk ends there: whichever mode
+    is chosen, the bar has somewhere to go no further along than that.
+    """
+    found: list[Link] = []
+    position = at + step
+    while 0 <= position < len(entries):
+        entry = entries[position]
+        tag = tags.get(entry.key)
+        href = None if entry.key in absent else relative_href(page, entry.page)
+        found.append(Link(href, entry.title, entry.key, tag))
+        if tag is None:
+            break
+        position += step
+    return tuple(found)
 
 
 def index_href(contents: Contents, key: str) -> str:
@@ -165,6 +214,7 @@ def rail(
     container: str = "",
     unit: str = "",
     absent: frozenset[str] = frozenset(),
+    tags: Mapping[str, modes.Tag] | None = None,
 ) -> tuple[RailContainer, ...]:
     """Return every container of this corpus as the page at `from_page` reaches it.
 
@@ -185,7 +235,7 @@ def rail(
     at a page nobody wrote.
     """
     return tuple(
-        _rail_container(group, within, from_page, above, container, unit, absent)
+        _rail_container(group, within, from_page, above, container, unit, absent, tags or {})
         for group, within in _deepest_within(contents)
     )
 
@@ -242,6 +292,7 @@ def _rail_container(
     container: str,
     unit: str,
     absent: frozenset[str],
+    tags: Mapping[str, modes.Tag],
 ) -> RailContainer:
     """One container of the rail, addressed from the page that is asking."""
     page = above.get(group.key)
@@ -250,6 +301,7 @@ def _rail_container(
         level=group.level,
         href=None if page is None else relative_href(from_page, page),
         current=bool(container) and group.key == container,
+        tag=tags.get(group.key),
         units=tuple(
             RailUnit(
                 title=entry.title,
@@ -257,6 +309,7 @@ def _rail_container(
                 href=None if entry.key in absent else relative_href(from_page, entry.page),
                 current=bool(unit) and entry.key == unit,
                 key=entry.key,
+                tag=tags.get(entry.key),
             )
             for entry in group.entries
         ),

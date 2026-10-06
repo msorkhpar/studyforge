@@ -22,6 +22,9 @@ def test_the_package_states_its_contract():
 def test_the_public_surface_is_declared_and_complete():
     assert set(bundle.__all__) == {
         "BUILD",
+        "materialise_files",
+        "materialised_files",
+        "read_plant_files",
         "BUNDLES_DIRNAME",
         "BUNDLE_API",
         "BUNDLE_DIRNAMES",
@@ -33,7 +36,10 @@ def test_the_public_surface_is_declared_and_complete():
         "GATES_FILENAME",
         "OPTIONAL_KEYS",
         "PLANTS_DIRNAME",
+        "PLANT_VERSION",
         "PLANT_DIRNAME",
+        "PlantSpec",
+        "Replacement",
         "Places",
         "REFERENCE_SUMMARY",
         "ROLE_DIRNAMES",
@@ -49,11 +55,21 @@ def test_the_public_surface_is_declared_and_complete():
         "emit",
         "emit_page",
         "is_run_output",
+        "materialise",
+        "materialised",
         "ordinals",
         "plant_dirname",
         "plant_positions",
+        "require_argument_paths",
         "require_inside",
+        "read_plant",
+        "require_plants",
+        "roles_of",
         "require_no_gap",
+        "spec_bytes",
+        "spec_file",
+        "spec_from",
+        "spec_of",
         "unpermitted",
         "write",
     }
@@ -93,7 +109,10 @@ def test_nothing_here_knows_any_source(tmp_path):
 
 
 def test_the_package_depends_only_on_studyforge_and_the_standard_library():
-    allowed = {"studyforge", "dataclasses", "pathlib", "json", "re", "__future__"}
+    allowed = {
+        "studyforge", "dataclasses", "pathlib", "json", "re", "__future__", "difflib",
+        "collections", "typing",
+    }
     for path in package_modules():
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):

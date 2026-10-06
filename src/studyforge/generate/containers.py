@@ -33,13 +33,16 @@ raises. ⭐ `studyforge plan`'s goldens say the same thing: one `create …
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.container import Container, Unit
 from studyforge.corpus.placement import ContainerLocations, PlacementError, relative_href
 from studyforge.generate.declarations import BuildError, Corpus, declared_location
+from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.navigation import rail
 from studyforge.generate.writing import Written, place
+from studyforge.render import modes
 from studyforge.render.container import Document, Item, PageError
 from studyforge.render.container import Placement as ContainerPlacement
 from studyforge.render.container import render as render_container
@@ -54,14 +57,22 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
     above = page_paths(corpus)
+    offer = offer_of(corpus)
+    tags = offer.tags if offer is not None else {}
     for _, container in corpus.maps:
         at = _location(corpus, container)
-        placement = ContainerPlacement(corpus=corpus.manifest.source, container=at, shared=shared)
+        placement = ContainerPlacement(
+            corpus=corpus.manifest.source,
+            container=at,
+            shared=shared,
+            offer=offer,
+            entry=tags.get(container.address.key),
+        )
         place(
             out,
             at.page,
             render_container(
-                _document(corpus, container, at),
+                _document(corpus, container, at, tags),
                 placement,
                 rail=rail(
                     corpus.contents,
@@ -69,6 +80,7 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
                     above,
                     container=container.address.key,
                     absent=corpus.absent,
+                    tags=tags,
                 ),
             ),
             written,
@@ -98,7 +110,12 @@ def _location(corpus: Corpus, container: Container) -> ContainerLocations:
         ) from None
 
 
-def _document(corpus: Corpus, container: Container, at: ContainerLocations) -> Document:
+def _document(
+    corpus: Corpus,
+    container: Container,
+    at: ContainerLocations,
+    tags: Mapping[str, modes.Tag],
+) -> Document:
     """One container as its own page renders it.
 
     ⛔ `level` is the corpus's own word for the depth a container map sits at,
@@ -125,6 +142,7 @@ def _document(corpus: Corpus, container: Container, at: ContainerLocations) -> D
                     href=_href(corpus, container, unit, at)
                     if container.address.unit_key(unit.n) in present
                     else None,
+                    tag=tags.get(container.address.unit_key(unit.n)),
                 )
                 for unit in container.units
             ),

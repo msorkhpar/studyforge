@@ -14,7 +14,13 @@
      last verdict, and a new Run or Submit opens it again.
    Every one of the four is kept per reader, in the display record of
    `study-progress.js` — the one file that touches the store — so a page with
-   no storage still resizes and closes, for as long as it is open.
+   no storage still resizes and closes, for as long as it is open. ⭐ The report's
+   height is kept PER PRACTICE (the name carries the practice's key), so the split a
+   reader chose for one practice is not another's.
+
+   ⭐ **Until a Run or Submit reports, the report is only its strip**: the panel is marked
+   `data-practice-reported` by the first act, and `practice-panes.css` shows the report's body
+   and its divider only then, so the editor fills the pane on open.
 
    ⛔ **Nothing is moved, copied or created.** Every control is markup, shipped
    `hidden` (`practice-workspace.html`, `practice-panel.html`); this file shows
@@ -51,6 +57,7 @@
   var QUIZ = 'data-workspace-quiz';
   var SHOWN = 'data-practice-report';
   var NARROW = '(max-width: 40rem)';
+  var REPORTED = 'data-practice-reported';
   var OPENED = 'studyforge:practice-opened';
   var SETTLED = 'studyforge:practice-settled';
 
@@ -208,10 +215,14 @@
   }
 
   /* --- the report under the editor -------------------------------------- */
-  var report = number(recall(KEPT_REPORT));
+  var report = null;
+  var reportFor = null;
   var reportShown = recall(KEPT_REPORT_SHOWN) !== CLOSED;
 
   function panel() { return document.querySelector('section[data-practice][data-workspace-open]'); }
+
+  /* The height is kept under a name that carries the practice's key. */
+  function reportName() { return KEPT_REPORT + ':' + reportFor; }
 
   function parts(one) {
     function part(name) { return one.querySelector('[data-practice-part="' + name + '"]'); }
@@ -242,6 +253,11 @@
     if (!one) { return; }
     var had = parts(one);
     if (!had.divider || !had.report || !had.bar || !had.body) { return; }
+    var named = one.getAttribute('data-practice') || '';
+    if (named !== reportFor) {
+      reportFor = named;
+      report = number(recall(reportName()));
+    }
     had.bar.hidden = !served;
     had.divider.hidden = !served || !reportShown;
     had.body.hidden = served && !reportShown;
@@ -304,7 +320,7 @@
       var bounds = reportBounds(one, had);
       var gutter = had.divider.getBoundingClientRect().height;
       setReport((bounds.bottom - event.clientY - gutter / 2) / bounds.inner * 100);
-    }, function () { if (report !== null) { keep(KEPT_REPORT, report); } });
+    }, function () { if (report !== null) { keep(reportName(), report); } });
 
     had.divider.addEventListener('keydown', function (event) {
       var bounds = reportBounds(one, had);
@@ -321,7 +337,7 @@
       if (to === undefined) { return; }
       event.preventDefault();
       setReport(to);
-      keep(KEPT_REPORT, report);
+      keep(reportName(), report);
     });
 
     had.bar.addEventListener('click', function () { flipReport(!reportShown, false); });
@@ -330,6 +346,7 @@
     one.addEventListener('click', function (event) {
       var act = event.target.closest && event.target.closest('button[data-practice-act]');
       if (!act || act.getAttribute('data-practice-act') === 'stop') { return; }
+      one.setAttribute(REPORTED, '');
       if (!reportShown) { flipReport(true, false); }
       window.setTimeout(function () { glance(one); }, 0);
     });

@@ -117,10 +117,9 @@ def test_a_case_line_is_taken_off_the_stream_and_every_other_line_is_shown():
     # program's own output — but the breakdown's own REFUSAL is prose for the
     # reader, and it must still arrive. ⛔ So exactly one shape is consumed.
     body = behaviour()
-    assert (
-        "if (found) { said[found[1]] = found[2] === PASSED; } else { append(output, line); }"
-        in body
-    )
+    assert "if (found) { said[found[1]] = found[2] === PASSED; }" in body
+    # ⭐ A detail line is consumed too, and only when asked for; every other line is still shown.
+    assert "else if (!record) { append(output, line); }" in body
     assert body.count("CASE_LINE.exec(line)") == 1
 
 

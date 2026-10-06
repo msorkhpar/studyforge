@@ -138,6 +138,8 @@ from studyforge.exercise.gates.quiz.mechanical import (
     key_total_and_single,
     origin_still_resolves,
 )
+from studyforge.exercise.gates.quiz.mock import P1, MOCK, check_mock
+from studyforge.exercise.gates.quiz.review import S1, REVIEW, check_review
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.gates.quiz.judged` directly is a consumer this contract
@@ -146,10 +148,14 @@ from studyforge.exercise.gates.quiz.mechanical import (
 __all__ = [
     "JUDGED",
     "JUDGED_FIELDS",
+    "P1",
     "MECHANICAL",
+    "MOCK",
     "PICKED_NONE",
     "QUESTION_ROLE",
     "QUIZ",
+    "S1",
+    "REVIEW",
     "Q1",
     "Q2",
     "Q2_PROMPT",
@@ -159,6 +165,8 @@ __all__ = [
     "Q5",
     "WHOLE_QUESTION",
     "Judgement",
+    "check_mock",
+    "check_review",
     "check_quiz",
     "cited_for",
     "cited_role",

@@ -53,6 +53,7 @@ from studyforge.exercise import ExerciseError
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import BUNDLE_DIRNAMES, RUN_OUTPUT_DIRNAME, Places, unpermitted
 from studyforge.exercise.gates import drifted, record_of
+from studyforge.exercise.gates.quiz import P1
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
 
@@ -70,6 +71,9 @@ RULE_BUNDLE_CONTENTS = "bundle-contents"
 
 #: A page whose exercises are not numbered `1..n`.
 RULE_PRACTICE_ORDINALS = "practice-ordinals"
+
+#: A code practice whose Run would grade like Submit, in a corpus that has adopted try-it files.
+RULE_RUN_IS_SUBMIT = "run-is-submit"
 
 #: ⛔ A gate record carrying personal data. ⚠️ `validate.corpus`' own spelling,
 #: because it is the same rule and two ids for one fact is two audits.
@@ -122,6 +126,17 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
                 "ships a gate record in which not every gate held. A shortfall is "
                 "reported rather than engineered away: re-author the exercise, "
                 "never loosen the gate.",
+            )
+        elif record is not None and _is_mock(unit) and all(v.id != P1 for v in record.verdicts):
+            # ⛔ A record names a family by carrying one of its verdicts, so a mock exam's
+            # record with the mock gate deleted would read as a plain quiz's, complete. The
+            # exercise is what says it is a mock exam, and it is owed `P1`.
+            yield Finding(
+                RULE_GATE_SHORTFALL,
+                where,
+                f"declares a mock exam and ships a gate record with no verdict for {P1}. "
+                f"A mock exam clears the mock gate as well as the quiz's five, so the "
+                f"record is incomplete rather than clear.",
             )
 
 
@@ -203,6 +218,46 @@ def check_practice_ordinals(walk: Walk) -> Iterator[Finding]:
             )
 
 
+def check_run_is_not_submit(walk: Walk) -> Iterator[Finding]:
+    """Where a corpus has adopted try-it files, no graded code practice runs its tests on Run.
+
+    ⭐ **Opt-in by adoption.** The check fires only on a corpus in which at least one code
+    practice carries `try_file`: that corpus has said what Run is for (the reader's own calls, no
+    tests, no grade), so a practice whose `run_command` equals its `test_command` is the one it
+    forgot. ⛔ A corpus with no try-it file anywhere is left exactly as it was, so no existing
+    course newly fails.
+    """
+    found: list[tuple[Unit, object]] = []
+    for unit in walk.units:
+        if unit.document.get("kind") != "practice":
+            continue
+        try:
+            exercise = exercise_of(unit.document, unit.where)
+        except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
+            continue
+        if exercise is not None and not exercise.is_quiz and not exercise.is_deck:
+            found.append((unit, exercise))
+    if not any(exercise.try_file is not None for _, exercise in found):
+        return
+    for unit, exercise in found:
+        if exercise.test_command is not None and exercise.run_command == exercise.test_command:
+            yield Finding(
+                RULE_RUN_IS_SUBMIT,
+                unit.where,
+                "Run would grade like Submit: its run command equals its test command. Give the "
+                "practice a try-it entry point (`try_file`) that Run executes.",
+            )
+
+
+def _is_mock(unit: Unit) -> bool:
+    """Does this unit's exercise declare a mock exam?"""
+    try:
+        exercise = exercise_of(unit.document, unit.where)
+    except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
+        return False
+    return exercise is not None and exercise.mock is not None
+
+
 def _authored(unit: Unit) -> tuple[Places, str] | None:
     """Return the bundle of this document's authored exercise, or `None` if it has none."""
     document = unit.document
@@ -255,4 +310,5 @@ CHECKS = (
     check_bundle_digests,
     check_bundle_contents,
     check_practice_ordinals,
+    check_run_is_not_submit,
 )

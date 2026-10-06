@@ -18,6 +18,10 @@ command (`test_command`), the editor's two windows (`practice_folder`,
 `open_url`, `write_settings`) and the run; `routes.runs` for the one live slot
 and the stream; `exercise.require_path` for what a path may be.
 
+⭐ The test starts in the directory `execute.test_workdir` names: the copy's root for
+a Python test, so a folder named from the corpus root (an example's `support`) is on
+its import path, and the runner's root for every other.
+
 ## ⭐ The SAME editor, the same two windows, the same lock
 
 ⛔ **Nothing here is a second editor mechanism.** The editor is the one the
@@ -53,7 +57,7 @@ view, which is never broken.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from urllib.parse import unquote
 
 from studyforge.execute import (
@@ -68,6 +72,7 @@ from studyforge.execute import (
     practice_folder,
     sync,
     test_command,
+    test_workdir,
     write_settings,
 )
 from studyforge.exercise import ExerciseError, require_path
@@ -99,6 +104,8 @@ class Unrecorded:
     """
 
     corpus: ServedCorpus
+    #: The command the run executes: the output filter is chosen from its first word.
+    argv: list[str] = field(default_factory=list)
 
     def record(self, verdict: int | str) -> tuple[str, ...]:
         """Say nothing more; the exit line is the verdict."""
@@ -125,13 +132,16 @@ def route(runs: Runs, corpus: ServedCorpus, act: str, tail: str) -> Response:
     if argv is None:
         return error(409, NO_TEST)
     try:
-        live = runs.claim(lambda: Live(corpus.source, path, act, runs.runner(corpus).start([argv])))
+        workdir = test_workdir(found)
+        live = runs.claim(
+            lambda: Live(corpus.source, path, act, runs.runner(corpus).start([argv], workdir))
+        )
     except RunRefused:
         return error(422, NOT_RUN)
     if live is None:
         return error(409, BUSY)
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
-    return Response(200, headers, stream=Stream(runs, live, Unrecorded(corpus)))
+    return Response(200, headers, stream=Stream(runs, live, Unrecorded(corpus, argv)))
 
 
 def windows(runs: Runs, corpus: ServedCorpus, found: Pair) -> Response:

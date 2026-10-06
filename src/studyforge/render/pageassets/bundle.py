@@ -66,6 +66,10 @@ from studyforge.render.pageassets.source import text
 #: after `notes.css` because the panel sits under a section the reading surface
 #: has already set, and at equal specificity the last rule wins.
 #:
+#: ⭐ `practice-detail.css` follows `practice.css` directly: it dresses the text a run reports under
+#: each case, in the
+#: panel's own box.
+#:
 #: ⭐ `practice-quiz.css` follows `practice.css` directly and for that
 #: part's own reason: the two are one region split at a named seam for R11 — the
 #: panel and the run on one side, the questions on the other — and a quiz wears
@@ -94,6 +98,11 @@ from studyforge.render.pageassets.source import text
 #: rule wins. It comes *before* `plyr.css` because the rule stated above is
 #: unchanged: nothing authored may follow the vendored player theme, or a video
 #: control stops taking its own look.
+#:
+#: ⭐ `topbar.css` and `search.css` follow `notes.css`: the bar and the search dialog are regions
+#: this framework emits inside the masthead, reached by role and `data-*` hook, and the rail's
+#: offset under the bar (`topbar.css`) has to come after the rail's own rules in `chrome.css`
+#: because at equal specificity the last rule wins.
 STYLE_PARTS = (
     "reset.css",
     "palette.css",
@@ -103,7 +112,10 @@ STYLE_PARTS = (
     "lists.css",
     "onward.css",
     "notes.css",
+    "topbar.css",
+    "search.css",
     "practice.css",
+    "practice-detail.css",
     "practice-quiz.css",
     "practice-workspace.css",
     "practice-panes.css",
@@ -154,6 +166,13 @@ STYLE_PARTS = (
 #: LAST-ness is the property being kept, and after `narration.js` so the parts
 #: that draw a region of their own read together.
 #:
+#: ⭐ `practice-detail.js` PRECEDES `practice.js`: it publishes `window.studyforge.practiceDetail`,
+#: which the panel
+#: reads when it wires a practice, and a page whose server sends no detail draws nothing from it.
+#:
+#: ⭐ `practice-files.js` is before `practice-editor.js`, which calls what it publishes when a
+#: practice opens (the further files' tabs and the link to the editor in a tab of its own).
+#:
 #: ⭐ `practice-editor.js` and `practice-quiz.js` follow `practice.js`
 #: for the same reason `practice-quiz.css` follows `practice.css`: they are that
 #: part split at named seams for R11 — the panel and the run, the two editor
@@ -169,6 +188,9 @@ STYLE_PARTS = (
 #: so the order between them settles nothing, and it is stated rather than
 #: left to the alphabet. ⚠️ Before `read-mark.js` because that part's
 #: LAST-ness is the property being kept.
+#:
+#: ⭐ `practice-editions.js` is before `practice-workspace.js`, which asks it (through
+#: `window.studyforge.editions`) what a card of a practice written in several languages holds.
 #:
 #: ⭐ `practice-panes.js` follows `practice-workspace.js`: it shows the
 #: workspace's dividers and the report's bar, and paints once at start for a
@@ -187,19 +209,30 @@ STYLE_PARTS = (
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
 #: property being kept. ⚠️ It is not what stops the page flashing the wrong
 #: theme — a deferred part cannot be — and `page.html`'s head boot is.
+#:
+#: ⭐ `rail-scroll.js` saves the rail's scroll position through the store, so it follows
+#: `study-progress.js`; `search.js` needs no store and defines nothing another part reads, and the
+#: library it loads (`minisearch.js`) and the index (`search-index.js`) are written beside the
+#: bundle and fetched only when the reader first opens the search. Both sit before
+#: `read-mark.js` for that part's LAST-ness.
 SCRIPT_PARTS = (
     "prism.js",
     "plyr.js",
     "study-progress.js",
     "theme.js",
+    "rail-scroll.js",
+    "search.js",
     "copy-code.js",
     "video-player.js",
     "narration-stand-in.js",
     "narration-probe.js",
     "narration.js",
+    "practice-detail.js",
     "practice.js",
+    "practice-files.js",
     "practice-editor.js",
     "practice-quiz.js",
+    "practice-editions.js",
     "practice-workspace.js",
     "practice-panes.js",
     "code-links.js",

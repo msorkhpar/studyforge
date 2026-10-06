@@ -58,6 +58,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.describe import describe
+from studyforge.exercise.cases import CASE_ID
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_path
 
@@ -79,7 +80,11 @@ DIGEST_PERMITTED = "'<algorithm>:<hex>', the algorithm one of " + ", ".join(ALGO
 
 #: Said in a refusal instead of the value (R7). ⚠️ As wide as a case id, because
 #: the `code` family's plant roles carry one: `plant:<case id>`.
-ROLE_PERMITTED = "ASCII letters, digits and '. _ - : # $ / @ + = , ( ) [ ]', with no whitespace"
+ROLE_PERMITTED = (
+    "ASCII letters, digits and '. _ - : # $ / @ + = , ( ) [ ]', with no whitespace — "
+    "except that a 'plant:<case id>' role carries its case id as that id is "
+    "permitted, one single space between two characters included"
+)
 
 #: The keys of one input, in the order a record writes them (R10).
 INPUT_KEYS = ("role", "path", "digest")
@@ -92,6 +97,11 @@ CITED_KEYS = ("role", "path", "section", "digest")
 #: How the `code` family names the passage an exercise's own `origin` cites.
 #: ⭐ Named here rather than in `code` because `record` prints it in a refusal.
 ORIGIN_ROLE = "origin"
+
+#: The prefix of a planted solution's role: `plant:<case id>`. ⭐ Spelled here,
+#: where the role's shape is decided, and re-exported by `runs`, which composes
+#: the role: one spelling, and `runs` already depends on this module's neighbours.
+PLANT = "plant"
 
 
 @dataclass(frozen=True, slots=True)
@@ -204,7 +214,18 @@ def require_digest(value: object, where: str) -> str:
 
 
 def _is_role(value: str) -> bool:
-    """Whether every character is one the permitted set names."""
+    """Whether every character is one the permitted set names.
+
+    ⭐ **One exception, and it is the case id's own rule**: a `plant:` role
+    ends in a case id, and a case id may hold one interior space, so the
+    part after the prefix is read by `CASE_ID` rather than re-spelled here.
+    ⛔ Every other role stays whitespace-free.
+    """
+    prefix = f"{PLANT}:"
+    if value.startswith(prefix) and " " in value:
+        return CASE_ID.match(value[len(prefix) :]) is not None and _is_role(
+            value[len(prefix) :].replace(" ", "")
+        )
     return all(
         letter.isascii() and (letter.isalnum() or letter in "._-:#$()[],+=@/") for letter in value
     )

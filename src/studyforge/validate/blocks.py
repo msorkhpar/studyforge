@@ -29,10 +29,20 @@ from studyforge.archive.blocks import (
     ITEM_BLOCKS,
 )
 from studyforge.describe import describe
+from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import RULE_DOCUMENT, Walk
 from studyforge.validate.report import Finding
 
 LIST = "list"
+EXAMPLE = "example"
+
+#: An example's tab, its flags and what it holds. ⛔ Spelled here as `archive.example` spells
+#: them, and a test pins the two equal: the archive's names stay inside the archive.
+EXAMPLE_TAB_KEYS = ("lang", "span")
+EXAMPLE_TAB_OPTIONAL = ("code",)
+EXAMPLE_MAX_TABS = 8
+EXAMPLE_OUTPUTS = ("compiler", "warning")
+EXAMPLE_BLOCKS = ("code",)
 
 
 def block_problems(blocks: object, where: str = "blocks") -> Iterator[tuple[str, str]]:
@@ -61,6 +71,75 @@ def _block(block: object, at: str) -> Iterator[tuple[str, str]]:
         yield from _list(block, at)
     elif kind in CONTAINER_TYPES:
         yield from block_problems(block.get("blocks"), f"{at}.blocks")
+        if kind == EXAMPLE:
+            yield from _example(block, at)
+
+
+def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
+    """An example's id, its tabs (distinct languages whose spans cover its blocks) and output."""
+    if not isinstance(block.get("id"), str) or not block["id"]:
+        yield f"{at}.id", f"is {describe(block.get('id'))}; an example is named by an id"
+    if "output" in block and block["output"] not in EXAMPLE_OUTPUTS:
+        said = describe(block["output"])
+        yield f"{at}.output", f"is {said}; output is one of {list(EXAMPLE_OUTPUTS)}"
+    if "support" in block:
+        support = block["support"]
+        if not isinstance(support, list) or not support:
+            yield f"{at}.support", f"is {describe(support)}; support is a non-empty array of paths"
+        else:
+            for number, one in enumerate(support):
+                fault = source_path_fault(one) if isinstance(one, str) else "not text"
+                if fault:
+                    yield (
+                        f"{at}.support[{number}]",
+                        f"is {fault}; support is a corpus-relative file or folder",
+                    )
+    blocks = block.get("blocks")
+    held = blocks if isinstance(blocks, list) else []
+    for number, part in enumerate(held):
+        if isinstance(part, dict) and part.get("type") not in EXAMPLE_BLOCKS:
+            yield (
+                f"{at}.blocks[{number}]",
+                f"is {describe(part.get('type'))}; an example holds "
+                f"blocks of {list(EXAMPLE_BLOCKS)}",
+            )
+    tabs = block.get("tabs")
+    if not isinstance(tabs, list) or not tabs:
+        yield f"{at}.tabs", f"is {describe(tabs)}; tabs is a non-empty array"
+        return
+    if len(tabs) > EXAMPLE_MAX_TABS:
+        yield f"{at}.tabs", f"has {len(tabs)} tabs; an example has at most {EXAMPLE_MAX_TABS}"
+    seen: list[object] = []
+    covered = 0
+    for number, tab in enumerate(tabs):
+        here = f"{at}.tabs[{number}]"
+        if not isinstance(tab, dict) or tuple(tab) not in (
+            EXAMPLE_TAB_KEYS,
+            (*EXAMPLE_TAB_KEYS, *EXAMPLE_TAB_OPTIONAL),
+        ):
+            yield (
+                here,
+                f"is {describe(tab)}; a tab is an object with {list(EXAMPLE_TAB_KEYS)}"
+                f" and optionally {list(EXAMPLE_TAB_OPTIONAL)}",
+            )
+            continue
+        if "code" in tab:
+            fault = source_path_fault(tab["code"]) if isinstance(tab["code"], str) else "not text"
+            if fault:
+                yield f"{here}.code", f"is {fault}; code is the corpus-relative path of a file"
+        if not isinstance(tab["lang"], str) or not tab["lang"]:
+            yield f"{here}.lang", f"is {describe(tab['lang'])}; a tab names a language by its id"
+        elif tab["lang"] in seen:
+            yield f"{here}.lang", "repeats a language; the tabs of an example name distinct ones"
+        else:
+            seen.append(tab["lang"])
+        span = tab["span"]
+        if not isinstance(span, int) or isinstance(span, bool) or span < 1:
+            yield f"{here}.span", f"is {describe(span)}; span is a positive integer"
+        else:
+            covered += span
+    if covered != len(held):
+        yield f"{at}.tabs", "do not cover the example's blocks exactly once, in order"
 
 
 def _list(block: dict, at: str) -> Iterator[tuple[str, str]]:

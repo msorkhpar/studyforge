@@ -125,3 +125,35 @@ def test_every_section_is_checked_and_the_list_is_inhabited():
     built = document()
     assert len(built["sections"]) == 2
     assert parse(json.dumps(built)) == built
+
+
+def tagged():
+    return build(of([support.lesson(1, lang="aa"), support.lesson(2, lang="bb")], "unit-01"))
+
+
+def test_a_tagged_section_reads_back_unchanged():
+    built = tagged()
+    assert [s["lang"] for s in built["sections"]] == ["aa", "bb"]
+    assert parse(render(built)) == built
+
+
+def test_a_section_may_be_tagged_or_not_within_one_document():
+    built = build(of([support.lesson(1), support.lesson(2, lang="bb")], "unit-01"))
+    assert parse(render(built)) == built
+
+
+def test_a_lang_that_is_not_the_last_key_is_refused():
+    built = tagged()
+    section = built["sections"][0]
+    rest = {k: v for k, v in section.items() if k != "lang"}
+    built["sections"][0] = {"lang": section["lang"], **rest}
+    with pytest.raises(ContentError, match="section 0 must carry exactly"):
+        parse(render(built))
+
+
+@pytest.mark.parametrize("bad", ["", 3, None])
+def test_a_lang_that_is_not_an_id_is_refused(bad):
+    built = tagged()
+    built["sections"][0]["lang"] = bad
+    with pytest.raises(ContentError, match="'lang' that is not an id"):
+        parse(render(built))

@@ -123,6 +123,7 @@ from studyforge.exercise.cases import (
     DEFAULT_KIND,
     EDGE,
     EXERCISE_KINDS,
+    FLASHCARDS,
     JUNIT,
     MAIN,
     ORIGIN_KEYS,
@@ -140,6 +141,16 @@ from studyforge.exercise.cases import (
     report_document,
     report_of,
 )
+from studyforge.exercise.deck import (
+    CARD_KEYS,
+    CARDS,
+    DECK_KEYS,
+    DECK_PROVENANCE,
+    DECK_TRUST,
+    Card,
+    cards_document,
+    cards_of,
+)
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.keys import (
     AUTHORED_KEYS,
@@ -154,6 +165,7 @@ from studyforge.exercise.record import (
     of,
     to_document,
 )
+from studyforge.exercise.casedetail import CaseDetail, Detail, detail_of
 from studyforge.exercise.report import (
     CLOCK_SLACK,
     PASSING_CHILDREN,
@@ -195,8 +207,17 @@ __all__ = [
     "Breakdown",
     "CASE_ID_PERMITTED",
     "CASE_KEYS",
+    "CARDS",
+    "CARD_KEYS",
     "CASE_KINDS",
     "CLOCK_SLACK",
+    "Card",
+    "DECK_KEYS",
+    "DECK_PROVENANCE",
+    "DECK_TRUST",
+    "FLASHCARDS",
+    "cards_document",
+    "cards_of",
     "CODE",
     "COMMANDS",
     "Case",
@@ -231,9 +252,12 @@ __all__ = [
     "STATES",
     "TEST",
     "UNGRADED",
+    "CaseDetail",
+    "Detail",
     "breakdown_of",
     "cases_document",
     "cases_of",
+    "detail_of",
     "completes_practice",
     "from_document",
     "kind_of",

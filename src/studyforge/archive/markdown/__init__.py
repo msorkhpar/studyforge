@@ -56,6 +56,9 @@ lines against R11's 400, and because these are genuinely separate jobs:
 - `table`, `listing` — the two constructs with rules of their own.
 - `container` — `quote` and `disclosure`, the blocks that hold blocks.
 - `document` — the dispatcher.
+- `regions` — a page cut at its language sections and example blocks, before any
+  of it is parsed.
+- `example` — an example region read into the archive's `example` block.
 """
 
 from __future__ import annotations
@@ -63,5 +66,17 @@ from __future__ import annotations
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
 from studyforge.archive.markdown.document import parse
 from studyforge.archive.markdown.errors import MarkdownError
+from studyforge.archive.markdown.example import blocks_of, example_block
+from studyforge.archive.markdown.regions import Region, regions, undeclared
 
-__all__ = ["BLOCK_TYPES", "CONTAINER_TYPES", "MarkdownError", "parse"]
+__all__ = [
+    "BLOCK_TYPES",
+    "CONTAINER_TYPES",
+    "MarkdownError",
+    "Region",
+    "blocks_of",
+    "example_block",
+    "parse",
+    "regions",
+    "undeclared",
+]

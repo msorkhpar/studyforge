@@ -357,11 +357,31 @@ def outline(document: dict) -> str:
     found = entries(document)
     if len(found) < 2:
         return ""
+    tags = _languages(document)
     items = "".join(
-        f'<li data-level="{level}"><a href="{escape_attribute(href)}">{inline(label)}</a></li>'
+        f'<li data-level="{level}"{tags.get(href, "")}>'
+        f'<a href="{escape_attribute(href)}">{inline(label)}</a></li>'
         for level, label, href in found
     )
     return templates.fill(OUTLINE_TEMPLATE, items=items)
+
+
+def _languages(document: dict) -> dict[str, str]:
+    """`href -> ' data-lang="id"'` for each outline line of a tagged section, else empty.
+
+    ⭐ An untagged page's outline keeps its bytes; a reading mode that hides a
+    section hides the line that points at it.
+    """
+    tags: dict[str, str] = {}
+    for section in document.get("sections") or ():
+        lang, key = section.get("lang"), section.get("key")
+        if not isinstance(lang, str) or not lang or not isinstance(key, str):
+            continue
+        attribute = f' data-lang="{escape_attribute(lang)}"'
+        tags[anchor(section_anchor(key))] = attribute
+        for position, block in enumerate(section.get("blocks") or ()):
+            tags[anchor(block_anchor(key, position))] = attribute
+    return tags
 
 
 def _slug(value: object, what: str) -> str:

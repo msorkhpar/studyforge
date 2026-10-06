@@ -144,6 +144,7 @@ def compose(
                 rail=render_rail(rail),
                 outline=f"{ABOUT}\n",
                 body=head(document) + disclosure.render(document),
+                **placement.mode_slots(),
                 **dict.fromkeys(EMPTY_SLOTS, ""),
             )
             + TRAILING_NEWLINE

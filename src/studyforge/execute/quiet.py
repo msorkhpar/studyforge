@@ -27,10 +27,13 @@ root and scrubbed (`output`), so it rewrites nothing.
 A corpus declares its `runtimes` (`corpus.manifest.runtimes`). ⭐
 **`TOOLCHAINS` maps a runtime name to its rules, and the rules are data.** A
 Gradle corpus and a Maven corpus each get their own, and adding a third is one
-entry. ⛔ **Nothing here looks at the command or the output to work out which
+entry. ⛔ **Nothing here looks at the output to work out which
 tool is running.** `select` returns a toolchain only when exactly ONE
-declared runtime has rules. None, or two (a corpus declaring both `gradle`
-and `maven`), means `None`, and `None` passes every line through UNFILTERED.
+declared runtime has rules. None means `None`, and `None` passes every line
+through UNFILTERED. ⭐ A corpus declaring both `gradle` and `maven` has the rules
+chosen per run from the FIRST WORD of the run's command (`select(runtimes, argv)`),
+which is the command the corpus wrote, not the output; no first word that names a
+tool with rules, no filter.
 Guessing wrong would drop somebody's output. Not guessing costs some noise.
 
 ## ⛔ Filtering never removes a failure
@@ -70,7 +73,7 @@ line come first.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 
 from studyforge.execute.handle import exit_line
@@ -105,6 +108,15 @@ class Toolchain:
     always_noise: tuple[str, ...]
     signal: tuple[str, ...]
     noise: tuple[str, ...]
+    #: The first words of a command that runs this tool (`gradle`, `gradlew`), the
+    #: way `select` tells two declared tools apart for ONE run. Empty: never chosen
+    #: by command.
+    commands: tuple[str, ...] = ()
+    #: ⭐ `True`: this tool's rules apply only to a run whose command NAMES it
+    #: (`pytest`, `python -m pytest`), and never because it is the one declared
+    #: runtime. A runtime that had no rules before (`python`) keeps passing every
+    #: line through for a corpus that declares nothing else with rules.
+    only_by_command: bool = False
 
 
 #: ⭐ Maven 3.9, measured against real `mvn -B test` output (see the tests).
@@ -113,6 +125,7 @@ class Toolchain:
 #: UNPREFIXED, which is why no rule here touches an unprefixed line.
 MAVEN = Toolchain(
     name="maven",
+    commands=("mvn", "mvnw"),
     always_noise=(
         # The help footer after a failure. It explains how to rerun Maven, never
         # why the build failed.
@@ -166,6 +179,7 @@ MAVEN = Toolchain(
 #: is the only label a test's output has.
 GRADLE = Toolchain(
     name="gradle",
+    commands=("gradle", "gradlew"),
     always_noise=(
         # `> Task :test FAILED` ends in FAILED and would otherwise be kept as a
         # verdict, when the verdict is the test line further down.
@@ -183,6 +197,11 @@ GRADLE = Toolchain(
         r"^\d+ tests? completed",
         r"(AssertionError|AssertionFailedError|Exception|Error):",
         r"^\s+(expected:|actual:)",
+        # `exceptionFormat = FULL` prints a failed test's exception four spaces in:
+        # the type, then the assertion message, which may run to several lines and
+        # may say anything (a link, a sentence). Such a line is the reason the test
+        # failed, so no noise rule can drop it. Gradle's own notes start at column 0.
+        r"^ {4}\S",
     ),
     noise=(
         r"^\* (What went wrong|Try|Get more help|Where):",
@@ -202,20 +221,127 @@ GRADLE = Toolchain(
     ),
 )
 
+#: ⭐ pytest. Measured against real `python -m pytest` output (see the tests).
+#: Only the lines pytest prints ABOUT ITSELF are listed; a failure's `E` lines, its
+#: frames, the `FAILED` summary and the tally are signal, and a test's own output
+#: matches no rule and is kept. ⛔ Selected by the run's command and never by
+#: being the declared runtime (`only_by_command`), so a corpus that declares
+#: `python` and no other tool with rules is unchanged.
+PYTEST = Toolchain(
+    name="python",
+    commands=("pytest", "py.test"),
+    only_by_command=True,
+    always_noise=(),
+    signal=(
+        r"^(FAILED|ERROR) ",
+        r"^E +",
+        r"\b(AssertionError|ImportError|ModuleNotFoundError|SyntaxError)\b",
+        r"^=+ .*\b(passed|failed|error|errors)\b.* =+$",
+        r"^\d+ (passed|failed|error|errors)\b",
+        r"^_{3,} .+ _{3,}$",
+        r"^\S+:\d+: \w+",
+    ),
+    noise=(
+        r"^=+ test session starts =+$",
+        r"^platform \S+ -- Python ",
+        r"^rootdir: ",
+        r"^configfile: ",
+        r"^plugins?: ",
+        r"^cachedir: ",
+        r"^collected \d+ items?\b",
+        r"^-+ generated xml file: ",
+        r"^-- generated xml file: ",
+        r"^-- Docs: https?://docs\.pytest\.org",
+        # The progress line (`path.py FFF.  [100%]`, or `FFF.  [100%]` under `-q`): the
+        # summary below it says the same, with the names.
+        r"^(?:\S+\.py )?[.FEsxX]+ +\[ *\d+%\]$",
+    ),
+)
+
+#: ⭐ `node --test`. Measured against real `node --test` output on the pinned Node (see the
+#: tests). Only the lines the runner prints about itself are listed: the tally lines of the
+#: default reporter that say nothing a case did not (`suites`, `cancelled`, `todo`, the
+#: duration). A load failure (`ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, which is what an `enum`
+#: or a parameter property gets from type stripping), an assertion, a mark and the pass/fail
+#: tally are signal. ⛔ Selected by the run's command (`node --test`) and never by being the
+#: declared runtime (`only_by_command`), so `node` as a plain interpreter is unfiltered.
+NODE_TEST = Toolchain(
+    name="node",
+    commands=("node",),
+    only_by_command=True,
+    always_noise=(),
+    signal=(
+        r"^[✖✔] ",
+        r"^ℹ (tests|pass|fail) \d+",
+        r"\b(ERR_[A-Z_]+|AssertionError|SyntaxError|TypeError|ReferenceError)\b",
+        r"^\s+(expected|actual):",
+        r"^\^+$",
+    ),
+    noise=(
+        r"^ℹ (suites|cancelled|skipped|todo|duration_ms) \d",
+        r"^Node\.js v\d",
+    ),
+)
+
 #: ⭐ THE declaration: a runtime name, as a corpus spells it in `runtimes`, to its
 #: rules. ⛔ A name that is not here has no filter, and its output passes through.
-TOOLCHAINS: dict[str, Toolchain] = {toolchain.name: toolchain for toolchain in (GRADLE, MAVEN)}
+TOOLCHAINS: dict[str, Toolchain] = {
+    toolchain.name: toolchain for toolchain in (GRADLE, MAVEN, PYTEST, NODE_TEST)
+}
 
 
-def select(runtimes: Iterable[str]) -> Toolchain | None:
-    """Return the ONE declared runtime's rules, or `None`, which filters nothing.
+def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolchain | None:
+    """Return the rules for the run, or `None`, which filters nothing.
 
-    ⛔ `None` when no declared runtime has rules, and also when more than one
-    does. With two build tools declared, the run could be either, and this
-    module does not guess which.
+    ⭐ **One declared runtime with rules** (`gradle` or `maven`): its rules, whatever
+    `argv` is, exactly as before. **None**: `None`.
+
+    ⭐ **Two or more declared with rules** (a corpus declaring `gradle` and `maven`):
+    the rules are chosen PER RUN from `argv`'s first word, by the `commands` each
+    toolchain lists (`gradle` or `./gradlew`, `mvn` or `./mvnw`; a directory before
+    the name and a `.cmd`/`.bat` after it are ignored). ⛔ A run whose first word names
+    none of them, a run given no `argv`, and a word two toolchains claim all give
+    `None`: nothing is guessed from the output, and an unknown command is left whole.
+
+    ⭐ **A toolchain flagged `only_by_command`** (pytest, declared as `python`) takes no
+    part in either rule above: it is counted nowhere, so a corpus declaring `python`
+    beside Gradle selects exactly what it selected before. It is chosen only when the
+    run's command names it (`pytest`, `python -m pytest`) and its runtime is declared,
+    and only when the corpus also declares a tool with rules that is not itself chosen by
+    command, which is the corpus whose runs the filter must tell apart. ⭐ `node --test` is
+    the second such toolchain (declared as `node`), chosen when the argv carries `--test`.
     """
-    found = {name for name in runtimes if name in TOOLCHAINS}
-    return TOOLCHAINS[found.pop()] if len(found) == 1 else None
+    declared = list(dict.fromkeys(runtimes))
+    found = [TOOLCHAINS[name] for name in declared if name in TOOLCHAINS]
+    if argv:
+        for toolchain in found:
+            if toolchain.only_by_command and _names(toolchain, argv):
+                return toolchain if any(not t.only_by_command for t in found) else None
+    found = [toolchain for toolchain in found if not toolchain.only_by_command]
+    if len(found) == 1:
+        return found[0]
+    if len(found) < 2 or not argv:
+        return None
+    word = _word(argv[0])
+    matching = [toolchain for toolchain in found if word in toolchain.commands]
+    return matching[0] if len(matching) == 1 else None
+
+
+def _word(first: str) -> str:
+    """A command's first word, without its directory or a `.cmd`/`.bat` suffix."""
+    word = re.split(r"[\\/]", first)[-1]
+    return re.sub(r"\.(cmd|bat)$", "", word, flags=re.IGNORECASE)
+
+
+def _names(toolchain: Toolchain, argv: Sequence[str]) -> bool:
+    """Does this command run `toolchain`: its own word, or `python -m <word>`?"""
+    word = _word(argv[0])
+    if toolchain is NODE_TEST:
+        return word == "node" and "--test" in argv[1:]
+    if word in toolchain.commands:
+        return True
+    module = len(argv) > 2 and argv[1] == "-m" and argv[2] in toolchain.commands
+    return module and re.fullmatch(r"(python|py)[0-9.]*", word) is not None
 
 
 class Quiet:

@@ -20,7 +20,7 @@ the names, and `bases` for the locked references. It writes nothing.
 from __future__ import annotations
 
 from studyforge.skills.execution.standalone import bases as locked
-from studyforge.skills.execution.standalone import closure, images
+from studyforge.skills.execution.standalone import closure, images, profile
 
 #: The manifest's path in the learner tree, and its shape's version.
 MANIFEST = ".studyforge/release.json"
@@ -66,6 +66,16 @@ def manifest(
             for kind in locked.KINDS
             for one in (getattr(bases, kind),)
         }
+        if bases.profile is not None:
+            document["bases"]["profile"] = {
+                "name": bases.profile.name,
+                **{
+                    kind: {"image": one.image, "tag": one.tag, "digest": one.digest}
+                    for kind in profile.KINDS
+                    for one in (getattr(bases.profile, kind),)
+                    if one is not None
+                },
+            }
     return document
 
 

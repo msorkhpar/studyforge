@@ -137,14 +137,14 @@ the adapter writes it — because the adapter is the only thing that knows what
 your build command is or where a grader came from.
 
 **Every key the record defines is below, in the order it is written.** Most
-records carry the first six and nothing else; the last six arrive with an
+records carry the first six and nothing else; the last seven arrive with an
 exercise somebody authored for this site.
 
 **This fence is the key list and not a record to copy.** Two of the keys in it
 are never written together with the rest: `"kind": "code"` is what a record
 with no `kind` already means, so the build leaves it out again, and `questions`
-belongs to a **quiz**, which carries none of the workspace keys above it and
-is shown here empty only so the list is complete. A quiz is written whole
+and `mock` belong to a **quiz**, which carries none of the workspace keys above
+it and is shown here empty only so the list is complete. A quiz is written whole
 further down.
 
 ```json
@@ -165,7 +165,13 @@ further down.
     "report": {"format": "junit", "path": "practice/basics-01/target/surefire-reports"},
     "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"},
     "questions": [],
-    "concepts": ["A greeting is built from the name it is given."]
+    "mock": {"pass_mark": 70, "domains": [{"id": "d-1", "title": "Greeting a caller"}]},
+    "concepts": ["A greeting is built from the name it is given."],
+    "files": [],
+    "review": null,
+    "cards": [],
+    "layout": null,
+    "try_file": null
   }
 }
 ```
@@ -183,7 +189,33 @@ came from — `bundled`, `generated` or `user` — and `trust` is either
 the other four are the grader**, and the grader is written whole or not at all
 (`trust` alone may be left out, and is then defaulted from `provenance`).
 
-### The last six: what an authored exercise says
+A Gradle practice sets `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in its `tasks.test`, so a failed test shows its assertion message and the run filter keeps it.
+
+A lesson's example offers Run for the test its page links, in any language the corpus declares: `python3 -m pytest` for a `.py` test, `node --test` for a `.ts`, `.js`, `.mjs` or `.cjs` test, and for a Java or Kotlin test the command of the build file its module holds: Maven's (a `pom.xml`, unchanged) or Gradle's, `gradle --offline -q -p <build> cleanTest test --tests <package.Class>` (a subproject is addressed as `:<dir>:cleanTest :<dir>:test`). Run is quiet, which hides Gradle's lifecycle log, so a failed Gradle example shows its assertion message only when its `tasks.test` sets `testLogging { quiet { events("failed"); exceptionFormat = TestExceptionFormat.FULL } }`; a passing run prints only the exit line.
+
+**A Python practice** is graded by pytest through the same JUnit report. Its `test_command` is an argv list, for example `["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "--junitxml=<workspace>/target/report.xml", "<workspace>/test_x.py"]`, and its `report` is `{"format": "junit", "path": "target/report.xml"}`. An option may carry a path (`--junitxml=<path>`); the path must be inside the exercise's workspace like any other. A case id is the test's name as pytest reports it: a bare function name, a parametrised test with the id pytest spells (`test_collapses[inner spaces]`, at most one space in a row), or the node id `tests/test_x.py::test_name`, which is read from the report's dotted class name. The starter returns a wrong value so that every test fails on an assertion; a starter that raises `NotImplementedError` fails on an error, which says nothing about the task. A code draft that sets `assertions_only` has `G2` and `G3` refuse a starter or a plant whose tests failed with anything but an assertion. The run page drops pytest's own banner, progress and rootdir lines for a run whose command is `pytest` or `python -m pytest` when the corpus declares `python` beside another tool with rules, and keeps every failure line, frame and the tally.
+
+**A TypeScript practice** is graded by `node --test` through the same JUnit report, on Node's built-in type stripping alone: no compiler and no install. Its files are `.ts`, its `test_command` is an argv list, and its case ids are the test names exactly as the `junit` reporter spells them (`test("blank text is refused", ...)` is `blank text is refused`). The solution is the main file and the tests import it as `./name.ts`, with the extension. ⛔ Type stripping erases types and nothing else: an `enum`, a parameter property (`constructor(private x: number)`), a `namespace` with code and a decorator are refused by Node with `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, and `import type` is needed for a type-only import. Such a file fails with Node's own message, which the run page keeps; a draft that sets `assertions_only` has `G2` and `G3` refuse a starter or a plant that fails to load, and `G1` and `G4` refuse a reference that does. A failure counts as an assertion when the report's `cause` is an `AssertionError` (`assert.equal`, `assert.throws`, `assert.rejects`); a `TypeError`, an `Error` thrown by an unimplemented starter and a skipped test do not.
+
+⚠️ **Node opens the report's destination before anything runs and does not create its directory**, and a reporter named without a leading `./` is read as a package name. A practice therefore ships one build file, for example `junit-file.mjs`, that writes the built-in reporter's XML next to itself:
+
+```js
+import { mkdirSync, writeFileSync } from "node:fs";
+import { junit } from "node:test/reporters";
+
+export default async function* (source) {
+  let xml = "";
+  for await (const chunk of junit(source)) xml += chunk;
+  mkdirSync(new URL("./target/", import.meta.url), { recursive: true });
+  writeFileSync(new URL("./target/report.xml", import.meta.url), xml);
+}
+```
+
+and a `test_command` of `["node", "--test", "--test-reporter=spec", "--test-reporter-destination=stdout", "--test-reporter=./<workspace>/junit-file.mjs", "--test-reporter-destination=stdout", "<workspace>/name.test.ts"]`, with `report` `{"format": "junit", "path": "target/report.xml"}`. The `spec` reporter prints a failing run's `AssertionError` for the reader. An option's path may begin with one `./`; it is checked as any other path and must be inside the workspace. A command that sends the built-in `junit` reporter straight to `<workspace>/target/report.xml` leaves no report when the directory is absent, and `G1` and `G4` say so naming the path. The run page drops Node's `suites`, `cancelled`, `skipped`, `todo` and duration tally lines for a run whose command is `node --test` when the corpus declares `node` beside another tool with rules, and keeps every other line, frame and the pass and fail tally.
+
+**An optional type check.** A code draft may set `typecheck_command`, an argv such as `["tsc", "--noEmit", "--strict", "--erasableSyntaxOnly", "<workspace>/name.ts"]`, run in each staged solution's workspace before its tests. A non-zero exit is a failure of its own and not a test case: `G1` names it for the reference, `G2` for the starter and `G3` for a plant, and exit code 127 says the checker is not on the image (only an image that carries `typescript` has `tsc`). `--erasableSyntaxOnly` makes `tsc` refuse the constructs Node refuses, at type-check time. A draft without the field runs no check, so a reference that does not type-check passes as it always did. The check is read at authoring time; a reader's Submit runs the tests only.
+
+### The last seven: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
 means. **Write it only where it is not `code`**: the framework writes that
@@ -207,6 +239,13 @@ a grader**, so it is the one of these an *ungraded* record may carry.
 
 **`questions` is a quiz's, and only a quiz's.** Writing it on any other record
 is a refusal; see *A practice for material that is not code* below.
+
+**`layout` is a plain quiz's: `page` opts it out of one question at a time** (see *A plain quiz is
+drawn one question at a time*).
+
+**`mock` is a quiz's too, and says the quiz is a mock exam**: a page of many
+questions covering a level, scored per domain. Writing it on any other record
+is a refusal; see *A mock exam* below.
 
 **`concepts` is what the exercise practises**: a list of sentences, one per
 idea, shown on the exercise's card in the page's *Practice (n)* list before a
@@ -283,6 +322,277 @@ honesty gates are judgements taken once when it was authored and cannot be
 re-run by whoever holds the corpus, so no quiz may claim to be your material's
 own grader — `bundled` and `authoritative` are refused on one.
 
+### A mock exam
+
+**A mock exam is a quiz that covers a whole level and is scored per domain.** It is
+the same record with `kind` `quiz`, so every rule above holds for it: one keyed
+option per question, a sentence per option, a passage per question, `generated` and
+`advisory`, and grading in the page with no network, no container and no model. A
+quiz with no `mock` key is a quiz as it always was. Two things are added:
+
+```json
+{
+  "kind": "quiz",
+  "mock": {
+    "pass_mark": 70,
+    "domains": [
+      {"id": "AS1", "title": "Prompting and task execution"},
+      {"id": "AS2", "title": "Output evaluation and validation"}
+    ]
+  },
+  "questions": [
+    {"id": "x1", "domain": "AS1", "stem": "…", "options": ["…"], "origin": "…"}
+  ]
+}
+```
+
+**`mock`** is a `pass_mark`, a whole percent from 1 to 100 of the questions, and the
+`domains` the exam reports a score under, each an `id` token and a `title`. **A
+question's `domain`** is one of those ids. A `domain` on a quiz with no `mock` is
+refused.
+
+**The page** shows how many questions are answered and keeps the answers in the
+reader's own browser, so a reader who closes the tab resumes where they were. A
+submit with a question open names each one by its number and grades nothing. When
+every question is answered, the page grades it, shows each question's verdict and
+the sentence of the option the reader chose, a score per domain, and the whole exam's
+score against the pass mark, rounded down so that two of three is 66 and never a 67.
+The answers lock until the reader starts again. The page works at phone width.
+
+**The gates.** `Q1` to `Q5` run over every question unchanged: `Q4` and `Q5` are
+mechanical and name the question that fails, and `Q1` to `Q3` are judgements taken
+for each question and recorded for each. One gate is added for what a mock needs:
+`P1` holds when every question names a domain, every domain a question names is
+declared, and every declared domain has a question. A gate record for a mock exam
+names the `mock` family beside `quiz` and is complete only with `P1`. Draft one with
+`QuizDraft(title=…, questions=…, mock=Mock(…))`.
+
+#### The exam form
+
+**A mock exam may sit like a real certification sitting.** Everything below is opt-in on the
+`mock` record and on its questions: a mock that uses none of it is the page described above, in
+bytes. Any one key switches that mock to the exam form, and a question with `select` does too.
+
+```json
+{
+  "mock": {
+    "pass_mark": 70,
+    "domains": [
+      {"id": "AS1", "title": "Prompting and task execution", "weight": 60},
+      {"id": "AS2", "title": "Output evaluation and validation", "weight": 40}
+    ],
+    "minutes": 90,
+    "layout": "exam",
+    "scenarios": [
+      {"id": "support-bot", "title": "A support bot that forgets",
+       "context": "Two to four sentences that set the situation. A second sentence."}
+    ],
+    "difficulties": [
+      {"id": "foundational", "title": "Foundational"},
+      {"id": "scenario-hard", "title": "Scenario, hard"}
+    ],
+    "sittings": [
+      {"id": "full", "title": "Full sitting", "questions": 60, "minutes": 90},
+      {"id": "short", "title": "Short sitting", "questions": 20},
+      {"id": "scenarios", "title": "Scenario sitting", "scenarios": 3}
+    ],
+    "scale": {"min": 100, "max": 1000, "pass": 720}
+  },
+  "questions": [
+    {"id": "p1", "domain": "AS1", "scenario": "support-bot", "difficulty": "scenario-hard",
+     "stem": "…", "options": ["…"], "origin": "…"},
+    {"id": "p2", "domain": "AS2", "select": 2, "shuffle": false,
+     "stem": "Which two …", "options": ["…"], "origin": "…"}
+  ]
+}
+```
+
+**The `mock` keys**, each optional beyond `pass_mark` and `domains`:
+
+- **`minutes`**, a whole number from 1 to 1440: the time of the exam. The page shows the time
+  remaining, keeps it across a reload (the start time is stored in the reader's browser with the
+  answers), and submits by itself at zero. A reader who opens the page after the time ran out finds
+  it submitted. No `minutes`, no clock.
+- **`layout`**, only `"exam"`: one question to a view, with a navigator of question numbers (each
+  says answered, not answered and flagged, in words as well as in look), previous and next,
+  and filters by domain and by flagged. Left out, every question is on the page, as before.
+- **`scenarios`**, a list of `id` (a token), `title` and `context`: a situation several questions
+  are asked about. A question names one in its own `scenario`, and the page shows the card with the
+  question (once for each run of questions that share it, in the all-on-one-page layout).
+- **`difficulties`**, a list of `id` and `title`: the labels a question may carry in `difficulty`.
+  The label is shown with the question in the exam layout and the results report a score for each.
+- **`sittings`**, a list of `id`, `title` and at most one of `questions` (a whole number to draw)
+  or `scenarios` (a whole number of scenarios to draw, with all their questions) or `per_domain`
+  (an object of domain id to the exact count of that domain to draw), and an optional
+  `minutes`. A sitting with neither asks every question. The questions of the record are a **pool**
+  and may be many more than one sitting asks. A sitting that draws `questions` draws them by domain
+  weight, keeping each scenario's questions together; a sitting that draws `scenarios` draws that
+  many whole ones. Without its own `minutes` a sitting takes the mock's `minutes` in proportion to
+  the questions it draws against the largest sitting that names a number of questions (or the pool,
+  for a sitting that asks everything). A mock with no `sittings` asks every question in the order
+  written, with no shuffling.
+- **`scale`**, `min`, `max` and `pass`, whole numbers with `pass` between: a score the results
+  show as a linear illustration, `min + (max - min) * right / asked` rounded, beside the scale's
+  pass, with the note that it is a linear illustration and not the exam's own scaling. The
+  verdict stays the percent pass mark.
+- A domain may carry **`weight`**, a whole percent; give it to every domain or to none, summing to
+  100. Drawing questions follows the weights, else each domain's share of the pool.
+
+**The question keys**, written after `domain` and only where present: `scenario` (an id of the
+mock's `scenarios`), `difficulty` (an id of `difficulties`), `select` and `shuffle`. All four are
+refused on a quiz with no `mock`.
+Exception: `select` is accepted on a plain quiz drawn one question at a time (not `layout: page`).
+Authoring syntax for `select` and `per_domain`: [Multiple-response items and question pools](pools-and-multiple-response.md).
+
+- **`select: n`** makes a **multiple-response question**: a whole number of at least 2, the number
+  of options the reader must choose. Exactly `n` options are keyed `correct`, and at least one is
+  left to rule out. The page says "Choose n.", stops the reader at `n` boxes, and scores the
+  question all or nothing: right only when exactly the keyed options are chosen. A question with
+  no `select` keys exactly one option, as always.
+- **`shuffle: false`** keeps one question's options in the order written. The default, in a mock
+  with `sittings`, is that the page shuffles them.
+
+**Sittings, seeds and what is remembered.** The reader chooses a sitting and begins it. The page
+draws the set with a random seed, shuffles the order of the questions (a scenario's questions stay
+together, in the order written) and the options, and stores the seed and the drawn set with the
+answers, the flags and the start time, so a reload shows the same exam with the clock still running.
+**Start again** draws a new set that prefers questions the reader has not yet met in earlier
+sittings (the ids met are kept in the same place; once the whole pool has been met the preference
+starts over). Everything is kept in the reader's own browser; a browser that refuses storage still
+runs the exam and forgets on reload.
+
+**The results**, after the reader submits (a submit with questions open names them and asks once
+more, and a question left open is wrong): the score against the pass mark, the optional scaled
+score, a score per domain and per difficulty over the questions the sitting asked, and every
+question's verdict with **every option's sentence**, the keyed options marked and the reader's choice
+marked. A filter reviews all, only the missed, or only the flagged questions. The page works at phone
+width and by keyboard alone, and makes no request.
+
+**The checks.** The record refuses what is wrong in one value (a `minutes` that is not a whole
+number, a `scale` whose pass lies outside it, a `select` that is not a whole number of at least 2, a
+question keying a different number than its `select`, two sittings with one id) and, because the page
+cannot draw otherwise, a question under a scenario nobody declared, a declared scenario with no
+question, a difficulty used and not declared, a sitting that draws more than the pool holds, and a
+pool too thin in one domain for the largest sitting by the domain weights. `Q4` holds a
+multiple-response question to the count it states and says so in its own words; `Q3` owes one
+judgement for every option that is not keyed; `Q1` and `Q2` are taken per question as before.
+`P1` also holds when every scenario named is declared and asked about, every scenario's context is
+two to four sentences, and every difficulty is declared and carried by a question.
+
+**Authoring one.** The exam covers a level, so it is authored from the pages of the whole level,
+and each question's `origin` names the page and passage it is built from.
+
+- **Domains.** Declare each domain once with an `id` token and a `title`, as the source's own exam
+  guide names them, and tag **every** question with exactly one. `P1` refuses a question with no
+  domain, a domain nobody declared and a declared domain with no question, naming the question by
+  its stem, so a domain is never a label left over from a plan. Spread the questions over the
+  domains the way the guide weights them, and say so in the page; the framework counts none of it.
+- **One judgement set per question, taken by a reader who did not write it.** `Q1` (the page
+  holds the answer), `Q2` (the wording alone gives nothing away) and `Q3` (a passage rules out each
+  wrong option) are taken for every question and recorded for every question, whatever the number
+  of questions. `judge(brief, questions)` returns one `Q1` and one `Q2` per question and one `Q3`
+  per wrong option, each over `question_digest(question)`, for all of the exam at once. A question
+  reworded after a refusal needs fresh judgements: the earlier ones are over the old wording.
+- **Scenario questions.** A question the page's own quiz already asks is not repeated: the mock
+  is the level's check, so a reader meets a new situation that needs two or three pages together.
+  The score is only as good as the least careful question, and `Q4` and `Q5` refuse the mechanical
+  faults one question at a time.
+- **The pass mark is the corpus's number** (`mock.pass_mark`); the page states only whether the
+  score reached it. Do not write the mark into a question.
+
+### Revision aids: a review bank and a deck of flashcards
+
+**Two opt-in shapes for revising a level, both opened in the practice workspace like a quiz, both
+kept entirely in the reader's own browser (no network, no account).** A corpus that uses neither is
+the corpus it was, byte for byte.
+
+**The line naming where the items came from follows what they cite.** A deck or bank whose items
+cite one page, or none, says it was written from this page. One whose items cite more than one
+page says it was written from several pages of the level. There is no flag to set: cite the pages
+the items were written from, and the sentence follows.
+
+**A plain quiz is drawn one question at a time.** A quiz with no `mock` and no `review` is shown by
+the exam form's own parts, in a kind of its own: one question per view, **Previous** and **Next**, a
+progress line (*Question 2 of 7. 3 answered.*), a navigator of numbered buttons that say answered or
+open, and a **Finish quiz** button. Each answer is explained **as it is given**: the verdict and the
+sentence for the option chosen, never the key, so a reader told why a choice fails can try again. The
+answers live in the reader's own browser (`studyforge.mockform.v1`, behind a guard that tolerates a
+refused store), so a reload comes back on the same question with the same answers. **Finish quiz**
+asks once about questions left open, then shows a summary: *Question n: Right.* or *Not this one.*
+for every question, each a button that jumps to that question, and below it every question with the
+key marked and every option's sentence (a review filter narrows it to the missed ones). The quiz is
+complete, and its card reads *Passed*, as soon as every question is right, as before. There is no
+pass mark, clock, flag or domain table. It is the default; a quiz that wants every question on one
+page with one **Check answers** control writes the opt-out:
+
+```json
+{"kind": "quiz", "layout": "page", "questions": ["…"]}
+```
+
+`layout` is `steps` (what leaving it out gives) or `page`. It belongs to a plain quiz only: it is
+refused on a record that is not a quiz and beside `mock` or `review`, which draw themselves. The
+build writes the exam form's four files beside the shared bundle for a corpus that has a stepped
+quiz, and a corpus whose quizzes all say `page` writes none of them. Draft one with
+`QuizDraft(title=…, questions=…, layout="page")`.
+
+**A lesson that lists its quiz shows the quiz once, in place.** A lesson sometimes ends with a
+section (a heading, numbered questions, a folded *Answer key*) that lists the same questions as its
+quiz practice. The match is by the text: one unbroken run of question blocks that holds every stem
+of one plain quiz practice verbatim, with only option lists, code samples or images between the
+questions. The page then draws the interactive quiz **where those questions were**, under their
+heading, and does not draw the static questions or the folded key right after them; each question's
+explanation appears after answering. Everything else stays: the heading, the lesson's prose before
+and after, a mock page's intro and domain table. Stems scattered through prose are not a quiz, and
+nothing is removed; the practice is then drawn after the lesson. The
+practice is not listed again in *Practice (n)* or opened in a workspace. A section that holds
+different questions and a unit with no quiz practice are untouched, and a page with no match is the
+page it was. **A mock exam counts as a quiz here**: a mock page that lists its questions and folds
+an answer key away is replaced the same way, so the key is not in the page as readable text and each
+explanation appears after submit. The key the page grades from stays in its own data block. A
+review bank and a deck are never what a lesson repeats. A quiz that no lesson section lists is
+opened from its card in the workspace, where it reads as a page that scrolls as one.
+
+**A review bank is a quiz with a `review` key.** Every item is a quiz question under every quiz rule:
+one keyed option, a sentence per option, a passage per question, `generated` and `advisory`.
+`review` adds the schedule:
+
+```json
+{"kind": "quiz", "review": {"intervals_days": [1, 3, 7, 14, 30]}, "questions": ["…"]}
+```
+
+`intervals_days` is 1 to 12 strictly growing whole days, 1 to 730. The page shows the items that
+are due and grades them from the key it carries. An item never seen, or last answered wrong, is due;
+an item answered right `n` times in a row is due again once `intervals_days[min(n, last)-1]` local
+days have passed since it was last got right (`exercise.quiz.review.due` is the rule, and a browser
+test reads the page against it). A wrong answer resets the streak, so the item is due again at once.
+The streak and the day are kept in the reader's browser under `studyforge.review.v1`, behind a guard
+that tolerates a refused store. A bank is never a mock exam: the two keys are refused together.
+Draft it with `QuizDraft(title=…, questions=…, review=Review((1, 3, 7)))`.
+
+**A deck is a `flashcards` exercise.** It carries `cards` in place of a workspace or questions:
+
+```json
+{"kind": "flashcards", "cards": [
+  {"id": "fc-001", "front": "What does a language model do at each step?",
+   "back": "It scores every token for how likely it is next …",
+   "origin": {"path": "course/01/page.md", "section": "How it generates"}}
+]}
+```
+
+A card is `id` (a plain token), `front`, `back` and `origin`, the passage it was written from. The
+page shows each front, turns a card on a button, and marks it known or to see again; the marks live
+in the reader's browser under `studyforge.deck.v1`. With no script every card shows both sides. A
+deck completes nothing and has no run, and it is `generated` and `advisory` like a quiz. Draft it with
+`DeckDraft(title=…, cards=(Card(id, front, back, Origin(path, section)), …))`.
+
+**The gates.** A bank answers `Q1` to `Q5` over its items and `S1` (the schedule fits the bank: at
+least as many questions as steps). A deck answers two mechanical gates: `C1` (a front and a different
+back no longer than 800 characters, and no two fronts that ask the same thing) and `C2` (every card
+cites a passage whose digest the ledger still holds). `gate_deck(draft, brief, ledger, where=…)`
+needs no runner and no judge, writes `tests/deck.json` and `gates.json`, and `deck_of` reads the
+document back; the adapter reads it as it reads a quiz. Nothing is re-run by `validate`: it re-reads
+the record and re-digests the bundle.
+
 ### A file with no test
 
 **When your material ships a file the reader runs but nothing that checks it**,
@@ -317,9 +627,87 @@ manufacturing a result.
 
 ---
 
+## Languages and profiles
+
+**One line per language a practice and an example run in.** `runtimes` names the tools a runner
+carries, never a version; a practice's `test_command` is argv, its `report` is the JUnit report,
+and the same five gates read every language.
+
+| Language | Graded by | Declare in `runtimes` |
+|---|---|---|
+| Java | JUnit through Maven (`pom.xml`) or Gradle, the JUnit XML report | `java` and `maven` or `gradle` |
+| Kotlin | JUnit or `kotlin.test` through Gradle or Maven, the JUnit XML report | `java`, `kotlin` and `gradle` or `maven` |
+| Python | `pytest` through `--junitxml`, the JUnit XML report | `python` |
+| TypeScript | `node --test` on Node's type stripping, a build file writing the JUnit report, an optional `tsc --noEmit` | `node` |
+
+**Profiles.** A toolchain may carry an image profile that holds what not every course needs, and a
+corpus names it in `profile`. `claude-sdks` holds the Python wheels, npm packages and JVM jars of the
+Claude SDKs, offline, for practices and examples in all four languages above, and a Python language
+server in the editor; a course that names it declares `python`, `node`, `java`, `gradle` and `kotlin`
+and is exported thin. A corpus that names no profile is built on the plain bases.
+
+---
+
+## One practice in several languages: editions
+
+**A practice that differs only by language is ONE practice, not one per language.** A course
+that teaches the same task in Python, TypeScript, Java and Kotlin writes four exercises (four
+bundles, four gate records, four sets of plants), and its site lists **one** card for them, with
+**one** status, and one panel with a language switch at the top.
+
+**How a corpus opts in.** Every language's exercise stays a practice document of its own. The
+adapter writes two keys on each of them, in the fields it hands to `archive.document.build`:
+
+| Key | What it says |
+|---|---|
+| `lang` | the one language this document is written in: an id the manifest declares in `languages` |
+| `edition` | the id of the practice this document is one language edition of: lowercase letters, digits, `-` and `_`; every language's document of one practice gives the same id |
+
+The documents of one unit that share an `edition` are one practice. An `edition` with no `lang`, or
+with several languages in it, is refused when the document is built. A practice with no `edition`
+is what it always was, and so is an `edition` that only one document of its unit names (there is
+nothing to choose between) and one carried by a quiz or a deck (they are not written in a
+language). A corpus that never writes the key builds the bytes it built before.
+
+**What the reader sees.**
+
+- **One card.** The card of the practice is titled once, with no language in it: a trailing
+  parenthesis naming the edition's language (its id or its declared name, as in
+  `Keep a conversation (Python)`) is dropped from the title, and any other title is kept as written.
+  Under it the card says *Available in:* and lists each edition, in the order the documents are
+  numbered. The card sits where the first edition sits, and the outline lists the practice once;
+  *Practice (n)* counts practices, not editions.
+- **One panel, a switch at the top.** The card opens the one workspace, with the statement of the
+  shown edition on the left and its editor, Run and Submit on the right. The row of language buttons
+  is the first thing in the panel. Choosing another language swaps the statement, the workspace
+  files, the tests, the Run and Submit target and the editor to that edition's; nothing is merged.
+- **It opens in the reader's language.** The row opens on the first edition in this list: the
+  reading mode's `practices`, then its `prose` language, then its `tabs`, in that order; when the
+  practice has no edition in any of them, or the corpus declares no modes, it opens on the first
+  edition. The mode is the one chosen in the page header, read when the card is opened, so changing
+  the mode and opening a card again opens it in the new mode's language. The switch always lists
+  every edition: the mode picks where it opens, and never hides an edition. (The mode's
+  `practice_choice` does not change this.)
+- **Progress is per edition.** Each edition's pass is recorded under its own practice key, as a
+  practice with one language always was. The *Available in:* line marks each edition that has
+  passed, and the card's status summarises them: *Not started*, *Passed in 2 of 4 languages*, or
+  *Passed in every language*.
+
+**What stays per edition.** The gates run on each edition as they do on any practice: each has its
+bundle, its `gates.json`, its cases, and its plants (a `PlantSpec` against that edition's own
+reference). Nothing about authoring changes; `edition` only tells the site which documents are one
+practice. Every edition's statement and panel are on the page for a reader with no script and
+under `file://`, one after another under the list, as practices always are; the switch ships
+hidden and only a script shows it.
+
+---
+
 ## Run and Submit are different acts
 
 **Run executes the reader's program so they can see what it printed.**
+
+A practice's Run runs its `try_file` where it has one (see
+[A try-it file](#a-try-it-file-what-run-executes)).
 
 **Only a test run can complete a practice.** A program that prints successfully
 has demonstrated nothing whatsoever about its tests, and treating the two alike
@@ -580,8 +968,12 @@ with a question on each. The aspects are in `ASPECTS` in
 | `starter` | what the reader starts from. Every test must fail on it |
 | `reference` | the worked solution. Every test must pass on it, and the reader can open it |
 | `tests` | the tests, one or more per case |
-| `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge |
+| `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge: its full text, or a `PlantSpec` of replacements against the reference (see *A plant as replacements*) |
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
+| `files` | optional, empty by default: the further files the reader edits beside `main_file`, each workspace-relative path mapped to `EditedFile(starter, reference)`; see *A practice of several files* |
+| `try_file` | optional, `None` by default: the try-it file, one of the keys of `files`, that `run_command` executes (no tests, no grade); see *A try-it file: what Run executes* |
+| `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
+| `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 
 ⛔ **Every path in a command is inside the exercise's own workspace.** The
 brief gives you that directory as `brief.places.workspace`. An argument
@@ -636,6 +1028,176 @@ def basket(brief):
         plants={NEGATIVE.id: "def total(prices):\n    return sum(prices)\n"},
     )
 ```
+
+### A practice of several files
+
+A configuration practice has the reader edit a settings file, a memory file and a hook script,
+and the tests judge what the files say. `CodeDraft.main_file` is the first of them and
+`CodeDraft.files` names the rest:
+
+```python
+from studyforge.skills.exercises import CodeDraft, EditedFile
+
+draft = CodeDraft(
+    title="Project setup",
+    lang="json",
+    main_file="settings.json",
+    test_file="test_setup.py",
+    run_command=("python3", f"{ws}/check.py"),
+    test_command=("python3", "-m", "pytest", f"{ws}/test_setup.py"),
+    cases=cases,
+    report="target/report.xml",
+    origin=origin,
+    statement=statement,
+    starter=STARTER_SETTINGS,
+    reference=REFERENCE_SETTINGS,
+    tests=tests,
+    plants=plants,
+    files={"docs/memory.md": EditedFile(STARTER_NOTES, REFERENCE_NOTES)},
+)
+```
+
+- **The bundle** holds `starter/<path>` and `reference/<path>` for each further file, and
+  `bundle.json` lists them under `files`. The gate record digests each as `starter:<path>`
+  and `reference:<path>`, so a changed starter drifts the record like any other input.
+- **A plant** that changes a further file is a `PlantSpec` whose replacement names that file
+  (`Replacement("docs/memory.md", old, new)`); a file no replacement names stays as the
+  reference has it. A full-text plant is the main file's text alone. A replacement naming a
+  file the reader does not edit is refused, so no plant reaches the tests.
+- **The exercise record** gains `files`, the corpus-relative paths in the order declared,
+  written only for a practice that has some. The workspace is written with every edited file
+  in its starter state, the page names every file the reader edits, and the editor opens the
+  practice's own folder with one tab for each file; the files are editable and everything
+  else is read-only. `studyforge check` accepts any of the files.
+- **Nothing changes for a practice of one file**: no key, no input, no block.
+
+### A try-it file: what Run executes
+
+**Run and Submit are different acts.** Submit grades. Run executes the reader's own code, a
+small editable entry point, and shows what it printed and logged, with no tests and no grade.
+A practice whose `run_command` is its `test_command` has a Run that grades like Submit; give it
+a **try-it file** instead. `studyforge validate` reports `run-is-submit` for such a practice in
+any corpus where another practice already carries a `try_file`.
+
+- **The record** gains `try_file`, the corpus-relative path of the file, which is also listed
+  in `files` (the reader edits it like any further file). The `run_command` executes it and
+  differs from `test_command`; a record whose two commands are equal and that names a
+  `try_file` is refused. A `CodeDraft` sets `try_file=` (a key of its `files`) and a bundle
+  carries `"try_file"` beside `files`. A practice without it is unchanged. The page then says
+  that Run executes that file, runs no tests and gives no grade.
+- **What the file does:** builds the object the practice asks for with the same stand-in the
+  first main test uses, calls it on the statement's example, prints what comes back, and turns
+  the logger up so the code's own log lines show under the printed lines.
+- **Names and the logger switch, per language:**
+
+  | Language | File | Run command | Logger switch |
+  |---|---|---|---|
+  | Python | `try_it.py` | `python3 <workspace>/try_it.py` | `logging.basicConfig(level=logging.DEBUG, ...)` |
+  | TypeScript | `try-it.ts` | `node <workspace>/try-it.ts` | `logTo("try-it")`, the harness logger beside the file |
+  | Java | `TryIt.java` | `gradle --offline -q -p <workspace> tryIt` | `java.util.logging` root logger and a `ConsoleHandler`, both at `ALL` |
+  | Kotlin | `TryIt.kt` | `gradle --offline -q -p <workspace> tryIt` | the same switch; the class is `TryItKt` |
+
+- **The JVM `tryIt` task.** The file lives in the main source set, so the build lists its
+  folder beside the solution's and registers a `JavaExec` task whose `mainClass` is `TryIt`
+  (Java) or `TryItKt` (Kotlin): `tasks.register<JavaExec>("tryIt") { classpath =
+  sourceSets["main"].runtimeClasspath; mainClass.set("TryIt") }`.
+- **The scaffold.** `studyforge.skills.exercises.tryit` holds `TRYIT_FILE`, `skeleton(lang,
+  module, cls)`, `gradle_task(lang)`, `run_command(lang, workspace)` and `problems(lang,
+  text)`; `python -m studyforge.skills.exercises.tryit <lang> [module] [class]` prints a
+  skeleton. The skeleton ends in a `TODO` for the stand-in and the call; `problems` reports a
+  file that still holds it, prints nothing, or does not turn the logger up.
+- **What an adapter sets:** `files` holds the try-it file with its starter text (the reader's
+  file starts as the author wrote it, and the reference is the same text), `try_file` names
+  it, and `run_command` is the command in the table. A practice with no try-it file leaves
+  `try_file` unset.
+
+### A plant as replacements
+
+A plant usually differs from the reference by a line or a few. Instead of the
+whole text, a plant may be written as an ordered list of exact replacements
+against the reference:
+
+```python
+from studyforge.skills.exercises import PlantSpec, Replacement
+
+plants={
+    NEGATIVE.id: PlantSpec((
+        Replacement(
+            "total.py",
+            '    if any(price < 0 for price in prices):\n'
+            '        raise ValueError("a price is never negative")\n',
+            "",
+        ),
+    )),
+}
+```
+
+Both forms are accepted in one draft, edge by edge. A text is the plant as it
+is; a `PlantSpec` is the reference with its replacements applied.
+
+- Each replacement is `file`, `old` and `new`. `file` is the exercise's
+  `main_file`, since a plant is that one file. `old` must occur exactly once
+  in the text the replacement is applied to, counting an occurrence that
+  overlaps another.
+- Replacements apply in order, each to the text the one before it left.
+- The gate materialises the full plant from the reference into its own staging
+  directory, runs it like any plant, and discards it. Nothing writes the full
+  text into a source tree.
+- A draft is refused, before any run, when a replacement's `old` is absent or
+  occurs more than once, when it is empty or equals `new`, when `file` is not
+  the main file, when the list is empty, or when the result is identical to
+  the reference. The refusal names the plant by its edge position and the
+  replacement by its position, and quotes none of the text.
+- Gates `G1` to `G5` read a spec plant exactly as they read the equivalent
+  full plant: same runs, same verdicts, same sentences.
+
+**What the bundle holds.** A full plant is the file
+`plants/edge-N/<main file>`. A spec plant is the file
+`plants/edge-N/<main file>.plant.json`:
+
+```json
+{
+  "plant_version": 1,
+  "replacements": [
+    {"file": "total.py", "old": "...", "new": "..."}
+  ]
+}
+```
+
+An edge has one of the two files, never both and never neither; `emit` refuses
+a bundle that files both or neither. The gate record digests whichever file the
+bundle holds under the same `plant:<case id>` role, so `validate` re-digests a
+spec plant as it does a full one. Fixing the reference changes the plants at
+the next gate run, and a replacement the fix leaves with nothing to find is
+refused instead of skipped, so the author sees which plants the fix touched.
+
+**What a learner receives.** Plants stay in `exercises/`, as before. The
+learner's workspace is made of the starter and the tests, and the site, runner
+and editor images leave `exercises/` out of their build contexts, so a spec
+plant, like a full one, is in no image. The standalone export keeps the
+`exercises/` tree on `main` and writes the same files for both forms.
+
+**Converting a course once.** `studyforge.exercise.bundle.convert` reads every
+bundle under `exercises/`, derives for each full plant the smallest list of
+replacements, widened with the lines around each change until the text is
+unique, and materialises it again:
+
+```python
+from studyforge.exercise.bundle.convert import convert_plants
+
+report = convert_plants(root)               # reads and proves, writes nothing
+report = convert_plants(root, write=True)   # then writes what was proven
+report.converted, report.left               # bundles changed; each plant left, with why
+```
+
+Without `write=True` nothing is written. With it, a plant is
+replaced only when its spec materialises to the same bytes and is smaller than
+the file, and the plant's input in `gates.json` is re-digested; the verdicts are
+left as they were, because every gate ran over the same text. A plant is left,
+with its reason in `report.left`, when the spec would not be smaller, when it equals the
+reference, when the record does not hold the plant's current digest, or when the
+record does not re-encode to its own bytes. A bundle is written whole or
+restored.
 
 ---
 
@@ -915,6 +1477,9 @@ digest of every file the gates read and each gate's verdict.
 in which any gate failed, and a bundle whose files no longer match their
 recorded digests.
 
+| `S1` | (a review bank only) the bank holds at least as many questions as its schedule has steps | every step of the schedule has something to show |
+| `C1`, `C2` | (a deck, instead of the five) the cards are sound and each cites a passage the ledger still holds | a card is a front and a different back, built from the page |
+
 ⚠️ **What `validate` does not do is re-run the gates.** It re-reads the record
 and re-digests the bundle's files. A quiz record whose key breaks `Q4`'s rules
 is refused wherever it is read, because the quiz record itself refuses that.
@@ -973,6 +1538,61 @@ objects.
   Where a plant's change could reach a later case, fix the order with
   `@TestMethodOrder`. `G1` runs the reference twice, the same way both times,
   so it cannot find this for you.
+
+### Python and TypeScript silent passes
+
+Both languages have their own ways for a test to pass whatever the code does. `G2` (every test
+fails on the starter) refuses a test that passes on a starter returning its input, which is the
+first reading; the cases below also pass a wrong plant, or a wrong solution nobody planted, so
+look for each before the pass.
+
+**Python (pytest)**
+
+- **A test that asserts nothing.** A function that calls the code and ends passes whatever the
+  code returns. So does an `assert` inside a loop over an empty sequence, inside an `except`
+  branch no run reaches, or in a helper the test never calls.
+- **Truthiness.** `assert normalise(x)` passes for any non-empty result, and `assert result is not
+  None` for any result at all. Compare the exact value, and for a collection its exact contents.
+- **A tuple asserted.** `assert (got == want, "message")` is a non-empty tuple and is always true.
+  Write the message after a comma, not inside parentheses.
+- **Identity against equality.** `==` on two lists compares contents, so a solution that returns
+  its own input list passes a test that only compares; `is` on small integers, short strings
+  and tuples of them compares one cached object with itself and passes for the wrong reason.
+  Build the values at run time, assert `is not` where a copy is the point, and assert `==`
+  where equality is.
+- **A mutable default argument.** `def add(item, bucket=[])` keeps one list for every call, so
+  a test that calls it once passes. Call it twice, and assert the second result.
+- **`pytest.raises(Exception)`** accepts any error, including the `NotImplementedError` of an
+  unwritten starter. Name the exact exception and check its message where the message matters.
+
+**TypeScript (`node --test` on type stripping)**
+
+- **A missing `await`.** `assert.rejects(...)` and `assert.doesNotReject(...)` return a promise;
+  left unawaited, the test body ends first. Node 24 then reports the late failure against the
+  test **file**, not the test, so the test itself shows as passed and the file as failed, which
+  the case ids cannot map. `await` it, or `return` it, and make an async test `async`.
+- **A promise chain with no `return`.** `fn().then((v) => assert.equal(...))` settles after the
+  test ended, with the same effect. Prefer `await`.
+- **Truthiness.** `assert.ok(value)` and `assert(value)` pass for any non-empty value. Use
+  `assert.equal` or `assert.deepEqual` with the expected value.
+- **Loose equality.** `node:assert` (not `node:assert/strict`) compares with `==`, so `"1"`
+  equals `1` and a starter returning a string passes. Import `node:assert/strict`, whose `equal`
+  is `===` and whose `deepEqual` is strict.
+- **An `any` that hides a type error.** Type stripping reads no type, so a test run never sees a
+  wrong signature, and an `any` or a cast makes the optional `tsc --noEmit --strict` pass on
+  one. Declare real types in the starter and the reference, and run the type check
+  (`typecheck_command`) where the signature is part of the ask.
+- **`enum`, parameter properties and `namespace` under type stripping.** Node refuses them with
+  `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`: a file that does not load. A draft that sets
+  `assertions_only` has `G2` and `G3` refuse such a starter or plant as *not an assertion*, and
+  `G1` refuses such a reference; `--erasableSyntaxOnly` in the type check names it earlier.
+- **A skipped or nested test.** A `test.skip`, a `todo` and a `test(...)` inside another test do
+  not run as a case of their own. A case that was never run is not a pass.
+- **A stub that returns without asserting.** A test whose body calls the code and ends passes.
+  Every test ends in an assertion on the value the ask names.
+
+⭐ **Prove the plant of each language's own trap before the pass:** a wrong solution that is
+the mistake, never the deletion of the code, and the test that must fail on it.
 
 ### Threads
 

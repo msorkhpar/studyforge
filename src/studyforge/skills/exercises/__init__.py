@@ -41,6 +41,7 @@ runner is the caller's.
 | `drafts` | the page, the three source cases, the brief, the two draft shapes, and no retreat |
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
 | `quizdoc` | a quiz's own document read back, through R9's guard, as an adapter reads it |
+| `tryit` | a practice's try-it file: its name, skeleton and Run command per language |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |
@@ -74,6 +75,7 @@ gate answers → what one page ships → what the corpus commits.
 
 from __future__ import annotations
 
+from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises.accounting import (
     ACCOUNTED_KEYS,
     LEDGER_API,
@@ -115,6 +117,8 @@ from studyforge.skills.exercises.drafts import (
     AuthoringError,
     Brief,
     CodeDraft,
+    DeckDraft,
+    EditedFile,
     Judge,
     Page,
     QuizDraft,
@@ -125,6 +129,7 @@ from studyforge.skills.exercises.drafts import (
     source_case,
     words_of,
 )
+from studyforge.skills.exercises.deckgating import gate_deck
 from studyforge.skills.exercises.gating import (
     OUTPUT_LINES,
     Gated,
@@ -133,6 +138,13 @@ from studyforge.skills.exercises.gating import (
     gate_code,
     gate_quiz,
     json_bytes,
+)
+from studyforge.skills.exercises.deckdoc import (
+    DECK_API,
+    DECK_DOCUMENT,
+    Deck,
+    DeckRefused,
+    deck_of,
 )
 from studyforge.skills.exercises.ledger import (
     ENTRY_KEYS,
@@ -237,6 +249,14 @@ __all__ = [
     "AuthoringError",
     "Brief",
     "CodeDraft",
+    "DECK_API",
+    "DECK_DOCUMENT",
+    "Deck",
+    "DeckDraft",
+    "DeckRefused",
+    "EditedFile",
+    "PlantSpec",
+    "Replacement",
     "Covered",
     "Delta",
     "Entry",
@@ -267,7 +287,9 @@ __all__ = [
     "carried_practices",
     "commit",
     "digests",
+    "deck_of",
     "gate_code",
+    "gate_deck",
     "gate_quiz",
     "json_bytes",
     "key_of",

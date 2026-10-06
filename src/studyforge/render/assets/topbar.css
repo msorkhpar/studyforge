@@ -1,0 +1,121 @@
+/* The top bar: always on screen, carrying the search, the reading-mode switch and the theme.
+
+   ⛔ NOT ONE COLOUR AND NOT ONE CLASS. Every value is a `palette.css` token and every
+   part is reached by its role, its label or a published `data-*` hook.
+
+   ⭐ INSIDE THE MASTHEAD, FIXED TO THE WINDOW. `page.html` declares the top-level positions
+   of `<body>` that the rail's grid row span counts, so the bar is a child of `<header>` and
+   leaves the flow with `position: fixed`: it adds no row and no grid cell. `body` takes the
+   bar's height as top padding so nothing starts underneath it, `html` takes it as scroll
+   padding so a heading opened by its address is not hidden behind it, and the rail and the
+   outline stick just below it.
+
+   ⛔ Its layer is 2: above the page and the skip link, below the practice workspace (3 and 4),
+   which is a full-window mode with a bar of its own. The search dialog (`search.css`) is above
+   everything. */
+
+html { scroll-padding-top: calc(var(--topbar) + .75rem); }
+
+body { padding-top: var(--topbar); }
+
+body > header > div[role="toolbar"][data-section="topbar"] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  height: var(--topbar);
+  padding: 0 var(--gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-ui);
+}
+
+/* The search sits at the left edge of the bar; the mode switch and the theme icon at the right. */
+body > header > div[role="toolbar"] > button[data-section="search-open"] {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: min(20rem, 40vw);
+  margin-right: auto;
+  padding: .35rem .6rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--bg);
+  color: var(--muted);
+  font: inherit;
+  font-size: .88rem;
+  cursor: pointer;
+}
+
+body > header > div[role="toolbar"] > button[data-section="search-open"][hidden] { display: none; }
+
+body > header > div[role="toolbar"] > button[data-section="search-open"]:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+}
+
+body > header > div[role="toolbar"] > button[data-section="search-open"] span { flex: 1 1 auto; text-align: left; }
+
+body > header > div[role="toolbar"] kbd {
+  flex: 0 0 auto;
+  padding: 0 .35rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+  background: var(--surface);
+  color: var(--fg-soft);
+  font-family: var(--font-ui);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+
+/* --- the theme icon ------------------------------------------------------- */
+
+/* ⭐ One button that shows the theme the page is in: the sun on a light page, the moon on a dark
+   one, and pressing it chooses the other. ⛔ Chosen by CSS alone from the same `data-theme`
+   attribute and system scheme `palette.css` answers to, so the icon is right on the first paint. */
+body > header > div[role="toolbar"] > button[data-section="theme"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+body > header > div[role="toolbar"] > button[data-section="theme"][hidden] { display: none; }
+
+body > header > div[role="toolbar"] > button[data-section="theme"]:hover { background: var(--surface-2); }
+
+button[data-section="theme"] svg[data-icon="moon"] { display: none; }
+
+:root[data-theme="dark"] button[data-section="theme"] svg[data-icon="sun"] { display: none; }
+:root[data-theme="dark"] button[data-section="theme"] svg[data-icon="moon"] { display: block; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) button[data-section="theme"] svg[data-icon="sun"] { display: none; }
+  :root:not([data-theme="light"]) button[data-section="theme"] svg[data-icon="moon"] { display: block; }
+}
+
+/* The page outside the reading mode: a note under the bar in the masthead, in the flow. */
+body > header aside[data-section="mode-outside"] { max-width: var(--measure); }
+
+/* --- the rail and the outline start under the bar ------------------------- */
+
+@media (min-width: 72rem) {
+  body > nav[aria-label="Containers"],
+  body:has(nav[aria-label="Containers"]) > nav[aria-label="Outline"],
+  body:has(nav[aria-label="Containers"]) > section[aria-label="About this site"] {
+    top: var(--topbar);
+    max-height: calc(100vh - var(--topbar));
+  }
+}

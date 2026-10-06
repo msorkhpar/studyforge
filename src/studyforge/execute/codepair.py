@@ -31,6 +31,15 @@ something the author did not; the file then opens alone. ⭐ Where several
 files share one name, the one whose directory shares the longest tail with the
 file's own — the package — is the partner, and a tie there is no partner too.
 
+## ⭐ Across languages only when the same suffix pairs nothing
+
+⭐ Where a module holds Java and Kotlin together (`SHARED_MODULE_RUNTIMES`, both
+declared), a test that no source of its own suffix pairs falls back to a source of the
+other language, by the same name and then the same text; a source likewise falls back to
+a test of the other. ⛔ **Same-suffix pairing is read first and wins**; a corpus declaring
+one such language, or none, has no fallback and pairs exactly as before. The test command
+is unchanged: it names the module and the test's stem, never its source.
+
 ## ⭐ The build module is the scope
 
 ⭐ **A partner is looked for inside the file's own build module** — the
@@ -52,6 +61,12 @@ reader sees *Tests run: 8, Failures: 0* rather than an exit line alone.
 ⛔ **A corpus whose build tool has no command here gets none**, and the page
 then offers no Run rather than one that cannot work: a command is never guessed
 for a tool nobody measured.
+
+## ⭐ One command per kind of test, by `testargv`
+
+⭐ `test_command` asks `execute.testargv` for the command, chosen by the test's suffix and the
+build file its module holds: pytest for a `.py` test, `node --test` for a `.ts` or `.js` one,
+and for a JVM test the module's own tool, Maven's (a `pom.xml`, first, unchanged) or Gradle's.
 """
 
 from __future__ import annotations
@@ -63,17 +78,15 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import link_suffixes
-from studyforge.execute.codetree import CodeRefused, code_files, in_copy
+from studyforge.execute.codetree import CodeRefused, code_files
 from studyforge.execute.conventions import (
     BUILD_FILES,
     is_a_test,
+    other_language_suffixes,
     source_suffixes,
     tested_stem,
 )
-
-#: The build tools a test command is known for, and each one's build file.
-MAVEN = "maven"
-POM = "pom.xml"
+from studyforge.execute.testargv import argv_for, workdir_for
 
 #: A word a test's text may name a source by.
 WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
@@ -147,18 +160,34 @@ def pair_in(
         return None
     module = module_of(files, path, runtimes)
     suffix = PurePosixPath(path).suffix
+    other = other_language_suffixes(suffix, runtimes)
     inside = [one for one in files if one.endswith(suffix) and _under(one, module)]
     if is_a_test(path):
         sources = [one for one in inside if not is_a_test(one)]
         partner = _by_name(path, sources, tested_stem(_stem(path)))
         if partner is None:
             partner = _by_text(files[path], sources)
+        if partner is None and other:
+            # ⭐ Only where no same-suffix source paired: a source of another language.
+            sources = [one for one in files if one.endswith(other) and _under(one, module)]
+            sources = [one for one in sources if not is_a_test(one)]
+            partner = _by_name(path, sources, tested_stem(_stem(path)))
+            if partner is None:
+                partner = _by_text(files[path], sources)
         return Pair(opened=path, source=partner, test=path, module=module)
     tests = [one for one in inside if is_a_test(one)]
     named = [one for one in tests if tested_stem(_stem(one)) == _stem(path)]
     partner = _by_name(path, named, None)
     if partner is None:
         partner = _naming(path, {one: files[one] for one in tests})
+    if partner is None and other:
+        # ⭐ Only where no same-suffix test paired: a test of another language.
+        tests = [one for one in files if one.endswith(other) and _under(one, module)]
+        tests = [one for one in tests if is_a_test(one)]
+        named = [one for one in tests if tested_stem(_stem(one)) == _stem(path)]
+        partner = _by_name(path, named, None)
+        if partner is None:
+            partner = _naming(path, {one: files[one] for one in tests})
     return Pair(opened=path, source=path, test=partner, module=module)
 
 
@@ -177,35 +206,38 @@ def test_command(
     root: Path, found: Pair, runtimes: tuple[str, ...] | list[str]
 ) -> list[str] | None:
     """Return the argv that runs `found`'s test in the copy, or `None` when none is known."""
-    if found.test is None or MAVEN not in runtimes:
+    if found.test is None:
         return None
-    return _test_argv(code_files(Path(root)), found)
+    return _test_argv(code_files(Path(root)), found, runtimes)
 
 
-def _test_argv(files: dict[str, Path], found: Pair) -> list[str] | None:
-    """Return the Maven argv that runs `found`'s test among `files`, or `None`."""
-    if _pom(found.module) not in files:
+def _test_argv(
+    files: dict[str, Path], found: Pair, runtimes: tuple[str, ...] | list[str]
+) -> list[str] | None:
+    """Return the argv that runs `found`'s test among `files`, or `None`."""
+    if found.test is None:
         return None
-    reactor = found.module
-    while reactor and _pom(_parent(reactor)) in files:
-        reactor = _parent(reactor)
-    argv = ["mvn", "-B", "-o", "-f", in_copy(_pom(reactor))]
-    if found.module != reactor:
-        cut = len(reactor) + 1 if reactor else 0
-        argv += ["-pl", found.module[cut:], "-am"]
-    return [*argv, "test", f"-Dtest={_stem(found.test)}", "-Dsurefire.failIfNoSpecifiedTests=false"]
+    return argv_for(files, found.test, found.module, runtimes)
 
 
-def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
-    """Return the argv that runs each test file the copy holds, every one a command may run.
+def test_workdir(found: Pair) -> str:
+    """Return the directory `found`'s test command starts in, relative to the runner's root.
+
+    ⭐ `testargv.workdir_for`: the copy's root for a Python test, the runner's root otherwise.
+    """
+    return workdir_for(found.test or found.opened)
+
+
+def test_runs(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[tuple[str, list[str]]]:
+    """Return `(working directory, argv)` for each test file the copy holds that a command runs.
 
     ⭐ **The run service's allowlist reads this** (`serve.published`): a test's
-    command names its build module and its own stem and never its source, so
-    each test is asked for on its own and no text is read. ⚠️ Code too large to
+    command names its build module and its own file and never its source, so
+    each test is asked for on its own and no text is read but a JVM test's own
+    package line. ⭐ Each entry carries the directory its command starts in
+    (`test_workdir`), because the run service compares both. ⚠️ Code too large to
     copy runs no test, exactly as the served example then opens nothing.
     """
-    if MAVEN not in runtimes:
-        return []
     try:
         files = code_files(Path(root))
     except CodeRefused:
@@ -215,10 +247,15 @@ def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[lis
         if is_code(path, runtimes) and is_a_test(path):
             module = module_of(files, path, runtimes)
             opened = Pair(opened=path, source=None, test=path, module=module)
-            argv = _test_argv(files, opened)  # ⭐ one walk for every test, not one each
+            argv = _test_argv(files, opened, runtimes)  # ⭐ one walk for every test, not one each
             if argv is not None:
-                found.append(argv)
+                found.append((workdir_for(path), argv))
     return found
+
+
+def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
+    """Return the argv that runs each test file the copy holds: `test_runs` less directories."""
+    return [argv for _workdir, argv in test_runs(root, runtimes)]
 
 
 def _by_name(path: str, candidates: list[str], stem: str | None) -> str | None:
@@ -282,11 +319,3 @@ def _stem(path: str) -> str:
 
 def _under(path: str, module: str) -> bool:
     return not module or path.startswith(f"{module}/")
-
-
-def _parent(directory: str) -> str:
-    return directory.rpartition("/")[0]
-
-
-def _pom(directory: str) -> str:
-    return f"{directory}/{POM}" if directory else POM

@@ -23,7 +23,8 @@ from __future__ import annotations
 
 from studyforge.describe import describe_keys
 from studyforge.exercise import quiz
-from studyforge.exercise.cases import BREAKDOWN_KEYS
+from studyforge.exercise.cases import BREAKDOWN_KEYS, DEFAULT_KIND
+from studyforge.exercise.deck import DECK_KEYS
 from studyforge.exercise.concepts import CONCEPTS
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.states import GRADER_KEY
@@ -43,9 +44,19 @@ EXERCISE_KEYS = (
     "report",
     "origin",
     quiz.QUESTIONS,
+    quiz.MOCK,
     CONCEPTS,
+    "files",
+    "review",
+    "cards",
+    quiz.LAYOUT,
+    "try_file",
 )
 
+#: ⭐ `files` is the further files a reader edits beside `main_path`, written only where the
+#: practice has some (a configuration practice: a settings file, a memory file, a script).
+#: ⛔ A record without it is the record it always was, byte for byte.
+#:
 #: The keys every record carries: the reader's file, and how it runs. ⭐ Also
 #: the whole of an ungraded record, in `EXERCISE_KEYS` order.
 REQUIRED_KEYS = ("main_path", "run_command")
@@ -62,7 +73,19 @@ DEFAULTED_KEYS = ("trust",)
 #: only where the record carries them**, which is what keeps every document
 #: written before them byte-identical through a round trip (R10).
 #: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
-AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS, CONCEPTS)
+AUTHORED_KEYS = (
+    "kind",
+    *BREAKDOWN_KEYS,
+    "origin",
+    quiz.QUESTIONS,
+    quiz.MOCK,
+    CONCEPTS,
+    "files",
+    "review",
+    "cards",
+    quiz.LAYOUT,
+    "try_file",
+)
 
 
 def require_known_keys(value: dict, where: str) -> None:
@@ -118,3 +141,35 @@ def _require_whole_breakdown(value: dict, where: str) -> None:
             f"'cases' with no 'report' names tests nothing can be read from, and "
             f"a 'report' with no 'cases' is a file nothing folds through."
         )
+
+
+def written_keys(exercise) -> tuple[str, ...]:
+    """Which keys this record writes — chosen by its shape, never by which values are `None`."""
+    concepts = {CONCEPTS} if exercise.concepts is not None else set()
+    if exercise.files is not None and not exercise.is_quiz and not exercise.is_deck:
+        concepts.add("files")
+    if exercise.try_file is not None and not (exercise.is_quiz or exercise.is_deck):
+        concepts.add("try_file")
+    if exercise.is_deck:
+        carried = set(DECK_KEYS) - (set() if exercise.origin else {"origin"})
+        carried = (carried - {CONCEPTS}) | concepts
+        return tuple(key for key in EXERCISE_KEYS if key in carried)
+    if exercise.is_quiz:
+        carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
+        carried = (carried - {CONCEPTS, quiz.MOCK}) | concepts
+        if exercise.layout is not None:
+            carried.add(quiz.LAYOUT)
+        if exercise.mock is not None:
+            carried.add(quiz.MOCK)
+        if exercise.review is not None:
+            carried.add(quiz.REVIEW)
+        return tuple(key for key in EXERCISE_KEYS if key in carried)
+    carried = set(concepts)
+    if exercise.kind != DEFAULT_KIND:
+        carried.add("kind")
+    if exercise.breaks_down:
+        carried.update(BREAKDOWN_KEYS)
+    if exercise.origin is not None:
+        carried.add("origin")
+    shape = set(EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS) - set(AUTHORED_KEYS)
+    return tuple(key for key in EXERCISE_KEYS if key in shape or key in carried)

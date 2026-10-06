@@ -65,8 +65,9 @@ def lesson(
     title: str = "A lesson",
     video: dict | None = None,
     attachments: list | None = None,
+    lang: str | None = None,
 ) -> dict:
-    """One valid lesson document."""
+    """One valid lesson document, tagged with a language when one is passed."""
     return archive_document(
         source="demo",
         address=["solo"],
@@ -79,10 +80,13 @@ def lesson(
         blocks=list(LESSON_BLOCKS),
         video=video,
         attachments=attachments,
+        lang=lang,
     )
 
 
-def practice(ordinal: int = 1, *, title: str = "A practice", exercise: object = None) -> dict:
+def practice(
+    ordinal: int = 1, *, title: str = "A practice", exercise: object = None, lang: str | None = None
+) -> dict:
     """One valid practice document, graded when an exercise is passed."""
     return archive_document(
         source="demo",
@@ -96,6 +100,7 @@ def practice(ordinal: int = 1, *, title: str = "A practice", exercise: object = 
         blocks=list(PRACTICE_BLOCKS),
         starting_code="def greet(who):\n    ...\n",
         exercise=exercise,
+        lang=lang,
     )
 
 

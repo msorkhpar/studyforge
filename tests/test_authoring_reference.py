@@ -158,7 +158,7 @@ def test_the_reason_floor_the_reference_quotes_is_the_one_the_code_enforces():
 
 def test_the_block_vocabulary_is_the_shipped_vocabulary_both_ways():
     named = vocabulary_under(
-        document("archive.md"), "`blocks` — the vocabulary is closed at eleven types"
+        document("archive.md"), "`blocks` — the vocabulary is closed at twelve types"
     )
     assert named - set(BLOCK_TYPES) == set(), "archive.md names a block type that does not exist"
     assert set(BLOCK_TYPES) - named == set(), (
@@ -191,7 +191,7 @@ def test_the_reference_counts_the_keys_it_lists():
 
 def _word(number: int) -> str:
     """Spell a small count the way the reference spells it."""
-    return {4: "Four", 11: "eleven", 15: "Fifteen"}[number]
+    return {4: "Four", 5: "Five", 6: "Six", 11: "eleven", 15: "Fifteen"}[number]
 
 
 def test_every_container_map_key_has_a_row_and_no_row_invents_one():
@@ -260,6 +260,8 @@ def _spelled(number: int) -> str:
         22: "twenty-two",
         23: "twenty-three",
         24: "twenty-four",
+        27: "twenty-seven",
+        28: "twenty-eight",
         29: "twenty-nine",
         30: "thirty",
         31: "thirty-one",
@@ -274,6 +276,10 @@ def _spelled(number: int) -> str:
         47: "forty-seven",
         48: "forty-eight",
         49: "forty-nine",
+        52: "fifty-two",
+        53: "fifty-three",
+        55: "fifty-five",
+        56: "fifty-six",
     }[number]
 
 

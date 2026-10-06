@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-four checks
+## The thirty checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -85,17 +85,25 @@ checker check* is this table and nothing else.
 | 22 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
 | 23 | `check_links_resolve` | does every relative link on a unit's page lead to a file of the corpus, a unit's page or a heading of that page, from where the page sits? |
 | 24 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
+| 25 | `check_languages_are_declared` | is every `lang` a document carries, and every language an `example` block's tab names, a language `corpus.json` declares under `languages`? |
+| 26 | `check_example_code_exists` | does every `code` file an `example` block's tab names exist in the corpus as a regular file? |
+| 27 | `check_example_files_are_released` | does every `code` file an example's tab names, and every `support` path its block declares, reach the released runner (a file or folder of the corpus, not hidden, build output or a framework folder)? |
+| 28 | `check_units_have_prose` | where `corpus.json` declares `modes`, does every unit hold a lesson, tagged or common? |
+| 29 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
+| 30 | `check_run_is_not_submit` | where a corpus has a practice with a `try_file`, does any graded code practice still run its tests on Run? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 to 16 about your
 source repository, 17–20 and 22 about the authored exercises a corpus commits,
 21 about the graders that claim to be your material's own, 23 about the links
-its pages carry, and 24 about its narration.
+its pages carry, 24 about its narration, and 25–29 about the languages its documents are tagged with and the files its examples run.
 **Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
+
+**Check 30 fires only on a corpus in which a practice carries a `try_file`** (see [exercises](exercises.md)), and then on every graded code practice whose Run would grade like Submit. **Checks 28 and 29 fire only on a corpus that declares `modes`**, and checks 26 and 27 only on an example tab that names a `code` file or a block that declares `support`.
 
 **Checks 17–20 fire only on a `generated` grader, check 21 only on an
 `authoritative` one, and check 22 only on a committed ledger. Check 24 fires only
@@ -112,7 +120,7 @@ file in both.
 
 ---
 
-## The forty-nine rule ids
+## The fifty-six rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -139,6 +147,12 @@ before it, `check_untouched` after — which reports in the same shape.
 | `empty-unit` | a unit carries no blocks at all |
 | `unit-missing` | a declared unit is absent |
 | `practice-count` | declared `practices` and present practice documents disagree |
+| `language-undeclared` | a document's `lang`, or the language of an example's tab, is not a language `corpus.json` declares under `languages` (or the corpus declares none) |
+| `example-code-missing` | an example's tab names a `code` file the corpus does not hold as a regular file; asked only of a tab that names one |
+| `example-code-unreleased` | an example's tab names a `code` file the release would not carry to the runner: a hidden, build-output or framework path |
+| `example-support-missing` | an example's `support` names a path that is no file or folder of the corpus, or one the release would not carry to the runner |
+| `unit-prose` | in a corpus that declares `modes`, a unit holds no lesson document, tagged or common |
+| `mode-empty` | a declared mode lists no unit: no lesson is common or in its `prose` language, and no practice is common or in a language it offers |
 | `duplicate-path` | two artifacts would be written to one path |
 | `unplaceable` | the placement profile cannot produce a legal path |
 | `origin-not-a-file` | a declared `origin` names something that is not a file |
@@ -162,6 +176,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
+| `run-is-submit` | a graded code practice's run command equals its test command, in a corpus where another practice carries a `try_file`: Run would grade like Submit. A corpus with no try-it file anywhere is not judged |
 | `derivation-record` | an `authoritative` grader ships no record of its derivation's two gates, one nothing can read, or one that does not support the claim: another family's gates, no blanked method named, a starter or test that is not the exercise's own, or a starter identical to the original |
 | `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |
 | `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |

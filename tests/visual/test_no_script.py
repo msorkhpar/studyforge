@@ -32,14 +32,14 @@ PROSE = {
 #: ⛔ Read from the page rather than listed per fixture: it is a corpus's text, so
 #: a sentence typed here would be a third copy of two fixtures' titles.
 #:
-#: ⚠️ The theme control is inside the masthead and is NOT the masthead's words:
-#: it ships `hidden` and the page script reveals it, so reading it here would
-#: make this check say "the masthead is script-dependent" about the one region
-#: that is supposed to appear only when a script can back it. ⛔ Excluded by the
-#: hook it carries, not by its words, so renaming a label cannot re-admit it.
+#: ⚠️ The top bar and the search dialog are inside the masthead and are NOT the masthead's words:
+#: their controls ship `hidden` and the page script reveals them, so reading them here would
+#: make this check say "the masthead is script-dependent" about the regions that are supposed
+#: to appear only when a script can back them. ⛔ Excluded by the hook they carry, not by their
+#: words, so renaming a label cannot re-admit them.
 MASTHEAD = (
     "Array.from(document.querySelector('header').children)"
-    ".filter(el => !el.matches('[data-section=\"theme\"]'))"
+    ".filter(el => !el.matches('[data-section=\"topbar\"], [data-section=\"search\"]'))"
     ".map(el => el.innerText).join(' ').replace(/\\s+/g, ' ').trim()"
 )
 

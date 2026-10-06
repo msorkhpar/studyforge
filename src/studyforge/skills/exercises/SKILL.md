@@ -117,7 +117,7 @@ reasoned plans zero, and a page teaching nothing checkable names no aspect
 and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
 never how many.
 
-⛔ **The two populations are the corpus's to declare** (R1). What is
+⛔ **The two populations are the corpus's to declare** (S1). What is
 material comes from the manifest's `content` policy, and what is a grader
 comes from the corpus's own declaration. The framework never guesses a
 test-file pattern.
@@ -153,10 +153,13 @@ test-file pattern.
 
 #### ⛔ Write a draft the gates can prove
 
-- **A practice has exactly one main file.** `CodeDraft.main_file` is the one
-  file the starter, the reference and every plant replace. A hierarchy is
-  nested in it as static member types of one class, and a sealed type's
-  implicit `permits` come only from that file.
+- **A practice has one main file, and may have more files to edit.**
+  `CodeDraft.main_file` is the file the starter, the reference and a full-text
+  plant replace. A hierarchy is nested in it as static member types of one
+  class, and a sealed type's implicit `permits` come only from that file. A
+  configuration practice (a settings file, a memory file, a hook script) names
+  the others in `CodeDraft.files`; see *A practice of several files* in
+  `docs/authoring/exercises.md`, which is where that is written once.
 
   ```java
   public class Shapes {
@@ -188,6 +191,26 @@ test-file pattern.
 - ⭐ **Some wrong solutions pass tests that look complete.** Before you draft a
   practice about equality, copying, immutability, time, text, numbers or
   threads, read *What the gates cannot see* in `docs/authoring/exercises.md`.
+- ⭐ **A Python or TypeScript practice has silent passes of its own**, listed in *Python and
+  TypeScript silent passes* on that page: a test that asserts nothing, truthiness
+  (`assert x`, `assert.ok(x)`), a tuple asserted, `is` against `==`, a mutable default
+  argument, a missing `await` on `assert.rejects` (Node reports it against the file), loose
+  `==` from `node:assert`, an `any` that hides a type error from `tsc`, an `enum` or a
+  parameter property that type stripping refuses, and a stub that returns without asserting.
+  Set `assertions_only` on such a draft, so `G2` and `G3` refuse a starter or plant that fails
+  on anything but an assertion, and write the adversary's wrong solutions from that list.
+- ⭐ **A mock exam is a quiz with a `mock` key.** Tag every question with exactly one declared
+  domain (`P1` holds when every domain has a question and every question a declared domain),
+  and take `Q1` to `Q3` for each question from a reader who did not write it; a reworded
+  question needs fresh readings. See *A mock exam* on that page.
+- ⭐ **Revision aids are two more shapes, not new gates for old ones.** A review bank is a quiz
+  with a `review` schedule (`QuizDraft(review=Review(...))`: `Q1` to `Q5` over every item, and `S1`);
+  a deck is `DeckDraft` (`gate_deck`: `C1` and `C2`, mechanical, no judge). Each card cites its
+  passage. See *Revision aids* in `docs/authoring/exercises.md`, where it is written once.
+- ⛔ **A live-capable example holds no key and no captured secret.** It reads the variable the
+  manifest names from its environment, prints neither the environment nor a header, writes the
+  key nowhere and reaches the one declared host; its graded test needs no key and no network.
+  See *`live`* in `docs/authoring/corpus.md`.
 
 ⭐ **Commands are spelled from the corpus root**, and every path argument is
 inside the exercise's own workspace (`brief.places.workspace`), or `emit`
@@ -201,6 +224,46 @@ tests, and the gate record digests it. ⛔ The library itself is never a file
 you write: the pinned runner image carries it, primed from the corpus's own
 build (`skills.execution`, step 4a), so a build naming something the prime did
 not warm fails `G1` and does not ship.
+
+#### ⛔ Write it once
+
+⭐ **A plant is a few lines away from the reference, so write it as the few
+lines.** Give `CodeDraft.plants` a `PlantSpec` for each edge: an ordered list
+of `Replacement(file, old, new)`, each `old` occurring exactly once in the
+text it is applied to. The gate materialises the full plant from the reference
+into its own staging directory, and the bundle stores the spec alone, so
+fixing the reference reaches every plant at the next gate run instead of
+leaving ten copies to drift. A plant that comes out identical to the
+reference, or a replacement whose text is gone or ambiguous, is refused by
+position, never silently skipped. A full-text plant is still accepted, for the
+plant whose change is most of its file.
+
+- ⛔ **Never hand-copy a file to vary it.** A plant, a second starter, a
+  variant of a test: derive it from the file it varies, by a replacement or by
+  one function, so the original is the only place it is edited.
+- ⭐ **One shared generator or tool per course, never a copy per batch.** A
+  script that builds a course's practices, runs its checks or writes its
+  examples lives in one place and takes the batch as its argument. A second
+  copy for the next batch is a second place to fix, and the two stop agreeing.
+- ⭐ **Share test helpers where the runner allows.** A fixture, a runner
+  shim or a report reader several practices need belongs in one module the
+  tests import. ⛔ **Each learner workspace still stays self-contained and
+  readable**: a file a learner opens does not inherit from, import from or
+  point to a file they must go and find to understand it, and what the
+  workspace needs must be there when it is copied out alone.
+- ⚠️ **Keep the duplication that is the material**, and only that:
+  a learner's own file (the starter and the tests they edit stay whole, with
+  nothing to chase); a page's visible example (what the page shows is what a
+  reader sees, shown whole, and it is not reduced to a reference to
+  somewhere else); and a language's idiomatic version (the Java and the
+  Kotlin of one idea are two solutions, each as that language would write it,
+  and not one generated from the other). Remove a copy only when nothing a
+  learner reads is harmed by its going.
+
+`studyforge.exercise.bundle.convert` turns a course's existing full plants into
+specs once: it proves each by materialising it again and reading the bytes
+back, and leaves any plant it cannot prove. See *A plant as replacements* in
+`docs/authoring/exercises.md`.
 
 ### 3. Run the pass
 

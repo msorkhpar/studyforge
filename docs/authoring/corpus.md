@@ -66,12 +66,15 @@ below.
 | `curriculum` | *optional* | Which document records your reading order and grouping, the address each of its groups is filed at, optionally the filename prefix each group's files carry, as a check, and whether the record opens each container of your last level with a linked entry. Absent means your adapter reads its record itself |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
+| `profile` | *optional* | The toolchain image profile your runner and editor are built on, beyond the base of your `runtimes`: a name, such as the toolchain lists it. Needs `runtimes`; absent means the bases alone |
+| `live` | *optional* | Which examples and practices may be run live against a reader's own API key: one host, the name of the variable the key is given under, and what runs. Needs `runtimes`; absent means no live run |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
 | `languages` | *optional* | The languages a section may be tagged with: a list of `{id, label, fence_labels}`. Absent means no tagging and today's behaviour |
 | `modes` | *optional* | The reading modes a reader chooses between: a list of `{id, label, summary, prose, tabs, practices}` and an optional boolean `practice_choice`. Needs `languages`; absent means no question |
 | `default_mode` | *optional* | The id of the mode shown without scripts. Needs `modes`; absent means the first declared mode |
 | `outside_mode` | *optional* | What an entry does in a mode that does not show its language: `open` or `locked`. Needs `modes`; absent means `open` |
+| `absent_language` | *optional* | What an example block and a practice show for a language they lack: `hide` or `grey`. Needs `modes`; absent means `hide` |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -382,6 +385,51 @@ restore it, and regenerate.
 
 ---
 
+## `profile` — an image profile as the base of your layers
+
+Optional. A toolchain may carry profiles: images layered on the base of a declared set that hold
+what not every corpus needs, such as pinned Python wheels, npm packages or JVM jars for offline
+practices. Name one in `profile` and the export builds the runner's and the editor's course
+layers on that profile's images instead of the plain bases. The key needs `runtimes` and at least
+the runtimes the profile layers on, which the toolchain checks when the course is exported. The
+framework names no profile; the name is yours. A course that names a profile is exported thin
+only, with a bases lock that carries a `profile` entry (see the execution skill, *A course's main
+stands alone*); a corpus with no `profile` is exported exactly as before.
+
+## `live` — runs against a reader's own key
+
+Optional, and a corpus without it is built and served exactly as before. A corpus that teaches a
+service whose real API a reader may call with their own key can name the examples and practices that
+may run that way: `{"host": "api.example.test", "key_variable": "EXAMPLE_API_KEY", "examples":
+[{"path": "examples/a/run.py", "command": ["python3", "examples/a/run.py"]}], "practices":
+["<practice key>"]}`. `host` is the one bare lower-case hostname a live run may reach; the framework
+names none. `key_variable` is the NAME of the environment variable the reader's key is given to a live
+run under, never a value. An example is a code file a page links and the argv that runs it (the same
+safe form a practice's command has); a practice runs its own `run_command`. The key needs `runtimes`.
+
+The reader types the key in the served site; it is kept in the browser (the tab only, unless they opt
+in to keeping it on the device) and sent only in the body of a live-run request. A live run happens
+only in a course served from its own compose with the `live` profile; a read-only preview and a
+corpus served any other way show no key field and no control. Live runs are never graded.
+
+**What a live-capable example may and may not contain.** A live example is ordinary code with one
+extra property: it can be started with a key. So that no key can ever rest in the course:
+
+- ⛔ **No key, anywhere in the corpus.** Not in the source, the command, a fixture, a recorded
+  exchange, a log, a comment or a test. The example reads the variable the manifest names, by that
+  name, from its environment; it reads no file for it, and the framework reads none either.
+- ⛔ **No captured secret.** A recorded exchange shown on a page carries no key, header, request
+  id, organisation id or token, and is labelled as captured, with the model and the date.
+- ⛔ **The key is never printed or kept.** The program does not print its environment, its client
+  configuration or a request's headers, and it writes the key to no file; an error it prints names
+  what failed and never the value it was given.
+- **One host.** It reaches only the host the manifest names; a second host is refused by the
+  proxy and is a defect of the example.
+- **A command is argv**, written in the safe form the manifest checks, never a shell string.
+- **Grading is separate.** The example's offline test, the one a Run or a Submit uses, runs
+  against the course's scripted stand-in with no key and no network; the live command is another
+  argv beside it. A live-capable practice is graded exactly as before; the live run is never graded.
+
 ## `languages` and `modes` — reading modes
 
 All four keys are optional, and a corpus that declares none is read exactly as before.
@@ -394,6 +442,82 @@ or `locked`) need `modes`. A manifest is refused by name for an undeclared langu
 repeated id, a shared fence label, a `default_mode` that is no mode or an `outside_mode`
 that is neither value. The keys need `corpus_api` 8, which this build already writes;
 validation never asks a unit to have anything in a language.
+
+A practice written in several languages is one practice with an edition per language: the
+practice documents of a unit that share an `edition` (and each name their own `lang`) are one card,
+and the mode decides only which edition its panel opens in (`practices`, then `prose`, then
+`tabs`). See *One practice in several languages* in `exercises.md`.
+
+**What a reader sees.** A corpus that declares `modes` writes `modes.css` and `modes.js`
+beside `page.css` and `page.js`, and every page carries a switch listing the declared
+modes. On a first visit a card asks which one to read, listing each mode's label and
+summary; the choice is kept in the browser the way the theme is, through guarded reads
+and writes, so a page where the browser refuses storage still renders and simply asks
+nothing. A mode shows the sections tagged with its `prose` language and the untagged
+ones; the page's outline drops the lines that point at hidden sections. With scripts
+off, in a crawl, and before an answer, a page shows the `default_mode` view: the root
+element carries `data-mode` with that value and the stylesheet keys on it. A page opened
+from a file asks on every load. A corpus that declares no `modes` gets none of this: no
+switch, no question, no script, no style and no file.
+
+**An entry with nothing for the mode.** A unit whose sections are all tagged, and a
+module whose units all are, is never hidden: in a mode that does not read its languages
+its row in the index, the rail and the module's list stays, greyed, with a label naming
+its languages (`data-entry-lang` on the row; a unit with any untagged section is read in
+every mode and carries nothing). Under `outside_mode: open` it is greyed and still a
+link; opening it shows every section in its own language under a one-line note naming
+the modes that read it normally, and the previous and next links walk through it. Under
+`locked` its row is an anchor with no `href`, `aria-disabled`, out of the tab order (the
+address stays in `data-href` and comes back when a mode that reads it is chosen); the
+previous and next links pass over it (the bar holds the neighbours up to the first one
+every mode reads, and shows the first the chosen mode opens); and a direct link to it
+shows only a note naming the modes that read it with a control for each. In both
+settings the counts (`of N read` on a group, the progress line and strip, the Up next
+slip, a module's unit count) cover the pages the mode reads. A link to a section the mode
+hides shows that section while the link is the target. With scripts off the page is the
+`default_mode` view in every respect, including which rows are closed and what the bar
+shows.
+
+**An example with a tab for each language.** An `example` block holds from one to eight
+tabs, each naming a declared language once; validation refuses a ninth, a repeated language and
+an undeclared one, and the Markdown marker `<!-- example: <id> tabs: a,b,c,d -->` refuses the
+same. A mode's `tabs` list says which of the block's tabs the mode shows and in what order: the
+first it lists opens, a click changes that block only, and a mode that lists one language shows
+that tab and no bar. At phone width the bar wraps inside the block, every tab is at least 44 px,
+and the keys are those of the WAI-ARIA tabs pattern (Left and Right wrap, Home, End, one tab in the
+tab order). With scripts off every panel is present under its language's label.
+
+**A section for several languages.** A section, a lesson or a practice may be tagged with several
+declared languages (`lang` names them, joined by single spaces; the Markdown marker writes
+`<!-- lang: a,b -->`). It reads in the mode of each of them and in no other, its unit belongs to
+each of them, and the note a page outside a mode shows names every mode that reads it. A corpus
+whose sections each name one language builds the style rules it always did; the rules match a tag
+as a list of words only once some section names several.
+
+**Any number of languages and modes.** The framework counts neither: a corpus of one, two, three
+or four languages is read the same way, the first-visit question and the switch list exactly the
+declared modes, and nothing in the framework names a language.
+
+**A language a block or a practice lacks.** `absent_language` (`hide`, the default, or `grey`;
+needs `modes`) decides what an example block and a practice card show for a declared language they
+are not written in. Under `hide` they show nothing for it, as they always did. Under `grey`:
+
+- an example block has, for each declared language it has no tab for, a **disabled tab**
+  (`aria-disabled`, no panel, still focusable so its reason can be read; a click selects nothing and
+  the arrow keys, Home and End still reach it without selecting it), and one sentence,
+  `Available in: <languages>.`, naming the languages that do carry it, built from the corpus's own
+  `languages`. A mode that lists none of the block's languages still shows the block, with the
+  disabled tab and the sentence, never hides it; the first enabled tab the mode lists opens;
+- a practice card carries the languages its section is tagged with and a sentence naming them; in a
+  mode whose `practices` list holds none of them the card is greyed, its link is `aria-disabled`
+  and does not open, and Previous and Next in the practice workspace pass over it; a practice a
+  mode lists reads in its own language whatever that mode's `prose`, and its panel is tagged so
+  a mode that hides its statement hides it too;
+- a read-only preview keeps all of it: the panel's note replaces the panel, the banner is
+  unchanged, and the page reads the default mode until a question is answered (a page opened from a
+  file asks on every load).
+
+A corpus that leaves the key out, or says `hide`, builds to the bytes it always did.
 
 ## `curriculum` — where your reading order is recorded
 

@@ -30,6 +30,7 @@ give a learner images the builder never ran.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 from collections.abc import Mapping, Sequence
@@ -42,6 +43,7 @@ from studyforge.skills.execution.contract import (
     EDITOR_API,
     EDITOR_COMPONENT,
     EDITOR_PROMISE,
+    optional,
     read,
     require,
 )
@@ -126,6 +128,108 @@ def unprimed_tags(
 def asker(checkout: Path, *, platform: str, run: Run):
     """Return a function asking `checkout` for the unprimed tags of a runtime set."""
     return lambda runtimes: unprimed_tags(checkout, runtimes, platform=platform, run=run)
+
+
+#: ⛔ The shape of the `profile_tag` block this module has read.
+PROFILE_TAG_API = 1
+
+#: The slots `profile_tag.printed_by` carries beside `SET_SLOT`.
+PROFILE_SLOT = "<profile>"
+PROFILE_IMAGE_SLOT = "<runner|editor>"
+PLATFORM_SLOT = "<platform>"
+
+
+def _profile_tag_by(checkout: Path) -> list[str]:
+    """Return the command the contract names for a profile's tag, or refuse the toolchain.
+
+    ⭐ Read from `consuming.json`'s `profile_tag` block and never written in here: a toolchain
+    that carries no such block is refused by name, as a finding against that toolchain.
+    """
+    try:
+        text = (checkout / CONSUMING).read_text(encoding="utf-8")
+    except OSError as missing:
+        raise VendorRefused("the toolchain checkout carries no consuming.json") from missing
+    contract = read(text, component=EDITOR_COMPONENT, api=EDITOR_API, promise=EDITOR_PROMISE)
+    block = optional(contract, "profile_tag")
+    if not isinstance(block, Mapping):
+        raise VendorRefused(
+            "the toolchain's consuming.json declares no profile_tag, so it does not say how a "
+            "profile's tag is asked for: use a toolchain release that declares it"
+        )
+    if block.get("profile_tag_api") != PROFILE_TAG_API:
+        raise VendorRefused(
+            "the toolchain declares its profile tag in a shape this skill has not read"
+        )
+    command = block.get("printed_by")
+    if not isinstance(command, list) or not all(isinstance(one, str) for one in command):
+        raise VendorRefused("the toolchain's profile_tag.printed_by is not a command")
+    for slot in (PROFILE_SLOT, PROFILE_IMAGE_SLOT, SET_SLOT, PLATFORM_SLOT):
+        if slot not in command:
+            raise VendorRefused(f"the toolchain's profile_tag.printed_by names no {slot} slot")
+    return command
+
+
+#: What a tag, after its repository, may be made of.
+_TAG_AFTER_COLON = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$")
+
+
+def profile_tags(
+    checkout: Path, profile: str, runtimes: Sequence[str], *, platform: str, run: Run
+) -> dict[str, str]:
+    """Return the tag, after its repository, the toolchain computes for `profile`'s two images.
+
+    ⭐ The profile is the course's own declaration, and the toolchain is asked, so a profile it
+    does not have, or one that layers on runtimes the course does not declare, is refused by the
+    toolchain's own answer and surfaces here as `VendorRefused`. Nothing is built.
+    """
+    command = _profile_tag_by(Path(checkout))
+    slots = {
+        PROFILE_SLOT: profile,
+        SET_SLOT: ",".join(runtimes),
+        PLATFORM_SLOT: platform,
+        "python3": sys.executable,
+    }
+    found: dict[str, str] = {}
+    for image in ("runner", "editor"):
+        argv = [{**slots, PROFILE_IMAGE_SLOT: image}.get(one, one) for one in command]
+        code, printed = run(argv, Path(checkout))
+        if code != 0:
+            raise VendorRefused(
+                f"the toolchain refused profile {scrub(profile)} for the course's runtimes "
+                f"(exit {code}): run its profile command in the checkout to read why"
+            )
+        repository, _, tag = printed.strip().rpartition(":")
+        if not repository or not _TAG_AFTER_COLON.match(tag):
+            raise VendorRefused(
+                f"the toolchain printed no tag for the {image} of profile {scrub(profile)}"
+            )
+        assert_clean({"tag": tag}, f"the toolchain's {image} tag for the profile")
+        found[image] = tag
+    return found
+
+
+def profile_check(
+    manifest, bases, checkout: Path, *, platform: str, run: Run
+) -> dict[str, object]:
+    """The arguments `bases.check` takes for the course's image profile: none, if it has none.
+
+    ⛔ A course that declares a profile is exported thin only: a profile's images are published
+    bases, and a self-contained tree builds every base from the toolchain's own recipe, which holds
+    no profile. ⭐ The toolchain is asked once, for the declared profile, and only if there is one.
+    """
+    if manifest.profile and bases is None:
+        raise VendorRefused(
+            "the course declares an image profile, whose images are published bases: "
+            "export it thin, with a lock that names them"
+        )
+    if not manifest.profile:
+        return {}
+    return {
+        "profile_declared": manifest.profile,
+        "profile_tags": profile_tags(
+            checkout, manifest.profile, manifest.runtimes, platform=platform, run=run
+        ),
+    }
 
 
 def pinned(

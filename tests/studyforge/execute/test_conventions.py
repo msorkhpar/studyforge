@@ -67,3 +67,12 @@ def test_a_test_stem_names_what_it_tests_once_its_marking_is_off(stem, tested):
 )
 def test_a_test_is_known_by_its_directory_or_its_stem(where, test):
     assert is_a_test(where) is test
+
+
+def test_other_language_suffixes_need_two_shared_module_languages_declared():
+    from studyforge.execute.conventions import other_language_suffixes
+
+    assert other_language_suffixes(".java", ("java", "kotlin")) == (".kt",)
+    assert other_language_suffixes(".kt", ("java", "kotlin")) == (".java",)
+    assert other_language_suffixes(".java", ("java", "maven")) == ()
+    assert other_language_suffixes(".py", ("java", "kotlin", "python")) == ()

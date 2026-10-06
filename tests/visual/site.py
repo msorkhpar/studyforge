@@ -68,7 +68,15 @@ from studyforge.corpus.placement import relative_href
 from studyforge.generate.navigation import rail, trail
 from studyforge.render import pageassets
 from studyforge.render.index import render as render_index
-from studyforge.render.page import Crumb, Link, Links, Placement, RailContainer, render
+from studyforge.render.page import (
+    Crumb,
+    Link,
+    Links,
+    Placement,
+    RailContainer,
+    mock_form_files,
+    render,
+)
 from tests.studyforge.render.container import containers
 from tests.studyforge.render.index import indexes
 from tests.studyforge.render.page.sites import FIXTURES as UNIT_CASE_OF
@@ -185,6 +193,9 @@ def build(root: Path, damage: str | None = None) -> Site:
     if damage is not None and damage not in DAMAGE:
         raise ValueError(f"no such damage {damage!r}; declared: {sorted(DAMAGE)}")
     written: dict[str, str] = dict(pageassets.written_files())
+    # ⭐ A plain quiz is drawn one question at a time by the exam form's files, which a build writes
+    # beside the bundle for a corpus that has one.
+    written.update(mock_form_files())
     if damage in STYLESHEET_DAMAGE:
         written[pageassets.STYLESHEET_NAME] = STYLESHEET_DAMAGE[damage](
             written[pageassets.STYLESHEET_NAME]

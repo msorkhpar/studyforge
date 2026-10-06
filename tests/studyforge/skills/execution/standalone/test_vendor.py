@@ -28,10 +28,21 @@ PRINTED_BY = [
 ]
 
 
+PROFILE_TAG = {
+    "profile_tag_api": vendor.PROFILE_TAG_API,
+    "printed_by": [
+        "python3", "docker/profile_packages/package_build.py", "--profile", "<profile>",
+        "--image", "<runner|editor>", "--runtimes", vendor.SET_SLOT, "--print-tag",
+        "--platform", "<platform>",
+    ],
+}
+
+
 def toolchain(where: Path, **builds) -> Path:
     """A checkout whose contract declares `builds`, with one input root on disk."""
     document = contracts.editor_contract()
     document["builds"] = {"builds_api": vendor.BUILDS_API, "printed_by": PRINTED_BY, **builds}
+    document["profile_tag"] = PROFILE_TAG
     where.mkdir(parents=True)
     (where / "consuming.json").write_text(json.dumps(document), encoding="utf-8")
     (where / "docker" / "minimal").mkdir(parents=True)
@@ -199,13 +210,22 @@ def test_the_unprimed_tags_of_a_set_are_asked_without_a_prime_and_read_past_unre
     builds = [one for one in asked if one[0] != "git"]
     assert len(builds) == 2
     assert all("java,node" in one and "--prime" not in one for one in builds)
-    with pytest.raises(PersonalDataLeak):  # the tree-writing path still gates every key
+    # the tree-writing path reads the same file name past, and still gates every key
+    vendor.ask(
+        toolchain(tmp_path / "tc3"),
+        ("java",),
+        tmp_path,
+        platform="linux/amd64",
+        run=answering(TAGS, args=vsix),
+    )
+    address = {"FETCH": "contact " + "someone" + "@" + "registrable" + ".net"}
+    with pytest.raises(PersonalDataLeak):
         vendor.ask(
             toolchain(tmp_path / "tc2"),
             ("java",),
             tmp_path,
             platform="linux/amd64",
-            run=answering(TAGS, args=vsix),
+            run=answering(TAGS, args=address),
         )
 
 
