@@ -70,6 +70,7 @@ from studyforge.corpus.discovery.cache import (
     Cached,
     cache_path,
 )
+from studyforge.corpus.discovery.cache import read as read_cache
 from studyforge.corpus.discovery.errors import DiscoveryError
 from studyforge.corpus.discovery.freshness import (
     FRESH,
@@ -82,7 +83,8 @@ from studyforge.corpus.discovery.freshness import (
 from studyforge.corpus.discovery.scan import PAGE_SUFFIXES, pages, scan
 from studyforge.corpus.discovery.site import Artifact, Site, Unidentified
 
-#: ⛔ The package's whole public surface.
+#: ⛔ The package's whole public surface. ⭐ `read_cache` is shared with `serve.versions`,
+#: which folds a build's recorded digest into an asset's validator.
 __all__ = [
     "FRESH",
     "KNOWN_SITE_API",
@@ -102,6 +104,7 @@ __all__ = [
     "cache_path",
     "freshness",
     "pages",
+    "read_cache",
     "scan",
     "scan_sha256",
 ]
