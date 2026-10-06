@@ -29,7 +29,9 @@ extraction pays that debt during the port, not after: it arrives as focused
 modules or it does not arrive.
 
 **The static half**: `app` (the loopback server and its seams), `security`,
-`caching`, `response`, `routes.content` and `routes.assets`. **Then**:
+`caching`, `response`, `routes.content` and `routes.assets` — with `versions` (what a
+file version was judged to be, held until it moves), `routes.gated` (text, sent whole,
+streamed or gzip-coded) and `sending` (a file's span, sent by the kernel). **Then**:
 `discovery` (a root in, every corpus under it found, no configured paths),
 `addressing` (N-segment unit addresses at each corpus's own depth), `routes.state`
 (never cached, derived from the filesystem on every request) and `instance`

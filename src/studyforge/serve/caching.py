@@ -5,11 +5,21 @@ ETag over a content document's bytes and a **weak** ETag over an asset's size an
 modification time — answers the `304` question for `If-None-Match`, and reads a
 single `Range` header against a file's length.
 
-**How you use it.** `strong_etag(body)` and `weak_etag(stat)`;
+**How you use it.** `strong_etag(body)` and `weak_etag(stat, build)`;
 `not_modified(header, etag)`; `parse_range(header, size)` returns `WHOLE`,
-`UNSATISFIABLE`, or an inclusive `(first, last)` pair.
+`UNSATISFIABLE`, or an inclusive `(first, last)` pair. `accepts_gzip(header)` reads
+`Accept-Encoding`, `gzip_etag(etag)` tells a compressed representation's validator
+from the identity one's, and `gzipped(body)` is the one compressor.
 
-**Depends on.** `hashlib` and `os`. No request, no response, no disk.
+**Depends on.** `gzip`, `hashlib` and `os`. No request, no response, no disk.
+
+⭐ **An asset's weak validator folds in the build's own digest** where a build recorded
+one (`serve.versions.build_digest`): a rebuild that leaves a file's size and times alone
+still moves it. A root no build recorded keeps `W/"<size>-<mtime>"`.
+
+⭐ **A compressed answer is its own representation** (RFC 9110 §8.4): it carries
+`gzip_etag`'s mark inside the opaque tag, and `Vary: Accept-Encoding` is sent beside it.
+⛔ `gzipped` writes no timestamp, so one file's compressed bytes are the same every time.
 
 ## ⭐ Why the two namespaces get different validators
 
@@ -32,6 +42,7 @@ is weak and says so. ⛔ A weak validator never satisfies `If-Range` (RFC 9110
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import os
 
@@ -54,9 +65,48 @@ def strong_etag(body: bytes) -> str:
     return f'"{hashlib.sha256(body).hexdigest()}"'
 
 
-def weak_etag(stat: os.stat_result) -> str:
-    """Return `W/"<size>-<mtime>"`, a local validator marked weak because it is not content."""
-    return f'W/"{stat.st_size:x}-{stat.st_mtime_ns:x}"'
+#: The content coding offered for text, and the mark its validator carries.
+GZIP = "gzip"
+GZIP_ETAG_MARK = "+gzip"
+
+
+def weak_etag(stat: os.stat_result, build: str | None = None) -> str:
+    """Return `W/"<size>-<mtime>"`, a local validator marked weak because it is not content.
+
+    ⭐ `build` is the build's own digest, folded in after the times where there is one.
+    """
+    tail = f"-{build}" if build else ""
+    return f'W/"{stat.st_size:x}-{stat.st_mtime_ns:x}{tail}"'
+
+
+def accepts_gzip(header: str | None) -> bool:
+    """Say whether `Accept-Encoding` admits gzip: named, or `*`, with a non-zero weight."""
+    weights: dict[str, float] = {}
+    for item in (header or "").split(","):
+        coding, _, params = item.strip().partition(";")
+        weight = 1.0
+        for param in params.split(";"):
+            name, _, value = param.strip().partition("=")
+            if name.strip().lower() == "q":
+                try:
+                    weight = float(value)
+                except ValueError:
+                    weight = 0.0
+        weights[coding.strip().lower()] = weight
+    for coding in (GZIP, "x-" + GZIP, "*"):
+        if coding in weights:
+            return weights[coding] > 0
+    return False
+
+
+def gzip_etag(etag: str) -> str:
+    """Return the validator of the gzip-coded representation of the one `etag` names."""
+    return f'{etag[:-1]}{GZIP_ETAG_MARK}"' if etag.endswith('"') else etag + GZIP_ETAG_MARK
+
+
+def gzipped(body: bytes) -> bytes:
+    """Return `body` gzip-coded, with no timestamp, so the same bytes code the same way."""
+    return gzip.compress(body, compresslevel=6, mtime=0)
 
 
 def not_modified(header: str | None, etag: str) -> bool:

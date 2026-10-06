@@ -49,6 +49,7 @@ shape this build does not recognise, `500` for personal data.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Protocol
 
@@ -176,17 +177,24 @@ def _as_written(directory: Path) -> Marks:
 
 
 def _stamp(directory: Path) -> tuple:
-    """Every file under `directory` with its size and mtime, sorted: what a rebuild reads."""
+    """Every file under `directory` with its size and mtime, sorted: what a rebuild reads.
+
+    ⚠️ Asked on every request a file is gated for, so it walks with `os.scandir`: a
+    `Path.rglob` costs several times as much over the same tree.
+    """
+    found, pending = [], [os.fspath(directory)]
     try:
-        found = sorted(path for path in Path(directory).rglob("*") if path.is_file())
-        return tuple((path.as_posix(), *_size_and_time(path)) for path in found)
+        while pending:
+            with os.scandir(pending.pop()) as entries:
+                for entry in entries:
+                    if entry.is_dir(follow_symlinks=False):
+                        pending.append(entry.path)
+                    elif entry.is_file():
+                        stat = entry.stat()
+                        found.append((entry.path, stat.st_size, stat.st_mtime_ns))
     except OSError:
         return ()
-
-
-def _size_and_time(path: Path) -> tuple[int, int]:
-    stat = path.stat()
-    return stat.st_size, stat.st_mtime_ns
+    return tuple(sorted(found))
 
 
 def version_document(namespaces: object, own: tuple[str, ...]) -> dict:

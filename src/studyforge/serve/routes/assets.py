@@ -9,9 +9,16 @@ gate before it leaves; binary media is streamed.
 `serve(root, request, url_path, private)` for the static mount, which is the same
 function — ⛔ **one resolver, never two**, because two are two traversal surfaces.
 
-**Depends on.** `archive.scrub`, `corpus.placement.profile` for the generated
-directory's name, `serve.caching`, `serve.response`, and `serve.withheld` for a
-quiz's key.
+**Depends on.** `corpus.placement.profile` for the generated directory's name,
+`serve.caching`, `serve.response`, `serve.versions` for what a file version was judged
+to be, `routes.gated` for answering text (and, through it, `archive.scrub`), and
+`serve.withheld` for a quiz's key.
+
+⭐ **A file is read and judged once per version, not once per request.** `serve.app`
+hands both mounts one `serve.versions.Versions`, and every verdict below — a quiz's
+key, the personal-data gate, a text's gzip coding — is held against the file's
+version and reached again only when the file moves (or its quizzes do). ⛔ The rules
+themselves are unchanged: what was refused is refused, in the same order.
 
 ⭐ **A missing `/favicon.ico` is `204`, not `404`**: a browser asks every origin for
 it unprompted, a page names no icon, and a `404` is an error in the reader's
@@ -31,7 +38,7 @@ console on every served page.
 4. `resolve()` (following symlinks) and require the result inside the root and a
    regular file.
 
-## ⚠️ Text ignores `Range`
+## ⚠️ Text ignores `Range`, and is gzip-coded for a client that accepts it
 
 A range over text would bypass the gate by construction, so gated text is always
 answered whole, with `Accept-Ranges: none` — RFC 9110 §14.2 lets a server ignore
@@ -81,18 +88,23 @@ served form, and the mark is part of the opaque tag rather than a second header.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Callable
 from pathlib import Path
 from urllib.parse import unquote
 
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest import all_link_suffixes
 from studyforge.corpus.manifest.document import MANIFEST_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
 from studyforge.serve.response import TEXT_TYPE, Request, Response
+from studyforge.serve.routes.gated import (  # noqa: F401 - names callers import from here
+    ASSET_CACHE,
+    GATE_MAX_BYTES,
+    SAMPLES,
+    Served,
+    answer,
+)
 from studyforge.serve.routes.pagetag import (  # noqa: F401 - names callers import from here
     CLIENT_ETAG_MARK,
     CLIENT_PATH_FORBIDDEN,
@@ -103,15 +115,15 @@ from studyforge.serve.routes.pagetag import (  # noqa: F401 - names callers impo
     client_tag,
     with_client,
 )
-
-#: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
-#: or unknown-type file, which `withheld` is asked of first.
-ASSET_CACHE = "no-cache"
+from studyforge.serve.versions import UNHELD, Judged, Moved, Versions, build_digest
 
 #: What a browser asks every served origin for, unprompted. ⭐ Answered `204` when
 #: the site has none: a `404` is an error in the reader's console on every page,
 #: and a page names no icon, so there is nothing a build could fix.
 FAVICON = "/favicon.ico"
+
+#: How many times a file rewritten while it is answered is looked at afresh before `503`.
+MOVED_ATTEMPTS = 3
 
 #: Longest URL path accepted, before decoding.
 MAX_PATH = 1024
@@ -121,9 +133,6 @@ INDEX_FILENAME = "index.html"
 
 #: The one dot-prefixed name served: first, or where a corpus manifest sits beside it.
 EXPOSED_DOT_DIRECTORY = GENERATED_ROOT
-
-#: Largest text the gate reads. ⛔ Above it a file is refused, not served ungated.
-GATE_MAX_BYTES = 4 * 1024 * 1024
 
 #: Content types that are text, and so gated and never ranged.
 GATED_TYPES = ("text/", "application/json", "image/svg+xml")
@@ -165,7 +174,6 @@ DEFAULT_CONTENT_TYPE = "application/octet-stream"
 SOURCE_SUFFIXES_SERVED = frozenset(
     one for one in all_link_suffixes() if CONTENT_TYPES[one] == TEXT_TYPE
 )
-SAMPLES = re.compile(r"\b[\w.%+\-]+@[\w.\-]+\.[A-Za-z]{2,}\b|\bBearer\s+[\w.\-]{8,}")
 
 Private = Callable[[Path], bool]
 
@@ -265,9 +273,10 @@ def route(
     client: str | None = None,
     withheld: Withheld = nothing_withheld,
     live: str | None = None,
+    memo: Versions = UNHELD,
 ) -> Response:
     """Answer one request under `/api/v1/assets/`; `rest` is the path after it."""
-    return serve(root, request, "/" + rest, private, client, withheld, live)
+    return serve(root, request, "/" + rest, private, client, withheld, live, memo)
 
 
 def serve(
@@ -278,84 +287,79 @@ def serve(
     client: str | None = None,
     withheld: Withheld = nothing_withheld,
     live: str | None = None,
+    memo: Versions = UNHELD,
 ) -> Response:
     """Answer one file: `200`, `206`, `304`, `404` or `416`.
 
     ⭐ `client` is where the run namespace serves the page's execution client,
     and `None` is an instance that registers no such namespace. ⛔ It reaches an
     HTML page's BYTES and never the file on disk — see this module's docstring.
+    ⭐ `memo` holds what a file version was judged to be (`serve.versions`); the
+    default holds nothing, so every request judges.
     """
     target = resolve(root, url_path)
     if target is None and url_path == FAVICON:
         return Response(204, ())
     if target is None or private(target):
         return _not_found()
-    try:
-        stat = target.stat()
-    except OSError:
-        return _not_found()
-    ctype = content_type_for(target)
-    body = None
-    if ctype.startswith(GATED_TYPES) or ctype == DEFAULT_CONTENT_TYPE:
+    for _ in range(MOVED_ATTEMPTS):
         try:
-            body = target.read_bytes() if stat.st_size <= GATE_MAX_BYTES else None
+            return _answer(
+                Judged(target, target.stat(), memo), root, request, withheld, client, live
+            )
+        except Moved:
+            continue
         except OSError:
             return _not_found()
-        if body is not None and ctype != PAGE_TYPE and withheld(body):
-            return _not_found()
-    added = client if client and ctype == CONTENT_TYPES[".html"] else None
-    etag = client_etag(weak_etag(stat), bool(live)) if added else weak_etag(stat)
+    return Response(503, (("Content-Type", TEXT_TYPE),), b"the file is changing; ask again\n")
+
+
+def _answer(
+    judged: Judged,
+    root: Path,
+    request: Request,
+    withheld: Withheld,
+    client: str | None,
+    live: str | None,
+) -> Response:
+    """Answer one resolved file at the version `judged` names; `Moved` if it is rewritten."""
+    target, stat = judged.path, judged.stat
+    ctype = content_type_for(target)
+    gated = ctype.startswith(GATED_TYPES) or ctype == DEFAULT_CONTENT_TYPE
+    readable = gated and stat.st_size <= GATE_MAX_BYTES
+    if readable and ctype != PAGE_TYPE and _withholds(judged, withheld):
+        return _not_found()
+    plain = weak_etag(stat, build_digest(Path(root).resolve(), target, judged.memo))
+    added = client if client and ctype == PAGE_TYPE else None
+    etag = client_etag(plain, bool(live)) if added else plain
+    if ctype.startswith(GATED_TYPES):
+        source = target.suffix.lower() in SOURCE_SUFFIXES_SERVED
+        return answer(judged, request, ctype, etag, Served(added, live, source, GATE_MAX_BYTES))
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
-    if target.suffix.lower() in SOURCE_SUFFIXES_SERVED:
-        return _source(target, body, stat.st_size, ctype, validators)
-    if ctype.startswith(GATED_TYPES):
-        return _text(body, ctype, validators, added, live)
     ranges = request.headers.get("Range") if request.headers.get("If-Range") is None else None
     span = parse_range(ranges, stat.st_size)
     if span == UNSATISFIABLE:
         headers = (("Content-Range", f"bytes */{stat.st_size}"), ("Accept-Ranges", "bytes"))
         return Response(416, (("Content-Type", TEXT_TYPE), *headers), b"range not satisfiable\n")
     headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "bytes"))
+    held = judged.version
     if span == WHOLE:
         whole = (0, stat.st_size - 1) if stat.st_size else None
-        return Response(200, headers, file=target, span=whole)
+        return Response(200, headers, file=target, span=whole, version=held)
     first, last = span
     ranged = (*headers, ("Content-Range", f"bytes {first}-{last}/{stat.st_size}"))
-    return Response(206, ranged, file=target, span=span)
+    return Response(206, ranged, file=target, span=span, version=held)
 
 
-def _source(target: Path, body: bytes | None, size: int, ctype: str, validators: tuple) -> Response:
-    """Answer a source file whole; one too large to read is streamed unread."""
-    headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "none"))
-    try:
-        assert_clean(SAMPLES.sub("", (body or b"").decode("utf-8", errors="replace")), "asset")
-    except PersonalDataLeak:
-        return Response(500, (("Content-Type", TEXT_TYPE),), b"asset failed the gate\n")
-    if body is not None:
-        return Response(200, headers, body)
-    return Response(200, headers, file=target, span=(0, size - 1) if size else None)
-
-
-def _text(
-    body: bytes | None, ctype: str, validators: tuple, client: str | None, live: str | None = None
-) -> Response:
-    """Take a text file's bytes whole, add the client where one is named, gate it, answer it.
-
-    ⛔ **The gate runs over what LEAVES this process**, so the insertion happens
-    before it rather than after: a page gated and then edited is a page whose
-    served bytes nothing checked.
-    """
-    if body is None:
-        return Response(500, (("Content-Type", TEXT_TYPE),), b"text too large to gate\n")
-    body = with_client(body, client, live)
-    try:
-        assert_clean(body.decode("utf-8", errors="replace"), "asset")
-    except PersonalDataLeak:
-        return Response(500, (("Content-Type", TEXT_TYPE),), b"asset failed the gate\n")
-    headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "none"))
-    return Response(200, headers, body)
+def _withholds(judged: Judged, withheld: Withheld) -> bool:
+    """Ask `withheld` of a file's bytes, once per version and set of marks where it says them."""
+    marks = getattr(withheld, "marks", None)
+    if marks is None:
+        return withheld(judged.bytes())
+    now = marks()
+    return judged.verdict("withheld", lambda: withheld(judged.bytes(), now), against=now)
 
 
 def _not_found() -> Response:

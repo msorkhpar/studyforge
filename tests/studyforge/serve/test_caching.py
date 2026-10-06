@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import os
 
 import pytest
@@ -9,6 +10,9 @@ import pytest
 from studyforge.serve.caching import (
     UNSATISFIABLE,
     WHOLE,
+    accepts_gzip,
+    gzip_etag,
+    gzipped,
     not_modified,
     parse_range,
     strong_etag,
@@ -87,3 +91,46 @@ def test_a_range_is_read_against_a_hundred_byte_file(header, expected):
 @pytest.mark.parametrize("header", ["bytes=0-", "bytes=-5", "bytes=0-0"])
 def test_every_range_over_an_empty_file_is_unsatisfiable(header):
     assert parse_range(header, 0) == UNSATISFIABLE
+
+
+def test_a_weak_tag_folds_in_the_build_digest_and_keeps_its_shape_without_one(tmp_path):
+    path = tmp_path / "page.css"
+    path.write_bytes(b"a{}")
+    plain = weak_etag(path.stat())
+    built = weak_etag(path.stat(), "ab" * 32)
+    assert plain == weak_etag(path.stat(), None)
+    assert built.startswith(plain[:-1]) and built.endswith("ab" * 32 + '"')
+    assert built != weak_etag(path.stat(), "cd" * 32)
+
+
+@pytest.mark.parametrize(
+    ("header", "accepted"),
+    [
+        (None, False),
+        ("", False),
+        ("identity", False),
+        ("gzip", True),
+        ("GZIP", True),
+        ("deflate, gzip;q=0.5", True),
+        ("x-gzip", True),
+        ("*", True),
+        ("gzip;q=0", False),
+        ("gzip;q=0, *", False),
+        ("br, *;q=0", False),
+        ("gzip;q=nope", False),
+    ],
+)
+def test_accept_encoding_is_read_by_its_weights(header, accepted):
+    assert accepts_gzip(header) is accepted
+
+
+def test_the_gzip_representation_has_its_own_validator():
+    assert gzip_etag('W/"1-2"') == 'W/"1-2+gzip"'
+    assert not not_modified('W/"1-2"', gzip_etag('W/"1-2"'))
+    assert gzip_etag("W/bare") == "W/bare+gzip"
+
+
+def test_gzipped_bytes_round_trip_and_are_the_same_every_time():
+    body = b"window.studyforge = {};\n" * 100
+    assert gzip.decompress(gzipped(body)) == body
+    assert gzipped(body) == gzipped(body)

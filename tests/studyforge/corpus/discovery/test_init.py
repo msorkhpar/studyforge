@@ -31,6 +31,7 @@ PUBLIC_SURFACE = frozenset(
         "cache_path",
         "freshness",
         "pages",
+        "read_cache",
         "scan",
         "scan_sha256",
     }

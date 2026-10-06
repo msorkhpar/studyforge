@@ -59,7 +59,10 @@ content source every form already hands it.
    saying *"the answer is b"* — is not detectable either.
 2. ⭐ **Every sentence of every quiz the instance serves**, found in the text
    raw, JSON-escaped or HTML-escaped, with every run of whitespace read as one
-   space — so a hard-wrapped quotation is still found. ⚠️ **A sentence shorter
+   space — so a hard-wrapped quotation is still found. ⭐ A spelling is searched for
+   only when each pair of whole words inside it is a pair of neighbouring words of the
+   text: a necessary condition, so the verdict is the full search's at a fraction of
+   its cost. ⚠️ **A sentence shorter
    than `MIN_WORDS` words is not searched for**: a sentence as short as
    *"Right."* would withhold every page that happens to say it.
 
@@ -79,6 +82,8 @@ import json
 import re
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from functools import cached_property
+from itertools import pairwise
 
 #: Where a quiz record keeps its questions, and a question its options.
 QUESTIONS = "questions"
@@ -95,6 +100,9 @@ MIN_WORDS = 4
 #: The key as structure: a JSON pair, or an older page's option attribute.
 KEY_PATTERN = re.compile(r'"correct"\s*:\s*(?:true|false)\b|\bdata-[a-z-]*-correct\b')
 
+#: A word, as `carries` reads one to rule a spelling out before it is searched for.
+WORD = re.compile(r"\w+")
+
 
 @dataclass(frozen=True)
 class Marks:
@@ -106,6 +114,23 @@ class Marks:
     def __or__(self, other: Marks) -> Marks:
         """Return both sets of marks, as one instance serving both corpora holds them."""
         return Marks(self.sentences | other.sentences, self.questions | other.questions)
+
+    @cached_property
+    def forms(self) -> tuple[tuple[str, frozenset[tuple[str, str]]], ...]:
+        """Every searched spelling with its interior word pairs, built once per set of marks."""
+        return tuple(
+            (form, frozenset(_pairs(_interior(form)))) for form in searched(self.sentences)
+        )
+
+
+def _interior(text: str) -> list[str]:
+    """Return the words of `text` but its first and last, which a match may cut short."""
+    return WORD.findall(text)[1:-1]
+
+
+def _pairs(words: list[str]) -> pairwise:
+    """Return each word beside the next."""
+    return pairwise(words)
 
 
 def quiz_questions(document: object) -> Iterator[dict]:
@@ -195,11 +220,32 @@ def carries(body: bytes, marks: Marks) -> bool:
     text = body.decode("utf-8", errors="replace")
     if KEY_PATTERN.search(text) and any(f'"{one}"' in text for one in marks.questions):
         return True
-    forms = searched(marks.sentences)
-    if not forms:
+    if not marks.forms:
         return False
     flat = collapsed(text)
-    return any(form in flat for form in forms)
+    words = WORD.findall(flat)
+    pairs = frozenset(_pairs(words))
+    return any(inner <= pairs and form in flat for form, inner in marks.forms)
+
+
+class Refusal:
+    """The static mount's `withheld`: `carries` against the marks `source` holds when asked.
+
+    ⭐ `marks()` is exposed so a caller can hold a verdict for one file version and one set
+    of marks, and re-ask only when either moves.
+    """
+
+    def __init__(self, source: object) -> None:
+        """Hold the content source whose quizzes are withheld."""
+        self.source = source
+
+    def marks(self) -> Marks:
+        """Return the marks of the quizzes the source serves now."""
+        return marks_of(self.source)
+
+    def __call__(self, body: bytes, marks: Marks | None = None) -> bool:
+        """Say whether `body` carries a served quiz's key or sentence."""
+        return carries(body, self.marks() if marks is None else marks)
 
 
 def refused_by(source: object) -> Callable[[bytes], bool]:
@@ -208,7 +254,7 @@ def refused_by(source: object) -> Callable[[bytes], bool]:
     ⭐ **The marks are asked for per file, never captured once**, so a quiz
     added or edited while the instance serves is withheld from then on.
     """
-    return lambda body: carries(body, marks_of(source))
+    return Refusal(source)
 
 
 #: What a run's output says in place of a line that carries a key or a sentence.
