@@ -143,12 +143,10 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **One file per
-#: case** (R13), keyed on
-#: the record's own PREDICATES and never on `provenance` or `trust`, so neither
-#: R5 key can reach the page through this mapping — and no `data-*` attribute
-#: carries one either, which is what stops the words leaking back through a
-#: stylesheet hook.
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **One file per case**
+#: (R13), keyed on the record's own PREDICATES and never on `provenance` or `trust`, so neither R5
+#: key can reach the page through this mapping — and no `data-*` attribute carries one either, which
+#: is what stops the words leaking back through a stylesheet hook.
 GRADER_TEMPLATES = {
     "shipped": "practice-grader-shipped.html",
     "bundled": "practice-grader-bundled.html",
@@ -164,10 +162,9 @@ GRADER_TEMPLATES = {
 BREAKDOWN_TEMPLATE = "practice-breakdown.html"
 CASE_TEMPLATE = "practice-case.html"
 
-#: What closes an optional region inside the panel. ⚠️ The same shape
-#: `page.document._region` uses, and for the same reason: a region is exactly
-#: empty or exactly its markup plus one newline, never a conditional newline
-#: somewhere else (R10).
+#: What closes an optional region inside the panel. ⚠️ The same shape `page.document._region` uses,
+#: and for the same reason: a region is exactly empty or exactly its markup plus one newline, never
+#: a conditional newline somewhere else (R10).
 JOIN = "\n"
 
 
@@ -197,11 +194,10 @@ def render(section: dict, document: dict, placement: Placement, *, embedded: boo
             assets=placement.asset,
         )
     if exercise.is_quiz:
-        # ⛔ **A quiz is not work at a file**: it carries questions in
-        # place of a workspace, so there is no file to name, nothing to open in
-        # an editor, no command to Run and no grader to Submit to. ⭐ The two
-        # shapes share this one surface and this one renders its questions with
-        # no frame and no dead control — which is the same rule a reading-only
+        # ⛔ **A quiz is not work at a file**: it carries questions in place of a workspace, so
+        # there is no file to name, nothing to open in an editor, no command to Run and no grader
+        # to Submit to. ⭐ The two shapes share this one surface and this one renders its
+        # questions with no frame and no dead control — which is the same rule a reading-only
         # unit gets two lines above, applied to the other shape.
         if exercise.review is not None:
             # ⭐ A quiz that declares a review schedule is a bank revisited over time

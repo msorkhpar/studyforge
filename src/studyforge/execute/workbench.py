@@ -333,9 +333,8 @@ def write_settings(
 ) -> Path:
     """Write one practice's workspace settings into `folder`, and return the file.
 
-    `folder` is the HOST side of the editor's bind mount. Raises
-    `WorkbenchRefused` when the file there is not this framework's, or when it
-    cannot be written.
+    `folder` is the HOST side of the editor's bind mount. Raises `WorkbenchRefused` when the file
+    there is not this framework's, or when it cannot be written.
     """
     target = Path(folder) / SETTINGS_DIR / SETTINGS_FILE
     _require_ours(target)
