@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import html
 import json
+import random
 import re
 
 import pytest
@@ -19,10 +20,13 @@ from studyforge.serve.withheld import (
     Marks,
     OutputGate,
     carries,
+    collapsed,
     marks_in,
     marks_of,
     redacted,
     refused_by,
+    searched,
+    spellings,
 )
 from tests.studyforge.serve.routes.quizzing import QUESTIONS, sentences
 
@@ -159,6 +163,42 @@ def test_refused_by_asks_the_source_on_every_file_and_never_captures_it() -> Non
 def test_a_source_that_cannot_say_withholds_nothing() -> None:
     assert marks_of(object()) == Marks()
     assert not refused_by(object())(b'{"id": "q-1", "correct": true}')
+
+
+def test_refused_by_says_the_marks_it_reads_and_reads_given_ones() -> None:
+    source = Source()
+    refused = refused_by(source)
+    body = f"<p>{sentences()[0]}</p>".encode()
+    assert refused.marks() == Marks()
+    assert refused(body, SERVED)
+    source.found = SERVED
+    assert refused.marks() == SERVED
+
+
+def naive(body: bytes, marks: Marks) -> bool:
+    """The search `carries` makes for a sentence, without its word-pair ruling-out."""
+    flat = collapsed(body.decode("utf-8", errors="replace"))
+    return any(form in flat for form in searched(marks.sentences))
+
+
+def test_ruling_spellings_out_by_word_pairs_never_changes_a_verdict() -> None:
+    chooser = random.Random(7)
+    found = sentences()
+    words = [word for sentence in found for word in sentence.split()] + ["x", "—", "'", "\\n"]
+    marks, seen = Marks(frozenset(found)), set()
+    for _ in range(400):
+        parts = [chooser.choice(words) for _ in range(chooser.randint(0, 30))]
+        if chooser.random() < 0.5:
+            sentence = chooser.choice(found)
+            spelled = chooser.choice(sorted(spellings(sentence)))
+            cut = chooser.randint(0, len(spelled))
+            spelled = spelled if chooser.random() < 0.5 else spelled[:cut] + "~" + spelled[cut:]
+            parts.insert(chooser.randint(0, len(parts)), chooser.choice(["", "x", '"']) + spelled)
+        body = chooser.choice([" ", "\n", "  ", ""]).join(parts).encode()
+        verdict = carries(body, marks)
+        assert verdict is naive(body, marks)
+        seen.add(verdict)
+    assert seen == {True, False}
 
 
 # --------------------------------------------------------------------------

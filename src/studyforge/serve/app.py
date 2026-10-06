@@ -3,7 +3,7 @@ r"""App wiring: the loopback server, the gate in front of every route, and the w
 **What it does.** Binds `127.0.0.1` only, refuses every request `security.refusal`
 refuses, dispatches `/api/v1/<namespace>/…` to the namespace registered under that
 name, serves every other path from the static mount, and writes each `Response` —
-security headers on all of them, a file streamed span by span.
+security headers on all of them, a file's span sent by the kernel (`serve.sending`).
 
 **How you use it.**
 
@@ -11,9 +11,10 @@ security headers on all of them, a file streamed span by span.
     server.serve_forever()          # server.server_address is (host, port)
 
 **Depends on.** `http.server`, `serve.security`, `serve.response`, `serve.routes`,
-`serve.withheld`, `archive.scrub` for the log. ⛔ **No process-spawning library in
-this package** — `tests/studyforge/serve/test_init.py` asserts that of every module,
-and the Docker socket is never reachable from here (spec §8.3).
+`serve.withheld`, `serve.versions` (one memo per server), `serve.sending`, and
+`archive.scrub` for the log. ⛔ **No process-spawning library in this package** —
+`tests/studyforge/serve/test_init.py` asserts that of every module, and the Docker
+socket is never reachable from here (spec §8.3).
 
 ## ⭐ The seams later rows plug into
 
@@ -55,6 +56,7 @@ from collections.abc import Callable, Collection, Mapping
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import BinaryIO
 from urllib.parse import urlsplit
 
 from studyforge.archive.scrub import scrub
@@ -81,13 +83,12 @@ from studyforge.serve.security import (
     require_loopback,
     response_headers,
 )
+from studyforge.serve.sending import MOVED, MOVED_STATUS, opened, send_span
+from studyforge.serve.versions import Versions
 from studyforge.serve.withheld import refused_by
 
 #: What `studyforge serve` binds when it is not told otherwise.
 DEFAULT_PORT = 8765
-
-#: Streaming chunk for a file body.
-CHUNK = 64 * 1024
 
 #: Seconds between two looks at a streaming client's socket for a hang-up.
 HANGUP_POLL = 0.25
@@ -111,6 +112,9 @@ class ServingServer(ThreadingHTTPServer):
 
     daemon_threads = True
     allow_reuse_address = True
+    #: ⭐ The listen backlog: `socketserver`'s default of 5 drops a page's burst of asset
+    #: connections, and a dropped connection waits out the client's retransmit timer.
+    request_queue_size = 128
 
     def __init__(
         self,
@@ -144,7 +148,8 @@ class ServingServer(ThreadingHTTPServer):
         self.frames = frames
         self.allowed_hosts = ALLOWED_HOSTS
         withheld = refused_by(source)
-        tags = {"client": client, "live": live, "withheld": withheld}
+        self.memo = Versions()
+        tags = {"client": client, "live": live, "withheld": withheld, "memo": self.memo}
         self.static = partial(assets.serve, root, private=private, **tags)
         self.namespaces: dict[str, Route] = {
             "content": partial(content.route, source),
@@ -298,6 +303,17 @@ class _Handler(BaseHTTPRequestHandler):
         if response.stream is not None:
             self._write_stream(response)
             return
+        handle, moved = opened(response) if self.command != "HEAD" else (None, False)
+        if moved:
+            response = error(MOVED_STATUS, MOVED)
+        try:
+            self._send(response, close, handle)
+        finally:
+            if handle is not None:
+                handle.close()
+
+    def _send(self, response: Response, close: bool, handle: BinaryIO | None) -> None:
+        """Write the status, the headers, and the body or the open file's span."""
         self.send_response(response.status)
         for name, value in (*response.headers, *self.server.headers(self.headers.get("Host"))):
             self.send_header(name, value)
@@ -312,7 +328,11 @@ class _Handler(BaseHTTPRequestHandler):
         if response.file is None:
             self.wfile.write(response.body)
             return
-        self._stream(response)
+        if handle is not None and response.span is not None:
+            if send_span(self.connection, handle, response.span[0], response.length):
+                # Headers are out; dropping the connection is the only honest signal left.
+                self.server.log("file answer cut short")
+                self.close_connection = True
 
     def _write_stream(self, response: Response) -> None:
         """Send each chunk as it is produced; the body ends when the connection closes.
@@ -376,25 +396,3 @@ class _Handler(BaseHTTPRequestHandler):
                 return
             if readable:
                 return
-
-    def _stream(self, response: Response) -> None:
-        """Stream the inclusive span of a file without holding it in memory."""
-        if response.span is None or response.file is None:
-            return
-        first, _ = response.span
-        remaining = response.length
-        try:
-            with response.file.open("rb") as handle:
-                handle.seek(first)
-                while remaining > 0:
-                    chunk = handle.read(min(CHUNK, remaining))
-                    if not chunk:
-                        break
-                    self.wfile.write(chunk)
-                    remaining -= len(chunk)
-        except OSError as exc:
-            self.server.log(f"read failed mid-response: {type(exc).__name__}")
-        if remaining:
-            # Headers are already out; dropping the connection is the only honest
-            # signal left that the body is short.
-            self.close_connection = True

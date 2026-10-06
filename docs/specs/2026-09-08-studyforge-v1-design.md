@@ -2070,7 +2070,8 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   time.
 - **Backend** — `/api/v1/content` (cacheable, strong ETag) and `/api/v1/state`
   (never cached, derived from the filesystem on every request) as two namespaces
-  with opposite caching rules; `/api/v1/assets` (Range, weak ETag);
+  with opposite caching rules; `/api/v1/assets` (Range, weak ETag, gzip for text a
+  client accepts it for, each file judged once per version);
   `/api/v1/run` for Run and Submit. ⛔ No quiz route: a quiz is graded in its page. ⛔ The
   server binds loopback only, refuses a non-loopback peer, refuses a `Host` that
   is not a loopback name, and refuses cross-site requests.

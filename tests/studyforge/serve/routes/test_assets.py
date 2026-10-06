@@ -425,3 +425,27 @@ def test_a_source_file_is_served_with_nosniff_over_a_socket(site):
     assert headers["content-type"] == assets_module.TEXT_TYPE
     assert headers["x-content-type-options"] == "nosniff"
     assert "content-security-policy" in headers
+
+
+class Rewritten(assets_module.Judged):
+    """A file each read finds rewritten, the first `times` times it is read."""
+
+    times = 0
+
+    def bytes(self):
+        if Rewritten.times > 0:
+            Rewritten.times -= 1
+            raise assets_module.Moved
+        return super().bytes()
+
+
+@pytest.mark.parametrize(("times", "status"), [(1, 200), (assets_module.MOVED_ATTEMPTS, 503)])
+def test_a_file_rewritten_while_it_is_answered_is_looked_at_afresh(
+    site, monkeypatch, times, status
+):
+    monkeypatch.setattr(assets_module, "Judged", Rewritten)
+    monkeypatch.setattr(Rewritten, "times", times)
+    response = get(site, "/.studyforge/assets/page.css")
+    assert response.status == status
+    if status == 200:
+        assert response.body == (site / ".studyforge" / "assets" / "page.css").read_bytes()

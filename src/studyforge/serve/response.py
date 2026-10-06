@@ -75,7 +75,11 @@ class BodyRequest(Request):
 
 @dataclass(frozen=True, slots=True)
 class Response:
-    """One answer: bytes in `body`, the inclusive `span` of `file`, or a `stream` of chunks."""
+    """One answer: bytes in `body`, the inclusive `span` of `file`, or a `stream` of chunks.
+
+    ⭐ `version` is the `serve.versions` version `file` was judged at; `app` sends no byte of
+    a file whose open handle names another.
+    """
 
     status: int
     headers: tuple[tuple[str, str], ...] = ()
@@ -83,6 +87,7 @@ class Response:
     file: Path | None = None
     span: tuple[int, int] | None = None
     stream: Iterator[bytes] | None = None
+    version: tuple | None = None
 
     @property
     def length(self) -> int:
