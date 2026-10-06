@@ -499,6 +499,19 @@ def test_an_index_that_names_a_page_the_walk_missed_is_refused_by_name(tmp_path)
         preview.preview(tree, tmp_path / "out")
 
 
+def test_an_index_that_names_a_page_nothing_links_copies_it_when_the_tree_holds_it(tmp_path):
+    tree = searchable(tmp_path / "tree", INDEX.replace("u2.unit.html", "lone.unit.html"))
+    units = tree / ".studyforge/g/units"
+    write(units / "lone.unit.html", (units / "u2.unit.html").read_text(encoding="utf-8"))
+    (tree / ".studyforge/g/units/u2.unit.html").unlink()
+    text = (tree / ".studyforge/g/units/u1.unit.html").read_text(encoding="utf-8")
+    write(tree / ".studyforge/g/units/u1.unit.html", text.replace("u2.unit.html", "u1.unit.html"))
+    out = tmp_path / "out"
+    preview.preview(tree, out)
+    assert [one for one in files(out) if one.endswith("g/units/lone.unit.html")]
+    assert dangling(out) == []
+
+
 def test_an_index_that_names_a_missing_piece_is_refused_by_name(tmp_path):
     tree = searchable(tmp_path / "tree", parts=("1",))
     with pytest.raises(preview.PreviewRefused, match="search-index-2.js"):
