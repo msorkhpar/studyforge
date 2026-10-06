@@ -251,8 +251,7 @@ def open_url(editor: Editor, path: str) -> str | None:
     inside = editor.file(path)
     if inside is None:
         return None
-    # ⚠️ Compact separators: this is a query-string value, and a space in it
-    # becomes three characters once quoted, in a URL a reader may see.
+    # ⚠️ Compact separators: a space in this query-string value becomes three characters.
     payload = json.dumps(
         [[OPEN_FILE, f"{REMOTE}://{authority(editor)}{inside}"]], separators=(",", ":")
     )

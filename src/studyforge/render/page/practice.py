@@ -197,15 +197,11 @@ def render(section: dict, document: dict, placement: Placement, *, embedded: boo
             assets=placement.asset,
         )
     if exercise.is_quiz:
-        # ⛔ **A quiz is not work at a file**: it carries questions in
-        # place of a workspace, so there is no file to name, nothing to open in
-        # an editor, no command to Run and no grader to Submit to. ⭐ The two
-        # shapes share this one surface and this one renders its questions with
-        # no frame and no dead control — which is the same rule a reading-only
-        # unit gets two lines above, applied to the other shape.
+        # ⛔ **A quiz is not work at a file**: no file to name or open, nothing to Run or
+        # Submit to, so its questions render with no frame and no dead control (the rule
+        # a reading-only unit gets above, applied to the other shape).
         if exercise.review is not None:
-            # ⭐ A quiz that declares a review schedule is a bank revisited over time
-            # (`page.review`); every other quiz is rendered below exactly as it always was.
+            # ⭐ A quiz with a review schedule is a bank revisited over time (`page.review`).
             return review.render(
                 exercise,
                 key=key,
