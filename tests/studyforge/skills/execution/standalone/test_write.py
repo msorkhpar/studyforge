@@ -544,3 +544,25 @@ def test_a_lock_whose_tags_the_toolchain_does_not_compute_is_refused_before_a_fi
     with pytest.raises(bases.BasesRefused, match="runner base is locked at tag stale"):
         export(tmp_path, stale)
     assert not (tmp_path / "learner").exists()
+
+
+def test_a_course_s_own_readme_sections_and_pictures_reach_the_tree(tmp_path):
+    root = checkout(tmp_path)
+    where = root / "docs" / "learner-readme"
+    (where / "shots").mkdir(parents=True)
+    (where / "top.md").write_text("## Before you start\n\nA plain note.\n", encoding="utf-8")
+    (where / "body.md").write_text("## Seen\n\n![one](shots/one.png)\n", encoding="utf-8")
+    (where / "shots" / "one.png").write_bytes(b"\x89PNG\r\n\x1a\n" + b"0" * 32)
+    subprocess.run([*GIT, "add", "-A"], cwd=root, check=True)
+    subprocess.run([*GIT, "commit", "-q", "-m", "own sections"], cwd=root, check=True)
+    out = tmp_path / "learner"
+    made = write.release(
+        root, out, toolchain=toolchain(tmp_path / "tc"), platform="linux/amd64", run=answered()
+    )
+    text = (out / "README.md").read_text(encoding="utf-8")
+    assert text.index("## Before you start") < text.index("## The course") < text.index("## Seen")
+    assert "docker compose -f compose.pull.yaml up -d" in text
+    assert "![one](.studyforge/images/readme/one.png)" in text
+    assert (out / ".studyforge/images/readme/one.png").is_file()
+    assert ".studyforge/images/readme/one.png" in made.written
+    assert "docs/learner-readme/top.md" not in on_disk(out)

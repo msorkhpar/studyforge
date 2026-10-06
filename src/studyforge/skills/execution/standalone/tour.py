@@ -190,8 +190,15 @@ def ways(facts: Facts, *, narrated: bool) -> list[str]:
     ]
 
 
-def sections(facts: Facts, shots: Mapping[str, str], *, title: str, narrated: bool) -> list[str]:
-    """Return the three sections, in reading order."""
+def sections(
+    facts: Facts,
+    shots: Mapping[str, str],
+    *,
+    title: str,
+    narrated: bool,
+    body: tuple[str, ...] = (),
+) -> list[str]:
+    """Return the three sections, in reading order; a course's own `body` replaces the last two."""
     return [
         "## The course",
         "",
@@ -200,6 +207,5 @@ def sections(facts: Facts, shots: Mapping[str, str], *, title: str, narrated: bo
         "lessons is online: see the website link at the top of this repository.",
         "",
         *holds(facts),
-        *features(facts, shots, narrated=narrated),
-        *ways(facts, narrated=narrated),
+        *(body or (*features(facts, shots, narrated=narrated), *ways(facts, narrated=narrated))),
     ]

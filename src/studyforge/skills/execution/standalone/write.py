@@ -58,6 +58,7 @@ from studyforge.skills.execution.standalone import (
     images,
     learner,
     live,
+    own,
     pages,
     places,
     preview,
@@ -204,6 +205,14 @@ def release(
     )
     built, pulled = compose.render(plan)
     shots = _screenshots(screenshots, out, written)
+    try:
+        mine = own.read(root)
+    except ValueError as error:
+        raise ReleaseRefused(str(error)) from error
+    for name, one in mine.shots:
+        where = f"{compose.IMAGES}/readme/{name}"
+        _copy(one, out / where)
+        written.append(where)
     narrated = bool(manifest.narration) and (root / images.CLIPS).is_file()
     course = learner.Course(
         manifest.title,
@@ -219,6 +228,8 @@ def release(
         licence="LICENSE" in kept,
         thin=bases is not None,
         live=plan.live,
+        top=mine.top,
+        body=mine.body,
     )
     texts = {
         f"{compose.IMAGES}/site/Dockerfile": images.site_dockerfile(

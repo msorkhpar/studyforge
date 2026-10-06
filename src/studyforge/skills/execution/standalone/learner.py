@@ -70,6 +70,10 @@ class Course:
     thin: bool = False
     #: ⭐ `(API host, key variable name)` of a course that declares live runs, else `None`.
     live: tuple[str, str] | None = None
+    #: The course's own sections (`own`): lines after the title, and lines in place of the
+    #: generated features and comparison. Empty: the README is the one it always was.
+    top: tuple[str, ...] = ()
+    body: tuple[str, ...] = ()
 
 
 def settings(course: Course) -> str:
@@ -135,8 +139,13 @@ def readme(course: Course) -> str:
     parts = [
         f"# {course.title}",
         "",
+        *course.top,
         *tour.sections(
-            course.facts, dict(course.shots), title=course.title, narrated=course.narrated
+            course.facts,
+            dict(course.shots),
+            title=course.title,
+            narrated=course.narrated,
+            body=course.body,
         ),
         *_requirements(course),
         f"## {tour.RUN_HEADING}",
