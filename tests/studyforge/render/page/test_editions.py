@@ -158,3 +158,16 @@ def test_the_cards_of_a_page_without_editions_are_the_bytes_they_were():
     ungraded = practices.card(section(), document(), sample_placement(), "A unit")
     assert "data-practice-editions" not in ungraded
     assert ungraded.startswith('<li id="card-practice-java" data-practice-card="s-practice-java"')
+
+
+def test_a_mixed_mode_opens_a_practice_in_its_practice_language_then_each_prose_language():
+    from studyforge.corpus.manifest.reading import Language, Mode, Reading
+    from studyforge.render import modes
+    from studyforge.render.page import editions
+
+    reading = Reading(
+        languages=(Language("aa", "Aa"), Language("bb", "Bb")),
+        modes=(Mode("m", "M", "m", "aa", ("aa",), ("bb",), prose_also=("bb",)),),
+        default_mode="m",
+    )
+    assert editions.preference(modes.offer(reading))["modes"] == {"m": ["bb", "aa"]}

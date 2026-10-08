@@ -203,7 +203,7 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
     for unit in documents:
         lang = unit.document.get("lang")
         lesson = unit.document.get("kind") == "lesson"
-        shown = (mode.prose,) if lesson else mode.practices  # type: ignore[attr-defined]
+        shown = mode.reads if lesson else mode.practices  # type: ignore[attr-defined]
         if lang is None or any(one in shown for one in str(lang).split(" ")):
             return True
     return False

@@ -435,8 +435,9 @@ extra property: it can be started with a key. So that no key can ever rest in th
 All four keys are optional, and a corpus that declares none is read exactly as before.
 `languages` lists `{id, label, fence_labels}`; a fence label belongs to one language.
 `modes` lists `{id, label, summary, prose, tabs, practices}` with an optional boolean
-`practice_choice`: `prose` is one declared language id, `tabs` and `practices` are lists
-of declared language ids, each named once. `modes` needs `languages`; `default_mode` (a
+`practice_choice`: `prose` is one declared language id, or a non-empty list of them for a
+mixed mode that reads several languages' prose (each named once; the first is the mode's
+primary language); `tabs` and `practices` are lists of declared language ids, each named once. `modes` needs `languages`; `default_mode` (a
 declared mode id, the first mode when absent) and `outside_mode` (`open`, the default,
 or `locked`) need `modes`. A manifest is refused by name for an undeclared language, a
 repeated id, a shared fence label, a `default_mode` that is no mode or an `outside_mode`
@@ -453,8 +454,10 @@ beside `page.css` and `page.js`, and every page carries a switch listing the dec
 modes. On a first visit a card asks which one to read, listing each mode's label and
 summary; the choice is kept in the browser the way the theme is, through guarded reads
 and writes, so a page where the browser refuses storage still renders and simply asks
-nothing. A mode shows the sections tagged with its `prose` language and the untagged
-ones; the page's outline drops the lines that point at hidden sections. With scripts
+nothing. A mode shows the sections tagged with any of its `prose` languages and the untagged
+ones (sections keep the order the unit gives them; the list decides which are shown, not
+their order). An entry that none of the listed languages carries is greyed, or locked,
+as for a one-language mode; the page's outline drops the lines that point at hidden sections. With scripts
 off, in a crawl, and before an answer, a page shows the `default_mode` view: the root
 element carries `data-mode` with that value and the stylesheet keys on it. A page opened
 from a file asks on every load. A corpus that declares no `modes` gets none of this: no

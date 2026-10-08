@@ -69,3 +69,14 @@ def test_a_second_build_changes_nothing(tmp_path):
     second = files(build(tmp_path, "two", DOCUMENTS, READING))
     assert first == second
     assert write_site  # the entry point the helper drives
+
+
+def test_a_mode_reading_two_languages_builds_a_page_that_shows_both_and_hides_neither(tmp_path):
+    mixed = {
+        **READING,
+        "modes": [*READING["modes"], {**READING["modes"][0], "id": "mixed", "prose": ["aa", "bb"]}],
+    }
+    built = files(build(tmp_path, "mixed", DOCUMENTS, mixed))
+    css = built[".studyforge/assets/modes.css"].decode()
+    assert 'html[data-mode="mixed"] section[data-lang]:not([data-lang="aa"]):not([data-lang="bb"])' in css
+    assert b'data-mode-prose="aa bb"' in b"".join(built.values())

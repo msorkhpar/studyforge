@@ -93,6 +93,13 @@ class Choice:
     tabs: tuple[str, ...] = ()
     #: ⭐ The languages whose practices the mode lists; a practice outside them is greyed.
     practices: tuple[str, ...] = ()
+    #: ⭐ The languages whose prose the mode also reads, after `prose`.
+    prose_also: tuple[str, ...] = ()
+
+    @property
+    def reads(self) -> tuple[str, ...]:
+        """Return every language whose prose the mode shows, the first one first."""
+        return (self.prose, *self.prose_also)
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,14 +159,14 @@ def offer(
     if reading is None or not reading.modes or reading.default_mode is None:
         return None
     labels = {language.id: language.label for language in reading.languages}
-    prose = next(mode.prose for mode in reading.modes if mode.id == reading.default_mode)
+    prose = next(mode.reads for mode in reading.modes if mode.id == reading.default_mode)
     locks = reading.outside_mode == LOCKED
     tags = {
         key: Tag(
             languages=found,
             label=", ".join(labels[language] for language in found),
-            readers=tuple((mode.id, mode.label) for mode in reading.modes if mode.prose in found),
-            locked=locks and prose not in found,
+            readers=tuple((mode.id, mode.label) for mode in reading.modes if any(one in found for one in mode.reads)),
+            locked=locks and not any(one in found for one in prose),
         )
         for key, found in (entries or {}).items()
         if found
@@ -173,6 +180,7 @@ def offer(
                 mode.prose,
                 tuple(mode.tabs),
                 tuple(mode.practices),
+                tuple(mode.prose_also),
             )
             for mode in reading.modes
         ),
@@ -309,11 +317,29 @@ def files(made: Offer | None) -> dict[str, str]:
         + NEWLINE
         + example_tabs.style(made.choices, grey=made.grey)
     )
-    script = text(SCRIPT_NAME) + NEWLINE + example_tabs.script(made.choices)
+    script = _reads(text(SCRIPT_NAME), made) + NEWLINE + example_tabs.script(made.choices)
     if made.grey:
         stylesheet += absent_language.style(made.choices)
         script += NEWLINE + absent_language.script()
     return {STYLESHEET_NAME: stylesheet, SCRIPT_NAME: script}
+
+
+#: ⭐ What the client does with a mode's prose languages. A mode that reads one language keeps the
+#: script's own line; only a corpus with a mode that reads several swaps it for the list-aware one.
+SINGLE_READ = "tokens(node, name).indexOf(prose[mode]) === -1"
+LISTED_READ = (
+    "!prose[mode].split(' ').some(function (one) { "
+    "return tokens(node, name).indexOf(one) !== -1; })"
+)
+
+
+def _reads(script: str, made: Offer) -> str:
+    """Return the script, reading a mode's prose as a list of languages when some mode has several."""
+    if not any(choice.prose_also for choice in made.choices):
+        return script
+    if SINGLE_READ not in script:
+        raise ValueError("modes.js no longer holds the line that reads a mode's prose language")
+    return script.replace(SINGLE_READ, LISTED_READ)
 
 
 def _switch(made: Offer) -> str:
@@ -321,7 +347,7 @@ def _switch(made: Offer) -> str:
         templates.fill(
             "mode-button.html",
             id=escape_attribute(choice.id),
-            prose=escape_attribute(choice.prose),
+            prose=escape_attribute(" ".join(choice.reads)),
             label=escape(choice.label),
         )
         for choice in made.choices
@@ -368,19 +394,22 @@ def _rule(choice: Choice, locks: bool, several: bool = False) -> str:
     and under `locked` shows nothing else. A section a link points into stays shown while it
     is the target (`data-linked`, set by the client).
     """
-    lang = json.dumps(choice.prose)
     root = f'html[{MODE_ATTRIBUTE}="{choice.id}"]'
+    #: ⭐ A mode that reads several languages hides a section only when it is tagged with none of
+    #: them (one `:not` each, in the order listed); with one language this is the rule it always was.
     #: ⭐ `=` while each section names one language, `~=` once one may name several.
     match = "~=" if several else "="
-    tagged = f"[data-lang{match}{lang}]"
-    outside = f"[{ENTRY_ATTRIBUTE}]:not([{ENTRY_ATTRIBUTE}~={lang}])"
+    tagged = "".join(f":not([data-lang{match}{json.dumps(one)}])" for one in choice.reads)
+    outside = f"[{ENTRY_ATTRIBUTE}]" + "".join(
+        f":not([{ENTRY_ATTRIBUTE}~={json.dumps(one)}])" for one in choice.reads
+    )
     rules = [
-        f"{root} section[data-lang]:not({tagged}),\n"
-        f'{root} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
+        f"{root} section[data-lang]{tagged},\n"
+        f'{root} nav[aria-label="Outline"] li[data-lang]{tagged} '
         "{ display: none; }",
-        f"{root} section[data-lang][data-linked]:not({tagged}) {{ display: block; }}",
-        f"{root}{outside} section[data-lang]:not({tagged}) {{ display: block; }}",
-        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
+        f"{root} section[data-lang][data-linked]{tagged} {{ display: block; }}",
+        f"{root}{outside} section[data-lang]{tagged} {{ display: block; }}",
+        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]{tagged} '
         "{ display: list-item; }",
         f"{root} li{outside}, {root} li{outside} a {{ color: var(--muted); }}",
         f"{root} li{outside} [{LABEL_ATTRIBUTE}] {{ display: inline-block; }}",
