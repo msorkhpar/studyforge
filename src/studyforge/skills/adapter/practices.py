@@ -42,6 +42,21 @@ authored one would share a number, and the run refuses naming the bundle.
 with none missing. ⚠️ Otherwise `validate`'s practice-count check would refuse
 the container map, and a gap would be a lost exercise.
 
+## ⭐ THE LANGUAGE EDITIONS OF ONE PRACTICE SHARE ONE ID, AND NO COURSE SPELLS IT
+
+A practice written in several languages is one practice with one edition per
+language (`render.page.editions`). Each language is authored, gated and
+numbered as an exercise of its own, so its ordinal differs by language.
+⛔ **An id built from an ordinal is a different id per language**, and the
+page then shows one card per language. ⭐ So the id is `edition_id(folder)`,
+computed from the folder of the adapter's own material the practice was
+written in, and from nothing else: two languages of one folder cannot get two
+ids. `as_edition(fields, folder=..., lang=..., labels=...)` returns a
+practice document's fields as that edition: its `lang`, the shared `edition`,
+and a title that names no language (the switch in the panel names it).
+`planned_name(root, places)` is the name the adapter's plan gave the exercise,
+so the adapter finds that folder without reading a number.
+
 ## ⛔ A BUNDLE THE GATES DID NOT CLEAR IS REFUSED HERE, BEFORE ANY DOCUMENT
 
 ⭐ Every bundle's gate record must be present, must clear, and must still
@@ -54,6 +69,8 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -68,9 +85,13 @@ from studyforge.skills.exercises import (
     DeckRefused,
     QuizRefused,
     deck_of,
+    planned_name,
     practised,
     quiz_of,
 )
+
+#: ⭐ Re-exported for an adapter: the plan's name of a bundle (`skills.exercises.practised`).
+__all__ = ["as_edition", "authored", "edition_id", "planned_name", "untitled"]
 
 #: ⚠️ The date and source an emission is taken with. The generated `emit.py`
 #: rebuilds every document with the run's own, so neither reaches the archive.
@@ -100,6 +121,52 @@ QUIZ_BLOCKS = (
         "text": "Questions on what this page has just taught. Choose one answer for each.",
     },
 )
+
+
+#: ⭐ What an edition id may hold: the archive's id shape (`archive.language`).
+_NOT_ID = re.compile(r"[^a-z0-9]+")
+
+
+def edition_id(folder: str) -> str:
+    """Return the edition id of the practice written in `folder`, the same for every language.
+
+    ⭐ `folder` is where the adapter's own material for the practice lives (corpus-relative),
+    the folder that holds all its languages. The id is read off that folder alone, so no
+    language, ordinal or count enters it. ⛔ A folder with no letter or digit is refused.
+    """
+    said = _NOT_ID.sub("-", str(folder).casefold()).strip("-")
+    if not said:
+        raise PracticeRefused(
+            "an edition id is read off the folder a practice is written in, and the folder "
+            "given names no letter or digit"
+        )
+    return said
+
+
+def untitled(title: str, labels: Iterable[str]) -> str:
+    """Return `title` without a trailing parenthesis that names one of `labels`, in any case.
+
+    ⭐ `Count by a key (Kotlin)` with labels `("kotlin", "Kotlin")` is `Count by a key`; a title
+    naming no label, or nothing but the parenthesis, is returned as it came.
+    """
+    names = {str(one).strip().casefold() for one in labels if str(one).strip()}
+    text = str(title).rstrip()
+    if text.endswith(")") and " (" in text:
+        cut = text.rindex(" (")
+        if text[cut + 2 : -1].strip().casefold() in names and text[:cut].strip():
+            return text[:cut].rstrip()
+    return title
+
+
+def as_edition(fields: dict, *, folder: str, lang: str, labels: Iterable[str] = ()) -> dict:
+    """Return a practice document's fields as the `lang` edition of the practice in `folder`.
+
+    ⭐ Sets `lang`, sets `edition` to `edition_id(folder)`, and drops a trailing language
+    name from `title` (the language's id and each of `labels`), so the card and the panel
+    carry one title and the switch names the language. ⛔ `fields` is not changed in place.
+    """
+    title = untitled(str(fields.get("title", "")), (lang, *labels))
+    return {**fields, "lang": lang, "edition": edition_id(folder), "title": title}
 
 
 class PracticeRefused(RuntimeError):

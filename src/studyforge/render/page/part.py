@@ -47,9 +47,12 @@ def render(
     ⚠️ `heads_page` is `section.render`'s own word, passed STRAIGHT through and REQUIRED:
     `page.document` is its only caller and the only holder of the page.
     """
-    many = editions.edited_with(document, section) is not None
+    entry = editions.edited_with(document, section)
+    many = entry is not None
+    # ⭐ An edition's statement is headed by the practice's one title; the switch names the language.
+    shown = editions.untitled(section, entry, placement.offer) if many else section
     rendered = section_module.render(
-        section, placement, narration, heads_page=heads_page, edited=many
+        shown, placement, narration, heads_page=heads_page, edited=many
     )
     panel = practice.render(section, document, placement)
     if not many:
