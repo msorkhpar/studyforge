@@ -66,6 +66,7 @@ from urllib.parse import unquote
 
 from studyforge.execute import (
     BUILD_FILES,
+    CODE_COPY,
     CodeRefused,
     Pair,
     RunRefused,
@@ -81,7 +82,6 @@ from studyforge.execute import (
 )
 from studyforge.exercise import ExerciseError, require_path
 from studyforge.serve.discovery import ServedCorpus
-from studyforge.serve.programs import WORKDIR as PROGRAM_WORKDIR
 from studyforge.serve.programs import program_of
 from studyforge.serve.response import NO_STORE, TEXT_TYPE, Response, error, json_response
 from studyforge.serve.routes.runs import Live, Runs, Stream
@@ -137,7 +137,7 @@ def route(runs: Runs, corpus: ServedCorpus, act: str, tail: str) -> Response:
     if act == CODE:
         return windows(runs, corpus, found)
     if act == CODE_RUN:
-        argv, workdir = program_of(corpus, path), PROGRAM_WORKDIR
+        argv, workdir = program_of(corpus, path), CODE_COPY
         if argv is None:
             return error(409, NO_PROGRAM)
     else:

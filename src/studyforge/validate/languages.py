@@ -48,6 +48,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from studyforge.archive.blocks import walk as walk_blocks
+from studyforge.corpus.container import fields
 from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Advice, Finding
@@ -247,13 +248,22 @@ def _same_task(first: dict, second: dict, names: dict[str, str]) -> bool:
     one, other = first.get("exercise"), second.get("exercise")
     if not (isinstance(one, dict) and isinstance(other, dict)):
         return False
-    cited = one.get("origin")
+    cited = _origin(one)
     return (
-        isinstance(cited, dict)
-        and cited == other.get("origin")
+        cited is not None
+        and cited == _origin(other)
         and _file_stem(one.get("main_path")) is not None
         and _file_stem(one.get("main_path")) == _file_stem(other.get("main_path"))
     )
+
+
+def _origin(exercise: dict) -> tuple[str | None, str | None] | None:
+    """Return a cited region as `(path, section)`, or `None` when absent or unreadable."""
+    try:
+        found = fields.optional_origin(exercise.get("origin"), "origin", "an exercise")
+    except ValueError:
+        return None
+    return found if found[1] is not None else None
 
 
 def _file_stem(path: object) -> str | None:

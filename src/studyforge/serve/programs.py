@@ -9,8 +9,7 @@ tab names as the command that runs its program (`archive.example`: a tab's `run`
 `serve.published.allowed_runs` adds `program_runs` to the allowlist.
 
 **Depends on.** `archive.blocks` for the walk, `archive.scrub` for the personal-data gate
-every decoded document passes (R7), `execute.CODE_COPY` for where a program starts, and
-`serve.discovery` for the corpus. ⛔ No write.
+every decoded document passes (R7), and `serve.discovery` for the corpus. ⛔ No write.
 
 ## ⭐ The command is the record's, never the request's
 
@@ -34,15 +33,10 @@ from pathlib import Path
 
 from studyforge.archive.blocks import walk as walk_blocks
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
-from studyforge.execute import CODE_COPY
 from studyforge.serve.discovery import ServedCorpus
 
 #: Where a unit's lesson documents sit, relative to the unit's archive directory.
 LESSON_GLOB = "lesson-*.json"
-
-#: The directory a program's argv starts in, relative to the runner's root.
-WORKDIR = CODE_COPY
-
 
 def program_of(corpus: ServedCorpus, path: str) -> list[str] | None:
     """Return the argv that runs the program of the code file `path`, or `None` when none does."""
@@ -50,8 +44,11 @@ def program_of(corpus: ServedCorpus, path: str) -> list[str] | None:
     return list(next(iter(found))) if len(found) == 1 else None
 
 
-def program_runs(corpus: ServedCorpus) -> list[tuple[str, list[str]]]:
-    """Return every `(working directory, argv)` an example's Run may start, each once, in order."""
+def program_runs(corpus: ServedCorpus, workdir: str) -> list[tuple[str, list[str]]]:
+    """Return every `(workdir, argv)` an example's Run may start, each once, in order.
+
+    The caller names `workdir` (`execute.CODE_COPY`): this module never imports the runner.
+    """
     found: dict[tuple[str, ...], None] = {}
     named: dict[str, set[tuple[str, ...]]] = {}
     for code, argv in _declared(corpus):
@@ -59,7 +56,7 @@ def program_runs(corpus: ServedCorpus) -> list[tuple[str, list[str]]]:
     for code, argv in _declared(corpus):
         if len(named[code]) == 1:
             found.setdefault(tuple(argv), None)
-    return [(WORKDIR, list(argv)) for argv in found]
+    return [(workdir, list(argv)) for argv in found]
 
 
 def _declared(corpus: ServedCorpus) -> Iterator[tuple[str, list[str]]]:

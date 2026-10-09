@@ -1601,3 +1601,11 @@ What it reads, and the choices in it:
 **Why.** A served Run happens in the runner, on an internal network with no route out, in a copy of the course's code. Started in the runner's root, a Python example could not import the course's harness; the copy has no `node_modules`; and the Gradle libraries of an example build were in no cache, because the component refuses to warm a build without a checksum file and the corpus's shallowest build was that example build. The course's offline gate already runs every example with the corpus root on the import path, pinned packages from a local cache and a warmed Gradle home, so the Run now does the same. The working directory is the import root rather than an extra path argument, because a pytest path option is read relative to whichever configuration file pytest finds and would override a course's own. The packages go in the course's layer rather than the toolchain profile, because the profile carries a cache and leaves each course to install its own lockfile from it.
 
 **Serves.** `R1`, `R7`, `R8`
+
+### The plan's name of an exercise is part of the exercises surface
+
+**Decision.** `skills.exercises.planned_name` is exported from `skills.exercises`, beside `practised`. An adapter finds the folder of its own material a bundle was drafted from by the name its plan gave the exercise, and that name is read from the unit's coverage report by the same pairing `practised` uses.
+
+**Why.** The adapter is a different package from the one that reads the report, and a name used across two packages has one exported home. Keeping it private would make the adapter read the report a second time.
+
+**Serves.** `R1`, `R12`

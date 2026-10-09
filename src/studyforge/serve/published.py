@@ -35,6 +35,7 @@ from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.execute import (
+    CODE_COPY,
     DeclaredEditorProbe,
     EditorProbe,
     Published,
@@ -131,7 +132,7 @@ def allowed_runs(corpus: ServedCorpus) -> list[tuple[str, list[str]]]:
     runtimes = corpus.corpus.manifest.runtimes
     found.extend(test_runs(corpus.root, runtimes))
     # ⭐ And each example's program, where its tab names how it runs, in the copy.
-    found.extend(program_runs(corpus))
+    found.extend(program_runs(corpus, CODE_COPY))
     return found
 
 

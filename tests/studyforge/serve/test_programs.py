@@ -22,7 +22,7 @@ def served(tmp_path, *tabs):
 def test_a_tab_s_program_is_its_record_s_argv_started_in_the_copy(tmp_path):
     corpus = served(tmp_path, {"lang": "x", "span": 1, "code": "a/A.x", "run": ["tool", "a"]})
     assert program_of(corpus, "a/A.x") == ["tool", "a"]
-    assert program_runs(corpus) == [(CODE_COPY, ["tool", "a"])]
+    assert program_runs(corpus, CODE_COPY) == [(CODE_COPY, ["tool", "a"])]
 
 
 def test_no_run_two_different_runs_or_an_option_first_name_no_program(tmp_path):
@@ -35,4 +35,4 @@ def test_no_run_two_different_runs_or_an_option_first_name_no_program(tmp_path):
     )
     assert program_of(corpus, "a/A.x") is None
     assert program_of(corpus, "b/B.x") is None and program_of(corpus, "c/C.x") is None
-    assert program_runs(corpus) == []
+    assert program_runs(corpus, CODE_COPY) == []
