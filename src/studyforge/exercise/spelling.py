@@ -31,7 +31,8 @@ from xml.etree import ElementTree
 #: `pytest.raises` that did not raise). ⛔ Only a `failure` element can be one: an
 #: `error` element and a skipped test never are.
 ASSERTION_TYPE = re.compile(
-    r"(?:^|[.$])(?:AssertionError|AssertionFailedError|AssertJMultipleFailuresError|ComparisonFailure)\Z"
+    r"(?:^|[.$])"
+    r"(?:AssertionError|AssertionFailedError|AssertJMultipleFailuresError|ComparisonFailure)\Z"
 )
 ASSERTION_MESSAGE = re.compile(
     r"\A(?:assert\b|(?:[\w.$]+\.)?(?:AssertionError|AssertionFailedError)\b|Failed: )"
@@ -48,7 +49,9 @@ _GROUPED_FAILURE = re.compile(r"^\t(?=\S)(\S+?):?(?:\s|$)", re.MULTILINE)
 def _all_assertions(message: str) -> bool:
     """Answer whether every failure a `MultipleFailuresError` message lists is an assertion's."""
     named = _GROUPED_FAILURE.findall(message)
-    return bool(named) and all(ASSERTION_TYPE.search(name.rstrip(":")) is not None for name in named)
+    return bool(named) and all(
+        ASSERTION_TYPE.search(name.rstrip(":")) is not None for name in named
+    )
 
 
 #: ⭐ `node --test`'s JUnit reporter writes every failure as `type="testCodeFailure"`, whatever
