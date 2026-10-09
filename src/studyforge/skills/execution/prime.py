@@ -317,10 +317,15 @@ GRADLE_CHECKSUMS = "gradle/verification-metadata.xml"  # the component warms no 
 
 
 def _warmable(tool: str, roots: set[str], names: set[str]) -> set[str]:
-    """Every build directory; for Gradle, those with checksums if the shallowest has none."""
+    """Every build directory; for Gradle, only those with checksums where any has them.
+
+    ⭐ A build without checksums beside one with them is never the prime, at any depth: the
+    component would refuse it, so the two are not counted as rival builds (an example build
+    beside the corpus's prime build at the same depth). Where every build or none has them,
+    every build is a candidate, as before.
+    """
     pinned = {one for one in roots if f"{one}/{GRADLE_CHECKSUMS}".lstrip("/") in names}
-    plain = tool != "gradle" or not pinned or min(map(_depth, pinned)) == min(map(_depth, roots))
-    return roots if plain else pinned
+    return pinned if tool == "gradle" and pinned else roots
 
 
 def _is_build_file(where: str, tool: str) -> bool:

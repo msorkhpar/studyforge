@@ -399,6 +399,14 @@ def test_where_the_shallowest_gradle_build_has_checksums_or_none_does_it_is_the_
     ] == ["examples"]
 
 
+def test_a_gradle_build_without_checksums_beside_one_with_them_at_one_depth_is_no_rival(tmp_path):
+    # ⭐ A shared example build beside the corpus's prime build, both one folder deep.
+    gradle_build(tmp_path, "examples", checksums=False)
+    gradle_build(tmp_path, "prime", checksums=True)
+    made = prime.prime_for(tmp_path, ("gradle", "kotlin"), seeded=SEEDED)
+    assert [one.root for one in made.projects] == ["prime"]
+
+
 def test_two_gradle_builds_with_checksums_at_one_depth_are_still_refused(tmp_path):
     gradle_build(tmp_path, "examples", checksums=False)
     gradle_build(tmp_path, "tools/one", checksums=True)
