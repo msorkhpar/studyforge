@@ -194,8 +194,12 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
         "email address",
         # ⭐ A package file's own name is not an address: the toolchain pins an editor
         # extension whose archive is `<name>@linux-x64.vsix`; none of these is a top-level domain.
+        # ⭐ A Kotlin label is not an address either: the whole local part being `this`, `return`,
+        # `break`, `continue` or `super` (`this@Library.name`) reads as a label. A dotted local
+        # part such as `this.person` is not exempt.
         re.compile(
-            r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.(?!(?:vsix|whl|jar|tgz)\b)[A-Za-z]{2,}\b"
+            r"\b(?!(?:this|return|break|continue|super)@)"
+            r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.(?!(?:vsix|whl|jar|tgz)\b)[A-Za-z]{2,}\b"
         ),
         EMAIL_PLACEHOLDER,
     ),
