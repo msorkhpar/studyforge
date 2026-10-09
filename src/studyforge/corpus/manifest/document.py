@@ -67,6 +67,7 @@ from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.fields import (  # noqa: F401 - names callers import from here
     ONBOARDING_DOC,
     PLACEMENT_PROFILES,
+    example_run_of,
     exercises_of,
     levels_of,
     narration_of,
@@ -146,6 +147,8 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "profile"): 8,
     (None, "live"): 8,
     (None, "absent_language"): 8,
+    (None, "editions"): 8,
+    (None, "example_run"): 8,
 }
 
 #: Every key a manifest may carry, in the order §4 writes them.
@@ -161,12 +164,14 @@ MANIFEST_KEYS = (
     "profile",
     "live",
     "narration",
+    "example_run",
     "onboarding_doc",
     "languages",
     "modes",
     "default_mode",
     "outside_mode",
     "absent_language",
+    "editions",
     "placement",
     "content",
     "media",
@@ -209,6 +214,9 @@ class Manifest:
     #: ⭐ **Absent is `ONBOARDING.md` at the root**, as before the key; `None`
     #: (declared `false`) is no reader document at all.
     onboarding_doc: str | None = ONBOARDING_DOC
+    #: Whether a served page offers Run on an example. ⭐ **Absent is `True`**: the Run strip
+    #: is drawn wherever it always was. `False` draws it on no example.
+    example_run: bool = True
     #: Where the curriculum is recorded and what its groups are filed at
     #: ⭐ **Absent is `None`**: the adapter reads its record itself,
     #: as every corpus did before the key.
@@ -316,6 +324,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
             document.get("runtimes"), exercises=exercises, present="runtimes" in document
         ),
         narration=narration_of(document.get("narration", True), where),
+        example_run=example_run_of(document.get("example_run", True), where),
         onboarding_doc=onboarding_doc_of(document.get("onboarding_doc", ONBOARDING_DOC), where),
         curriculum=(
             parse_curriculum(document["curriculum"], where, len(levels), levels=levels)

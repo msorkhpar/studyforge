@@ -773,12 +773,14 @@ example is not where you learn what a manifest *may* carry. This list is.
 | `profile` | *optional* | The name of a toolchain image profile the corpus's runner and editor are built on, beyond the base of its `runtimes`. ⛔ Requires `runtimes`; gated at `corpus_api` 8; no bump. ⭐ **Absent means the bases alone**, and the framework names no profile: the name is the corpus's own declaration |
 | `live` | *optional* | `{host, key_variable, examples, practices}`: the one API host a live run may reach, the NAME of the variable a reader's own key is given under, and the examples (`{path, command}`) and practices (keys) that may run live. ⛔ Requires `runtimes`; gated at `corpus_api` 8; no bump. ⭐ **Absent means no live run**, and the framework names no host or variable: both are the corpus's declaration |
 | `narration` | *optional* | Whether a build and a serve voice the corpus. ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
+| `example_run` | *optional* | Whether a served page offers Run on an example. ⭐ **Absent means `true`**, the strip wherever an example's code has a test or names its program; `false` draws Run on no example. Gated at `corpus_api` 8; no bump |
 | `onboarding_doc` | *optional* | Where onboarding writes its reader document: a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root** |
 | `languages` | *optional* | `{id, label, fence_labels}` entries: the language ids a section may be tagged with. Absent means no tagging. Gated at `corpus_api` 8; no bump |
 | `modes` | *optional* | `{id, label, summary, prose, tabs, practices, practice_choice?}` entries, each naming declared languages. ⛔ Requires `languages`; absent means no question |
 | `default_mode` | *optional* | A declared mode id; absent means the first declared mode. Requires `modes` |
 | `outside_mode` | *optional* | `open` (default) or `locked`. Requires `modes` |
 | `absent_language` | *optional* | `hide` (default) or `grey`. Requires `modes` |
+| `editions` | *optional* | `advised` (default) or `required`: whether two practices of one unit that are one task in two languages and share no `edition` are a warning or a finding (`edition-unshared`). Requires `languages`; gated at `corpus_api` 8; no bump |
 | `placement` | **required** | `tree` or `sibling` (§5) |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted (§5). ⛔ **A corpus with no media declares nothing** |
