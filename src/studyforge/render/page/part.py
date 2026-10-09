@@ -47,12 +47,12 @@ def render(
     ⚠️ `heads_page` is `section.render`'s own word, passed STRAIGHT through and REQUIRED:
     `page.document` is its only caller and the only holder of the page.
     """
-    entry = editions.edited_with(document, section)
-    many = entry is not None
-    # ⭐ An edition's statement is headed by the practice's one title; the switch names the language.
-    shown = editions.untitled(section, entry, placement.offer) if many else section
+    many = editions.edited_with(document, section) is not None
+    # ⭐ An edition's statement keeps the heading its adapter gave it: an adapter that names no
+    # language in the title (`skills.adapter.practices.as_edition`) gets one title, and a course
+    # that names the language in each edition's title keeps naming it.
     rendered = section_module.render(
-        shown, placement, narration, heads_page=heads_page, edited=many
+        section, placement, narration, heads_page=heads_page, edited=many
     )
     panel = practice.render(section, document, placement)
     if not many:

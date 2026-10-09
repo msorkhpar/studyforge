@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from studyforge.render.page import part
+from studyforge.render.page import editions, part
 from studyforge.render.page.narration import SILENT
 from tests.studyforge.render.page.pages import sample_placement
 from tests.studyforge.render.page.test_editions import LANGS, four, offer
@@ -29,6 +29,21 @@ def test_an_edition_and_its_panel_carry_data_edition_and_never_data_lang():
     assert "data-lang=" not in found
     assert found.count('<section data-practice="') == 1
     assert LANGS[1] in found
+
+
+def test_an_edition_titled_with_its_language_keeps_the_language_in_its_statement_heading():
+    found = one(four(), 1)
+    assert 'data-label="Keep a conversation (TypeScript)"' in found
+
+
+def test_editions_the_adapter_titled_without_a_language_stay_one_card_with_no_language_in_it():
+    sections = [
+        {**one_edition, "heading": "Keep a conversation"} for one_edition in four()
+    ]
+    found = [one(sections, at) for at in range(len(sections))]
+    assert all('data-label="Keep a conversation"' in each for each in found)
+    assert all("Keep a conversation (" not in each for each in found)
+    assert len(editions.entries(document(sections=sections))) == 1
 
 
 def test_an_ordinary_tagged_practice_keeps_its_language_tag_on_the_panel():

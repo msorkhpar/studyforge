@@ -173,14 +173,22 @@ def test_a_mixed_mode_opens_a_practice_in_its_practice_language_then_each_prose_
     assert editions.preference(modes.offer(reading))["modes"] == {"m": ["bb", "aa"]}
 
 
-def test_no_edition_statement_or_panel_names_its_language_in_its_title():
-    # ⭐ The switch names the language: an edition's statement is headed by the practice's title.
-    markup = page(four(), with_offer=True)
+def test_editions_titled_without_a_language_name_none_in_one_card():
+    # ⭐ The switch names the language: an adapter's language-free titles make one card.
+    clean = [{**one, "heading": "Keep a conversation"} for one in four()]
+    markup = page(clean, with_offer=True)
     for lang in LANGS:
         assert f"Keep a conversation ({LABELS[lang]})" not in markup, lang
-    statements = re.findall(r'<section id="s-practice-conversation-[a-z]+"[^>]*>', markup)
-    titled = 'aria-label="Keep a conversation"'
-    assert all(titled in one or "aria-label" not in one for one in statements)
+    assert markup.count("data-practice-card=") == 1
+
+
+def test_editions_titled_with_a_language_keep_it_in_each_statement_not_the_card():
+    markup = page(four(), with_offer=True)
+    assert markup.count("data-practice-card=") == 1
+    for lang in LANGS:
+        assert f'data-label="Keep a conversation ({LABELS[lang]})"' in markup, lang
+    card = re.search(r'<li id="card-practice-conversation-[a-z]+"[^>]*>.*?</li>', markup, re.S)
+    assert card is not None and "Keep a conversation (" not in card.group(0)
 
 
 def test_a_declared_name_that_differs_from_the_id_is_dropped_from_the_title_too():

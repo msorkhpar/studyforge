@@ -164,18 +164,6 @@ def title(heading: str, entry: Entry, offer: modes.Offer | None = None) -> str:
     return heading
 
 
-def untitled(section: dict, entry: Entry, offer: modes.Offer | None = None) -> dict:
-    """Return an edition's section with its heading as the card's title: no language in it.
-
-    ⭐ The statement and the panel of an edition carry the one title of the practice; the
-    switch at the top of the panel names the language. A section with no heading is kept.
-    """
-    heading = section.get("heading")
-    if not isinstance(heading, str) or not heading:
-        return section
-    return {**section, "heading": title(heading, entry, offer)}
-
-
 def collapsed(document: dict) -> dict:
     """Return the document as the outline reads it: one practice section per practice.
 
