@@ -275,12 +275,13 @@ PROGRAM = "lib/greet_main.py"
 
 
 def declare_program(root: Path, code_path: str, argv: list[str]) -> None:
-    """Give the first lesson of the copy's archive an example tab naming `code_path` and its `run`."""
+    """Give the copy's first lesson an example tab naming `code_path` and its `run`."""
     path = sorted((root / "archive/kata/raw/python").glob("unit-*/lesson-*.json"))[0]
     document = json.loads(path.read_text(encoding="utf-8"))
     tab = {"lang": "python", "span": 1, "code": code_path, "run": argv}
     code_block = {"type": "code", "lang": "python", "text": "print('hello')"}
-    document["blocks"].append({"type": "example", "id": "m1", "tabs": [tab], "blocks": [code_block]})
+    block = {"type": "example", "id": "m1", "tabs": [tab], "blocks": [code_block]}
+    document["blocks"].append(block)
     path.write_text(json.dumps(document, indent=2), encoding="utf-8")
 
 

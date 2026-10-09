@@ -180,6 +180,8 @@ class Report:
         archive's `counts` makes, and it is why "0 unchecked" is printed.
         """
         verdict = "valid" if self.ok else "NOT valid"
-        said = f"{verdict}: {len(self.findings)} finding(s), {len(self.unchecked)} unchecked claim(s)"
+        said = (
+            f"{verdict}: {len(self.findings)} finding(s), {len(self.unchecked)} unchecked claim(s)"
+        )
         # ⭐ Named only when there is one, so a corpus with none reads the line it always did.
         return f"{said}, {len(self.advice)} warning(s)" if self.advice else said

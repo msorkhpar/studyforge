@@ -1,17 +1,22 @@
-"""The adapter's edition helpers (`skills.adapter.practices`): one id per practice folder, no language in a title."""
+"""Mirror of `src/studyforge/skills/adapter/editions.py` (R12): one id per practice folder.
+
+⭐ And no language in a title; `skills.adapter.practices` re-exports the helpers.
+"""
 
 from __future__ import annotations
 
 import pytest
 
-from studyforge.skills.adapter.practices import PracticeRefused, as_edition, edition_id, untitled
+from studyforge.skills.adapter.practices import EditionRefused, as_edition, edition_id, untitled
 
 FOLDER = "exercises/02-intermediate/27-references/unit-02/practice-1"
 
 
 def test_every_language_of_one_folder_gets_one_edition_id():
-    kotlin = as_edition({"title": "Count by a key (Kotlin)", "ordinal": 1}, folder=FOLDER, lang="kotlin", labels=["Kotlin"])
-    java = as_edition({"title": "Count by a key (Java)", "ordinal": 2}, folder=FOLDER, lang="java", labels=["Java"])
+    first = {"title": "Count by a key (Kotlin)", "ordinal": 1}
+    second = {"title": "Count by a key (Java)", "ordinal": 2}
+    kotlin = as_edition(first, folder=FOLDER, lang="kotlin", labels=["Kotlin"])
+    java = as_edition(second, folder=FOLDER, lang="java", labels=["Java"])
     assert kotlin["edition"] == java["edition"] == edition_id(FOLDER)
     assert (kotlin["lang"], java["lang"]) == ("kotlin", "java")
     assert kotlin["title"] == java["title"] == "Count by a key"
@@ -36,5 +41,5 @@ def test_the_fields_given_are_not_changed_in_place():
 
 
 def test_a_folder_with_no_letter_or_digit_is_refused():
-    with pytest.raises(PracticeRefused):
+    with pytest.raises(EditionRefused):
         edition_id("//")

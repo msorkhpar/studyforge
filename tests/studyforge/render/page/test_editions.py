@@ -179,7 +179,8 @@ def test_no_edition_statement_or_panel_names_its_language_in_its_title():
     for lang in LANGS:
         assert f"Keep a conversation ({LABELS[lang]})" not in markup, lang
     statements = re.findall(r'<section id="s-practice-conversation-[a-z]+"[^>]*>', markup)
-    assert all('aria-label="Keep a conversation"' in one or "aria-label" not in one for one in statements)
+    titled = 'aria-label="Keep a conversation"'
+    assert all(titled in one or "aria-label" not in one for one in statements)
 
 
 def test_a_declared_name_that_differs_from_the_id_is_dropped_from_the_title_too():

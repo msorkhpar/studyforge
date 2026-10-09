@@ -34,7 +34,8 @@ def test_editions_that_share_one_id_are_valid(tmp_path):
         document(kind="practice", ordinal=1, lang="aa", title="Count by a key", edition="count"),
         document(kind="practice", ordinal=2, lang="bb", title="Count by a key", edition="count"),
     ]
-    report = validate(corpus(tmp_path, shared, manifest={**READING, "editions": "required"}, practices=2))
+    required = {**READING, "editions": "required"}
+    report = validate(corpus(tmp_path, shared, manifest=required, practices=2))
     assert report.findings == () and report.advice == ()
 
 
@@ -44,6 +45,7 @@ def test_two_tasks_and_a_corpus_with_none_are_not_asked(tmp_path):
         document(kind="practice", ordinal=1, lang="aa", title="Count by a key"),
         document(kind="practice", ordinal=2, lang="bb", title="Sort the words"),
     ]
-    report = validate(corpus(tmp_path, different, manifest={**READING, "editions": "required"}, practices=2))
+    required = {**READING, "editions": "required"}
+    report = validate(corpus(tmp_path, different, manifest=required, practices=2))
     assert report.findings == () and report.advice == ()
     assert "warning" not in report.summary()
