@@ -78,3 +78,27 @@ def test_both_gates_hold_one_reserved_vocabulary():
     assert samples.RESERVED_DOMAINS == floor_reserved.RESERVED_DOMAINS
     for domain in ("example.invalid", "sub.example.org", "test.com", "example.co"):
         assert samples.is_reserved(domain) == floor_reserved.is_reserved(domain), domain
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "this@Library.name",
+        "return@forEach",
+        "break@outer",
+        "continue@outer",
+        "super@Base.method",
+        "@file:JvmName(\"Util\")",
+        "val n = this@Library.name.length",
+    ],
+)
+def test_kotlin_labels_are_not_addresses(text):
+    assert shape_in(text) is None, text
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["contact.person@mailhost.org", "this.person@mailhost.org", "write to jane.doe@mailhost.org"],
+)
+def test_real_addresses_are_still_refused(text):
+    assert shape_in(text) == "email address", text
