@@ -128,3 +128,15 @@ def test_a_practice_in_a_language_lists_the_unit_in_the_modes_that_offer_it(tmp_
     ]
     report = validate(corpus(tmp_path, documents, practices=1))
     assert "mode-empty" not in rules(report)
+
+
+def test_a_mode_reading_two_languages_lists_a_unit_in_either():
+    from studyforge.corpus.manifest.reading import Mode
+    from studyforge.validate.languages import _listed
+
+    class One:
+        document = {"lang": "bb", "kind": "lesson"}
+
+    mixed = Mode("m", "M", "m", "aa", ("aa",), (), prose_also=("bb",))
+    only = Mode("o", "O", "o", "aa", ("aa",), ())
+    assert _listed(mixed, [One()]) and not _listed(only, [One()])

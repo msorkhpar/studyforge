@@ -262,3 +262,37 @@ def test_no_new_key_is_required_and_the_version_is_not_raised():
 
     assert CORPUS_API == 8 and max(KNOWN_CORPUS_API) == 8
     assert not {"languages", "modes", "default_mode", "outside_mode"} & set(REQUIRED_KEYS)
+
+
+def test_a_string_prose_reads_one_language_as_it_always_did():
+    mode = from_document(full()).reading.modes[1]
+    assert mode.prose == "alpha" and mode.reads == ("alpha",)
+
+
+def test_a_list_prose_reads_its_languages_in_order():
+    document = full()
+    document["modes"][1]["prose"] = ["beta", "alpha"]
+    mode = from_document(document).reading.modes[1]
+    assert mode.prose == "beta" and mode.reads == ("beta", "alpha")
+
+
+def test_a_one_item_list_prose_is_the_same_as_the_string():
+    document = full()
+    document["modes"][1]["prose"] = ["alpha"]
+    assert from_document(document).reading.modes[1] == from_document(full()).reading.modes[1]
+
+
+@pytest.mark.parametrize(
+    "value, words",
+    [
+        ([], ("modes[1].prose", "non-empty")),
+        (["alpha", "gamma"], ("modes[1].prose", "'gamma'", "does not declare")),
+        (["alpha", "alpha"], ("modes[1].prose", "more than once")),
+        (["alpha", 3], ("modes[1].prose",)),
+        (3, ("modes[1].prose",)),
+    ],
+)
+def test_a_bad_prose_list_is_refused_by_name(value, words):
+    document = full()
+    document["modes"][1]["prose"] = value
+    refused(document, *words)

@@ -224,7 +224,7 @@ def preference(offer: modes.Offer | None) -> dict:
     return {
         "attribute": modes.MODE_ATTRIBUTE,
         "modes": {
-            choice.id: list(dict.fromkeys((*choice.practices, choice.prose, *choice.tabs)))
+            choice.id: list(dict.fromkeys((*choice.practices, *choice.reads, *choice.tabs)))
             for choice in offer.choices
         },
     }

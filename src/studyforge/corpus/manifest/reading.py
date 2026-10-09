@@ -27,8 +27,9 @@ choice), and a corpus with none of the five keys has no `Reading`.
   (`modes` needs `languages`; the others need `modes`);
 - a duplicate language id or mode id;
 - a fence label claimed by two languages (or twice by one);
-- a mode whose `prose`, `tabs` or `practices` names a language not declared;
-- a tab or a practice language listed twice in one mode;
+- a mode whose `prose` (one id, or a non-empty list of ids read in that order), `tabs` or
+  `practices` names a language not declared;
+- a prose, tab or practice language listed twice in one mode;
 - a `default_mode` that is not a declared mode;
 - an `outside_mode` that is not `open` or `locked`;
 - an `absent_language` that is not `hide` or `grey`;
@@ -94,6 +95,13 @@ class Mode:
     tabs: tuple[str, ...]
     practices: tuple[str, ...]
     practice_choice: bool = False
+    #: ⭐ The languages whose prose the mode also reads, after `prose` (a list-valued `prose`).
+    prose_also: tuple[str, ...] = ()
+
+    @property
+    def reads(self) -> tuple[str, ...]:
+        """Return every language whose prose the mode shows, the first one first."""
+        return (self.prose, *self.prose_also)
 
 
 @dataclass(frozen=True, slots=True)
@@ -234,6 +242,29 @@ def _language_list(
     return tuple(value)
 
 
+def _prose(value: object, known: set[str], name: str, where: str) -> tuple[str, ...]:
+    """Return the languages a mode reads: one id as a string (today), or a non-empty list of ids."""
+    if isinstance(value, list):
+        if not value:
+            raise ManifestError(
+                f"{where} '{name}.prose' must be a language id or a non-empty list of them, "
+                f"got {describe(value)}"
+            )
+        listed = value
+    else:
+        listed = [value]
+    for ident in listed:
+        if not isinstance(ident, str) or ident not in known:
+            raise ManifestError(
+                f"{where} '{name}.prose' names {_named(ident)}, which 'languages' does not "
+                f"declare; declared: {sorted(known)}"
+            )
+    repeated = sorted({ident for ident in listed if listed.count(ident) > 1})
+    if repeated:
+        raise ManifestError(f"{where} '{name}.prose' names {repeated} more than once")
+    return tuple(listed)
+
+
 def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
     entries = _object_list(value, "modes", where)
     modes: list[Mode] = []
@@ -250,12 +281,7 @@ def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
         ident = _id(entry, name, where)
         if any(mode.id == ident for mode in modes):
             raise ManifestError(f"{where} 'modes' declares the id {_named(ident)} twice")
-        prose = entry["prose"]
-        if not isinstance(prose, str) or prose not in known:
-            raise ManifestError(
-                f"{where} '{name}.prose' names {_named(prose)}, which 'languages' does not "
-                f"declare; declared: {sorted(known)}"
-            )
+        prose = _prose(entry["prose"], known, name, where)
         choice = entry.get("practice_choice", False)
         if not isinstance(choice, bool):
             raise ManifestError(
@@ -266,7 +292,8 @@ def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
                 id=ident,
                 label=_text(entry, "label", name, where),
                 summary=_text(entry, "summary", name, where),
-                prose=prose,
+                prose=prose[0],
+                prose_also=prose[1:],
                 tabs=_language_list(entry, "tabs", known, name, where, nonempty=True),
                 practices=_language_list(entry, "practices", known, name, where, nonempty=False),
                 practice_choice=choice,
