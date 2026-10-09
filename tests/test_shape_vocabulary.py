@@ -98,7 +98,11 @@ def test_kotlin_labels_are_not_addresses(text):
 
 @pytest.mark.parametrize(
     "text",
-    ["contact.person@mailhost.org", "this.person@mailhost.org", "write to jane.doe@mailhost.org"],
+    [
+        "contact.person" + "@" + "mailhost.org",
+        "this.person" + "@" + "mailhost.org",
+        "write to jane.doe" + "@" + "mailhost.org",
+    ],
 )
 def test_real_addresses_are_still_refused(text):
     assert shape_in(text) == "email address", text

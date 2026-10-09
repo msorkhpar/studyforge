@@ -86,7 +86,15 @@ SHAPES = (
         # prose about R7 is exactly where a real home path would be pasted by
         # accident. The cost is that `a@b.example` would not
         # be caught; that is stated rather than hidden.
-        re.compile(r"\b[A-Za-z0-9._%+\-]{2,}@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),
+        #
+        # ⭐ A Kotlin label is not an address: a local part that is exactly `this`,
+        # `return`, `break`, `continue` or `super` (`this@Library.name`) reads as a
+        # label, the same exemption the product rule makes. A dotted local part is
+        # not exempt.
+        re.compile(
+            r"\b(?!(?:this|return|break|continue|super)@)"
+            r"[A-Za-z0-9._%+\-]{2,}@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"
+        ),
     ),
     (
         "local hostname",

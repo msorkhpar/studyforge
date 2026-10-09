@@ -78,5 +78,6 @@ def test_a_mode_reading_two_languages_builds_a_page_that_shows_both_and_hides_ne
     }
     built = files(build(tmp_path, "mixed", DOCUMENTS, mixed))
     css = built[".studyforge/assets/modes.css"].decode()
-    assert 'html[data-mode="mixed"] section[data-lang]:not([data-lang="aa"]):not([data-lang="bb"])' in css
+    rule = 'html[data-mode="mixed"] section[data-lang]:not([data-lang="aa"]):not([data-lang="bb"])'
+    assert rule in css
     assert b'data-mode-prose="aa bb"' in b"".join(built.values())

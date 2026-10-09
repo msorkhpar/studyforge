@@ -105,7 +105,9 @@ MIXED = modes.offer(
         languages=LANGUAGES,
         modes=(
             *MODES,
-            Mode("mixed", "Mixed", "Aa then Bb", "aa", ("aa", "bb"), ("aa", "bb"), prose_also=("bb",)),
+            Mode(
+                "mixed", "Mixed", "Aa then Bb", "aa", ("aa", "bb"), ("aa", "bb"), prose_also=("bb",)
+            ),
         ),
         default_mode="only-aa",
     ),
