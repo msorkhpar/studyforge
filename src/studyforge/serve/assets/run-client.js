@@ -7,7 +7,7 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor`, `runnable`, `practice`, `code`, `codeTest`, `practices` — and
+   `start`, `stop`, `editor`, `runnable`, `practice`, `code`, `codeTest`, `codeRun`, `practices` — and
    draws nothing: the practice panel that puts Run and
    Submit in front of a reader is the page's own. ⛔ A control this file
    drew where no panel exists would be a dead button, and a dead button is
@@ -202,6 +202,7 @@
      needs no encoding, and is sent as the page carries it. */
   var CODE = 'code';
   var CODE_TEST = 'code-test';
+  var CODE_RUN = 'code-run';
   var SEGMENT = /^(?!-)[A-Za-z0-9._-]+$/;
 
   function codePath(path) {
@@ -236,6 +237,15 @@
     var encoded = codePath(path);
     if (!CORPUS.test(corpus) || encoded === null) { return refused('code'); }
     return streamed(BASE + corpus + '/' + CODE_TEST + '/' + encoded, onLine);
+  }
+
+  /* Run the PROGRAM of the example whose code is `path`, in the copy, streamed like a run.
+     ⛔ The argv is the one the corpus's lesson names for that file; the path only selects it. */
+  function codeRun(corpus, path, onLine) {
+    if (!available()) { return refused('no-origin'); }
+    var encoded = codePath(path);
+    if (!CORPUS.test(corpus) || encoded === null) { return refused('code'); }
+    return streamed(BASE + corpus + '/' + CODE_RUN + '/' + encoded, onLine);
   }
 
   function stop() {
@@ -281,6 +291,7 @@
     practice: practice,
     code: code,
     codeTest: codeTest,
+    codeRun: codeRun,
     practices: practices,
     modes: MODES.slice()
   };

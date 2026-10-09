@@ -232,7 +232,7 @@ def assets(
     if has_reviews(corpus):
         # ⭐ And a spaced-review bank its two.
         shared.update(review_files())
-    if has_example_run(corpus):
+    if corpus.manifest.example_run and has_example_run(corpus):
         # ⭐ And the Run strip's two only for a corpus whose examples name their code.
         shared.update(example_run_files())
     for filename, body in sorted(shared.items()):

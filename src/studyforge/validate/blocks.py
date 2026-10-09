@@ -39,7 +39,7 @@ EXAMPLE = "example"
 #: An example's tab, its flags and what it holds. ⛔ Spelled here as `archive.example` spells
 #: them, and a test pins the two equal: the archive's names stay inside the archive.
 EXAMPLE_TAB_KEYS = ("lang", "span")
-EXAMPLE_TAB_OPTIONAL = ("code",)
+EXAMPLE_TAB_OPTIONAL = ("code", "run")
 EXAMPLE_MAX_TABS = 8
 EXAMPLE_OUTPUTS = ("compiler", "warning")
 EXAMPLE_BLOCKS = ("code",)
@@ -113,10 +113,7 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
     covered = 0
     for number, tab in enumerate(tabs):
         here = f"{at}.tabs[{number}]"
-        if not isinstance(tab, dict) or tuple(tab) not in (
-            EXAMPLE_TAB_KEYS,
-            (*EXAMPLE_TAB_KEYS, *EXAMPLE_TAB_OPTIONAL),
-        ):
+        if not isinstance(tab, dict) or tuple(tab) not in _TAB_SHAPES:
             yield (
                 here,
                 f"is {describe(tab)}; a tab is an object with {list(EXAMPLE_TAB_KEYS)}"
@@ -127,6 +124,12 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
             fault = source_path_fault(tab["code"]) if isinstance(tab["code"], str) else "not text"
             if fault:
                 yield f"{here}.code", f"is {fault}; code is the corpus-relative path of a file"
+        if "run" in tab and not _argv(tab["run"]):
+            yield (
+                f"{here}.run",
+                f"is {describe(tab['run'])}; run is a non-empty array of non-empty strings, the"
+                f" first naming a program",
+            )
         if not isinstance(tab["lang"], str) or not tab["lang"]:
             yield f"{here}.lang", f"is {describe(tab['lang'])}; a tab names a language by its id"
         elif tab["lang"] in seen:
@@ -140,6 +143,23 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
             covered += span
     if covered != len(held):
         yield f"{at}.tabs", "do not cover the example's blocks exactly once, in order"
+
+
+#: The shapes a tab may have: its keys, then each optional key after the one before it.
+_TAB_SHAPES = tuple(
+    (*EXAMPLE_TAB_KEYS, *EXAMPLE_TAB_OPTIONAL[:count])
+    for count in range(len(EXAMPLE_TAB_OPTIONAL) + 1)
+)
+
+
+def _argv(value: object) -> bool:
+    """Whether `value` is an argv: words of text, none empty or holding a NUL, not opening `-`."""
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(isinstance(one, str) and one and "\0" not in one for one in value)
+        and not value[0].startswith("-")
+    )
 
 
 def _list(block: dict, at: str) -> Iterator[tuple[str, str]]:
