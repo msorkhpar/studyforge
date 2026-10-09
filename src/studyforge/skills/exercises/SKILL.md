@@ -265,6 +265,15 @@ specs once: it proves each by materialising it again and reading the bytes
 back, and leaves any plant it cannot prove. See *A plant as replacements* in
 `docs/authoring/exercises.md`.
 
+⭐ **A Kotlin practice follows the same draft rules, plus the Kotlin section of
+`docs/authoring/exercises.md`.** Name each test in camelCase and give none a
+`@DisplayName`, end the command in `cleanTest test`, set
+`testLogging { exceptionFormat = TestExceptionFormat.FULL }` in `tasks.test`,
+and ask the corpus's prime for a project that holds your dependency set. The
+adversary reads *Silent passes particular to Kotlin* (equality and identity,
+default arguments, platform nullability, virtual time, threads) as well as the
+Java list.
+
 ### 3. Run the pass
 
 ⭐ **Before the pass, take the two readings it cannot take for you:**
