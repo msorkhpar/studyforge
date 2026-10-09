@@ -66,6 +66,7 @@ def test_the_file_attribute_still_rebuilds_the_node_id():
         {"message": "Failed: DID NOT RAISE <class 'ValueError'>"},
         {"type": "org.opentest4j.AssertionFailedError", "message": "expected 1"},
         {"type": "java.lang.AssertionError"},
+        {"type": "org.assertj.core.error.AssertJMultipleFailuresError", "message": "[soft] (1 failure)"},
         {"type": "org.junit.ComparisonFailure"},
     ],
 )

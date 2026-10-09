@@ -31,7 +31,7 @@ from xml.etree import ElementTree
 #: `pytest.raises` that did not raise). ⛔ Only a `failure` element can be one: an
 #: `error` element and a skipped test never are.
 ASSERTION_TYPE = re.compile(
-    r"(?:^|[.$])(?:AssertionError|AssertionFailedError|ComparisonFailure)\Z"
+    r"(?:^|[.$])(?:AssertionError|AssertionFailedError|AssertJMultipleFailuresError|ComparisonFailure)\Z"
 )
 ASSERTION_MESSAGE = re.compile(
     r"\A(?:assert\b|(?:[\w.$]+\.)?(?:AssertionError|AssertionFailedError)\b|Failed: )"
