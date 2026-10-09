@@ -202,6 +202,11 @@ def _declarations(manifest: Any) -> dict[str, Any]:
     for later in ("reading", "profile", "live"):
         if value.get(later) is None:
             value.pop(later, None)
+    # ⭐ Two later keys whose absent value is not `None`: left out when they say today.
+    if value.get("example_run") is True:
+        value.pop("example_run")
+    if isinstance(value.get("reading"), dict) and value["reading"].get("editions") == "advised":
+        value["reading"].pop("editions")
     return value
 
 

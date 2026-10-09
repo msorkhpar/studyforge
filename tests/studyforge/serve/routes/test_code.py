@@ -269,3 +269,40 @@ def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support
         status, _, body = post(server, at(code.CODE_TEST, "samples/demo/test_demo.py"))
     assert status == 200, body
     assert "1 passed" in body and body.splitlines()[-1] == "--- exit 0 ---", body
+
+
+PROGRAM = "lib/greet_main.py"
+
+
+def declare_program(root: Path, code_path: str, argv: list[str]) -> None:
+    """Give the first lesson of the copy's archive an example tab naming `code_path` and its `run`."""
+    path = sorted((root / "archive/kata/raw/python").glob("unit-*/lesson-*.json"))[0]
+    document = json.loads(path.read_text(encoding="utf-8"))
+    tab = {"lang": "python", "span": 1, "code": code_path, "run": argv}
+    code_block = {"type": "code", "lang": "python", "text": "print('hello')"}
+    document["blocks"].append({"type": "example", "id": "m1", "tabs": [tab], "blocks": [code_block]})
+    path.write_text(json.dumps(document, indent=2), encoding="utf-8")
+
+
+def test_an_example_s_program_runs_in_the_copy_and_every_line_it_prints_reaches_the_stream(root):
+    # ⭐ The defect this guards: Run ran the paired test, whose passing run printed nothing, so
+    # the panel held the exit line alone. A tab that names its program runs THAT program.
+    (root / PROGRAM).write_text("print('hello Ann')\nprint('second line')\n", encoding="utf-8")
+    declare_program(root, LESSON, ["python3", PROGRAM])
+    before = authors(root)
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    with serving(live, discovered) as server:
+        status, _, body = post(server, at(code.CODE_RUN, LESSON))
+    assert status == 200, body
+    lines = body.splitlines()
+    assert "hello Ann" in lines and "second line" in lines, body
+    assert lines[-1] == "--- exit 0 ---"
+    assert authors(root) == before
+    assert discovered.corpora[0].progress().read()["practices"] == {}
+
+
+def test_a_file_no_tab_names_a_program_for_runs_nothing(root):
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    with serving(live, discovered) as server:
+        status, _, body = post(server, at(code.CODE_RUN, LESSON))
+    assert status == 409 and code.NO_PROGRAM in body and live.live is None

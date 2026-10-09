@@ -171,3 +171,19 @@ def test_a_mixed_mode_opens_a_practice_in_its_practice_language_then_each_prose_
         default_mode="m",
     )
     assert editions.preference(modes.offer(reading))["modes"] == {"m": ["bb", "aa"]}
+
+
+def test_no_edition_statement_or_panel_names_its_language_in_its_title():
+    # ⭐ The switch names the language: an edition's statement is headed by the practice's title.
+    markup = page(four(), with_offer=True)
+    for lang in LANGS:
+        assert f"Keep a conversation ({LABELS[lang]})" not in markup, lang
+    statements = re.findall(r'<section id="s-practice-conversation-[a-z]+"[^>]*>', markup)
+    assert all('aria-label="Keep a conversation"' in one or "aria-label" not in one for one in statements)
+
+
+def test_a_declared_name_that_differs_from_the_id_is_dropped_from_the_title_too():
+    entry = editions.Entry((edition("typescript", title="Keep a conversation (TS)"),))
+    named = dataclasses.replace(offer(), languages=(("typescript", "TS"),))
+    assert editions.title("Keep a conversation (TS)", entry, named) == "Keep a conversation"
+    assert editions.title("Keep a conversation (TS)", entry) == "Keep a conversation (TS)"
