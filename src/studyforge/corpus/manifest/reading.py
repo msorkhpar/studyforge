@@ -1,11 +1,12 @@
-"""Reading modes: the `languages`, `modes`, `default_mode`, `outside_mode`, `absent_language` keys.
+"""Reading modes: the `languages`, `modes`, `default_mode`, `outside_mode`, `absent_language` and
+`editions` keys.
 
-**What it does.** Validates the five optional top-level keys with which a corpus
+**What it does.** Validates the six optional top-level keys with which a corpus
 declares the languages its sections may be tagged with and the modes a reader
 may choose between, and returns one immutable `Reading`.
 
 **How you use it.** `parse_reading(document, where)`; a document with none of
-the five keys yields `None`, so no caller asks "did they declare one?" and a
+the six keys yields `None`, so no caller asks "did they declare one?" and a
 corpus that declares nothing is exactly what it was before the keys existed.
 
 **Depends on.** `errors` and `describe`.
@@ -19,7 +20,7 @@ data, and no line here branches on one.
 
 No key is required, and none gives another a default it did not have: a corpus
 with `languages` alone is valid (its sections may be tagged, nothing offers a
-choice), and a corpus with none of the five keys has no `Reading`.
+choice), and a corpus with none of the six keys has no `Reading`.
 
 ## ⛔ What is refused, each by name
 
@@ -27,11 +28,13 @@ choice), and a corpus with none of the five keys has no `Reading`.
   (`modes` needs `languages`; the others need `modes`);
 - a duplicate language id or mode id;
 - a fence label claimed by two languages (or twice by one);
-- a mode whose `prose`, `tabs` or `practices` names a language not declared;
-- a tab or a practice language listed twice in one mode;
+- a mode whose `prose` (one id, or a non-empty list of ids read in that order), `tabs` or
+  `practices` names a language not declared;
+- a prose, tab or practice language listed twice in one mode;
 - a `default_mode` that is not a declared mode;
 - an `outside_mode` that is not `open` or `locked`;
 - an `absent_language` that is not `hide` or `grey`;
+- an `editions` that is not `advised` or `required`, or one declared without `languages`;
 - a `practice_choice` that is not a boolean;
 - an unknown key inside a language or a mode, and an empty `languages` or `modes`.
 
@@ -61,8 +64,14 @@ DEFAULT_OUTSIDE_MODE = "open"
 ABSENT_CHOICES = ("hide", "grey")
 DEFAULT_ABSENT_LANGUAGE = "hide"
 
+#: What `editions` may say, and what absent means: two practices of one unit that are one task in
+#: two languages and share no `edition` are a warning (`advised`, today's verdict) or a finding
+#: that fails `validate` (`required`).
+EDITION_CHOICES = ("advised", "required")
+DEFAULT_EDITIONS = "advised"
+
 #: The top-level keys this module owns.
-READING_KEYS = ("languages", "modes", "default_mode", "outside_mode", "absent_language")
+READING_KEYS = ("languages", "modes", "default_mode", "outside_mode", "absent_language", "editions")
 
 #: An id: lowercase, starts with a letter or digit, then letters, digits, `-`, `_`.
 ID = re.compile(r"[a-z0-9][a-z0-9_-]*")
@@ -94,6 +103,13 @@ class Mode:
     tabs: tuple[str, ...]
     practices: tuple[str, ...]
     practice_choice: bool = False
+    #: ⭐ The languages whose prose the mode also reads, after `prose` (a list-valued `prose`).
+    prose_also: tuple[str, ...] = ()
+
+    @property
+    def reads(self) -> tuple[str, ...]:
+        """Return every language whose prose the mode shows, the first one first."""
+        return (self.prose, *self.prose_also)
 
 
 @dataclass(frozen=True, slots=True)
@@ -106,15 +122,21 @@ class Reading:
     default_mode: str | None = None
     outside_mode: str = DEFAULT_OUTSIDE_MODE
     absent_language: str = DEFAULT_ABSENT_LANGUAGE
+    #: ⭐ Whether one task in two languages must be one practice's editions (`required`).
+    editions: str = DEFAULT_EDITIONS
 
 
 def parse_reading(document: dict, where: str) -> Reading | None:
-    """Return the declared `Reading`, or `None` when none of the five keys is present."""
+    """Return the declared `Reading`, or `None` when none of the six keys is present."""
     if not any(key in document for key in READING_KEYS):
         return None
     if "modes" in document and "languages" not in document:
         raise ManifestError(
             f"{where} declares 'modes' without 'languages'; a mode names declared languages"
+        )
+    if "editions" in document and "languages" not in document:
+        raise ManifestError(
+            f"{where} declares 'editions' without 'languages'; an edition is a declared language"
         )
     for key in ("default_mode", "outside_mode", "absent_language"):
         if key in document and "modes" not in document:
@@ -131,6 +153,7 @@ def parse_reading(document: dict, where: str) -> Reading | None:
         absent_language=_absent_language(
             document.get("absent_language", DEFAULT_ABSENT_LANGUAGE), where
         ),
+        editions=_editions(document.get("editions", DEFAULT_EDITIONS), where),
     )
 
 
@@ -234,6 +257,29 @@ def _language_list(
     return tuple(value)
 
 
+def _prose(value: object, known: set[str], name: str, where: str) -> tuple[str, ...]:
+    """Return the languages a mode reads: one id as a string (today), or a non-empty list of ids."""
+    if isinstance(value, list):
+        if not value:
+            raise ManifestError(
+                f"{where} '{name}.prose' must be a language id or a non-empty list of them, "
+                f"got {describe(value)}"
+            )
+        listed = value
+    else:
+        listed = [value]
+    for ident in listed:
+        if not isinstance(ident, str) or ident not in known:
+            raise ManifestError(
+                f"{where} '{name}.prose' names {_named(ident)}, which 'languages' does not "
+                f"declare; declared: {sorted(known)}"
+            )
+    repeated = sorted({ident for ident in listed if listed.count(ident) > 1})
+    if repeated:
+        raise ManifestError(f"{where} '{name}.prose' names {repeated} more than once")
+    return tuple(listed)
+
+
 def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
     entries = _object_list(value, "modes", where)
     modes: list[Mode] = []
@@ -250,12 +296,7 @@ def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
         ident = _id(entry, name, where)
         if any(mode.id == ident for mode in modes):
             raise ManifestError(f"{where} 'modes' declares the id {_named(ident)} twice")
-        prose = entry["prose"]
-        if not isinstance(prose, str) or prose not in known:
-            raise ManifestError(
-                f"{where} '{name}.prose' names {_named(prose)}, which 'languages' does not "
-                f"declare; declared: {sorted(known)}"
-            )
+        prose = _prose(entry["prose"], known, name, where)
         choice = entry.get("practice_choice", False)
         if not isinstance(choice, bool):
             raise ManifestError(
@@ -266,7 +307,8 @@ def _modes(value: object, known: set[str], where: str) -> tuple[Mode, ...]:
                 id=ident,
                 label=_text(entry, "label", name, where),
                 summary=_text(entry, "summary", name, where),
-                prose=prose,
+                prose=prose[0],
+                prose_also=prose[1:],
                 tabs=_language_list(entry, "tabs", known, name, where, nonempty=True),
                 practices=_language_list(entry, "practices", known, name, where, nonempty=False),
                 practice_choice=choice,
@@ -300,5 +342,13 @@ def _absent_language(value: object, where: str) -> str:
         raise ManifestError(
             f"{where} 'absent_language' must be one of {list(ABSENT_CHOICES)}, "
             f"got {describe(value)}"
+        )
+    return value
+
+
+def _editions(value: object, where: str) -> str:
+    if not isinstance(value, str) or value not in EDITION_CHOICES:
+        raise ManifestError(
+            f"{where} 'editions' must be one of {list(EDITION_CHOICES)}, got {describe(value)}"
         )
     return value

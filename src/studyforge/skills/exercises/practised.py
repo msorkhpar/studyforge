@@ -9,6 +9,7 @@ shipped it.
 writes the answer into the exercise record's `concepts`:
 
     practised(root, places)          # ('a negative index counts back', …) or None
+    planned_name(root, places)       # 'negative-index' or None: the plan's own name
 
 **Depends on.** `archive.scrub` for the personal-data gate every decoded
 document passes (R7), this package's `coverage` for the report's name and the
@@ -47,6 +48,23 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
     will not read, at a version this build does not read, or whose shipped list
     does not pair with its plan, is refused naming the unit.
     """
+    found = _paired(root, places)
+    return None if found is None else found[1]
+
+
+def planned_name(root: Path | str, places: Places) -> str | None:
+    """Return the name the plan gave the exercise at `places`, or `None` without a report.
+
+    ⭐ The name the adapter's own plan wrote for the exercise, so an adapter can find the
+    folder of its own material a bundle was drafted from without reading a bundle's numbers.
+    ⛔ Refused exactly as `practised` refuses.
+    """
+    found = _paired(root, places)
+    return None if found is None else found[0]
+
+
+def _paired(root: Path | str, places: Places) -> tuple[str, tuple[str, ...]] | None:
+    """Return `(planned name, aspect sentences)` of the exercise at `places`, or `None`."""
     unit = places.bundle.rsplit("/", 1)[0]
     where = f"the coverage report of '{unit}'"
     path = Path(root) / unit / COVERAGE_FILENAME
@@ -78,7 +96,7 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
         )
     for bundle, planned in zip(bundles, shipped, strict=True):
         if bundle == places.bundle:
-            return tuple(says[aspect] for aspect in planned["aspects"])
+            return str(planned["name"]), tuple(says[aspect] for aspect in planned["aspects"])
     return None
 
 

@@ -89,8 +89,15 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.describe import describe
-from studyforge.execute import BUILD_FILES, SKIPPED
+from studyforge.execute import SKIPPED
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME
+from studyforge.skills.execution.buildfiles import (
+    depth,
+    directory_of,
+    is_build_file,
+    under,
+    warmable,
+)
 from studyforge.skills.execution.specimens import Specimen, per_module
 
 
@@ -283,17 +290,17 @@ def _project(
     no checksum file, so one that has it is preferred to a shallower one that does not.
     """
     names = [where for where, _ in held]
-    wanted = [where for where in names if _is_build_file(where, tool)]
+    wanted = [where for where in names if is_build_file(where, tool)]
     if not wanted:
         missing.append(
             f"{tool} is declared and its cache is seeded from a build, and this "
             f"corpus carries none of that tool's build files"
         )
         return None
-    roots = {_directory_of(where, tool) for where in wanted}
-    candidates = _warmable(tool, roots, set(names))
-    depth = min(_depth(one) for one in candidates)
-    shallowest = sorted(one for one in candidates if _depth(one) == depth)
+    roots = {directory_of(where, tool) for where in wanted}
+    candidates = warmable(tool, roots, set(names))
+    shallow = min(depth(one) for one in candidates)
+    shallowest = sorted(one for one in candidates if depth(one) == shallow)
     if len(shallowest) > 1:
         missing.append(
             f"{tool} is declared and this corpus carries {len(shallowest)} separate builds "
@@ -303,47 +310,14 @@ def _project(
         )
         return None
     base = shallowest[0]
-    inside = [(where, size) for where, size in held if _under(where, base)]
-    modules = sorted(one for one in roots if one == base or _under(one, base))
+    inside = [(where, size) for where, size in held if under(where, base)]
+    modules = sorted(one for one in roots if one == base or under(one, base))
     return Project(
         tool=tool,
         root=base,
-        build_files=tuple(sorted(where for where in wanted if _under(where, base))),
+        build_files=tuple(sorted(where for where in wanted if under(where, base))),
         specimens=_specimens(tool, base, declared, inside, modules, text, missing),
     )
-
-
-GRADLE_CHECKSUMS = "gradle/verification-metadata.xml"  # the component warms no build without it
-
-
-def _warmable(tool: str, roots: set[str], names: set[str]) -> set[str]:
-    """Every build directory; for Gradle, those with checksums if the shallowest has none."""
-    pinned = {one for one in roots if f"{one}/{GRADLE_CHECKSUMS}".lstrip("/") in names}
-    plain = tool != "gradle" or not pinned or min(map(_depth, pinned)) == min(map(_depth, roots))
-    return roots if plain else pinned
-
-
-def _is_build_file(where: str, tool: str) -> bool:
-    """Whether `where` is one of `tool`'s own build files, at any depth."""
-    return any(where == one or where.endswith(f"/{one}") for one in BUILD_FILES.get(tool, ()))
-
-
-def _directory_of(where: str, tool: str) -> str:
-    """Return the build directory a build file belongs to: its path less the tool's name."""
-    for one in BUILD_FILES.get(tool, ()):
-        if where == one:
-            return ""
-        if where.endswith(f"/{one}"):
-            return where[: -len(one) - 1]
-    return where.rsplit("/", 1)[0] if "/" in where else ""
-
-
-def _depth(directory: str) -> int:
-    return len(directory.split("/")) if directory else 0
-
-
-def _under(where: str, base: str) -> bool:
-    return not base or where.startswith(f"{base}/")
 
 
 def _specimens(

@@ -27,8 +27,10 @@ from __future__ import annotations
 EXAMPLE_TAB_KEYS = ("lang", "span")
 #: ⭐ A tab may also name `code`: the corpus-relative path of the file its code is, so a served
 #: page can offer Run for the test beside it. Written only where an adapter sets it, so a tab
-#: without one is the tab it always was.
-EXAMPLE_TAB_OPTIONAL = ("code",)
+#: without one is the tab it always was. ⭐ A tab that names `code` may then name `run`: the argv,
+#: started in the copy of the corpus's code, that runs the PROGRAM, so Run shows what it prints
+#: rather than a test's verdict. Optional keys are written in this order, each after the last.
+EXAMPLE_TAB_OPTIONAL = ("code", "run")
 #: How many tabs one example may have: a tab bar of more is a menu, not a choice between versions.
 EXAMPLE_MAX_TABS = 8
 EXAMPLE_OUTPUTS = ("compiler", "warning")

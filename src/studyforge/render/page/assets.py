@@ -108,6 +108,8 @@ class Placement:
     offer: modes.Offer | None = None
     #: ⭐ The page's own tag, when its unit belongs to some languages only: it adds the note.
     entry: modes.Tag | None = None
+    #: ⭐ Whether an example may draw its Run strip (`corpus.json`'s `example_run`); absent is yes.
+    example_run: bool = True
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""

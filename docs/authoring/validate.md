@@ -52,9 +52,14 @@ valid: 0 finding(s), 3 unchecked claim(s)
 had no source files to read. It is not a pass on those three, and it does not
 pretend to be.
 
+**A warning is neither.** It names a rule and a place like a finding, prints
+`warning —` after the rule, and does not fail the run; the summary then ends
+`, N warning(s)`. A corpus may turn a rule's warning into a finding in
+`corpus.json` (`editions: required`).
+
 ---
 
-## The thirty checks
+## The thirty-one checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -91,6 +96,7 @@ checker check* is this table and nothing else.
 | 28 | `check_units_have_prose` | where `corpus.json` declares `modes`, does every unit hold a lesson, tagged or common? |
 | 29 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
 | 30 | `check_run_is_not_submit` | where a corpus has a practice with a `try_file`, does any graded code practice still run its tests on Run? |
+| 31 | `check_editions_are_shared` | where `corpus.json` declares `languages`, do two practices of one unit that are one task in two languages share one `edition`? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
@@ -120,7 +126,7 @@ file in both.
 
 ---
 
-## The fifty-six rule ids
+## The fifty-seven rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -153,6 +159,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `example-support-missing` | an example's `support` names a path that is no file or folder of the corpus, or one the release would not carry to the runner |
 | `unit-prose` | in a corpus that declares `modes`, a unit holds no lesson document, tagged or common |
 | `mode-empty` | a declared mode lists no unit: no lesson is common or in its `prose` language, and no practice is common or in a language it offers |
+| `edition-unshared` | two practices of one unit are one task in two languages (one title once a trailing language name is dropped, or one file name from one cited section) and name no shared `edition`, so the page shows a card per language. A **warning** that does not fail the run, unless `corpus.json` says `editions: required`; then a finding. `skills.adapter.practices.as_edition` gives both one id |
 | `duplicate-path` | two artifacts would be written to one path |
 | `unplaceable` | the placement profile cannot produce a legal path |
 | `origin-not-a-file` | a declared `origin` names something that is not a file |

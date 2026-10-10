@@ -84,6 +84,24 @@ class Finding:
 
 
 @dataclass(frozen=True, slots=True)
+class Advice:
+    """One thing that is likely wrong and does not fail the run: a warning.
+
+    ⭐ A rule a corpus may opt into as a `Finding` (its manifest says so) is an `Advice` for a
+    corpus that has not, so a build that passed before keeps passing and is told. ⛔ A corpus
+    with no advice prints the lines and the summary it always did.
+    """
+
+    rule: str
+    where: str
+    message: str
+
+    def line(self) -> str:
+        """Render as one greppable line: `where: [rule] warning — message`."""
+        return f"{self.where}: [{self.rule}] warning — {self.message}"
+
+
+@dataclass(frozen=True, slots=True)
 class Unchecked:
     """One claim this run could not make, and why.
 
@@ -107,9 +125,11 @@ class Report:
 
     findings: tuple[Finding, ...]
     unchecked: tuple[Unchecked, ...]
+    #: ⭐ Warnings: reported, never failing the run. Empty for every corpus until it has one.
+    advice: tuple[Advice, ...] = ()
 
     @classmethod
-    def of(cls, items: Iterable[Finding | Unchecked]) -> Report:
+    def of(cls, items: Iterable[Finding | Unchecked | Advice]) -> Report:
         """Drain every check into one report.
 
         ⛔ Drains, rather than stopping at the first failure: an adapter author
@@ -117,9 +137,13 @@ class Report:
         """
         findings: list[Finding] = []
         unchecked: list[Unchecked] = []
+        advice: list[Advice] = []
         for item in items:
-            (findings if isinstance(item, Finding) else unchecked).append(item)
-        return cls(tuple(findings), tuple(unchecked))
+            if isinstance(item, Advice):
+                advice.append(item)
+            else:
+                (findings if isinstance(item, Finding) else unchecked).append(item)
+        return cls(tuple(findings), tuple(unchecked), tuple(advice))
 
     @property
     def ok(self) -> bool:
@@ -143,6 +167,7 @@ class Report:
     def lines(self) -> list[str]:
         """Every finding, then every unchecked claim, then one summary line."""
         out = [finding.line() for finding in self.findings]
+        out += [item.line() for item in self.advice]
         out += [item.line() for item in self.unchecked]
         out.append(self.summary())
         return out
@@ -155,6 +180,8 @@ class Report:
         archive's `counts` makes, and it is why "0 unchecked" is printed.
         """
         verdict = "valid" if self.ok else "NOT valid"
-        return (
+        said = (
             f"{verdict}: {len(self.findings)} finding(s), {len(self.unchecked)} unchecked claim(s)"
         )
+        # ⭐ Named only when there is one, so a corpus with none reads the line it always did.
+        return f"{said}, {len(self.advice)} warning(s)" if self.advice else said

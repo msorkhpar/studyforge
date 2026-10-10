@@ -32,6 +32,10 @@ validates exactly as it did.
   Run would find nothing.
 - `example-support-missing`: an example's `support` names a path that is not a file or folder of
   the corpus, or one the release would not carry.
+- `edition-unshared`: two practices of one unit are one task in two languages (their titles
+  are the same once a trailing language name is dropped, or they open the same file name from
+  the same cited section) and do not name one `edition`, so the page shows a card per
+  language. A finding when the manifest says `editions: required`, a warning otherwise.
 - `mode-empty`: a declared mode lists no unit. A unit is listed in a mode when
   one of its lessons is common or in the mode's `prose` language, or one of its
   practices is common or in a language the mode's `practices` names.
@@ -44,9 +48,10 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from studyforge.archive.blocks import walk as walk_blocks
+from studyforge.corpus.container import fields
 from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import Unit, Walk
-from studyforge.validate.report import Finding
+from studyforge.validate.report import Advice, Finding
 
 RULE_LANGUAGE = "language-undeclared"
 RULE_UNIT_PROSE = "unit-prose"
@@ -54,6 +59,7 @@ RULE_MODE_EMPTY = "mode-empty"
 RULE_EXAMPLE_CODE = "example-code-missing"
 RULE_EXAMPLE_RELEASE = "example-code-unreleased"
 RULE_EXAMPLE_SUPPORT = "example-support-missing"
+RULE_EDITION = "edition-unshared"
 
 
 def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
@@ -185,6 +191,89 @@ def check_modes_list_a_unit(walk: Walk) -> Iterator[Finding]:
             )
 
 
+def check_editions_are_shared(walk: Walk) -> Iterator[Finding | Advice]:
+    """Two practices of one unit that are one task in two languages share one `edition`.
+
+    ⭐ Asked only of a corpus that declares languages, and only of practices that each name one
+    language, so a corpus with no tags is not asked. ⛔ The message names the unit and the
+    languages, never a title or a path (R7).
+    """
+    reading = walk.manifest.reading if walk.manifest else None
+    if reading is None:
+        return
+    names = {one.id.casefold(): one.id for one in reading.languages}
+    names.update({one.label.casefold(): one.id for one in reading.languages})
+    made = Finding if reading.editions == "required" else Advice
+    for (_address, number), documents in _by_unit(walk).items():
+        tagged = [one for one in documents if _one_language(one.document)]
+        for at, one in enumerate(tagged):
+            for other in tagged[at + 1 :]:
+                first, second = one.document, other.document
+                if first["lang"] == second["lang"] or not _same_task(first, second, names):
+                    continue
+                edition = first.get("edition")
+                if isinstance(edition, str) and edition and edition == second.get("edition"):
+                    continue
+                yield made(
+                    RULE_EDITION,
+                    other.where,
+                    f"unit {number} holds one practice in {first['lang']!r} and in"
+                    f" {second['lang']!r} as two practices that name no shared 'edition', so its"
+                    f" page shows a card per language; give both one edition id"
+                    f" (skills.adapter.practices.as_edition)",
+                )
+
+
+def _one_language(document: dict) -> bool:
+    """Whether a document is a practice written in exactly one language."""
+    lang = document.get("lang")
+    return document.get("kind") == "practice" and isinstance(lang, str) and " " not in lang
+
+
+def _stem(title: object, names: dict[str, str]) -> str:
+    """Return a title without a trailing parenthesis naming a declared language, case-folded."""
+    text = str(title or "").strip()
+    if text.endswith(")") and " (" in text:
+        cut = text.rindex(" (")
+        if text[cut + 2 : -1].strip().casefold() in names and text[:cut].strip():
+            text = text[:cut]
+    return " ".join(text.split()).casefold()
+
+
+def _same_task(first: dict, second: dict, names: dict[str, str]) -> bool:
+    """Whether two one-language practices are one task: one title stem, or one file and section."""
+    stem = _stem(first.get("title"), names)
+    if stem and stem == _stem(second.get("title"), names):
+        return True
+    one, other = first.get("exercise"), second.get("exercise")
+    if not (isinstance(one, dict) and isinstance(other, dict)):
+        return False
+    cited = _origin(one)
+    return (
+        cited is not None
+        and cited == _origin(other)
+        and _file_stem(one.get("main_path")) is not None
+        and _file_stem(one.get("main_path")) == _file_stem(other.get("main_path"))
+    )
+
+
+def _origin(exercise: dict) -> tuple[str | None, str | None] | None:
+    """Return a cited region as `(path, section)`, or `None` when absent or unreadable."""
+    try:
+        found = fields.optional_origin(exercise.get("origin"), "origin", "an exercise")
+    except ValueError:
+        return None
+    return found if found[1] is not None else None
+
+
+def _file_stem(path: object) -> str | None:
+    """Return a path's file name without its suffix, case-folded, or `None`."""
+    if not isinstance(path, str) or not path:
+        return None
+    name = path.rsplit("/", 1)[-1]
+    return (name.rsplit(".", 1)[0] if "." in name else name).casefold() or None
+
+
 def _modes(walk: Walk) -> tuple:
     """Return the declared modes, or `()` for a corpus that declares none."""
     return walk.manifest.reading.modes if walk.manifest and walk.manifest.reading else ()
@@ -203,7 +292,7 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
     for unit in documents:
         lang = unit.document.get("lang")
         lesson = unit.document.get("kind") == "lesson"
-        shown = (mode.prose,) if lesson else mode.practices  # type: ignore[attr-defined]
+        shown = mode.reads if lesson else mode.practices  # type: ignore[attr-defined]
         if lang is None or any(one in shown for one in str(lang).split(" ")):
             return True
     return False
@@ -215,4 +304,5 @@ CHECKS = (
     check_example_files_are_released,
     check_units_have_prose,
     check_modes_list_a_unit,
+    check_editions_are_shared,
 )

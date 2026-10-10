@@ -12,13 +12,16 @@ from studyforge.execute.conventions import (
     source_suffixes,
 )
 from studyforge.execute.conventions import tested_stem as untested
-from studyforge.skills.execution import prime, specimens
+from studyforge.skills.execution import buildfiles, prime, specimens
 
 
 def test_the_prime_reads_the_same_spelling_and_keeps_none_of_its_own():
     # ⛔ Two spellings of one answer drift the day one learns a tool the other does not.
-    for name in ("BUILD_FILES", "SKIPPED", "SOURCE_SUFFIXES"):
+    for name in ("SKIPPED", "SOURCE_SUFFIXES"):
         assert getattr(prime, name) is getattr(conventions, name), name
+    # ⭐ The build-file spelling is read by `buildfiles`, which `prime` uses and which keeps no copy.
+    assert buildfiles.BUILD_FILES is conventions.BUILD_FILES
+    assert not hasattr(prime, "BUILD_FILES")
     assert specimens.is_a_test is is_a_test
 
 

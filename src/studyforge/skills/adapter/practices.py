@@ -42,6 +42,21 @@ authored one would share a number, and the run refuses naming the bundle.
 with none missing. ⚠️ Otherwise `validate`'s practice-count check would refuse
 the container map, and a gap would be a lost exercise.
 
+## ⭐ THE LANGUAGE EDITIONS OF ONE PRACTICE SHARE ONE ID, AND NO COURSE SPELLS IT
+
+A practice written in several languages is one practice with one edition per
+language (`render.page.editions`). Each language is authored, gated and
+numbered as an exercise of its own, so its ordinal differs by language.
+⛔ **An id built from an ordinal is a different id per language**, and the
+page then shows one card per language. ⭐ So the id is `edition_id(folder)`,
+computed from the folder of the adapter's own material the practice was
+written in, and from nothing else: two languages of one folder cannot get two
+ids. `as_edition(fields, folder=..., lang=..., labels=...)` returns a
+practice document's fields as that edition: its `lang`, the shared `edition`,
+and a title that names no language (the switch in the panel names it).
+`planned_name(root, places)` is the name the adapter's plan gave the exercise,
+so the adapter finds that folder without reading a number.
+
 ## ⛔ A BUNDLE THE GATES DID NOT CLEAR IS REFUSED HERE, BEFORE ANY DOCUMENT
 
 ⭐ Every bundle's gate record must be present, must clear, and must still
@@ -61,6 +76,7 @@ from studyforge.archive.document import build
 from studyforge.archive.scrub import assert_clean
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME, Places, bundle_of, emit
 from studyforge.exercise.gates import drifted, record_of
+from studyforge.skills.adapter.editions import EditionRefused, as_edition, edition_id, untitled
 from studyforge.skills.exercises import (
     DECK_DOCUMENT,
     QUIZ_DOCUMENT,
@@ -68,9 +84,14 @@ from studyforge.skills.exercises import (
     DeckRefused,
     QuizRefused,
     deck_of,
+    planned_name,
     practised,
     quiz_of,
 )
+
+#: ⭐ Re-exported for an adapter: the edition helpers (`skills.adapter.editions`) and the plan's
+#: name of a bundle (`skills.exercises.practised`).
+__all__ = ["EditionRefused", "as_edition", "authored", "edition_id", "planned_name", "untitled"]
 
 #: ⚠️ The date and source an emission is taken with. The generated `emit.py`
 #: rebuilds every document with the run's own, so neither reaches the archive.

@@ -279,3 +279,16 @@ def test_this_module_reads_the_table_and_never_the_framework():
     # ⛔ No framework import, asserted where it could be broken. Sharing evidence must
     # not become sharing code by somebody importing what looks convenient.
     assert not imports_module(Path(__file__), "studyforge")
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["this@Library.name", "return@forEach", "break@outer", "continue@outer", "super@Base.method"],
+)
+def test_a_kotlin_label_is_not_an_email_address(text):
+    assert shape_matches(f"// {text}") == []
+
+
+@pytest.mark.parametrize("local", ["this.person", "thisx", "contact.person"])
+def test_a_label_lookalike_local_part_is_still_an_address(local):
+    assert shape_matches("write to " + local + "@" + "mailhost.org") == [(1, "email address")]

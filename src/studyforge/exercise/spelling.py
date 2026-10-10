@@ -31,11 +31,27 @@ from xml.etree import ElementTree
 #: `pytest.raises` that did not raise). ⛔ Only a `failure` element can be one: an
 #: `error` element and a skipped test never are.
 ASSERTION_TYPE = re.compile(
-    r"(?:^|[.$])(?:AssertionError|AssertionFailedError|ComparisonFailure)\Z"
+    r"(?:^|[.$])"
+    r"(?:AssertionError|AssertionFailedError|AssertJMultipleFailuresError|ComparisonFailure)\Z"
 )
 ASSERTION_MESSAGE = re.compile(
     r"\A(?:assert\b|(?:[\w.$]+\.)?(?:AssertionError|AssertionFailedError)\b|Failed: )"
 )
+
+#: ⭐ JUnit's `assertAll` reports every failed assertion of the group as one
+#: `org.opentest4j.MultipleFailuresError`. It names the exception of each one on its own
+#: line of the `message`, indented by one tab, so the group is an assertion failure exactly
+#: when every line names an assertion: a group that holds a raised error is not.
+MULTIPLE_FAILURES_TYPE = re.compile(r"(?:^|[.$])MultipleFailuresError\Z")
+_GROUPED_FAILURE = re.compile(r"^\t(?=\S)(\S+?):?(?:\s|$)", re.MULTILINE)
+
+
+def _all_assertions(message: str) -> bool:
+    """Answer whether every failure a `MultipleFailuresError` message lists is an assertion's."""
+    named = _GROUPED_FAILURE.findall(message)
+    return bool(named) and all(
+        ASSERTION_TYPE.search(name.rstrip(":")) is not None for name in named
+    )
 
 
 #: ⭐ `node --test`'s JUnit reporter writes every failure as `type="testCodeFailure"`, whatever
@@ -131,6 +147,8 @@ def _asserts(failure: ElementTree.Element) -> bool:
     """
     if failure.get("type", "") == NODE_FAILURE_TYPE:
         return NODE_ASSERTION_CAUSE.search(failure.text or "") is not None
+    if MULTIPLE_FAILURES_TYPE.search(failure.get("type", "")) is not None:
+        return _all_assertions(failure.get("message", ""))
     return (
         ASSERTION_TYPE.search(failure.get("type", "")) is not None
         or ASSERTION_MESSAGE.match(failure.get("message", "")) is not None

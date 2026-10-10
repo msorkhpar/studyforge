@@ -48,6 +48,9 @@ def render(
     `page.document` is its only caller and the only holder of the page.
     """
     many = editions.edited_with(document, section) is not None
+    # ⭐ An edition's statement keeps the heading its adapter gave it: an adapter that names no
+    # language in the title (`skills.adapter.practices.as_edition`) gets one title, and a course
+    # that names the language in each edition's title keeps naming it.
     rendered = section_module.render(
         section, placement, narration, heads_page=heads_page, edited=many
     )

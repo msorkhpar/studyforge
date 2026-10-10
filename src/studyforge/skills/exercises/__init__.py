@@ -194,7 +194,7 @@ from studyforge.skills.exercises.plan import (
     shortfall,
     shortfall_document,
 )
-from studyforge.skills.exercises.practised import practised
+from studyforge.skills.exercises.practised import planned_name, practised
 from studyforge.skills.exercises.quizdoc import (
     QUIZ_API,
     QUIZ_DOCUMENT,
@@ -311,6 +311,7 @@ __all__ = [
     "plan_document",
     "plan_for",
     "plan_page",
+    "planned_name",
     "practised",
     "quiz_of",
     "require_after_carried",

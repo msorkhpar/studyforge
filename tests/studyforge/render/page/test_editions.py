@@ -158,3 +158,41 @@ def test_the_cards_of_a_page_without_editions_are_the_bytes_they_were():
     ungraded = practices.card(section(), document(), sample_placement(), "A unit")
     assert "data-practice-editions" not in ungraded
     assert ungraded.startswith('<li id="card-practice-java" data-practice-card="s-practice-java"')
+
+
+def test_a_mixed_mode_opens_a_practice_in_its_practice_language_then_each_prose_language():
+    from studyforge.corpus.manifest.reading import Language, Mode, Reading
+    from studyforge.render import modes
+    from studyforge.render.page import editions
+
+    reading = Reading(
+        languages=(Language("aa", "Aa"), Language("bb", "Bb")),
+        modes=(Mode("m", "M", "m", "aa", ("aa",), ("bb",), prose_also=("bb",)),),
+        default_mode="m",
+    )
+    assert editions.preference(modes.offer(reading))["modes"] == {"m": ["bb", "aa"]}
+
+
+def test_editions_titled_without_a_language_name_none_in_one_card():
+    # ⭐ The switch names the language: an adapter's language-free titles make one card.
+    clean = [{**one, "heading": "Keep a conversation"} for one in four()]
+    markup = page(clean, with_offer=True)
+    for lang in LANGS:
+        assert f"Keep a conversation ({LABELS[lang]})" not in markup, lang
+    assert markup.count("data-practice-card=") == 1
+
+
+def test_editions_titled_with_a_language_keep_it_in_each_statement_not_the_card():
+    markup = page(four(), with_offer=True)
+    assert markup.count("data-practice-card=") == 1
+    for lang in LANGS:
+        assert f'data-label="Keep a conversation ({LABELS[lang]})"' in markup, lang
+    card = re.search(r'<li id="card-practice-conversation-[a-z]+"[^>]*>.*?</li>', markup, re.S)
+    assert card is not None and "Keep a conversation (" not in card.group(0)
+
+
+def test_a_declared_name_that_differs_from_the_id_is_dropped_from_the_title_too():
+    entry = editions.Entry((edition("typescript", title="Keep a conversation (TS)"),))
+    named = dataclasses.replace(offer(), languages=(("typescript", "TS"),))
+    assert editions.title("Keep a conversation (TS)", entry, named) == "Keep a conversation"
+    assert editions.title("Keep a conversation (TS)", entry) == "Keep a conversation (TS)"

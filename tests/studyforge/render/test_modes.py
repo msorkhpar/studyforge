@@ -98,3 +98,59 @@ def test_a_closed_entry_is_an_anchor_with_no_href_out_of_the_tab_order():
     assert not modes.openable(tag)
     assert modes.attributes(tag) == ' data-entry-lang="bb"'
     assert modes.label(tag) == "<span data-entry-label>Bb</span>"
+
+
+MIXED = modes.offer(
+    Reading(
+        languages=LANGUAGES,
+        modes=(
+            *MODES,
+            Mode(
+                "mixed", "Mixed", "Aa then Bb", "aa", ("aa", "bb"), ("aa", "bb"), prose_also=("bb",)
+            ),
+        ),
+        default_mode="only-aa",
+    ),
+    {"u": ("bb",)},
+    several=True,
+)
+
+
+def test_a_one_language_mode_writes_the_rules_it_always_wrote():
+    css = modes.files(READING)["modes.css"]
+    assert 'html[data-mode="both"] section[data-lang]:not([data-lang="aa"])' in css
+    assert modes.SINGLE_READ in modes.files(READING)["modes.js"]
+
+
+def test_a_mixed_mode_hides_only_sections_of_neither_language():
+    css = modes.files(MIXED)["modes.css"]
+    assert (
+        'html[data-mode="mixed"] section[data-lang]:not([data-lang~="aa"]):not([data-lang~="bb"])'
+        in css
+    )
+
+
+def test_a_mixed_mode_reads_an_entry_of_either_language_and_is_listed_as_its_reader():
+    names = [ident for ident, _ in MIXED.tags["u"].readers]
+    assert names == ["only-bb", "mixed"]
+    css = modes.files(MIXED)["modes.css"]
+    assert '[data-entry-lang]:not([data-entry-lang~="aa"]):not([data-entry-lang~="bb"])' in css
+
+
+def test_a_mixed_mode_button_lists_its_languages_and_the_client_reads_the_list():
+    switch = modes.slots(MIXED, href)["modeswitch"]
+    assert 'data-mode-choice="mixed" data-mode-prose="aa bb"' in switch
+    assert 'data-mode-choice="only-aa" data-mode-prose="aa"' in switch
+    assert modes.LISTED_READ in modes.files(MIXED)["modes.js"]
+    assert modes.SINGLE_READ not in modes.files(MIXED)["modes.js"]
+
+
+def test_the_default_mode_that_is_mixed_locks_an_entry_that_neither_language_carries():
+    reading = Reading(
+        languages=(*LANGUAGES, Language("cc", "Cc", ())),
+        modes=(Mode("mixed", "Mixed", "x", "aa", ("aa",), (), prose_also=("bb",)),),
+        outside_mode="locked",
+        default_mode="mixed",
+    )
+    made = modes.offer(reading, {"p": ("cc",), "q": ("bb",)})
+    assert made.tags["p"].locked and not made.tags["q"].locked

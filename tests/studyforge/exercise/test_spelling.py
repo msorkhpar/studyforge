@@ -66,11 +66,48 @@ def test_the_file_attribute_still_rebuilds_the_node_id():
         {"message": "Failed: DID NOT RAISE <class 'ValueError'>"},
         {"type": "org.opentest4j.AssertionFailedError", "message": "expected 1"},
         {"type": "java.lang.AssertionError"},
+        {
+            "type": "org.assertj.core.error.AssertJMultipleFailuresError",
+            "message": "[soft] (1 failure)",
+        },
         {"type": "org.junit.ComparisonFailure"},
     ],
 )
 def test_a_failure_that_says_an_assertion_failed_is_one(attributes):
     assert asserted(failing(**attributes), PASSING_CHILDREN)
+
+
+GROUP = "org.opentest4j.MultipleFailuresError"
+
+
+def group(*lines: str) -> ElementTree.Element:
+    header = f"{GROUP}: Multiple Failures ({len(lines)} failures)"
+    message = header + "".join(f"\n\t{line}" for line in lines)
+    return failing(type=GROUP, message=message)
+
+
+def test_an_assert_all_group_of_assertion_failures_is_one():
+    element = group(
+        "org.opentest4j.AssertionFailedError: expected: <800> but was: <0>",
+        "org.opentest4j.AssertionFailedError: expected: <1400> but was: <0>",
+    )
+    assert asserted(element, PASSING_CHILDREN)
+
+
+@pytest.mark.parametrize(
+    "element",
+    [
+        group(
+            "org.opentest4j.AssertionFailedError: expected: <1> but was: <0>",
+            "java.lang.IllegalStateException: write me",
+        ),
+        group("kotlin.NotImplementedError: An operation is not implemented."),
+        failing(type=GROUP, message="no lines"),
+    ],
+    ids=["mixed", "raised", "unlisted"],
+)
+def test_an_assert_all_group_holding_a_raised_error_is_not_an_assertion(element):
+    assert not asserted(element, PASSING_CHILDREN)
 
 
 @pytest.mark.parametrize(

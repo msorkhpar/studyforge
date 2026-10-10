@@ -235,6 +235,8 @@ def index(runs: Runs) -> dict:
         # ⭐ A lesson's link to a code file: its two windows, and its test's run.
         "code": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE}/{{path}}",
         "code_test": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE_TEST}/{{path}}",
+        # ⭐ An example's program, where its tab names how it runs (`serve.programs`).
+        "code_run": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE_RUN}/{{path}}",
         "client": CLIENT_PATH,
         EDITOR: runs.editors(),
         # ⭐ Whether each corpus can run code now: `False` is a declared runner that is

@@ -72,6 +72,12 @@ DRAFTS = {
         "runtimes": ["java"],
         "profile": "example-profile",
     },
+    (None, "editions"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "editions": "required",
+    },
+    (None, "example_run"): {**corpora.DRAFT, "example_run": False},
     (None, "absent_language"): {
         **corpora.DRAFT,
         "languages": [{"id": "alpha", "label": "Alpha"}],

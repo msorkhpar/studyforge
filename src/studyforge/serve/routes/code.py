@@ -9,6 +9,10 @@ corpus asks for, under the run namespace:
 - `POST <corpus>/code-test/<path>` → the test the file names or is paired
   with, run in the copy and streamed exactly as a Submit is, and **not
   recorded**: it is no practice, and it completes nothing.
+- `POST <corpus>/code-run/<path>` → the PROGRAM of an example whose tab names
+  how it runs (`serve.programs`): its argv is the lesson document's, started in
+  the copy and streamed as a Run is, so the panel shows what the program prints.
+  Not recorded either. A file no tab names a program for is a `409`.
 
 **How you use it.** `serve.routes.run.start` hands a request whose act is one
 of `ACTS` to `route(runs, corpus, act, tail)`.
@@ -62,6 +66,7 @@ from urllib.parse import unquote
 
 from studyforge.execute import (
     BUILD_FILES,
+    CODE_COPY,
     CodeRefused,
     Pair,
     RunRefused,
@@ -77,19 +82,22 @@ from studyforge.execute import (
 )
 from studyforge.exercise import ExerciseError, require_path
 from studyforge.serve.discovery import ServedCorpus
+from studyforge.serve.programs import program_of
 from studyforge.serve.response import NO_STORE, TEXT_TYPE, Response, error, json_response
 from studyforge.serve.routes.runs import Live, Runs, Stream
 
 #: The act that opens a code file's two windows, and the one that runs its test.
 CODE = "code"
 CODE_TEST = "code-test"
-ACTS = (CODE, CODE_TEST)
+CODE_RUN = "code-run"
+ACTS = (CODE, CODE_TEST, CODE_RUN)
 
 NO_SUCH_FILE = "no such code file in this corpus"
 NO_EDITOR = "no editor is running over this corpus's code"
 NOT_COPIED = "the copy of this corpus's code could not be made"
 REFUSED = "the editor's settings for this file could not be written"
 NO_TEST = "this file names no test, or no command is known to run it"
+NO_PROGRAM = "no example names how this file's program runs"
 NOT_RUN = "this test's command was refused by the runner"
 BUSY = "a run is already live; stop it first"
 
@@ -128,11 +136,16 @@ def route(runs: Runs, corpus: ServedCorpus, act: str, tail: str) -> Response:
         return error(409, NOT_COPIED)
     if act == CODE:
         return windows(runs, corpus, found)
-    argv = test_command(corpus.root, found, runtimes)
-    if argv is None:
-        return error(409, NO_TEST)
-    try:
+    if act == CODE_RUN:
+        argv, workdir = program_of(corpus, path), CODE_COPY
+        if argv is None:
+            return error(409, NO_PROGRAM)
+    else:
+        argv = test_command(corpus.root, found, runtimes)
+        if argv is None:
+            return error(409, NO_TEST)
         workdir = test_workdir(found)
+    try:
         live = runs.claim(
             lambda: Live(corpus.source, path, act, runs.runner(corpus).start([argv], workdir))
         )

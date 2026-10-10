@@ -17,9 +17,12 @@ from tests.studyforge.skills.execution.standalone.test_write import (
 def test_a_published_account_reaches_the_readme_only(tmp_path):
     base = tmp_path / "base"
     named = tmp_path / "named"
+    # ⭐ One checkout for both: the course tag is the commit's id, which carries the commit's
+    # second, so two checkouts made a second apart would name two courses and differ in the tag.
+    source = checkout(tmp_path / "src")
     for out, kwargs in ((base, {}), (named, {"published_account": "exampleaccount"})):
         write.release(
-            checkout(tmp_path / (out.name + "src")),
+            source,
             out,
             toolchain=toolchain(tmp_path / (out.name + "tc")),
             platform="linux/amd64",

@@ -166,7 +166,7 @@ def _edited_card(entry: editions.Entry, document: dict, placement: Placement, un
         corpus=escape_attribute(placement.corpus),
         kind=CODE_KIND,
         anchor=escape_attribute(anchors.section_anchor(section.get("key"))),
-        title=inline(editions.title(anchors.practice_title(section, unit), entry)),
+        title=inline(editions.title(anchors.practice_title(section, unit), entry, offer)),
         concepts=_region(concepts(exercise)),
         state=_region(
             templates.fill(STATE_EDITIONS_TEMPLATE, total=str(len(entry.sections)))

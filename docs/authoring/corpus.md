@@ -68,6 +68,7 @@ below.
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `profile` | *optional* | The toolchain image profile your runner and editor are built on, beyond the base of your `runtimes`: a name, such as the toolchain lists it. Needs `runtimes`; absent means the bases alone |
 | `live` | *optional* | Which examples and practices may be run live against a reader's own API key: one host, the name of the variable the key is given under, and what runs. Needs `runtimes`; absent means no live run |
+| `example_run` | *optional* | Whether a served page offers Run on an example. `false` draws Run on no example: the page shows each verified output, and the reader copies the code or opens it in the editor. Absent means `true` |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
 | `languages` | *optional* | The languages a section may be tagged with: a list of `{id, label, fence_labels}`. Absent means no tagging and today's behaviour |
@@ -75,6 +76,7 @@ below.
 | `default_mode` | *optional* | The id of the mode shown without scripts. Needs `modes`; absent means the first declared mode |
 | `outside_mode` | *optional* | What an entry does in a mode that does not show its language: `open` or `locked`. Needs `modes`; absent means `open` |
 | `absent_language` | *optional* | What an example block and a practice show for a language they lack: `hide` or `grey`. Needs `modes`; absent means `hide` |
+| `editions` | *optional* | `advised` or `required`: whether one practice in two languages that is not one practice's editions (no shared `edition`) is a `validate` warning or a finding. Needs `languages`; absent means `advised` |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -435,8 +437,9 @@ extra property: it can be started with a key. So that no key can ever rest in th
 All four keys are optional, and a corpus that declares none is read exactly as before.
 `languages` lists `{id, label, fence_labels}`; a fence label belongs to one language.
 `modes` lists `{id, label, summary, prose, tabs, practices}` with an optional boolean
-`practice_choice`: `prose` is one declared language id, `tabs` and `practices` are lists
-of declared language ids, each named once. `modes` needs `languages`; `default_mode` (a
+`practice_choice`: `prose` is one declared language id, or a non-empty list of them for a
+mixed mode that reads several languages' prose (each named once; the first is the mode's
+primary language); `tabs` and `practices` are lists of declared language ids, each named once. `modes` needs `languages`; `default_mode` (a
 declared mode id, the first mode when absent) and `outside_mode` (`open`, the default,
 or `locked`) need `modes`. A manifest is refused by name for an undeclared language, a
 repeated id, a shared fence label, a `default_mode` that is no mode or an `outside_mode`
@@ -453,8 +456,10 @@ beside `page.css` and `page.js`, and every page carries a switch listing the dec
 modes. On a first visit a card asks which one to read, listing each mode's label and
 summary; the choice is kept in the browser the way the theme is, through guarded reads
 and writes, so a page where the browser refuses storage still renders and simply asks
-nothing. A mode shows the sections tagged with its `prose` language and the untagged
-ones; the page's outline drops the lines that point at hidden sections. With scripts
+nothing. A mode shows the sections tagged with any of its `prose` languages and the untagged
+ones (sections keep the order the unit gives them; the list decides which are shown, not
+their order). An entry that none of the listed languages carries is greyed, or locked,
+as for a one-language mode; the page's outline drops the lines that point at hidden sections. With scripts
 off, in a crawl, and before an answer, a page shows the `default_mode` view: the root
 element carries `data-mode` with that value and the stylesheet keys on it. A page opened
 from a file asks on every load. A corpus that declares no `modes` gets none of this: no

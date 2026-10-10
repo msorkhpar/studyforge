@@ -146,14 +146,16 @@ def label(offer: modes.Offer | None, lang: str) -> str:
     return dict(offer.languages).get(lang, lang) if offer is not None else lang
 
 
-def title(heading: str, entry: Entry) -> str:
+def title(heading: str, entry: Entry, offer: modes.Offer | None = None) -> str:
     """Return the card's title: the first edition's, without the language it names last.
 
     ⭐ An adapter that titles an edition `Keep a conversation (Python)` gets one title for the
     card, `Keep a conversation`: a trailing parenthesis that names the language of one of the
-    editions by its id, in any case, is dropped. Any other title is kept as it is.
+    editions by its id or, given the `offer`, by its declared name, in any case, is dropped.
+    Any other title is kept as it is.
     """
-    names = {str(one.get(LANG)).casefold() for one in entry.sections}
+    langs = [str(one.get(LANG)) for one in entry.sections]
+    names = {one.casefold() for one in (*langs, *(label(offer, lang) for lang in langs))}
     text = heading.rstrip()
     if text.endswith(")") and " (" in text:
         cut = text.rindex(" (")
@@ -224,7 +226,7 @@ def preference(offer: modes.Offer | None) -> dict:
     return {
         "attribute": modes.MODE_ATTRIBUTE,
         "modes": {
-            choice.id: list(dict.fromkeys((*choice.practices, choice.prose, *choice.tabs)))
+            choice.id: list(dict.fromkeys((*choice.practices, *choice.reads, *choice.tabs)))
             for choice in offer.choices
         },
     }

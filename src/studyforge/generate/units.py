@@ -116,6 +116,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             pairing=pairs if source.mentions.beside else None,
             offer=offer,
             entry=tags.get(source.key) if tags else None,
+            example_run=corpus.manifest.example_run,
         )
         body = render(
             document,

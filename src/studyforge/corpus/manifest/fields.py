@@ -120,6 +120,18 @@ def narration_of(value: object, where: str) -> bool:
     return value
 
 
+def example_run_of(value: object, where: str) -> bool:
+    """`example_run`: whether a served page offers Run on an example, as a real bool.
+
+    ⭐ Absent is `True`, every corpus's page before the key. `False` draws no Run strip on any
+    example: a corpus whose pages show each example's verified output leaves the program to be
+    copied or opened in the editor.
+    """
+    if not isinstance(value, bool):
+        raise ManifestError(f"{where} 'example_run' must be true or false, got {describe(value)}")
+    return value
+
+
 def onboarding_doc_of(value: object, where: str) -> str | None:
     """`onboarding_doc`: where the onboarding reader document goes, or `None` for none.
 
