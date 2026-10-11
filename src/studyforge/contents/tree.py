@@ -65,23 +65,39 @@ from collections.abc import Iterable, Iterator
 from studyforge.address import Address, AddressError
 from studyforge.contents.entries import Contents, Entry, Group
 from studyforge.contents.errors import ContentsError
+from studyforge.contents.titles import slug_titled
 from studyforge.corpus.container import Container
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PlacementError, Profile, profile_for
 from studyforge.unit import listed_numbering, without_outline_number
 
 
-def build(manifest: Manifest, containers: Iterable[Container]) -> Contents:
-    """Return the corpus's stable contents — the same bytes on any machine (R10)."""
+def build(
+    manifest: Manifest, containers: Iterable[Container], *, declared_titles: bool = False
+) -> Contents:
+    """Return the corpus's stable contents — the same bytes on any machine (R10).
+
+    ⭐ `declared_titles=True` refuses a contents whose group or unit title is the
+    folder slug rather than a declared name (`titles.slug_titled`). It is off by
+    default, so a corpus that has always built keeps building.
+    """
     profile = profile_for(manifest.placement)
     held = _by_address(manifest, containers)
     titles = _titles(held)
-    return Contents(
+    built = Contents(
         corpus=manifest.source,
         title=manifest.title,
         levels=manifest.levels,
         groups=_groups(manifest, profile, held, titles, ()),
     )
+    if declared_titles:
+        slugged = slug_titled(built)
+        if slugged:
+            raise ContentsError(
+                f"{len(slugged)} title(s) are the folder slug and not a declared name, "
+                f"at {list(slugged)}; declare a title in the container map or the unit"
+            )
+    return built
 
 
 def _by_address(

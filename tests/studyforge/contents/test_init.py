@@ -10,7 +10,7 @@ from tests.support import assert_package_contract
 
 #: The modules this package is made of. ⛔ Stated, so a new one arriving
 #: without a line on the contract's table is a failure rather than a surprise.
-MODULES = ("document", "entries", "errors", "order", "status", "tree", "writing")
+MODULES = ("document", "entries", "errors", "order", "status", "titles", "tree", "writing")
 
 
 def test_states_its_contract():
