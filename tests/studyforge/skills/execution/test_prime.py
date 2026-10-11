@@ -414,3 +414,26 @@ def test_two_gradle_builds_with_checksums_at_one_depth_are_still_refused(tmp_pat
     with pytest.raises(prime.PrimeRefused) as refused:
         prime.prime_for(tmp_path, ("gradle", "kotlin"), seeded=SEEDED)
     assert "tools/one" in str(refused.value) and "tools/two" in str(refused.value)
+
+
+def test_a_service_provider_file_of_a_primed_module_is_copied_and_named_in_the_document(tmp_path):
+    # ⭐ A compiler plugin or annotation processor is found by its provider file; a prime without it
+    # compiles the module and never runs the plugin.
+    root = corpus(tmp_path)
+    service = root / "sources/app/src/main/resources/META-INF/services/demo.Provider"
+    put(service, "demo.Demo\n")
+    made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    paths = [origin for _, origin in made.copies()]
+    assert "sources/app/src/main/resources/META-INF/services/demo.Provider" in paths
+    assert made.document()["projects"][0]["services"] == [
+        "sources/app/src/main/resources/META-INF/services/demo.Provider"
+    ]
+
+
+def test_a_build_with_no_service_provider_file_is_primed_and_documented_as_it_always_was(tmp_path):
+    # ⛔ Backward compatibility: no `services` key, and no other resource is swept in.
+    root = corpus(tmp_path)
+    put(root / "sources/app/src/main/resources/application.properties", "a=b\n")
+    made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    assert "services" not in made.document()["projects"][0]
+    assert not any("application.properties" in origin for _, origin in made.copies())
