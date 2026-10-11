@@ -437,3 +437,29 @@ def test_a_build_with_no_service_provider_file_is_primed_and_documented_as_it_al
     made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
     assert "services" not in made.document()["projects"][0]
     assert not any("application.properties" in origin for _, origin in made.copies())
+
+
+def test_an_authored_prime_directory_is_copied_whole_and_any_other_build_is_selected_from(tmp_path):
+    # ⭐ A top-level `prime/` build is written to be warmed: every file of it is the prime.
+    root = corpus(tmp_path)
+    kept = "prime/app/src/main/java/demo/Controller.java"
+    for where in ("prime/pom.xml", "prime/app/pom.xml", kept):
+        put(root / where, "<project/>\n" if where.endswith(".xml") else "package demo;\nclass Controller {}\n")
+    put(root / "prime/app/src/main/java/demo/Demo.java", "package demo;\npublic class Demo {}\n")
+    put(root / "prime/app/src/test/java/demo/DemoTest.java", "package demo;\nclass DemoTest {}\n")
+    # the corpus's other build is shallower in depth only by name; remove it so `prime/` is the build
+    for old in (root / "sources").rglob("*"):
+        if old.is_file():
+            old.unlink()
+    made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    assert made.projects[0].root == "prime"
+    assert kept in [origin for _, origin in made.copies()]
+    assert kept in made.document()["projects"][0]["whole"]
+
+
+def test_a_build_that_is_not_the_authored_prime_is_not_copied_whole(tmp_path):
+    root = corpus(tmp_path)
+    put(root / "sources/app/src/main/java/demo/Unnamed.java", "package demo;\n" + "// padding so it is not the smallest source\n" * 20 + "class Unnamed {}\n")
+    made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    assert "whole" not in made.document()["projects"][0]
+    assert not any("Unnamed" in origin for _, origin in made.copies())

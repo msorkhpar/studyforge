@@ -101,6 +101,14 @@ from studyforge.skills.execution.buildfiles import (
 from studyforge.skills.execution.specimens import Specimen, module_of, per_module
 
 
+#: ⭐ A build whose directory is this top-level one is the corpus's OWN authored prime: a project
+#: written to be warmed, with the framework modules and processors its practices need. It is copied
+#: whole, because the smallest real source of a module does not name the controller, the resource or
+#: the plugin a framework module needs to start, and a prime that leaves them out warms a build that
+#: fails. Any other build is selected from, as it always was.
+AUTHORED = "prime"
+
+
 class PrimeRefused(ValueError):
     """A prime that would prime nothing, and exactly what is missing from it."""
 
@@ -119,6 +127,8 @@ class Project:
     #: A compiler plugin or an annotation processor is found by its provider file, so a prime that
     #: leaves it out compiles the module but never runs the plugin. Empty for a build with none.
     services: tuple[str, ...] = ()
+    #: ⭐ Every other file of an authored prime (`AUTHORED`), corpus-relative; empty for any other build.
+    whole: tuple[str, ...] = ()
 
     def copies(self) -> tuple[tuple[str, str], ...]:
         """`(path in the prime, corpus-relative path)` for every file, sorted.
@@ -127,7 +137,7 @@ class Project:
         package directory is part of a JVM source's identity and a specimen
         moved out of its package no longer compiles.
         """
-        found = {*self.build_files, *self.services}
+        found = {*self.build_files, *self.services, *self.whole}
         for specimen in self.specimens:
             found.update(specimen.files())
         cut = len(self.root) + 1 if self.root else 0
@@ -173,6 +183,7 @@ class Prime:
                         for one in project.specimens
                     ],
                     **({"services": list(project.services)} if project.services else {}),
+                    **({"whole": list(project.whole)} if project.whole else {}),
                 }
                 for project in self.projects
             ]
@@ -324,6 +335,7 @@ def _project(
         build_files=tuple(sorted(where for where in wanted if under(where, base))),
         specimens=specimens,
         services=_services(inside, modules, specimens),
+        whole=tuple(sorted(where for where, size in inside if size > 0)) if base == AUTHORED else (),
     )
 
 
