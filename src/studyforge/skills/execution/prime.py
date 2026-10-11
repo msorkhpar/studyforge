@@ -98,7 +98,15 @@ from studyforge.skills.execution.buildfiles import (
     under,
     warmable,
 )
-from studyforge.skills.execution.specimens import Specimen, per_module
+from studyforge.skills.execution.specimens import Specimen, module_of, per_module
+
+
+#: ⭐ A build whose directory is this top-level one is the corpus's OWN authored prime: a project
+#: written to be warmed, with the framework modules and processors its practices need. It is copied
+#: whole, because the smallest real source of a module does not name the controller, the resource or
+#: the plugin a framework module needs to start, and a prime that leaves them out warms a build that
+#: fails. Any other build is selected from, as it always was.
+AUTHORED = "prime"
 
 
 class PrimeRefused(ValueError):
@@ -115,6 +123,12 @@ class Project:
     root: str
     build_files: tuple[str, ...]
     specimens: tuple[Specimen, ...]
+    #: ⭐ Service-provider files (`META-INF/services/<type>`) of the modules that carry a specimen.
+    #: A compiler plugin or an annotation processor is found by its provider file, so a prime that
+    #: leaves it out compiles the module but never runs the plugin. Empty for a build with none.
+    services: tuple[str, ...] = ()
+    #: ⭐ Every other file of an authored prime (`AUTHORED`), corpus-relative; empty for any other build.
+    whole: tuple[str, ...] = ()
 
     def copies(self) -> tuple[tuple[str, str], ...]:
         """`(path in the prime, corpus-relative path)` for every file, sorted.
@@ -123,7 +137,7 @@ class Project:
         package directory is part of a JVM source's identity and a specimen
         moved out of its package no longer compiles.
         """
-        found = {*self.build_files}
+        found = {*self.build_files, *self.services, *self.whole}
         for specimen in self.specimens:
             found.update(specimen.files())
         cut = len(self.root) + 1 if self.root else 0
@@ -168,6 +182,8 @@ class Prime:
                         }
                         for one in project.specimens
                     ],
+                    **({"services": list(project.services)} if project.services else {}),
+                    **({"whole": list(project.whole)} if project.whole else {}),
                 }
                 for project in self.projects
             ]
@@ -312,11 +328,30 @@ def _project(
     base = shallowest[0]
     inside = [(where, size) for where, size in held if under(where, base)]
     modules = sorted(one for one in roots if one == base or under(one, base))
+    specimens = _specimens(tool, base, declared, inside, modules, text, missing)
     return Project(
         tool=tool,
         root=base,
         build_files=tuple(sorted(where for where in wanted if under(where, base))),
-        specimens=_specimens(tool, base, declared, inside, modules, text, missing),
+        specimens=specimens,
+        services=_services(inside, modules, specimens),
+        whole=tuple(sorted(where for where, size in inside if size > 0)) if base == AUTHORED else (),
+    )
+
+
+def _services(
+    held: Sequence[tuple[str, int]], modules: Sequence[str], specimens: Sequence[Specimen]
+) -> tuple[str, ...]:
+    """Every `resources/META-INF/services/<type>` file of a module that has a specimen, sorted."""
+    primed = {one.module for one in specimens}
+    return tuple(
+        sorted(
+            where
+            for where, size in held
+            if size > 0
+            and "/resources/META-INF/services/" in f"/{where}"
+            and module_of(where, modules) in primed
+        )
     )
 
 
