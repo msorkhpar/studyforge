@@ -349,6 +349,12 @@ or reference naming, say, a `.local` host is refused under `personal-data`
 still carries it ends as a shortfall naming `personal-data`. Use `example.org` names and
 placeholders in samples.
 
+⭐ **One pattern set.** A course's own gate for personal data uses this same set and keeps no
+copy: `python -m studyforge.archive.scrub check PATH...` prints `path:line: <shape>` for every
+finding (never the matched text) and exits 1 on any, or a checker calls
+`studyforge.archive.scrub.findings(text, where)`. Raw serialised text is safe to scan: an
+escape such as `\n` before `@Scope` is not an address.
+
 ## Where it writes, and what it never touches
 
 | path | what it holds |

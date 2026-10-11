@@ -569,7 +569,10 @@ runs one argv and answers `(exit code, stdout)`.
 2. In the course repository, branch `studyforge/build` from `main`: it keeps
    everything, so nothing is lost.
 3. On a branch from `main` that will become the learner `main`:
-   `git rm -r -q .`, copy the exported tree in, `git add -A`, commit.
+   `git rm -r -q .`, copy the exported tree in, `git add -A`, commit. For a new export the
+   learner tree is one fresh commit by a placeholder author set on the command
+   (`git -c user.name=Example -c user.email=noreply@example.invalid commit ...`;
+   `standalone.publish.fresh_tree_commands`), never the machine's git identity.
 4. ⛔ Check that `git ls-files` equals the manifest's `keeps`, line for line.
    A difference is a file the export wrote and did not list, or the reverse:
    stop and regenerate, never hand-edit.
@@ -582,10 +585,25 @@ runs one argv and answers `(exit code, stdout)`.
 6. ⛔ The editor built this way skips the toolchain's build-time session proofs:
    run the toolchain's activation and confinement proofs against it before any
    image is published.
-7. Publishing is the owner's step, never this skill's. The commands, for the
-   owner to run: `docker compose build` with `STUDYFORGE_NAMESPACE` set to the
-   registry namespace, then `docker push` for each of the six images
-   `.studyforge/release.json` lists, once per narration for the site.
+7. ⭐ **Build the exported tree alone.** Clone the export into a fresh folder and run
+   `docker compose build` of every image there, with `STUDYFORGE_NAMESPACE` set on the
+   command, before any publish command is given. A tree that builds only beside the course
+   checkout is not exported.
+8. Publishing is the owner's step, never this skill's. `standalone.publish` prints the
+   command list from `.studyforge/release.json` (`python -m
+   studyforge.skills.execution.standalone.publish RELEASE_JSON NAMESPACE WORKDIR`); it runs
+   nothing. ⛔ Every docker line carries `--context desktop-linux`, and every build line sets
+   `STUDYFORGE_NAMESPACE=<placeholder>` explicitly: a value inherited from the shell would
+   leak into the registry lookups and tags. The list, in order:
+   - `docker compose build`, then **each image the manifest `release.json` lists** (not a
+     fixed count; the site once per narration);
+   - **a personal-data scan of every built image**: its filesystem is exported to a folder
+     and swept with the shared pattern set (`python -m studyforge.archive.scrub check
+     FOLDER`); a finding stops the list before anything is pushed;
+   - `docker push` for each listed image;
+   - **a digest check**: each pushed base's manifest digest must equal the built digest
+     the course images pin (`bases` in `release.json`). ⛔ On a mismatch the list stops;
+     nothing further is published.
 
 ⛔ An export is per platform (its `platform` argument, default this machine): an image's
 build arguments name that platform's pinned downloads.

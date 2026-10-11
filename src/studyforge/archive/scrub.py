@@ -197,8 +197,11 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
         # ⭐ A Kotlin label is not an address either: the whole local part being `this`, `return`,
         # `break`, `continue` or `super` (`this@Library.name`) reads as a label. A dotted local
         # part such as `this.person` is not exempt.
+        # ⭐ A local part never starts on an escape's letter: in serialised JSON a newline
+        # before `@Scope` is `\n@Scope`, and `n@...` must not be read as an address when a
+        # caller scans raw file text. An address written right after an escape is still found.
         re.compile(
-            r"\b(?!(?:this|return|break|continue|super)@)"
+            r"(?:(?<!\\)\b|(?<=\\[nrtbf]))(?!(?:this|return|break|continue|super)@)"
             r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.(?!(?:vsix|whl|jar|tgz)\b)[A-Za-z]{2,}\b"
         ),
         EMAIL_PLACEHOLDER,
@@ -305,6 +308,21 @@ def shape_in(text: str) -> str | None:
     return None
 
 
+def findings(text: str, where: str = "text") -> list[tuple[str, str]]:
+    """`(where:line, shape name)` for each line of raw `text` that carries a shape.
+
+    The public entry for a course's own checker, so no course keeps a second copy of
+    the pattern set. Reads lines, so a finding is locatable; ⛔ names the shape, never the
+    matched text.
+    """
+    found: list[tuple[str, str]] = []
+    for number, line in enumerate((text or "").splitlines(), start=1):
+        name = shape_in(line)
+        if name is not None:
+            found.append((f"{where}:{number}", name))
+    return found
+
+
 def _walk(value: object, visit: Callable[[str, str], str], where: str) -> object:
     """Rebuild `value`, replacing every string it reaches with `visit(where, text)`.
 
@@ -383,3 +401,9 @@ def assert_clean(value: object, where: str) -> None:
             f"{scrub(at)} carries {_article(name)} {name}, which is personal data; "
             f"refusing to write it rather than rewriting the record"
         )
+
+
+if __name__ == "__main__":  # `python -m studyforge.archive.scrub check PATH...`
+    from studyforge.archive.scrubcli import main
+
+    raise SystemExit(main())
