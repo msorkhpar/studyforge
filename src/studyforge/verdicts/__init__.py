@@ -46,7 +46,6 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-import sys
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -259,6 +258,3 @@ def main(argv: list[str] | None = None) -> int:
         print(f"pruned {len(store.prune(keep, cap))} entries")
     return 0
 
-
-if __name__ == "__main__":
-    sys.exit(main())

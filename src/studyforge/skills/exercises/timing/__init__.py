@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -122,6 +121,3 @@ def main(argv: list[str] | None = None) -> int:
     print(f"{len(found)} short wait(s)")
     return 1 if found and args.strict else 0
 
-
-if __name__ == "__main__":
-    sys.exit(main())
