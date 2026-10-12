@@ -215,7 +215,9 @@ def _write(path: Path, entry: Entry) -> None:
         "verdict": entry.verdict,
         "files": dict(entry.files),
     }
-    path.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def _read(path: Path) -> Entry | None:

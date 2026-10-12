@@ -13,4 +13,5 @@ import sys
 
 from studyforge.skills.exercises.timing import main
 
-sys.exit(main())
+if __name__ == "__main__":
+    sys.exit(main())
