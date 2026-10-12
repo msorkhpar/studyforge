@@ -333,10 +333,10 @@ def test_the_gate_reads_decoded_strings_and_not_the_rendered_bytes():
     parse(render(document), "lesson-1.json")
 
 
-def test_and_the_rendered_bytes_really_would_have_matched():
-    # ⭐ Without this the test above is vacuous — it would pass on any clean
-    # document. Here is the proof that the hazard is real.
-    assert shape_in(render(build(**{**BASE, "blocks": [DECORATOR]}))) == "email address"
+def test_and_the_rendered_bytes_read_clean_too():
+    # The email shape refuses a local part that starts on an escape's letter, so even the
+    # serialised form of a decorator on its own line is not address-shaped.
+    assert shape_in(render(build(**{**BASE, "blocks": [DECORATOR]}))) is None
 
 
 def test_a_document_of_card_shaped_strings_passes():

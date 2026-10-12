@@ -31,6 +31,7 @@ builds them.
 | `vendor` | the toolchain's builds as its own data, and its context as bytes |
 | `bases` | the lock naming the published bases a thin export starts from, by tag and digest |
 | `images` | the six images' names, and the build files studyforge owns |
+| `publish` | the owner's publish commands, printed from `release.json` and never run |
 | `compose` | `compose.yaml` and `compose.pull.yaml`, and the rules they keep |
 | `facts` | the counts a README states, read from the course's own records |
 | `tour` | the README's sections on what the course is, what it gives, and its two ways to be used |

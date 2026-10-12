@@ -291,3 +291,47 @@ def test_without_a_declaration_the_example_support_folder_moves_as_it_always_did
 
 def test_a_corpus_without_example_code_is_split_as_before(course):
     assert verdict(course, "somewhere-else") == split.MOVE
+
+
+# --------------------------------------------------------------------------
+# What a primed module and a top-level `prime/` build keep
+# --------------------------------------------------------------------------
+
+SERVICES = "src/main/resources/META-INF/services/demo.Spi"
+
+
+def _kept_with(tmp_path_factory, extra: tuple[str, ...]) -> tuple[str, ...]:
+    root = fixture_copy(tmp_path_factory.mktemp("primed"))
+    write_site(root, root)
+    files = tuple(
+        sorted(
+            {
+                *(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()),
+                *AROUND,
+                *extra,
+            }
+        )
+    )
+    return split.kept(split.classify(root, files), files)
+
+
+def test_a_primed_module_keeps_its_service_registration_files(tmp_path_factory):
+    carried = _kept_with(
+        tmp_path_factory,
+        (f"module-a/{SERVICES}", f".studyforge/execution/prime/maven/module-a/{SERVICES}"),
+    )
+    assert f"module-a/{SERVICES}" in carried
+    assert f".studyforge/execution/prime/maven/module-a/{SERVICES}" in carried
+
+
+def test_a_top_level_prime_build_is_kept_whole(tmp_path_factory):
+    own = (
+        "prime/pom.xml",
+        "prime/src/main/java/Demo.java",
+        f"prime/{SERVICES}",
+        ".studyforge/execution/prime/pom.xml",
+        f".studyforge/execution/prime/{SERVICES}",
+    )
+    carried = _kept_with(tmp_path_factory, own)
+    missing = [one for one in own if one not in carried]
+    assert missing == []

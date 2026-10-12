@@ -320,12 +320,14 @@ def test_material_that_is_only_address_shaped_after_escaping_is_not_refused():
     assert_clean({"blocks": [ESCAPING_ARTEFACT]}, "lesson-1.json")
 
 
-def test_and_the_serialised_form_would_have_matched():
+def test_and_the_serialised_form_reads_clean_too():
     # ⭐ Without this the test above is vacuous: it would pass just as well if
     # nothing about the document were address-shaped at all. Here is the proof
     # that the hazard is real and that the decoded read is what avoids it.
     serialised = json.dumps({"blocks": [ESCAPING_ARTEFACT]})
-    assert shape_in(serialised) == "email address"
+    # The pattern now also refuses a local part that starts on an escape's letter, so the
+    # serialised form reads clean too; the decoded read is still the primary one.
+    assert shape_in(serialised) is None
     assert shape_in(ESCAPING_ARTEFACT["text"]) is None
 
 
@@ -440,8 +442,15 @@ def test_the_gate_reads_no_environment():
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.add(node.module)
-    # The one framework import is `archive.samples`, which imports nothing.
-    assert imported == {"__future__", "re", "collections.abc", "studyforge.archive.samples"}
+    # The one framework import is `archive.samples`, which imports nothing; the other is the
+    # command line module, imported only under the `__main__` guard, which holds the I/O.
+    assert imported == {
+        "__future__",
+        "re",
+        "collections.abc",
+        "studyforge.archive.samples",
+        "studyforge.archive.scrubcli",
+    }
 
 
 def test_the_gate_does_not_import_the_repository_gates_patterns():
