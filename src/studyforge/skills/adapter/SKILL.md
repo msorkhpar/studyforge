@@ -160,7 +160,7 @@ re-reads.
 *"here are the containers and here are the units"* is identical for every
 corpus and is already written.
 
-Two rules, and both are §6:
+Three rules, the first two are §6:
 
 - ⛔ **An address is recorded, never derived.** Do not slugify a title to get
   one. **In one real corpus, 157 of 1,290 units (12.2%) are served at
@@ -170,6 +170,16 @@ Two rules, and both are §6:
   of the file the material was read from, and R3 guarantees that file is never
   touched — so it stays a working link from every generated page back into the
   reader's own material, and it is the field a re-fetch would use.
+- ⭐ **A published title is a declared title, never the folder slug.** The
+  sidebar, the breadcrumb and the root index print the container map's own
+  `titles` and each unit's `title`; the framework derives none from a folder
+  name, so `read.py` writes the real heading (capitals and punctuation intact),
+  and the address segment stays the slug. `studyforge.contents.slug_titled(built)`
+  names every group or unit whose title is in slug form (the segment itself, hyphenated
+  lowercase words, or a humanised slug: no punctuation and the same words as the
+  segment with its number dropped; any punctuation marks a title as declared), and
+  `build(manifest, containers, declared_titles=True)` refuses one. Run the check
+  on the emitted contents; the default build is unchanged.
 
 ⭐ **Where `corpus.json` declares `curriculum.containers`** (`corpus_api` 7),
 the scaffold has already written `containers` and `expected_units`:

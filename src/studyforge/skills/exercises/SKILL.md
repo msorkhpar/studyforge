@@ -274,6 +274,29 @@ adversary reads *Silent passes particular to Kotlin* (equality and identity,
 default arguments, platform nullability, virtual time, threads) as well as the
 Java list.
 
+#### ⛔ What a page and a practice may claim
+
+- ⛔ **A behavioural claim on a page is quoted from the output of a program that
+  ran.** Run the example, copy what it printed, and write the claim from that
+  output. A claim reasoned from the source, or remembered, is not stated.
+- ⛔ **A plant edits only a file the reader edits.** `materialise_files` refuses a
+  replacement that names any other file, and refuses a plant that changes nothing
+  (`studyforge.exercise.bundle.plantfiles`). Within that, write the plant in a
+  file whose starter and reference differ: a file the two share cannot be where
+  the reader's mistake lives, and that narrower rule is a review point, not a
+  gate.
+- ⛔ **A concurrency practice never passes on a short absolute wait.** No
+  sub-second sleep, await or timeout is a pass condition: use a latch, a join or
+  a future with a generous timeout (tens of seconds), so a loaded machine slows
+  the run and never fails it. `python3 -m studyforge.skills.exercises.timing
+  <practice tests>` lists every literal wait below 1000 ms. It warns and exits 0;
+  `--strict` exits 1. A line marked `timing: ok` is skipped.
+- ⭐ **The quiz reader rubric, stated once.** The key never repeats a word of
+  the stem. The options are parallel in form, length and specificity, so none is
+  singled out by its wording. The answer key folded into the page lists the same
+  questions, keys and sentences as the exercise's `quiz.json`, and is written from
+  it. `Q2` is where the first two are judged.
+
 ### 3. Run the pass
 
 ⭐ **Before the pass, take the two readings it cannot take for you:**
@@ -323,6 +346,16 @@ authored.bare  # every page left with nothing shipped (R6)
 6. Every file is checked against the tree **before any is written**, then the
    bundles, the reader's workspace files and each unit's coverage report are
    created, and the merged ledger is written.
+
+⭐ **A full run is split into module-range jobs.** Each job runs one range of
+modules and records a verdict per unit as it finishes, so a time cap or a crash
+loses at most the range in flight. A rerun resumes from the recorded verdicts and
+runs only the units whose input digest has no verdict. `studyforge.verdicts`
+provides that: `Store.record` keeps the verdict and the few small result files a
+judgement reads (never a build tree), `pending` lists what still has to run,
+`python3 -m studyforge.verdicts report|compact|prune --dir DIR` reports its size
+and trims it, and `preflight` (or `... preflight --dir DIR --floor-mb N`) refuses
+to start below a free-disk floor. It is opt-in: the pass itself does not call it.
 
 ## ⛔ When a gate refuses
 

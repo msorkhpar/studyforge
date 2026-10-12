@@ -94,6 +94,33 @@ framework whose generators do not work yet.
 ⛔ **So `Task` refuses two things:** a task with no demonstrable outcome, and
 a task that owns nothing and states no evidence either.
 
+⭐ **Mint a task only when it blocks the milestone.** Work that blocks nothing
+is a row in the backlog's later milestone, never an open task.
+
+#### ⛔ Sequence parallel authoring so rounds never collide
+
+- ⛔ **Anything parallel rounds would share is its own task, finished and
+  merged first.** Config files, build files and baselines are written once,
+  before the rounds that read them start. ⛔ Two rounds never add the same
+  file: a file has one owning task, and a second round that needs a change to
+  it waits on that task.
+- ⛔ **A post-merge check runs on the merged tree**, not on each branch. A
+  branch that is green alone proves nothing about the sum of the branches.
+- ⭐ **A bulk edit of pages ends with the page-digest refresh and a gate over
+  every module the edit touched.** The task's acceptance names both, and the
+  list of touched modules is read from the diff, not remembered.
+
+#### ⭐ The office-brief checklist
+
+A task handed to an office carries these lines, and the planner checks each is
+stated before the hand-off:
+
+- work only inside the worktree and branch the brief names;
+- a turn budget, with the instruction to stop new work near the end and hand
+  back early with what passes and what remains;
+- a time-box for every long wait;
+- confirm a heavy job is **running**, not queued, before counting its time.
+
 ### 4. Name the framework each task uses — ⛔ and file what it lacks
 
 ⭐ **A task's *depends on* names three kinds of thing**: a task of this plan,

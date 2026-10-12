@@ -58,6 +58,7 @@ framework knowing something about a source (R1).
 | `order` | the reading-order walk, `neighbours`, and `links` per asking page |
 | `document` | `toc.json` — its bytes, its reader, `toc_api`, and `digest` |
 | `status` | `status.json` — the local half, the checked join, and `missing` |
+| `titles` | `slug_titled` — which published titles are the folder slug, and the opt-in refusal |
 | `writing` | the staged write both documents reach the disk through |
 | `errors` | `ContentsError`, the only exception any of it raises |
 """
@@ -113,6 +114,7 @@ from studyforge.contents.status import (
     status_document,
     write_status,
 )
+from studyforge.contents.titles import SLUG_FORM, is_slug_form, slug_titled
 from studyforge.contents.tree import build
 
 #: ⛔ The package's whole public surface. A consumer that has to import
@@ -125,6 +127,7 @@ __all__ = [
     "KNOWN_TOC_API",
     "LINK_FIELDS",
     "LINK_KEYS",
+    "SLUG_FORM",
     "STATUS_FILENAME",
     "STATUS_KEYS",
     "TOC_API",
@@ -144,6 +147,7 @@ __all__ = [
     "found",
     "from_document",
     "from_status_document",
+    "is_slug_form",
     "join",
     "links",
     "load",
@@ -156,6 +160,7 @@ __all__ = [
     "positions",
     "render",
     "render_status",
+    "slug_titled",
     "status",
     "status_document",
     "to_document",
