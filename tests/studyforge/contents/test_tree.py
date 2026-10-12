@@ -205,7 +205,7 @@ def _spring():
         a_container(
             manifest,
             ("backend", SLUGGED),
-            ("Backend", DECLARED),
+            ("Server side", DECLARED),
             units=[{"n": 1, "title": "Beans and Injection"}],
         ),
     )
@@ -223,7 +223,7 @@ def test_a_declared_title_with_capitals_and_punctuation_is_published_not_the_slu
     crumbs = trail(built, module.entries[0].key, "index.html")
     assert [crumb.title for crumb in crumbs] == [
         "A Demo Corpus",
-        "Backend",
+        "Server side",
         DECLARED,
         "Beans and Injection",
     ]
@@ -234,8 +234,25 @@ def test_a_declared_title_with_capitals_and_punctuation_is_published_not_the_slu
 
 def test_a_title_that_is_the_slug_is_named_and_the_strict_build_refuses_it():
     manifest = depth2_manifest()
-    containers = (a_container(manifest, ("backend", SLUGGED), ("Backend", SLUGGED)),)
+    containers = (a_container(manifest, ("backend", SLUGGED), ("Server side", SLUGGED)),)
     built = build(manifest, containers)  # the default build is unchanged
     assert slug_titled(built) == (f"backend/{SLUGGED}",)
     with pytest.raises(ContentsError, match="folder slug"):
         build(manifest, containers, declared_titles=True)
+
+
+@pytest.mark.parametrize(
+    ("title", "segment", "flagged"),
+    [
+        ("intro", "intro", True),  # exact segment
+        ("spring-core-beans", "93-other", True),  # hyphen slug, not the segment
+        ("Spring core beans injection scopes and lifecycle", SLUGGED, True),  # humanised
+        ("Spring core: beans, injection, scopes and lifecycle", SLUGGED, False),  # declared
+        (DECLARED, SLUGGED, False),
+        ("Something else entirely", SLUGGED, False),
+    ],
+)
+def test_each_slug_form_is_flagged_and_a_declared_title_is_not(title, segment, flagged):
+    from studyforge.contents import is_slug_form
+
+    assert is_slug_form(title, segment) is flagged

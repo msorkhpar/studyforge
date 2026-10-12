@@ -1,8 +1,14 @@
 """Whether a published title is a declared title, or only the folder slug showing through.
 
 **What it does.** Names every group and unit of a built `Contents` whose
-title is in slug form — a group titled exactly its own address segment, or any
-title that is lowercase words joined by hyphens with no space. Those are the
+title is in slug form. Three forms are flagged: a title that is exactly its own
+address segment; a title that is lowercase words joined by hyphens with no space;
+and, for a group, a humanised slug: a title with no punctuation whose normalised
+form equals the normalised segment (lowercase, non-alphanumerics collapsed to one
+space, a leading number dropped), such as "Spring core beans injection scopes and
+lifecycle" for `93-spring-core-beans-injection-scopes-and-lifecycle`. ⭐ Any
+punctuation in a title (a colon, a comma) marks it as declared, so "Spring core:
+beans, injection, scopes and lifecycle" is never flagged. Those are the
 titles a sidebar, a breadcrumb and a root index would print as the folder name
 instead of the name the corpus declares.
 
@@ -35,11 +41,29 @@ from studyforge.contents.entries import Contents, Group
 SLUG_FORM = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)+$")
 
 
+#: Anything that is not a letter, a digit, an underscore or a space.
+_PUNCTUATION = re.compile(r"[^\w\s]|_")
+_LEADING_NUMBER = re.compile(r"^\d+\s+")
+
+
+def normalised(text: str) -> str:
+    """Return `text` lowercased, non-alphanumerics collapsed to single spaces, leading number dropped."""
+    words = re.sub(r"[\W_]+", " ", text.lower()).strip()
+    return _LEADING_NUMBER.sub("", words)
+
+
 def is_slug_form(title: object, segment: str | None = None) -> bool:
-    """Say whether `title` is the slug form of a name: its own segment, or hyphenated lowercase words."""
+    """Say whether `title` is the slug form of a name, in any of the three forms above."""
     if not isinstance(title, str):
         return False
-    return title == segment or SLUG_FORM.match(title) is not None
+    if title == segment or SLUG_FORM.match(title) is not None:
+        return True
+    return (
+        segment is not None
+        and _PUNCTUATION.search(title) is None
+        and normalised(title) != ""
+        and normalised(title) == normalised(segment)
+    )
 
 
 def slug_titled(contents: Contents) -> tuple[str, ...]:
