@@ -56,7 +56,7 @@ def is_slug_form(title: object, segment: str | None = None) -> bool:
     """Say whether `title` is the slug form of a name, in any of the three forms above."""
     if not isinstance(title, str):
         return False
-    if title == segment or SLUG_FORM.match(title) is not None:
+    if SLUG_FORM.match(title) is not None:
         return True
     return (
         segment is not None
