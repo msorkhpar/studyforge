@@ -13,7 +13,8 @@ unit belonging to it.
 **Depends on.** `studyforge.address` for what a unit key is, `studyforge.archive`
 for the block vocabulary and the personal-data gate, and
 `studyforge.render.markup` for the one inline-marker parser (see `voice.py`'s
-contract for why that dependency is taken deliberately), and
+contract for why that dependency is taken deliberately),
+`studyforge.render.page.claims` for the one reading of where a quiz stands, and
 `corpus.manifest.SOURCE_SUFFIXES`, the framework's constant table of what a code
 file is called. ⛔ Nothing of a corpus is read, not `serve`, and nothing here
 knows where a clip lands (R4).
@@ -50,7 +51,10 @@ its clips were most of a corpus's audio. ⭐ The page follows by construction:
 its narration is joined from these units (`narrate.playable`), so a practice
 part carries no audio attribute however old the record is. A code example is
 never spoken either, and `script.py` says why; that includes a lesson's
-code-example panel, and a heading over nothing spoken.
+code-example panel, and a heading over nothing spoken. ⛔ Nor is a lesson's
+repeat of its quiz: the run of questions and the folded key the page replaces
+with the interactive quiz yield nothing, decided by the page's own detector
+(`render.page.quizonce.claims`), never by a second one.
 
 ⭐ **Skipping a section renumbers nothing.** A speech id is minted from the
 section's own key and the block's position inside it, so every lesson unit
@@ -86,6 +90,7 @@ from studyforge.narrate.speakable.naming import (
 from studyforge.narrate.speakable.records import Speakable, SpeakableError, SpeechUnit
 from studyforge.narrate.speakable.script import SPEECH_OF, ordinal_word, units_of
 from studyforge.narrate.speakable.voice import URL_PHRASE, spoken_text
+from studyforge.render.page import claims
 
 #: ⛔ The package's whole public surface. A consumer reaching past this into a
 #: module is a consumer this contract failed.
@@ -133,6 +138,9 @@ def speakable_of(document: dict) -> Speakable:
 
     ⛔ A practice section yields nothing (see the module contract), and its key is
     still checked: a practice whose key repeats a lesson's is the same defect.
+
+    ⛔ Nor does a lesson's repeat of a quiz practice: the blocks `quizonce.claims`
+    gives the quiz say nothing, and every other block keeps its id.
     """
     if not isinstance(document, dict):
         raise SpeakableError("a speakable script is derived from a served unit document")
@@ -143,12 +151,18 @@ def speakable_of(document: dict) -> Speakable:
     spoken: list[SpeechUnit] = []
     withheld = 0
     seen: set[str] = set()
-    for section in sections:
+    claimed = claims(document)
+    for index, section in enumerate(sections):
         key = _section_key(section, seen)
         seen.add(key)
         if section.get("kind") == PRACTICE:
             continue
-        found, held = units_of(unit, key, section.get("blocks"))
+        quiet = frozenset(
+            place
+            for claim in claimed.get(index, ())
+            for place in range(claim.first, claim.last + 1)
+        )
+        found, held = units_of(unit, key, section.get("blocks"), quiet=quiet)
         spoken += found
         withheld += held
     return Speakable(unit_key=unit_key_of(unit), units=tuple(spoken), withheld=withheld)

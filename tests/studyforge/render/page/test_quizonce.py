@@ -389,3 +389,21 @@ def test_a_page_with_a_page_quiz_and_a_module_quiz_draws_both_interactive_and_no
     keys = re.findall(r'data-practice-quiz="([^"]+)"', html)
     assert len(set(keys)) == 2, "the two quizzes share one progress key"
     assert visible.index("Module quiz") < visible.rindex("data-practice-quiz=")
+
+
+# --------------------------------------------------------------------------
+# ⭐ the positions a quiz claims are read once, for the page and for narration alike
+# --------------------------------------------------------------------------
+
+
+def test_claims_names_the_run_and_its_key_by_position_and_nothing_else():
+    assert quizonce.claims(unit(lesson())) == {0: ((3, 4, 1),)}
+    given, _page, _module = two_quiz_unit()
+    assert quizonce.claims(given) == {0: ((3, 4, 1), (6, 7, 2))}
+
+
+def test_claims_is_empty_where_once_changes_nothing():
+    other = lesson()
+    other["blocks"][3] = {"type": "list", "ordered": True, "items": ["A different question?"]}
+    assert quizonce.claims(unit(other)) == {}
+    assert quizonce.claims({"sections": None}) == {}

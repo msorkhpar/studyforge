@@ -430,7 +430,7 @@ def test_a_prune_retires_the_code_example_clips_and_the_heading_over_them_and_ke
     # ⭐ The script before the ruling: the same one with both of its new rules off.
     with monkeypatch.context() as before_the_ruling:
         before_the_ruling.setattr(script, "code_examples", lambda block: False)
-        before_the_ruling.setattr(script, "unheard_headings", lambda blocks, heard: [])
+        before_the_ruling.setattr(script, "unheard_headings", lambda blocks, heard, *quiet: [])
         root = narrated(tmp_path, "depth2")
     _, walk = stage.survey(root)
     kept = sorted(walk.produced)
