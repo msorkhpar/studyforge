@@ -140,6 +140,7 @@ from studyforge.render.page.mockform import PARTS as MOCK_FORM_PARTS
 from studyforge.render.page.mockform import files as mock_form_files
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
+from studyforge.render.page.quizonce import Claim, claims
 from studyforge.render.page.rail import RailContainer, RailGroup, RailUnit
 from studyforge.render.page.rail import render as rail
 from studyforge.render.page.review import PARTS as REVIEW_PARTS
@@ -153,6 +154,7 @@ ENCODING = "utf-8"
 #: `studyforge.render.page.document` directly is a consumer this contract failed.
 __all__ = [
     "AUDIO_ATTRIBUTE",
+    "Claim",
     "DECK_PARTS",
     "ENCODING",
     "REVIEW_PARTS",
@@ -170,6 +172,7 @@ __all__ = [
     "RailUnit",
     "between_units",
     "breadcrumb",
+    "claims",
     "compose",
     "deck_files",
     "example_run_files",

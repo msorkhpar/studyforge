@@ -10,6 +10,7 @@ the document to render.
 
 **How you use it.** `page.document.compose` calls it first, over the served document, with `panel`,
 a function that renders one practice section's quiz markup, and renders what it returns.
+`claims(document)` names, per section, the blocks a quiz stands in for, and nothing else.
 ⛔ It reads the document and never changes the one it is given.
 
 **Depends on.** `exercise` for a practice's record. Nothing else.
@@ -36,6 +37,13 @@ the stems are scattered through prose, or two runs could each be the quiz, nothi
 page stays as written and the practice is drawn after it, as any practice is. The quiz with the most
 questions is matched first, so a module quiz that repeats a page quiz's questions takes its own run.
 
+## ⛔ What the page does not draw is never narrated
+
+The blocks a quiz claims, the run and its key, are never spoken: `narrate.speakable` reads the
+same `claims` and gives them no speech unit, as it gives none to a practice or a code example,
+and a heading left over nothing spoken says nothing either. ⛔ There is one detector, this one,
+so the page and its narration cannot disagree about where a quiz stands.
+
 ## ⛔ Block positions do not move
 
 Every block keeps its position, because the ids a page's headings and links carry are positions. The
@@ -47,6 +55,7 @@ outline entry or panel is made for it a second time.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import NamedTuple
 
 from studyforge.exercise import from_document
 from studyforge.exercise.errors import ExerciseError
@@ -54,30 +63,68 @@ from studyforge.exercise.errors import ExerciseError
 
 def once(document: dict, panel: Callable[[dict, dict], str]) -> dict:
     """Return `document`, with a lesson's repeat of a quiz practice replaced by that quiz."""
-    sections = document.get("sections")
-    if not isinstance(sections, list):
+    found = claims(document)
+    if not found:
         return document
-    quizzes = _stems(sections)
-    if not quizzes:
-        return document
+    sections = document["sections"]
     changed = False
-    taken: set[int] = set()
     drawn = []
-    for section in sections:
-        blocks = section.get("blocks") if isinstance(section, dict) else None
-        if not isinstance(section, dict) or section.get("kind") == "practice" or not blocks:
+    for index, section in enumerate(sections):
+        if index not in found:
             drawn.append(section)
             continue
-        replaced = _replace(blocks, quizzes, taken, sections, lambda one: panel(one, document))
-        if replaced is blocks:
+        blocks = section["blocks"]
+        out = list(blocks)
+        for claim in found[index]:
+            out[claim.first] = {"type": "html", "text": panel(sections[claim.practice], document)}
+            for place in range(claim.first + 1, claim.last + 1):
+                out[place] = {"type": "html", "text": ""}
+        if out == list(blocks):
             drawn.append(section)
         else:
             changed = True
-            drawn.append({**section, "blocks": replaced})
+            drawn.append({**section, "blocks": out})
     if not changed:
         return document
+    taken = {claim.practice for each in found.values() for claim in each}
     kept = [one for index, one in enumerate(drawn) if index not in taken]
     return {**document, "sections": kept}
+
+
+class Claim(NamedTuple):
+    """The blocks `first` to `last` of one section, both included, that one quiz practice claims.
+
+    `practice` is that practice's position among the document's sections.
+    """
+
+    first: int
+    last: int
+    practice: int
+
+
+def claims(document: dict) -> dict[int, tuple[Claim, ...]]:
+    """Return, per section position, the block ranges a quiz practice stands in for.
+
+    ⭐ The ONE detector: `once` draws a quiz where a claim is, and narration says nothing there.
+    A section no quiz claims is absent, so a document with no quiz practice, or none matched,
+    returns `{}`. Claims are listed in the order they were matched, the largest quiz first.
+    """
+    sections = document.get("sections")
+    if not isinstance(sections, list):
+        return {}
+    quizzes = _stems(sections)
+    if not quizzes:
+        return {}
+    taken: set[int] = set()
+    found: dict[int, tuple[Claim, ...]] = {}
+    for index, section in enumerate(sections):
+        blocks = section.get("blocks") if isinstance(section, dict) else None
+        if not isinstance(section, dict) or section.get("kind") == "practice" or not blocks:
+            continue
+        claimed = _claim(blocks, quizzes, taken)
+        if claimed:
+            found[index] = claimed
+    return found
 
 
 def _stems(sections: list) -> list[tuple[int, tuple[str, ...]]]:
@@ -103,28 +150,26 @@ def _stems(sections: list) -> list[tuple[int, tuple[str, ...]]]:
 _BETWEEN = frozenset({"list", "code", "image"})
 
 
-def _replace(blocks: list, quizzes: list, taken: set[int], sections: list, panel):
-    """Return `blocks` with each repeated quiz range replaced, or the same list when none is."""
-    out = list(blocks)
+def _claim(blocks: list, quizzes: list, taken: set[int]) -> tuple[Claim, ...]:
+    """Return the range each quiz the blocks repeat claims, adding its practice to `taken`."""
+    claimed: list[Claim] = []
     drawn: set[int] = set()
     # ⭐ The quiz with the most questions claims its range first, so a module quiz that repeats a
     # page quiz's questions does not take the page quiz's range.
     for position, stems in sorted(quizzes, key=lambda one: -len(one[1])):
         if position in taken:
             continue
-        runs = _runs(out, stems, drawn)
-        ranges = [one for one in runs if all(stem in _span(out, one) for stem in stems)]
+        runs = _runs(blocks, stems, drawn)
+        ranges = [one for one in runs if all(stem in _span(blocks, one) for stem in stems)]
         if len(ranges) != 1:
             continue  # ⛔ not delimited with certainty: the page stays as written
         first, last = ranges[0]
-        if last + 1 < len(out) and last + 1 not in drawn and _is_key(out[last + 1]):
+        if last + 1 < len(blocks) and last + 1 not in drawn and _is_key(blocks[last + 1]):
             last += 1
         taken.add(position)
-        out[first] = {"type": "html", "text": panel(sections[position])}
-        for place in range(first + 1, last + 1):
-            out[place] = {"type": "html", "text": ""}
+        claimed.append(Claim(first, last, position))
         drawn.update(range(first, last + 1))
-    return blocks if out == list(blocks) else out
+    return tuple(claimed)
 
 
 def _runs(blocks: list, stems: tuple[str, ...], drawn: set[int]) -> list[tuple[int, int]]:

@@ -2,7 +2,7 @@ r"""What each block type becomes as speech, and the walk that puts them in order
 
 **What it does.** Decides, per block type, what the narrator says — prose read as
 written, a fence not at all, a list read item by item (a list of code examples
-not at all), a table read row
+not at all, nor a lesson's repeat of its quiz), a table read row
 by row, a disclosure's summary spoken and its body withheld — and walks one
 section's blocks into ordered `SpeechUnit`s.
 
@@ -49,6 +49,15 @@ of it, whatever its words. `panel.py` says what such a list is.
 
 ⭐ **A heading over a panel and nothing spoken is silent**, and keeps its
 position; `panel.py` says why a heading over a lone fence still speaks.
+
+## ⛔ A lesson's repeat of its quiz is never spoken, and neither is the heading over it
+
+⭐ **The page draws the quiz where the lesson lists its questions**
+(`render.page.quizonce`), so the blocks it claims, the run of questions and
+the folded key after it, are not prose on the page and yield no unit here.
+`speakable_of` asks `quizonce.claims` which blocks those are and hands them in
+as `quiet`; a heading over them and nothing spoken is silent as a panel's is.
+⚠️ They keep their positions, so nothing around them is renumbered.
 
 ## ⛔ Narration speaks a disclosure's summary and stops. It never walks the body
 
@@ -161,11 +170,15 @@ def units_of(
     section_key: str,
     blocks: object,
     path: tuple[int, ...] = (),
+    *,
+    quiet: frozenset[int] = frozenset(),
 ) -> tuple[tuple[SpeechUnit, ...], int]:
     """Return one section's ordered speech units and the count of blocks withheld.
 
     `unit` is a flattened unit token, `section_key` the served section's key, and
     `path` the positions already walked into — empty for a section's own blocks.
+    `quiet` names the blocks of `blocks` the page draws as a quiz: they say nothing
+    and withhold nothing, and they keep their positions.
 
     ⛔ A heading over a panel and nothing spoken says nothing (`panel.unheard_headings`),
     and its words are gated all the same.
@@ -184,9 +197,12 @@ def units_of(
                 f"accident, so it is refused here instead"
             )
         found, held = _one_block(unit, section_key, block, kind, rule, here)
+        if index in quiet:
+            # ⛔ Walked all the same, so its words are gated, and then never said.
+            found, held = [], 0
         said.append(found)
         withheld += held
-    for index in unheard_headings(listed, [bool(found) for found in said]):
+    for index in unheard_headings(listed, [bool(found) for found in said], quiet):
         said[index] = []
     return tuple(unit for found in said for unit in found), withheld
 

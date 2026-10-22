@@ -170,3 +170,86 @@ def test_surviving_prose_around_the_examples_keeps_its_speech_id_and_digest():
         "shared.b3.i2",
     ]
     assert list(after) == [one for one in BEFORE_THE_EXAMPLES_RULING if one not in retired]
+
+
+# --------------------------------------------------------------------------
+# ⛔ a lesson's repeat of its quiz is never spoken: the page draws the quiz there
+# --------------------------------------------------------------------------
+
+import copy  # noqa: E402
+
+from tests.studyforge.render.page import test_quizonce as quizonce_cases  # noqa: E402
+from tests.studyforge.render.page.test_practice import QUIZ, UNGRADED  # noqa: E402
+from tests.studyforge.render.page.test_practice import document as served  # noqa: E402
+from tests.studyforge.render.page.test_practice import section as served_section  # noqa: E402
+
+
+def _without_quiz(document: dict) -> dict:
+    """`document` with every practice made a file nothing checks: no quiz can match, so the
+    lesson is spoken exactly as it was before quizzes were skipped."""
+    plain = copy.deepcopy(document)
+    for one in plain["sections"]:
+        if one.get("kind") == "practice":
+            one["workspace"] = dict(UNGRADED)
+    return plain
+
+
+def _spoken(document: dict) -> dict:
+    return {one.id: one.speak for one in speakable_of(document).units}
+
+
+def _positions(document: dict) -> set:
+    return {one.block_path[0] for one in speakable_of(document).units if one.section == "prose"}
+
+
+def test_a_page_quiz_and_its_folded_key_yield_no_speech_unit_and_nothing_else_moves():
+    follow = [{"type": "heading", "level": 2, "text": "Next"}, {"type": "para", "text": "More."}]
+    given = quizonce_cases.unit(quizonce_cases.lesson(*follow))
+    before, after = _spoken(_without_quiz(given)), _spoken(given)
+    # ⭐ The control: without the fix this document speaks the questions, the key and the heading.
+    assert "Answer key" in before.values() and "Quiz" in before.values()
+    assert _positions(given) == {0, 1, 5, 6}, "a quiz block, its key or its heading is spoken"
+    assert {key: before[key] for key in after} == after, "a surviving unit changed id or words"
+    assert "Answer key" not in after.values() and "Quiz" not in after.values()
+    for stem in quizonce_cases.STEMS:
+        assert not any(stem in said for said in after.values()), stem
+    units = speakable_of(given).units
+    assert len(set(clip_names(units))) == len(units)
+
+
+def test_a_module_quiz_that_repeats_a_page_quiz_is_silent_and_its_intro_prose_still_speaks():
+    given, page, module = quizonce_cases.two_quiz_unit()
+    # ⭐ The module quiz repeats the page quiz's questions, as a module quiz does.
+    module["questions"] = [*page["questions"], *module["questions"]]
+    blocks = given["sections"][0]["blocks"]
+    blocks[7]["items"] = [
+        [one["stem"], {"type": "list", "ordered": False, "items": ["a", "b"]}]
+        for one in module["questions"]
+    ]
+    blocks.insert(6, {"type": "para", "text": "This quiz covers both pages of the module."})
+    before, after = _spoken(_without_quiz(given)), _spoken(given)
+    assert "Module quiz" in before.values() and "Answer key" in before.values()
+    assert {key: before[key] for key in after} == after, "a surviving unit changed id or words"
+    # The page quiz's heading falls silent; the module quiz's heading has its intro under it.
+    assert _positions(given) == {0, 1, 5, 6}
+    assert "This quiz covers both pages of the module." in after.values()
+    assert "Answer key" not in after.values() and "Quiz" not in after.values()
+    for one in module["questions"]:
+        assert not any(one["stem"] in said for said in after.values()), one["stem"]
+    units = speakable_of(given).units
+    assert len(set(clip_names(units))) == len(units)
+
+
+def test_a_quiz_heading_over_questions_no_practice_asks_is_spoken_as_before():
+    other = quizonce_cases.lesson()
+    other["blocks"][3] = {"type": "list", "ordered": True, "items": ["A different question?"]}
+    given = quizonce_cases.unit(other)
+    assert _spoken(given) == _spoken(_without_quiz(given))
+    assert "Quiz" in _spoken(given).values() and "Answer key" in _spoken(given).values()
+
+
+def test_a_unit_with_no_quiz_practice_speaks_exactly_what_it_did():
+    given = served(sections=[quizonce_cases.lesson(), served_section(workspace=dict(UNGRADED))])
+    assert speakable_of(given) == speakable_of(copy.deepcopy(given))
+    assert len(speakable_of(given).units) == len(_spoken(_without_quiz(given)))
+    assert QUIZ["questions"][0]["stem"] in " ".join(_spoken(given).values())

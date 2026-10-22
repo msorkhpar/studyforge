@@ -38,6 +38,11 @@ names only the panel, so it says nothing either. ⚠️ A heading over nothing b
 a fence keeps its words: they name what the reader is looking at, and they are
 often the one spoken trace of a worked example. ⛔ A silent heading keeps its
 position, so nothing after it is renumbered.
+
+⭐ A lesson's repeat of its quiz counts as a panel here: the page draws the
+quiz in its place, so a heading over the quiz and nothing spoken (*Quiz*)
+says nothing either. ⚠️ A sentence of prose under it (*This quiz covers both
+pages*) is heard, so its heading keeps its words.
 """
 
 from __future__ import annotations
@@ -93,10 +98,14 @@ def _code_file(href: str) -> bool:
     return bool(named) and named[-1] != ".." and named[-1].endswith(CODE_SUFFIXES)
 
 
-def unheard_headings(blocks: list, heard: list[bool]) -> list[int]:
+def unheard_headings(
+    blocks: list, heard: list[bool], quiet: frozenset[int] = frozenset()
+) -> list[int]:
     """Return the positions of the headings over a code-examples panel and nothing spoken.
 
-    `heard` says, per block, whether it yields any speech unit.
+    `heard` says, per block, whether it yields any speech unit. `quiet` names the blocks the
+    page draws as a quiz (`render.page.quizonce.claims`): they stand in for a panel here, so a
+    heading over a quiz and nothing spoken (*Quiz*, *Module quiz*) is silent too.
 
     ⭐ A heading's blocks are those after it up to the next heading of its level
     or above. ⚠️ Read from the last heading back, so a subheading that fell
@@ -112,8 +121,9 @@ def unheard_headings(blocks: list, heard: list[bool]) -> list[int]:
         end = index + 1
         while end < len(blocks) and not _closes(blocks[end], level):
             end += 1
-        under = blocks[index + 1 : end]
-        if any(_panel(one) for one in under) and not any(heard[index + 1 : end]):
+        under = range(index + 1, end)
+        silenced = any(_panel(blocks[one]) or one in quiet for one in under)
+        if silenced and not any(heard[index + 1 : end]):
             heard[index] = False
             silent.append(index)
     return silent
