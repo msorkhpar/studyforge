@@ -52,6 +52,21 @@ def test_the_readme_says_how_to_get_narration_and_that_the_site_works_without_it
     assert learner.RESTORE_SH not in silent
 
 
+def test_the_readme_says_the_voiced_image_needs_no_download_and_how_to_turn_narration_on_and_off():
+    text = learner.readme(COURSE)
+    section = text.split("## Narration (optional)", 1)[1].split("\n## ", 1)[0]
+    assert "already holds every recording" in section
+    assert "no internet" in section
+    assert f"{images.NARRATION_VARIABLE}={images.NARRATIONS[1]}" in section
+    assert f"{images.NARRATION_VARIABLE}={images.NARRATIONS[0]}" in section
+    assert "Play narration" in section and "Space" in section
+    assert "never read aloud" in section
+    assert "Leave the setting as it is" not in section
+    # The release download is the building path's step only, never the pulled one's.
+    pulled, built = section.split("### Building it yourself", 1)
+    assert learner.RESTORE_SH not in pulled and learner.RESTORE_SH in built
+
+
 def test_the_readme_says_nothing_about_the_build_but_one_line_to_its_branch():
     text = learner.readme(COURSE)
     assert build_words(text) == []
