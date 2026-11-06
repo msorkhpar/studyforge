@@ -91,6 +91,35 @@ not one per sentence.
 - the same list twice (the rules, and a summary that repeats them word for word);
 - sweeping claims ("every system today…").
 
+⛔ **Say each thing once, and stop when the content stops.** These rules adapt the
+`humanizing-writing` skill (https://github.com/AshwinSathian/humanize-writing-skill, MIT), keeping
+only what fits a lesson:
+
+- a sentence that makes the previous point again in other words goes, and so does a paragraph's
+  last line when it only restates the paragraph as a saying. A conclusion drawn from the paragraph
+  is not a repeat;
+- replace a figure of speech with the fact it stands for: "without this check an empty order
+  goes through", not "this check is load-bearing". Established terms (bottleneck, memory leak) and
+  an analogy that explains a mechanism stay;
+- "it's not X, it's Y" only when the reader is likely to believe X, which is what a misconception
+  section is for. Anywhere else, state Y;
+- no fragments for effect ("Not a detail. A design decision."), no announced candor ("honestly",
+  "worth stating plainly"), no announcing a point before making it ("Here's the thing", "The
+  result?");
+- the plain verb and the common word: "is", "has", "use", not "serves as", "utilize", "the
+  implementation of";
+- split a sentence that keeps going on "and"; break a paragraph where its subject changes;
+- an em dash only where a comma would hide the break;
+- after a fix, check it did not swap one pattern for another (a triad for a negated contrast, one
+  long sentence for a string of fragments).
+
+They do not apply to the Reference (tables and parallel entries stay uniform) or the Summary,
+which exists to restate.
+
+⛔ **No numbered rule list in the introduction that repeats the headings.** The headings already
+state the rules, and the Summary restates them with their consequences; a third copy at the top is
+the repeat readers notice first. One clause ("six rules, one per section heading") is enough.
+
 ⛔ **Do not imitate a style.** Every block must answer a question the reader has at that point. If
 you cannot name the question, delete the block. Epigraphs, jokes and margin trivia add words, not
 understanding.
@@ -135,13 +164,17 @@ reasoning.
    and why each is removable, shorter rewrites, writing tells, anything confusing or used before it
    is introduced, and every technical claim they believe is wrong. Verify each claimed error in the
    source before acting. In the pilot the review found one real factual error and one wrong
-   cross-reference, and its cuts removed about a tenth of the words.
+   cross-reference, and its cuts removed about a tenth of the words. When the page is over its
+   budget, the editor also names the cuts that bring it within, largest first.
 2. **The compile and claim check.** Every code block compiles, and every output matches a run.
 3. **The quiz readers**, if the page has a quiz (see `skills/exercises`, *The quiz*).
 
-⭐ **Measure, don't target.** Record prose words before and after, excluding code. The pilot kept
-its length and replaced listing with explanation. A page that got shorter by dropping the "why"
-got worse.
+⛔ **A prose budget.** Record prose words before and after, excluding code. The rewritten page
+stays within 1.2 times the old page's prose words. A run the old page did not have, a failure the
+reader now sees happen, may add up to about 200 words on top; the report lists each such run and
+its words. Without a budget, a whole course grew 58% in one pass, and readers had asked for fewer
+words. Cut repeats, announcements and narration first, never the "why": a page that got shorter
+by dropping the reason a rule exists got worse.
 
 ## What this skill does not do
 
