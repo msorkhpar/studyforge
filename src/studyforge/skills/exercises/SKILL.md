@@ -151,6 +151,60 @@ test-file pattern.
   back the same way. Docker Desktop shares no host `/tmp` and Windows has none,
   and the runner must work on both.
 
+#### ⛔ Plan from concepts, not from sentences
+
+An aspect's `says` is an idea and its basis is the section that teaches it. A practice built to
+match the page's sentences tests memory: its statement restates the rules and the reader
+transcribes them. In a real course, readers named exactly this as the problem.
+
+- **Start from the misconception.** For each idea, write down the wrong belief a reader is likely
+  to hold, and what it costs. Each edge case's plant implements one such belief, never a deleted
+  line.
+- ⛔ **The statement never restates the page.** It gives the situation and the goal, such as a
+  production symptom or an outcome, and names the file. The reader decides the mechanism. If a
+  rule from the page appears in the statement, the practice tests reading.
+- ⛔ **Test inputs never come from the page.** Use other terminals, STANs, amounts and orders than
+  the examples show, so a solution copied from the page's output fails.
+- **Transfer where the page shows the code.** When the page builds the component itself, the
+  practice applies the same ideas somewhere else: another message class, another store (a table
+  instead of a queue). That way copying the page's code does not solve it.
+
+#### ⛔ The shape of a practice
+
+- **Working code with small TODO methods.** The starter is a class that already runs the happy
+  path, with a few package-private methods marked `TODO`. Each has a comment that says what the
+  method is for and what the reader must achieve, never how. Throw an exception no test expects
+  (`IllegalStateException("TODO: …")`), so `G2` holds.
+- ⛔ **The reader's whole change is 2 to 50 lines: the sum over every TODO method of the practice,
+  not per method.** Each TODO method is usually a few lines. Say the expected total in the
+  statement ("about ten lines in total"). A concept that needs more than 50 lines gets more
+  practices, stacked if they build on each other.
+- **Stack practices** when one builds on another. The next practice's starter is the previous
+  one's reference plus new TODOs, and its statement says so. Two stacked practices of ten lines
+  each teach more than one of forty.
+- **Main cases check the outcome loosely, edges check one idea each.** A plant must pass every
+  main case, so a main case that asserts the exact sequence of events fails plants it should not.
+  Assert what the reader must achieve; leave the details to the edges.
+- **Behaviour against a real component.** Where the library can run in-process, run it: a real
+  multiplexer against a scripted test host beats a mocked interface, because the reader's code
+  meets the real rules. Drive concurrency with latches and holds, never with sleeps.
+
+#### ⛔ The quiz
+
+- **Every question is a scenario** with inputs the page does not show, and every wrong option is
+  a misconception from the plan.
+- **Options share one grammatical form** (claim, then a "since/so" reason) and form pairs: two
+  options that open alike, two others that open alike. A correct option that is the only one
+  without a reason, the only one naming the stem's subject, or the shorter half of a pair is a
+  giveaway.
+- **No stem word that only the key repeats.** Remove it from the stem rather than from the key.
+- **Run the page-free reader until it picks nothing.** A fresh reader sees only the stems and
+  options and names any wording cue. Rewrite and run a new reader until every question comes back
+  `null`. In the pilot, the first version gave away all four answers, and it took five rounds to
+  get to none.
+- **Run the page reader after the last wording change.** It checks that the page decides each
+  answer and refutes each wrong option. It also finds options that are partly true.
+
 #### ⛔ Write a draft the gates can prove
 
 - **A practice has one main file, and may have more files to edit.**
