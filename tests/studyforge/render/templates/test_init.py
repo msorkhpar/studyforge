@@ -102,6 +102,7 @@ MULTI_LINE = (
     "practice-concepts.html",
     "practice-workspace.html",
     "practices.html",
+    "practices-placed.html",
     "practice-mock-question.html",
     "practice-mock.html",
     "practice-mockform-question.html",

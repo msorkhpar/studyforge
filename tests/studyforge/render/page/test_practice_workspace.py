@@ -231,3 +231,17 @@ def test_a_quiz_opens_in_one_column_and_a_code_practice_keeps_the_split():
     assert "overflow: visible;" in quizzing[: quizzing.index("}")]
     assert "html[data-workspace-quiz] [data-workspace-away] { display: none; }" in style
     assert "html[data-workspace-open]:not([data-workspace-quiz]) { overflow: hidden; }" in style
+
+
+def test_a_placed_practices_card_is_one_of_the_cards_and_the_page_is_stilled_around_it():
+    # ⭐ A practice a lesson places has a card list of its own (`render/page/placed.py`): every
+    # list is read, in page order, and its section stands inside the lesson's, so the page is
+    # stilled upward from each open part and not from the workspace alone.
+    body = behaviour()
+    assert "var regions = [].slice.call(document.querySelectorAll(REGION));" in body
+    assert "document.querySelectorAll(REGION + ' ' + CARD)" in body
+    assert "regions.forEach(function (region) { region.setAttribute(LIVE, ''); });" in body
+    stilling = body[body.index("function still(one)") : body.index("function wake()")]
+    assert "kept.forEach(function (from) {" in stilling
+    assert "for (var at = from.parentElement;" in stilling
+    assert "data-practices" in templates.template("practices-placed.html").template

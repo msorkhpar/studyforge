@@ -74,7 +74,15 @@ from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors, editions, examplerun, navigation, part, quizonce
+from studyforge.render.page import (
+    anchors,
+    editions,
+    examplerun,
+    navigation,
+    part,
+    placed,
+    quizonce,
+)
 from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import practices as practices_region
@@ -138,16 +146,26 @@ def compose(
     synthesised renders exactly as a corpus that will never have any (R6), and
     the transport is absent in both cases rather than present and dead.
     """
+    spots = placed.plan(document)
     document = quizonce.once(document, lambda s, d: practices_region.embedded(s, d, placement))
+    spots = spots.within(document)
     title = _title(document)
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
+
+    def draw(section: dict, opens: bool = False) -> str:
+        return part.render(section, placement, narration, document, heads_page=opens)
+
+    def practice(keys: tuple[str, ...], spot: str) -> str:
+        found = [one for one in sections if one.get("key") in keys]
+        return practices_region.placed_practice(found, spot, document, placement, draw)
+
+    shown = [one for one in sections if not spots.placed(one)]
     parts = [
-        part.render(section, placement, narration, document, heads_page=index == 0 and heads)
-        for index, section in enumerate(sections)
+        draw(placed.spliced(one, spots, practice), one is sections[0] and heads) for one in shown
     ]
-    joined = practices_region.joined(parts, sections, document, placement)
+    joined = practices_region.joined(parts, shown, document, placement, spots)
     body = code_region.examples(*code_region.mark(joined, placement), placement)
     body += examplerun.links(body, placement)
     return (
@@ -162,7 +180,7 @@ def compose(
             meta=_region(meta(document)),
             breadcrumb=_region(navigation.breadcrumb(trail)),
             rail=_region(rail_region.render(rail)),
-            outline=_region(anchors.outline(editions.collapsed(document))),
+            outline=_region(anchors.outline(placed.outlined(editions.collapsed(document), spots))),
             body=body,
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
