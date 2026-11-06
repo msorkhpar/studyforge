@@ -43,14 +43,26 @@ record could only ever say *not started*.
 ⭐ The outline lists **Practice (n)** and, under it, each practice by its title,
 pointing at its CARD — where a reader chooses — rather than at the material
 the workspace shows (`page.anchors`).
+
+## ⭐ A PRACTICE THE LESSON PLACES IS DRAWN WHERE IT IS PLACED
+
+⭐ A practice a lesson names with `<!-- practice N -->` (`page.placed`) is drawn
+at that line: a list of its one card, then its section and panel
+(`placed_practice`). ⛔ It is not listed again, so the **Practice (n)** list
+counts and lists only the practices no marker names, and is absent when every
+practice is placed. ⭐ The one workspace is still drawn, after the lesson, for
+every practice of the page: a placed card opens in it exactly as a listed one.
 """
 
+
 from __future__ import annotations
+
+from collections.abc import Callable
 
 from studyforge.exercise import Exercise, ExerciseError, from_document
 from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors, editions
+from studyforge.render.page import anchors, editions, placed
 from studyforge.render.page import practice as practice_module
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
@@ -60,6 +72,7 @@ PRACTICE = practice_module.PRACTICE
 
 #: The list's own region, its heading's words, one card, and a card's parts.
 REGION_TEMPLATE = "practices.html"
+PLACED_TEMPLATE = "practices-placed.html"
 CARD_TEMPLATE = "practice-card.html"
 CONCEPTS_TEMPLATE = "practice-concepts.html"
 STATE_TEMPLATE = "practice-state.html"
@@ -92,9 +105,12 @@ def of(document: dict) -> list[dict]:
     ]
 
 
-def region(document: dict, placement: Placement) -> str:
-    """Return the **Practice (n)** section, or `''` for a unit that sets no practice."""
-    found = editions.entries(document)
+def region(document: dict, placement: Placement, spots: placed.Plan = placed.NONE) -> str:
+    """Return the **Practice (n)** section, or `''` for a unit that lists no practice.
+
+    ⭐ A practice `spots` places is drawn at its marker and is not listed here.
+    """
+    found = [one for one in editions.entries(document) if not spots.placed(one.first)]
     if not found:
         return ""
     unit = document.get("title")
@@ -186,23 +202,52 @@ def concepts(exercise: Exercise | None) -> str:
     return templates.fill(CONCEPTS_TEMPLATE, items=items)
 
 
-def joined(parts: list[str], sections: list, document: dict, placement: Placement) -> str:
+def joined(
+    parts: list[str],
+    sections: list,
+    document: dict,
+    placement: Placement,
+    spots: placed.Plan = placed.NONE,
+) -> str:
     """Join a page's rendered sections, with the list before its first practice.
 
     ⭐ **The list, then the practices' own material, then the one workspace**:
     the reader chooses from the list, and the material stays in the page for a
     reader with no script (R8). ⛔ The document's order is kept: a practice is
     never moved ahead of a section the document put before it.
+
+    ⚠️ `parts` and `sections` are what is drawn after the lesson: a placed
+    practice is neither. ⭐ When every practice is placed there is no list, and
+    the workspace still follows the lesson.
     """
-    listed = region(document, placement)
+    listed = region(document, placement, spots)
     if not listed:
-        return JOIN.join(parts)
+        drawn = workspace(document, placement) if spots.spots else ""
+        return JOIN.join([*parts, drawn] if drawn else parts)
     first = next(
         index
         for index, section in enumerate(sections)
         if isinstance(section, dict) and section.get("kind") == PRACTICE
     )
     return JOIN.join([*parts[:first], listed, *parts[first:], workspace(document, placement)])
+
+
+def placed_practice(
+    sections: list[dict],
+    spot: str,
+    document: dict,
+    placement: Placement,
+    draw: Callable[[dict], str],
+) -> str:
+    """Return one placed practice: a list of its one card, then each section `draw` renders.
+
+    ⭐ `sections` are the practice's language editions in order, or the practice alone; `spot` is
+    the marker block's anchor, which the list carries so the outline can point at it.
+    """
+    unit = document.get("title")
+    cards = card(sections[0], document, placement, unit) + JOIN
+    listed = templates.fill(PLACED_TEMPLATE, id=escape_attribute(spot), cards=cards)
+    return JOIN.join([listed, *(draw(one) for one in sections)])
 
 
 def embedded(section: dict, document: dict, placement: Placement) -> str:

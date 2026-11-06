@@ -45,7 +45,12 @@
    shows ONE edition's statement and panel — the language of the current reading mode, else the
    first — and the switch at the top of the panel swaps the pair: the panel left is told it is
    closed and the one shown is told it is opened, with the same two events, so the editor, Run and
-   Submit follow the edition shown and nothing is moved. */
+   Submit follow the edition shown and nothing is moved.
+
+   ⭐ **A practice the lesson places has a list of its own, at its place** (`render/page/placed.py`):
+   every such list and the *Practice (n)* list are read in page order, as one run of cards for
+   Previous and Next. Its section and panel then stand inside the lesson's section, so the page is
+   stilled from each of the three open parts upward, not from the workspace alone. */
 
 (function () {
   'use strict';
@@ -96,9 +101,9 @@
   var ESCAPE = 'Escape';
   var EXAMPLE = 'details[data-code-example][open]';
 
-  var region = document.querySelector(REGION);
+  var regions = [].slice.call(document.querySelectorAll(REGION));
   var shell = document.querySelector(WORKSPACE);
-  if (!region || !shell) { return; }
+  if (!regions.length || !shell) { return; }
 
   function part(name) {
     return shell.querySelector('[' + PART + '="' + name + '"]');
@@ -125,7 +130,7 @@
   var editions = window.studyforge.editions;
   var SWITCH = 'button[data-edition-switch]';
 
-  var practices = [].slice.call(region.querySelectorAll(CARD)).map(function (card) {
+  var practices = [].slice.call(document.querySelectorAll(REGION + ' ' + CARD)).map(function (card) {
     var found = editions.of(card, panelOf);
     return {
       card: card,
@@ -175,15 +180,17 @@
 
   function still(one) {
     var kept = [shell, one.section, one.panel].filter(Boolean);
-    for (var at = shell.parentElement; at && at !== document.documentElement; at = at.parentElement) {
-      [].slice.call(at.children).forEach(function (child) {
-        if (child.inert || kept.some(function (part) { return child.contains(part); })) { return; }
-        child.inert = true;
-        /* A quiz is read as a page, so what is not part of it is taken out of the flow. */
-        if (document.documentElement.hasAttribute(QUIZ_OPEN)) { child.setAttribute(AWAY, ''); }
-        stilled.push(child);
-      });
-    }
+    kept.forEach(function (from) {
+      for (var at = from.parentElement; at && at !== document.documentElement; at = at.parentElement) {
+        [].slice.call(at.children).forEach(function (child) {
+          if (child.inert || kept.some(function (part) { return child.contains(part); })) { return; }
+          child.inert = true;
+          /* A quiz is read as a page, so what is not part of it is taken out of the flow. */
+          if (document.documentElement.hasAttribute(QUIZ_OPEN)) { child.setAttribute(AWAY, ''); }
+          stilled.push(child);
+        });
+      }
+    });
   }
 
   function wake() {
@@ -279,7 +286,7 @@
       open(index);
     });
   });
-  region.setAttribute(LIVE, '');
+  regions.forEach(function (region) { region.setAttribute(LIVE, ''); });
   part('title').tabIndex = -1;
 
   act('previous').addEventListener('click', function () { open(current - 1); });
