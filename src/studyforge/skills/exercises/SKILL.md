@@ -185,6 +185,12 @@ transcribes them. In a real course, readers named exactly this as the problem.
 - **Main cases check the outcome loosely, edges check one idea each.** A plant must pass every
   main case, so a main case that asserts the exact sequence of events fails plants it should not.
   Assert what the reader must achieve; leave the details to the edges.
+- ⛔ **Nothing the starter can break runs in a class-level setup.** If `@BeforeAll` asserts that a
+  component the reader writes has deployed, the starter fails the setup, the report names one
+  `initializationError` instead of the declared cases, and the gated pass refuses to read it. Start
+  the rig in `@BeforeAll`, and assert the reader's part inside each test, so every case fails under
+  its own name. Before gating, check that the starter's and each plant's reports name only declared
+  cases.
 - **Behaviour against a real component.** Where the library can run in-process, run it: a real
   multiplexer against a scripted test host beats a mocked interface, because the reader's code
   meets the real rules. Drive concurrency with latches and holds, never with sleeps.
