@@ -298,6 +298,12 @@ downstream can notice it went missing.
 
 ---
 
+**Math is written in GitHub's syntax and drawn by the page.** A display formula is a fence
+labelled `math`, kept as a `code` block with `lang` `math`; an inline formula is a code span between
+dollar signs, $`x_{i,t}`$, kept in the text as written. A page whose body carries either links
+KaTeX's files and draws the formulas after load (`render.page.math`); a formula KaTeX cannot parse
+stays visible as its code. A corpus with no formula writes none of those files.
+
 ## Four rules that are not negotiable
 
 ### An address is recorded, never derived

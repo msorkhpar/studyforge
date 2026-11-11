@@ -1,0 +1,13 @@
+/* Math: the room a drawn formula takes. Linked only by a page whose body carries math. */
+.math-display {
+  margin: 1.1em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+}
+.math-display .katex-display {
+  margin: 0;
+}
+.math-inline .katex {
+  font-size: 1.05em;
+}

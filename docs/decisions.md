@@ -1609,3 +1609,11 @@ What it reads, and the choices in it:
 **Why.** The adapter is a different package from the one that reads the report, and a name used across two packages has one exported home. Keeping it private would make the adapter read the report a second time.
 
 **Serves.** `R1`, `R12`
+
+### A page draws math with vendored KaTeX, in GitHub's syntax, and only a corpus with math carries it
+
+**Decision.** A display formula is a fenced block whose language is math, and an inline formula is a code span with a dollar sign on each side (GitHub's own math syntax), so the archive keeps both as it keeps any fence and code span: no new block type, no new manifest key. `render.page.math.links` adds four tags to a body that carries either form: KaTeX 0.16.22's stylesheet and script, vendored under `katex.LICENSE` by `tools/vendor/katex.py` (which checks the npm registry's sha512 and changes nothing in either file but its header), and this framework's `math.css` and `math.js`, which draw each formula in place after load and leave one KaTeX refuses as the code it was. KaTeX's 20 faces are kept as woff2 files, each pinned by sha256 in `render.page.math.FACES`, and `render.page.math.files` writes the stylesheet with each face inlined as a data URI, as the site's own faces are. `generate.site` writes the four files only when `generate.mathpages.wanted` finds a formula in some lesson, so a corpus without math builds byte for byte as before.
+
+**Why.** An optimization course is written in formulations, and a formula shown as raw LaTeX in a code box is the part of a lesson a reader most needs to read. GitHub's syntax keeps the source readable where the material is published, rendering in the browser keeps the build pure Python with no new dependency, and inlining the faces when the stylesheet is written keeps the page working from a file with no request (R8) while the stored stylesheet stays exactly what KaTeX ships. KaTeX with its faces is about 640 KB, which no corpus without math should carry.
+
+**Serves.** `R8`, `R10`, `R13`

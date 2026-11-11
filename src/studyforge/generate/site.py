@@ -74,6 +74,7 @@ from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.exampleruns import wanted as has_example_run
 from studyforge.generate.media import unit_media
+from studyforge.generate.mathpages import wanted as has_math
 from studyforge.generate.mockexam import form_wanted as has_mock_form
 from studyforge.generate.mockexam import wanted as has_mock_exam
 from studyforge.generate.narration import voiced
@@ -88,6 +89,7 @@ from studyforge.render.index import render as render_index
 from studyforge.render.page import (
     deck_files,
     example_run_files,
+    math_files,
     mock_files,
     mock_form_files,
     review_files,
@@ -232,6 +234,9 @@ def assets(
     if has_reviews(corpus):
         # ⭐ And a spaced-review bank its two.
         shared.update(review_files())
+    if has_math(corpus):
+        # ⭐ And KaTeX's two and the math pair only for a corpus whose lessons carry a formula.
+        shared.update(math_files())
     if corpus.manifest.example_run and has_example_run(corpus):
         # ⭐ And the Run strip's two only for a corpus whose examples name their code.
         shared.update(example_run_files())

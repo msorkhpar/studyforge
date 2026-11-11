@@ -78,6 +78,7 @@ from studyforge.render.page import (
     anchors,
     editions,
     examplerun,
+    math,
     navigation,
     part,
     placed,
@@ -168,6 +169,7 @@ def compose(
     joined = practices_region.joined(parts, shown, document, placement, spots)
     body = code_region.examples(*code_region.mark(joined, placement), placement)
     body += examplerun.links(body, placement)
+    body += math.links(body, placement)
     return (
         templates.fill(
             SKELETON,

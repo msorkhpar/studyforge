@@ -7,7 +7,7 @@ import re
 import pytest
 
 from studyforge.render import modes
-from studyforge.render.page import DECK_PARTS, MOCK_FORM_PARTS, MOCK_PARTS, REVIEW_PARTS
+from studyforge.render.page import DECK_PARTS, MATH_PARTS, MOCK_FORM_PARTS, MOCK_PARTS, REVIEW_PARTS
 from studyforge.render.pageassets import (
     SCRIPT_NAME,
     SCRIPT_PARTS,
@@ -46,6 +46,7 @@ def test_every_part_on_disk_is_in_exactly_one_bundle_or_is_the_sprite():
     # corpus that has one.
     exam_parts = [
         *MOCK_PARTS,
+        *MATH_PARTS,
         *MOCK_FORM_PARTS,
         *DECK_PARTS,
         *REVIEW_PARTS,

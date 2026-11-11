@@ -57,6 +57,8 @@ where = ["src"]
 studyforge = [
     "**/templates/*.html",
     "**/assets/*",
+    # KaTeX's faces, inlined by `render.page.math` into the stylesheet it writes.
+    "**/assets/katex/*.woff2",
     "skills/**/SKILL.md",
     # The restore scripts a packed corpus carries, rendered from these two.
     "narrate/release/scripts/restore.sh",

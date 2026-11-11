@@ -130,10 +130,12 @@ from collections.abc import Sequence
 
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.deck import PARTS as DECK_PARTS
+from studyforge.render.page.math import PARTS as MATH_PARTS
 from studyforge.render.page.deck import files as deck_files
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.examplerun import files as example_run_files
+from studyforge.render.page.math import files as math_files
 from studyforge.render.page.mock import PARTS as MOCK_PARTS
 from studyforge.render.page.mock import files as mock_files
 from studyforge.render.page.mockform import PARTS as MOCK_FORM_PARTS
@@ -156,6 +158,7 @@ __all__ = [
     "AUDIO_ATTRIBUTE",
     "Claim",
     "DECK_PARTS",
+    "MATH_PARTS",
     "ENCODING",
     "REVIEW_PARTS",
     "MOCK_FORM_PARTS",
@@ -176,6 +179,7 @@ __all__ = [
     "compose",
     "deck_files",
     "example_run_files",
+    "math_files",
     "review_files",
     "mock_files",
     "mock_form_files",
