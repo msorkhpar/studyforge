@@ -26,7 +26,8 @@ corpus's data, taken from the offer.
   languages that do carry it, built from the corpus's own declaration.
 - **The tab bar, the stylesheet and the script exist only for a corpus that declares
   modes**, so an example of a corpus with none is its panels under labels and nothing
-  else: no bar is emitted.
+  else: no bar is emitted. ⭐ With one panel there is no label either: the code's own
+  caption already names the language, and a lone label read as a stray paragraph.
 
 ## ⛔ Not narrated, and no class
 
@@ -77,6 +78,8 @@ def render(
         spans[tab["lang"]] = (start, start + tab["span"])
         start += tab["span"]
     stem = escape_attribute("-".join(("example", section, *(str(index) for index in path))))
+    # ⭐ One language and no modes: the code's own caption names it, so no label repeats it.
+    labelled = offer is not None or len(tabs) > 1
     panels, buttons = [], []
     for tab in tabs:
         lang = tab["lang"]
@@ -96,7 +99,7 @@ def render(
                 id=panel,
                 tab=button,
                 lang=escape_attribute(lang),
-                label=label,
+                label=f"<p data-example-label>{label}</p>" if labelled else "",
                 children=drawn,
             )
         )

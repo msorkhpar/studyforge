@@ -95,5 +95,13 @@ def test_a_corpus_that_declares_no_modes_gets_panels_under_labels_and_no_tab_bar
     assert "<p data-example-label>aa</p>" in page, "the id is the label when none is declared"
 
 
+ONE = {**EXAMPLE, "tabs": [{"lang": "aa", "span": 2}], "blocks": EXAMPLE["blocks"][:2]}
+
+
+def test_one_language_and_no_modes_draws_no_label_the_caption_already_names_it():
+    assert "data-example-label" not in draw(ONE, offer=None)
+    assert "<p data-example-label>Aa &lt;lang&gt;</p>" in draw(ONE), "a corpus with modes keeps it"
+
+
 def test_nothing_in_an_example_is_narrated():
     assert "data-speak" not in draw() and "audio" not in draw()
