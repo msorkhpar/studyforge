@@ -150,9 +150,11 @@ def _pairs(corpus: Corpus) -> Callable[[str], tuple[str | None, str | None]]:
     by its name.
     """
     found = pairing(corpus.root, corpus.manifest.runtimes)
+    tests = corpus.manifest.example_tests
 
     def answer(path: str) -> tuple[str | None, str | None]:
-        pair = found(path)
+        # ⭐ A corpus whose panel pairs no test (`example_tests: false`) draws each file alone.
+        pair = found(path) if tests else None
         if pair is None:
             return (None, path) if is_a_test(path) else (path, None)
         return pair.source, pair.test

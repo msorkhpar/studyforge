@@ -141,7 +141,8 @@ def route(runs: Runs, corpus: ServedCorpus, act: str, tail: str) -> Response:
         if argv is None:
             return error(409, NO_PROGRAM)
     else:
-        argv = test_command(corpus.root, found, runtimes)
+        tests = corpus.corpus.manifest.example_tests
+        argv = test_command(corpus.root, found, runtimes) if tests else None
         if argv is None:
             return error(409, NO_TEST)
         workdir = test_workdir(found)
@@ -161,7 +162,9 @@ def windows(runs: Runs, corpus: ServedCorpus, found: Pair) -> Response:
     """Prepare the folder the pair's windows open and answer where each window is."""
     editor = runs.found().get(corpus.source)
     main = found.source or found.test
-    test = found.test if found.source else None
+    # ⭐ `example_tests: false` opens a source alone: no Test window and nothing for Run tests.
+    tests = corpus.corpus.manifest.example_tests
+    test = found.test if found.source and tests else None
     runtimes = corpus.corpus.manifest.runtimes
     # ⭐ The module's own build files weigh in the folder, so a JVM window opens
     # the project the language server reads, never a bare source directory.
@@ -193,7 +196,10 @@ def windows(runs: Runs, corpus: ServedCorpus, found: Pair) -> Response:
             "main": {"file": main, "url": open_url(where, in_copy(main))},
             "test": None if test is None else {"file": test, "url": open_url(where, in_copy(test))},
             # ⭐ The file a Run names: the test, wherever it opened, when a command runs it.
-            "runs": found.test if test_command(corpus.root, found, runtimes) else None,
+            "runs": found.test if tests and test_command(corpus.root, found, runtimes) else None,
+            # ⭐ The source whose PROGRAM a lesson's example names how to run, so the panel can
+            # offer Run beside Run tests and show what the program prints; `None` otherwise.
+            "program": found.source if found.source and program_of(corpus, found.source) else None,
         },
     )
 

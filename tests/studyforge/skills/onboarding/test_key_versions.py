@@ -78,6 +78,7 @@ DRAFTS = {
         "editions": "required",
     },
     (None, "example_run"): {**corpora.DRAFT, "example_run": False},
+    (None, "example_tests"): {**corpora.DRAFT, "example_tests": False},
     (None, "absent_language"): {
         **corpora.DRAFT,
         "languages": [{"id": "alpha", "label": "Alpha"}],

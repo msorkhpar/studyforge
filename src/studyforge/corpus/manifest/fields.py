@@ -132,6 +132,18 @@ def example_run_of(value: object, where: str) -> bool:
     return value
 
 
+def example_tests_of(value: object, where: str) -> bool:
+    """`example_tests`: whether a lesson's code panel pairs each source with its test.
+
+    ⭐ Absent is `True`, every corpus's panel before the key: a source opens beside its test and
+    Run tests runs it. `False` pairs no test: each source opens alone, with no Test window and no
+    Run tests, for a corpus whose tests check the lesson's numbers rather than teach.
+    """
+    if not isinstance(value, bool):
+        raise ManifestError(f"{where} 'example_tests' must be true or false, got {describe(value)}")
+    return value
+
+
 def onboarding_doc_of(value: object, where: str) -> str | None:
     """`onboarding_doc`: where the onboarding reader document goes, or `None` for none.
 

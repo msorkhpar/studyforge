@@ -307,3 +307,39 @@ def test_a_file_no_tab_names_a_program_for_runs_nothing(root):
     with serving(live, discovered) as server:
         status, _, body = post(server, at(code.CODE_RUN, LESSON))
     assert status == 409 and code.NO_PROGRAM in body and live.live is None
+
+
+def test_the_page_is_told_the_source_whose_program_an_example_runs_and_no_other(root):
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    with serving(live, discovered) as server:
+        _, _, body = post(server, at(code.CODE, LESSON))
+    # ⛔ No tab names how this file's program runs: no Run beside Run tests.
+    assert json.loads(body)["program"] is None
+    declare_program(root, LESSON, ["python3", PROGRAM])
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    with serving(live, discovered) as server:
+        _, _, body = post(server, at(code.CODE, LESSON))
+    assert json.loads(body)["program"] == LESSON and json.loads(body)["runs"] == TEST
+
+
+def pair_no_tests(root: Path) -> None:
+    """Declare `example_tests: false` in the copy's manifest."""
+    manifest = root / "corpus.json"
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document["example_tests"] = False
+    document["corpus_api"] = 8  # ⭐ the version that added the key
+    manifest.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+
+
+def test_a_corpus_that_pairs_no_tests_opens_each_source_alone_and_runs_no_test(root):
+    pair_no_tests(root)
+    declare_program(root, LESSON, ["python3", PROGRAM])
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    with serving(live, discovered) as server:
+        status, _, body = post(server, at(code.CODE, LESSON))
+        tested, _, refusal = post(server, at(code.CODE_TEST, LESSON))
+    answer = json.loads(body)
+    assert status == 200 and answer["test"] is None and answer["runs"] is None
+    # ⭐ The program still runs: only the test is withheld.
+    assert answer["program"] == LESSON
+    assert tested == 409 and code.NO_TEST in refusal

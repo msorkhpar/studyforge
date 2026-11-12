@@ -110,7 +110,7 @@ def test_a_runner_that_is_down_withholds_run_tests_and_names_the_runner():
     assert "show(part(entry, 'no-runner'), !runs);" in up
     # ⛔ The controls are shown only for a runner that is up, and a click is refused without one.
     draw = body[body.index("function draw(") : body.index("function load(entry)")]
-    assert "show(part(entry, 'controls'), !!where.runs && runs);" in draw
+    assert "show(part(entry, 'controls'), (!!where.runs || !!where.program) && runs);" in draw
     assert "if (!where || !where.runs || !runs) { return; }" in body
 
 
@@ -122,5 +122,15 @@ def test_it_never_claims_or_enforces_read_only():
 
 def test_the_test_is_run_by_the_file_the_server_named_and_never_composed_here():
     body = behaviour()
-    assert "run.codeTest(entry.corpus, where.runs, function (line) {" in body
+    assert "return run.codeTest(entry.corpus, where.runs, onLine);" in body
     assert "if (!where || !where.runs || !runs) { return; }" in body
+
+
+def test_run_starts_the_program_the_server_named_and_shows_only_where_it_named_one():
+    body = behaviour()
+    draw = body[body.index("function draw(") : body.index("function load(entry)")]
+    program = "show(entry.details.querySelector('[' + ACT + '=\"program\"]'), "
+    assert program + "!!where.program && !!run.codeRun);" in draw
+    assert "show(entry.details.querySelector('[' + ACT + '=\"test\"]'), !!where.runs);" in draw
+    assert "return run.codeRun(entry.corpus, where.program, onLine);" in body
+    assert "if (!where || !where.program || !runs || !run.codeRun) { return; }" in body

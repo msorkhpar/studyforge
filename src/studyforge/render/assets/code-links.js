@@ -20,7 +20,7 @@
    frame policy blocked the frame. ⛔ Neither is copied here.
 
    ⛔ **This file draws; it never talks to the API.** Everything it asks goes
-   through `window.studyforge.run` — `editor`, `code`, `codeTest`, `stop` —
+   through `window.studyforge.run` — `editor`, `code`, `codeTest`, `codeRun`, `stop` —
    which the SERVING PROCESS adds to the page it answers, so a built text names
    no API, no origin and no client file (R8).
 
@@ -101,7 +101,11 @@
     entry.built = {};
     frames.reloadWhenBlocked(where.main.url);
     show(part(entry, 'editor'), true);
-    show(part(entry, 'controls'), !!where.runs && runs);
+    show(part(entry, 'controls'), (!!where.runs || !!where.program) && runs);
+    /* ⭐ Run starts the source's own program, where a lesson's example names how it runs; Run
+       tests stays the test's. Each button shows only when the server named its file. */
+    show(entry.details.querySelector('[' + ACT + '="program"]'), !!where.program && !!run.codeRun);
+    show(entry.details.querySelector('[' + ACT + '="test"]'), !!where.runs);
     select(entry, 'main');
     setTimeout(function () { remember(null); }, 5000);
   }
@@ -159,29 +163,49 @@
       });
     });
     var act = entry.details.querySelector('[' + ACT + '="test"]');
+    var program = entry.details.querySelector('[' + ACT + '="program"]');
     var stop = entry.details.querySelector('[' + ACT + '="stop"]');
-    act.addEventListener('click', function () {
-      var where = entry.where;
-      if (!where || !where.runs || !runs) { return; }
+    /* One run at a time, streamed into the entry's one output: `start` names the server's call. */
+    function launch(running, start, told) {
       var status = part(entry, 'status');
       var output = part(entry, 'output');
       act.disabled = true;
+      if (program) { program.disabled = true; }
       show(stop, true);
       output.textContent = '';
       show(output, true);
-      status.textContent = 'Running the test…';
-      run.codeTest(entry.corpus, where.runs, function (line) {
+      status.textContent = running;
+      start(function (line) {
         output.textContent += line + '\n';
       }).then(function (verdict) {
-        status.textContent = verdict === 0 ? 'Passed.' : verdict === 'stopped' ? 'Stopped.'
-          : verdict === 'timeout' ? 'Timed out.' : 'Failed.';
+        status.textContent = verdict === 'stopped' ? 'Stopped.'
+          : verdict === 'timeout' ? 'Timed out.' : told(verdict);
       }, function () {
-        status.textContent = 'The test could not be run.';
+        status.textContent = 'It could not be run.';
       }).then(function () {
         act.disabled = false;
+        if (program) { program.disabled = false; }
         show(stop, false);
       });
+    }
+    act.addEventListener('click', function () {
+      var where = entry.where;
+      if (!where || !where.runs || !runs) { return; }
+      launch('Running the test…', function (onLine) {
+        return run.codeTest(entry.corpus, where.runs, onLine);
+      }, function (verdict) { return verdict === 0 ? 'Passed.' : 'Failed.'; });
     });
+    if (program) {
+      program.addEventListener('click', function () {
+        var where = entry.where;
+        if (!where || !where.program || !runs || !run.codeRun) { return; }
+        launch('Running the program…', function (onLine) {
+          return run.codeRun(entry.corpus, where.program, onLine);
+        }, function (verdict) {
+          return verdict === 0 ? 'Finished.' : 'The program exited with an error.';
+        });
+      });
+    }
     stop.addEventListener('click', function () { run.stop(); });
     entry.details.addEventListener('toggle', function () {
       if (entry.details.open) { load(entry); } else if (live === entry) { unload(entry); }

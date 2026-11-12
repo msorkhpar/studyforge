@@ -1617,3 +1617,11 @@ What it reads, and the choices in it:
 **Why.** An optimization course is written in formulations, and a formula shown as raw LaTeX in a code box is the part of a lesson a reader most needs to read. GitHub's syntax keeps the source readable where the material is published, rendering in the browser keeps the build pure Python with no new dependency, and inlining the faces when the stylesheet is written keeps the page working from a file with no request (R8) while the stored stylesheet stays exactly what KaTeX ships. KaTeX with its faces is about 640 KB, which no corpus without math should carry.
 
 **Serves.** `R8`, `R10`, `R13`
+
+### A lesson's code panel runs the program, and a corpus may keep its tests out of it
+
+**Decision.** A code panel entry whose source a lesson's example names a program for (a tab's `run`) shows Run beside Run tests: `serve.routes.code` answers the entry with `program`, the source `serve.programs.program_of` knows how to run, and the panel streams that program's output through `code-run`, as an example's Run does. The manifest key `example_tests` (absent means `true`) lets a corpus pair no test: `generate.units` draws each file alone and `serve.routes.code` answers no test and refuses Run tests, while Run is unchanged.
+
+**Why.** A panel whose only button runs a test shows a learner a verdict, not what the code does; the program's own output is what a lesson's code is for. A corpus whose tests exist to prove the numbers its lessons print (rather than to be read) should not hand the learner those tests at all, and the choice belongs to the corpus, not to a naming convention.
+
+**Serves.** `R1`, `R8`
