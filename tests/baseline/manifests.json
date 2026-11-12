@@ -15,6 +15,7 @@
    },
    "corpus_api": 1,
    "curriculum": null,
+   "example_tests": true,
    "exercises": false,
    "levels": [
     "course"
@@ -46,6 +47,7 @@
    },
    "corpus_api": 1,
    "curriculum": null,
+   "example_tests": true,
    "exercises": true,
    "levels": [
     "section",
@@ -119,6 +121,7 @@
     "linked": null,
     "record": "SUMMARY.md"
    },
+   "example_tests": true,
    "exercises": true,
    "levels": [
     "group"
@@ -195,6 +198,7 @@
     "linked": "module",
     "record": "SUMMARY.md"
    },
+   "example_tests": true,
    "exercises": true,
    "levels": [
     "section",
@@ -239,6 +243,7 @@
    },
    "corpus_api": 1,
    "curriculum": null,
+   "example_tests": true,
    "exercises": true,
    "levels": [
     "section",
@@ -285,6 +290,7 @@
    },
    "corpus_api": 4,
    "curriculum": null,
+   "example_tests": true,
    "exercises": true,
    "levels": [
     "course"
@@ -323,6 +329,7 @@
    },
    "corpus_api": 1,
    "curriculum": null,
+   "example_tests": true,
    "exercises": false,
    "levels": [
     "guide"
