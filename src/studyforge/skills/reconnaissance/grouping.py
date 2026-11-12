@@ -176,7 +176,7 @@ def _opens(number: int, found: list[tuple[int, str]], entries: list[Entry]) -> b
 def _drop_stray_opening(
     found: list[tuple[int, str]], entries: list[Entry], linked=frozenset()
 ) -> list[tuple[int, str]]:
-    """Drop a leading label that opens too few entries to be a group.
+    """Drop the first label when it opens a single entry, and only that one label.
 
     ⚠️ **Measured, and it is the difference between the right number of groups
     and one too many.** A corpus links to its contributor guide from a
@@ -185,17 +185,21 @@ def _drop_stray_opening(
     extra "section" holding one entry that is not a unit (`SKILL.md`, appendix
     **A3**).
 
-    ⭐ A run smaller than the allowance is not a group; it is the stray the
-    allowance exists for, and `observe` names it. ⛔ Applied only at the front:
-    a genuinely small *last* container is a real thing and this must not eat it.
-    ⛔ Nor a linked label: it opens no entry by construction, and its units are
-    the regions of its file.
+    ⭐ **The rule: at most one label goes, and only if it opens exactly one
+    entry and that entry fits in the allowance.** That is the stray, and
+    `observe` names its entry. ⛔ Not a loop and not a share of the record: a
+    loop that drops every leading label under `UNLABELLED_ALLOWANCE` eats real
+    sections, and more of them as the curriculum grows. A measured course with
+    155 entries lost its first three sections (9, 13 and 14 entries) that way.
+    ⛔ Applied only at the front: a genuinely small *last* container is a real
+    thing and this must not eat it. ⛔ Nor a linked label: it opens no entry by
+    construction, and its units are the regions of its file.
     """
-    while len(found) > 2 and found[0][0] not in linked:
-        opened = sum(1 for entry in entries if found[0][0] < entry.line < found[1][0])
-        if opened > UNLABELLED_ALLOWANCE * len(entries):
-            break
-        found = found[1:]
+    if len(found) <= 2 or found[0][0] in linked:
+        return found
+    opened = sum(1 for entry in entries if found[0][0] < entry.line < found[1][0])
+    if opened == 1 and opened <= UNLABELLED_ALLOWANCE * len(entries):
+        return found[1:]
     return found
 
 

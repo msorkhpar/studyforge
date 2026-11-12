@@ -7,8 +7,10 @@ grouping it expresses*. The tests that drive it end to end live in
 
 from __future__ import annotations
 
+from studyforge.skills.reconnaissance import read
 from studyforge.skills.reconnaissance.grouping import (
     UNLABELLED_ALLOWANCE,
+    choose,
     grouping,
     label,
     shape,
@@ -91,8 +93,9 @@ def test_but_the_allowance_is_small_and_stated():
 
 def test_a_leading_label_that_opens_almost_nothing_is_dropped_not_kept():
     # ⚠️ Measured: kept, it becomes an eleventh "section" of the Java corpus
-    # holding one entry that is not a unit.
-    lines = ["Overview bullet", "- [stray](x)"] + [
+    # holding one entry that is not a unit. ⛔ The bullet is a list item, the
+    # shape the numbered labels have, or it never competes and nothing is dropped.
+    lines = ["- Overview bullet", "- [stray](x)"] + [
         line
         for n in range(1, 6)
         for line in [f"{n}. Group {n}"] + [f"- [u{n}.{k}](x)" for k in range(1, 4)]
@@ -103,3 +106,56 @@ def test_a_leading_label_that_opens_almost_nothing_is_dropped_not_kept():
     groups, _ = grouping(lines, entries)
     assert "Overview bullet" not in groups
     assert len(groups) == 5
+
+
+def test_the_stray_is_dropped_as_one_label_never_as_a_run_of_them():
+    # ⚠️ A second single-entry label after the stray is a real group: only one goes.
+    lines = ["- Overview bullet", "- [stray](x)", "1. Short", "- [s](x)"] + [
+        line
+        for n in range(2, 7)
+        for line in [f"{n}. Group {n}"] + [f"- [u{n}.{k}](x)" for k in range(1, 4)]
+    ]
+    entries = [entry(2), entry(4)] + [
+        entry(4 + 4 * (n - 2) + 1 + k) for n in range(2, 7) for k in range(1, 4)
+    ]
+    groups, _ = grouping(lines, entries)
+    assert groups == ["Short"] + [f"Group {n}" for n in range(2, 7)]
+
+
+#: Entries per section of a measured course record: the first three each hold
+#: under a tenth of the 155 entries.
+SIZES = (9, 13, 14, 33, 14, 29, 16, 7, 14, 3, 3)
+
+
+def numbered_record(sizes=SIZES):
+    """Return `(lines, entries)` for numbered bare-line labels over linked units."""
+    lines, entries = ["# Course", "", "## Curriculum", ""], []
+    for n, size in enumerate(sizes, start=1):
+        lines += [f"{n}. Section {n}", ""]
+        for k in range(1, size + 1):
+            lines.append(f"- [{n}.{k}. Unit](s{n:02}/u{k:02}.md)")
+            entries.append(entry(len(lines), f"s{n:02}/u{k:02}.md"))
+        lines.append("")
+    return lines, entries
+
+
+def test_small_leading_sections_are_groups_not_strays():
+    # ⛔ Regression: dropping every leading label under the allowance ate the
+    # first three sections of a 155-entry course, and ingest then counted 8
+    # groups against the 11 its corpus declares.
+    lines, entries = numbered_record()
+    found, kept = choose(lines, entries)
+    assert [text for _, text in found] == [f"Section {n}" for n in range(1, 12)]
+    assert len(kept) == sum(SIZES)
+
+
+def test_every_numbered_section_survives_read(tmp_path):
+    lines, entries = numbered_record()
+    targets = {entry.target for entry in entries}
+    for target in targets:
+        (tmp_path / target).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / target).write_text("# Unit\n", encoding="utf-8")
+    (tmp_path / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    record = read(tmp_path / "README.md", tmp_path, targets)
+    assert record is not None
+    assert list(record.groups) == [f"Section {n}" for n in range(1, 12)]
