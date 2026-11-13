@@ -100,7 +100,8 @@ When `manifest.runtimes` is empty the result is **empty** —
 
 ### 2. Select the toolchain
 
-`toolchain.select(manifest.runtimes, editor)` answers three questions from data:
+`toolchain.select(manifest.runtimes, editor, profile=manifest.profile)` answers three questions
+from data:
 
 | question | where the answer comes from |
 |---|---|
@@ -112,6 +113,12 @@ When `manifest.runtimes` is empty the result is **empty** —
 is a function of the build's inputs, so a hand-made one names nothing. Step 5a
 runs each image's `tag_from` in the pinned checkout and records what it prints;
 nothing here does, and nobody types one.
+
+⭐ **A corpus that names an image profile** (`profile` in `corpus.json`) also gets the
+contract's `profile_tag.printed_by` for each image, its profile, image and set filled and its
+`<platform>` slot left open; `toolchain.json` keeps it under `profile`, and `EXECUTION.md` says
+the profile's images are what runs. ⛔ A contract with no `profile_tag` is refused for such a
+corpus. A corpus that names no profile never reads the block and keeps the bytes it had.
 
 ⚠️ A runtime the corpus declared and the editor does not carry is **reported,
 not dropped in silence** — it is a real difference between what a reader can
@@ -338,6 +345,22 @@ environment file:
 | `record_runner` | `.studyforge/execution/runner.env` | `<runner.image.env_var>=<tag>` |
 | `record_editor` | `.studyforge/execution/editor.env` | `<editor.image.env_var>=<tag>` |
 
+⭐ **A corpus that names an image profile records the profile's tags**, the way the
+export's lock check asks for them: each call asks the contract's `profile_tag.printed_by` for
+its image instead of `tag_from`, and refuses anything but one tag of
+`<block>.image.repository-<profile>`. The tag is computed for one platform, so the caller
+names the host's:
+
+    record_runner(execution, corpus, component, ask=ask, platform="linux/amd64")
+    record_editor(execution, corpus, component, ask=ask, platform="linux/amd64")
+
+⛔ Without `platform` (`linux/amd64` or `linux/arm64`) a profiled corpus is refused: this
+package reads nothing of the machine it runs on. ⛔ **A profile and a prime do not combine
+here**, and such a corpus is refused before anything is asked: the profile command takes no
+prime and a profile image is built on the unprimed base, so no tag the component computes
+names an image with both. Its export runs it, because the export's course layer warms the
+prime on top of the profile image.
+
 ⭐ `--print-tag` hashes files and starts no Docker; this package itself imports
 nothing that can start a process, which is why the caller hands the one process
 in. The `ask` in `record`'s own docstring is one that works.
@@ -401,7 +424,10 @@ checkout** — each with the flag its block declares (`runner.prime.declared_by`
 `editor.prime.declared_by`) pointing at the written prime directory by its full
 path. `EXECUTION.md` prints both lines with this corpus's directory in the slot,
 says which of them carry the flag, and each builds the tag step 5a recorded for
-it. Then, from the corpus root:
+it. ⚠️ For a corpus that names a profile these lines build the bases; the profile's
+images are built on them as the component's own profile instructions say, because the
+contract declares how a profile image's tag is asked for and no command that builds one.
+Then, from the corpus root:
 
     docker compose --env-file .studyforge/execution/runner.env \
       --env-file .studyforge/execution/editor.env \
@@ -535,7 +561,9 @@ runs one argv and answers `(exit code, stdout)`.
   declare or a tag it does not compute is refused before a file is written. The course's
   runner and editor layers start `FROM` the profile's images, and their tags carry the
   profile's digests. ⛔ A course that names a profile is exported thin only. A corpus with no
-  `profile` and a lock with no `profile` entry write the bytes they always did.
+  `profile` and a lock with no `profile` entry write the bytes they always did. ⭐ The check
+  that the checkout is the one the course was built with compares the profile's tags with
+  what step 5a recorded when the course has no prime, and the primed bases' when it has one.
 - ⭐ **The README explains the course before it explains the command**
   (`standalone.learner` over `facts` and `tour`): the counts, each feature with
   its picture, the two ways to use the course in one table, the requirements, and
@@ -619,8 +647,8 @@ build arguments name that platform's pinned downloads.
 | `.studyforge/execution/allowed/.gitignore` | keeps the run service's allowlist, which the study server writes, out of the repository |
 | `.studyforge/execution/site.env` | the study server's image and the profile that brings it up (step 5b) |
 | `.studyforge/execution/site/site.containerfile` | the study server's build, on a base pulled by digest; the library copy beside it is ignored (step 5b) |
-| `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
-| `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
+| `.studyforge/execution/runner.env` | the primed runner's tag, or the profile's runner's, as the component printed it (step 5a) |
+| `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, or the profile's editor's, as the component printed it (step 5a) |
 | `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
 | `.studyforge/execution/instance.env` | this checkout's project, site and editor ports and container names: the one place a port is set, the publisher's file, written once and never recorded as the skill's (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |

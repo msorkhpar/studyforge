@@ -76,8 +76,19 @@ def answered(asked: list[list[str]] | None = None, refuse: bool = False):
 
 
 def checkout(where: Path, declared: Path | None = DECLARED) -> Path:
-    """The fixture corpus as a git checkout; `declared` is another manifest laid over it."""
-    root = course(Path(shutil.copytree(DECLARED.parent, where / "course")))
+    """The fixture corpus as a git checkout; `declared` is another manifest laid over it.
+
+    ⭐ A course that names the profile and has no prime recorded the profile's tags, as the
+    execution skill's record step writes them; one that names none recorded its primed bases'.
+    """
+    named = json.loads((declared or DECLARED).read_text(encoding="utf-8")).get("profile")
+    recorded = {
+        "runner": f"t/runner-{named}:{RUNNER_TAG}",
+        "editor": f"t/editor-{named}:{EDITOR_TAG}",
+    }
+    root = course(
+        Path(shutil.copytree(DECLARED.parent, where / "course")), **(recorded if named else {})
+    )
     if declared not in (None, DECLARED):
         shutil.copyfile(declared, root / "corpus.json")
     subprocess.run([*GIT, "init", "-q"], cwd=root, check=True)

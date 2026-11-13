@@ -44,6 +44,16 @@ contract, and a test asserts the contract still carries no key that
 would settle it.** ⚠️ The day the component declares one, that test goes RED,
 this constant is deleted and the value is read. ⛔ It is not a fix and it must
 not be allowed to become one by being quietly forgotten.
+
+## ⭐ A CORPUS THAT NAMES A PROFILE RUNS ON THE PROFILE'S IMAGES
+
+⭐ `select(…, profile=name)` also reads the contract's `profile_tag` block, the
+command a consumer asks for a profile image's tag with, and fills its profile,
+image and set slots. ⛔ **Its platform slot stays open here**: the platform is
+the host's, which the record step's caller hands in (`record.PLATFORMS`), and a
+document a corpus keeps names no host. ⛔ A corpus that names a profile against
+a contract that declares no `profile_tag` is refused, as the export's lock
+check refuses it; a corpus that names none never reads the block.
 """
 
 from __future__ import annotations
@@ -68,6 +78,12 @@ PLACEHOLDER = "<the declared set>"
 #: ⚠️ **Provisional. See the module contract above.** How the
 #: declared set is written into the one argv slot the contract leaves for it.
 SET_SEPARATOR = ","
+
+#: The `profile_tag` block's slots, and the shape of it this module has read.
+PROFILE_SLOT = "<profile>"
+PROFILE_IMAGE_SLOT = "<runner|editor>"
+PLATFORM_SLOT = "<platform>"
+PROFILE_TAG_API = 1
 
 #: The contract key that would settle `SET_SEPARATOR`, named here so a test can
 #: assert it is still absent rather than a reader having to remember it is.
@@ -101,6 +117,20 @@ class Selection:
     #: block that declares no prime. ⭐ A contract before `provides` 3 declares
     #: none for the editor, and its editor is then built and recorded unprimed.
     prime_flag: str | None = None
+    #: The image profile the corpus names, or `None` for the plain base.
+    profile: str | None = None
+    #: `profile_tag.printed_by` for this image, every slot filled but `PLATFORM_SLOT`; `()`
+    #: for a corpus that names no profile.
+    profile_tag_from: tuple[str, ...] = ()
+
+    def profile_tag_on(self, platform: str) -> tuple[str, ...]:
+        """Return the profile's tag command with `platform` in its slot."""
+        return tuple(platform if one == PLATFORM_SLOT else one for one in self.profile_tag_from)
+
+    @property
+    def profile_repository(self) -> str | None:
+        """The repository every tag of this image's profile begins with, or `None` for none."""
+        return None if self.profile is None else f"{self.repository}-{self.profile}"
 
     def primed_by(self, directory: str) -> str | None:
         """Return this image's prime flag with `directory` in its slot, or `None` for none.
@@ -115,8 +145,12 @@ class Selection:
         return self.prime_flag.replace(DIRECTORY_SLOT, directory)
 
     def document(self) -> dict[str, object]:
-        """Return the selection as a corpus keeps it: data, and no tag."""
-        return {
+        """Return the selection as a corpus keeps it: data, and no tag.
+
+        ⭐ A `profile` entry is added only for a corpus that names one, so every other corpus
+        keeps the bytes it had.
+        """
+        kept: dict[str, object] = {
             "declared": list(self.declared),
             "carried": list(self.carried),
             "withheld": [{"runtime": name, "why": why} for name, why in self.withheld],
@@ -133,6 +167,17 @@ class Selection:
                 "beside the commit the workspace pins"
             ),
         }
+        if self.profile is not None:
+            kept["profile"] = {
+                "name": self.profile,
+                "tag_from": list(self.profile_tag_from),
+                "what_runs": (
+                    "the profile's images, layered on the base the build and tag_from above "
+                    f"describe. The record step runs tag_from with {PLATFORM_SLOT} set to the "
+                    "host's platform"
+                ),
+            }
+        return kept
 
     def render(self) -> str:
         """Render the document as the bytes a corpus keeps, newline-terminated."""
@@ -140,9 +185,13 @@ class Selection:
 
 
 def select(
-    runtimes: Sequence[str], contract: Mapping[str, object], *, block: str = "editor"
+    runtimes: Sequence[str],
+    contract: Mapping[str, object],
+    *,
+    block: str = "editor",
+    profile: str | None = None,
 ) -> Selection:
-    """Join a corpus's declared runtimes with one image block of a contract."""
+    """Join a corpus's declared runtimes with one image block of a contract, and its profile."""
     declared = tuple(sorted(runtimes))
     selectable = frozenset(words(contract, block, "runtimes", "selectable"))
     reasons = optional(contract, block, "runtimes", "not_carried", default={})
@@ -166,7 +215,37 @@ def select(
         read_back_from=_string(contract, block, "runtimes", "read_back_from"),
         repository=_string(contract, block, "image", "repository"),
         prime_flag=_prime_flag(contract, block),
+        profile=profile,
+        profile_tag_from=() if profile is None else _profile_tag(contract, profile, carried, block),
     )
+
+
+def _profile_tag(
+    contract: Mapping[str, object], profile: str, carried: Sequence[str], block: str
+) -> tuple[str, ...]:
+    """Return `profile_tag.printed_by` for one image of `profile`, its platform slot left open."""
+    found = optional(contract, "profile_tag")
+    if not isinstance(found, Mapping):
+        raise ContractRefused(
+            "this corpus names an image profile, and the contract declares no profile_tag, so "
+            "it does not say how a profile's tag is asked for: pin a toolchain that declares it"
+        )
+    if found.get("profile_tag_api") != PROFILE_TAG_API:
+        raise ContractRefused(
+            "the contract declares its profile_tag in a shape this skill has not read"
+        )
+    argv = found.get("printed_by")
+    if not isinstance(argv, list) or not all(isinstance(one, str) for one in argv):
+        raise ContractRefused("the contract's profile_tag.printed_by is not a command")
+    for slot in (PROFILE_SLOT, PROFILE_IMAGE_SLOT, PLACEHOLDER, PLATFORM_SLOT):
+        if slot not in argv:
+            raise ContractRefused(f"the contract's profile_tag.printed_by names no {slot} slot")
+    filled = {
+        PROFILE_SLOT: profile,
+        PROFILE_IMAGE_SLOT: block,
+        PLACEHOLDER: SET_SEPARATOR.join(carried),
+    }
+    return tuple(filled.get(one, one) for one in argv)
 
 
 def _prime_flag(contract: Mapping[str, object], block: str) -> str | None:

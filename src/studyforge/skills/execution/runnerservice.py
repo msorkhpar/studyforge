@@ -95,11 +95,13 @@ def plan(
     runtimes: tuple[str, ...],
     runs_as: Mapping[str, object],
     name_variable: str | None = None,
+    profile: str | None = None,
 ) -> Runner:
     """Return the runner service for corpus `source`, whose root compose reaches at `root`.
 
     ⭐ `name_variable`, when given, is the variable the container's name is
-    interpolated from, with the contract's name as its default.
+    interpolated from, with the contract's name as its default. ⭐ `profile`, when
+    given, is the image profile the corpus names, whose runner image a Submit runs in.
     """
     block = require(document, SERVICE)
     if not isinstance(block, Mapping):
@@ -110,7 +112,7 @@ def plan(
             f"the runner block breaks a ruling this renderer will not emit against: "
             f"{'; '.join(broken)}"
         )
-    selection = toolchain.select(runtimes, document, block=SERVICE)
+    selection = toolchain.select(runtimes, document, block=SERVICE, profile=profile)
     name = container_name(block, source)
     own = optional(block, "runs_as", default={})
     if isinstance(own, Mapping) and own.get("compose_key") and own.get("compose_value"):

@@ -10,7 +10,7 @@ learner's tree, byte for byte.
 **How you use it.**
 
     asked = ask(checkout, runtimes, prime, platform=..., run=run)   # Toolchain(...)
-    pinned(course_root, checkout, runtimes, prime, platform=..., run=run)  # or refused
+    pinned(course_root, checkout, runtimes, prime, profiled, platform=..., run=run)  # or refused
     copied = copy(checkout, target, asked.inputs)     # relative paths written
 
 **Depends on.** `contract` for the one file this reads of the component, and
@@ -235,21 +235,44 @@ def pinned(
     checkout: Path,
     runtimes: Sequence[str],
     prime: Path,
+    profiled: Mapping[str, object] | None = None,
     *,
     platform: str,
     run: Run,
 ) -> None:
-    """Refuse unless `checkout` computes the primed tags the course at `root` recorded."""
+    """Refuse unless `checkout` computes the primed tags the course at `root` recorded.
+
+    ⭐ `profiled` is what `profile_check` returned. A course that names a profile and has no prime
+    recorded the profile's tags (`record`), so those are compared, each recorded under a repository
+    named for the profile; one with a prime recorded its primed bases' tags, since a profile and a
+    prime are not recorded together.
+    """
+    profiled = profiled or {}
+    profile, computed = profiled.get("profile_declared"), profiled.get("profile_tags")
+    if profile and not isinstance(computed, Mapping):
+        raise VendorRefused(f"profile {scrub(str(profile))} has no computed tags to compare")
+    if not any(one.is_file() for one in Path(prime).rglob("*")) and isinstance(computed, Mapping):
+        for image, recorded in (("runner", RUNNER_ENV), ("editor", EDITOR_ENV)):
+            want = _recorded(Path(root) / recorded)
+            repository, _, tag = want.rpartition(":")
+            if not repository.endswith(f"-{profile}") or tag != computed[image]:
+                _unpinned(computed[image], want, f"profile {image}")
+        return
     command = _printed_by(Path(checkout))
     for image, recorded in (("runner", RUNNER_ENV), ("editor", EDITOR_ENV)):
         want = _recorded(Path(root) / recorded)
         got = _asked(Path(checkout), command, image, runtimes, prime, platform, run)["tag"]
         if want != got:
-            raise VendorRefused(
-                f"the toolchain checkout computes {scrub(str(got))} for the course's primed "
-                f"{image}, and the course recorded {scrub(str(want))}: check out the toolchain "
-                "commit the course was built with, or re-onboard the course's execution"
-            )
+            _unpinned(got, want, f"primed {image}")
+
+
+def _unpinned(got: object, want: object, which: str) -> None:
+    """Refuse a checkout that computes `got` where the course recorded `want`."""
+    raise VendorRefused(
+        f"the toolchain checkout computes {scrub(str(got))} for the course's {which}, and the "
+        f"course recorded {scrub(str(want))}: check out the toolchain commit the course was built "
+        "with, or re-onboard the course's execution"
+    )
 
 
 def copy(checkout: Path, target: Path, inputs: Sequence[str]) -> tuple[str, ...]:

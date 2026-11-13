@@ -192,7 +192,7 @@ def generate(
     block = contract.require(editor, "editor")
     if not isinstance(block, Mapping):
         raise contract.ContractRefused("the contract's editor must be an object")
-    selection = toolchain.select(manifest.runtimes, editor)
+    selection = toolchain.select(manifest.runtimes, editor, profile=manifest.profile)
     sources = source_root(manifest)
     workspaces = workspaces_bind(block, sources)
     extra = tuple(one for one in (workspaces, code_bind(block, sources)) if one is not None)
@@ -200,8 +200,7 @@ def generate(
     # ⭐ The prime is selected for what the image will CARRY, not for all the corpus declared: an
     # image without a runtime cannot compile a specimen in it; the rest are named in the document.
     seeds = contract.optional(editor, "runner", "prime", "seeds", default={})
-    seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
-    primed = _primed(root, selection.carried, seeded)
+    primed = _primed(root, selection.carried, tuple(seeds) if isinstance(seeds, Mapping) else ())
     flag = _prime_flag(editor) if primed.projects else None
     editor_flag = selection.primed_by(f"<this corpus>/{PRIME_DIR}") if flag else None
     names = instance.defaults(manifest.source, port=composefile.per_project_port(block))
@@ -214,6 +213,7 @@ def generate(
         runtimes=manifest.runtimes,
         runs_as=_runs_as(block),
         name_variable=instance.RUNNER_NAME,
+        profile=manifest.profile,
     )
     names[instance.RUNNER_NAME] = runner.name
     site = siteservice.plan(

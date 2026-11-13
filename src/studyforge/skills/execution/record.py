@@ -48,6 +48,23 @@ and `EXECUTION.md` prints the editor's build with it: the tag recorded is the
 tag the printed, primed build produces. ⚠️ A contract that declares no editor
 prime is read as it stands: the editor is asked, printed and recorded unprimed.
 
+## ⭐ A CORPUS THAT NAMES A PROFILE RECORDS THE PROFILE'S TAGS
+
+⭐ **A corpus that names an image profile (`profile` in `corpus.json`) runs on
+the profile's images**, which the component layers on the base of its declared
+runtimes. So each image is asked with the contract's `profile_tag.printed_by`,
+its profile, image and set filled by `toolchain.select` and its platform the
+host's, which the caller hands in as `platform`, exactly as the export's
+lock check asks it; and what is recorded must be one tag of
+`<block>.image.repository-<profile>`. ⛔ The plain base's tag is never recorded
+in its place: that image lacks what the profile adds.
+
+⛔ **A profile and a prime do not combine here, and such a corpus is refused.**
+The contract's profile command takes no prime, and a profile image is built on
+the unprimed base, so no tag the component computes names an image carrying
+both: recording either half would start images that cannot run this corpus's
+practices offline. The export layers the prime on the profile image itself.
+
 ## ⚠️ RE-RUN IT WHEN AN INPUT MOVES
 
 The component's pin, the prime, and the host's architecture each move a tag.
@@ -97,20 +114,52 @@ WHAT_IT_HOLDS = {
     ),
 }
 
+#: The platforms a profile's tag is asked for, as the contract's `<platform>` slot names them.
+#: ⭐ The caller names the host's: this package reads nothing of the machine it runs on.
+PLATFORMS = frozenset({"linux/amd64", "linux/arm64"})
+
 #: Runs one argv in one directory and answers `(exit code, stdout)`.
 Ask = Callable[[Sequence[str], Path], tuple[int, str]]
 
 
-def argv(execution: Execution, root: Path) -> list[str]:
-    """Return the runner's own `tag_from`, with the prime this skill wrote flagged."""
+def argv(execution: Execution, root: Path, *, platform: str | None = None) -> list[str]:
+    """Return the runner's own `tag_from`, with the prime this skill wrote flagged.
+
+    ⭐ For a corpus that names a profile, the profile's tag command on `platform`.
+    """
     runner = _runner(execution)
+    if runner.selection.profile is not None:
+        return _profiled(execution, runner.selection, platform)
     return _flagged(execution, root, runner.selection.tag_from, runner.prime_flag)
 
 
-def editor_argv(execution: Execution, root: Path) -> list[str]:
-    """Return the editor's own `tag_from`, with the same prime flagged when it declares one."""
+def editor_argv(execution: Execution, root: Path, *, platform: str | None = None) -> list[str]:
+    """Return the editor's own `tag_from`, with the same prime flagged when it declares one.
+
+    ⭐ For a corpus that names a profile, the profile's tag command on `platform`.
+    """
     editor = _editor(execution)
+    if editor.profile is not None:
+        return _profiled(execution, editor, platform)
     return _flagged(execution, root, editor.tag_from, editor.prime_flag)
+
+
+def _profiled(execution: Execution, selection: Selection, platform: str | None) -> list[str]:
+    """Return the profile's tag command for one image, or refuse a corpus that also primes."""
+    if execution.primed is not None and execution.primed.projects:
+        raise ExecutionRefused(
+            "this corpus names an image profile and also has a prime, and the two do not "
+            "combine in a local record: the component's profile_tag.printed_by takes no prime "
+            "and a profile image is built on the unprimed base, so no tag it computes names an "
+            "image with both. Run it from its export, whose course layer primes the profile "
+            "image, or drop one of the two"
+        )
+    if platform not in PLATFORMS:
+        raise ExecutionRefused(
+            f"this corpus names an image profile, whose tag is computed for one platform: hand "
+            f"the record step platform= one of {sorted(PLATFORMS)}, the host's"
+        )
+    return list(selection.profile_tag_on(platform))
 
 
 def _flagged(
@@ -124,34 +173,53 @@ def _flagged(
     return command
 
 
-def record_runner(execution: Execution, root: Path, component: Path, *, ask: Ask) -> str:
-    """Ask the component for the primed runner's tag, write it, and return the path written."""
+def record_runner(
+    execution: Execution, root: Path, component: Path, *, ask: Ask, platform: str | None = None
+) -> str:
+    """Ask the component for the runner's tag, write it, and return the path written.
+
+    ⭐ The primed runner's tag, or, for a corpus naming a profile, its runner on `platform`.
+    """
     runner = _runner(execution)
-    tag = _asked(ask, argv(execution, root), component, runner.repository, "runner")
-    return _written(root, RUNNER_ENV, text(runner.selection.image_env, tag))
+    command = argv(execution, root, platform=platform)
+    tag = _asked(ask, command, component, runner.selection, "runner")
+    return _written(
+        root, RUNNER_ENV, text(runner.selection.image_env, tag, profile=runner.selection.profile)
+    )
 
 
-def record_editor(execution: Execution, root: Path, component: Path, *, ask: Ask) -> str:
-    """Ask the component for the editor's tag, write it, and return the path written."""
+def record_editor(
+    execution: Execution, root: Path, component: Path, *, ask: Ask, platform: str | None = None
+) -> str:
+    """Ask the component for the editor's tag, write it, and return the path written.
+
+    ⭐ The editor's tag, or, for a corpus naming a profile, its editor on `platform`.
+    """
     editor = _editor(execution)
-    tag = _asked(ask, editor_argv(execution, root), component, editor.repository, "editor")
-    return _written(root, EDITOR_ENV, text(editor.image_env, tag, image="editor"))
+    command = editor_argv(execution, root, platform=platform)
+    tag = _asked(ask, command, component, editor, "editor")
+    return _written(
+        root, EDITOR_ENV, text(editor.image_env, tag, image="editor", profile=editor.profile)
+    )
 
 
-def _asked(ask: Ask, command: list[str], component: Path, repository: str, block: str) -> str:
-    """Run one `tag_from` through `ask`, and return the one tag it printed or refuse."""
+def _asked(ask: Ask, command: list[str], component: Path, selection: Selection, block: str) -> str:
+    """Run one tag command through `ask`, and return the one tag it printed or refuse."""
+    asked = "profile_tag.printed_by" if selection.profile else f"{block}.image.tag_from"
+    repository = selection.profile_repository or selection.repository
     code, printed = ask(command, component)
     if code != 0:
         raise ExecutionRefused(
-            f"the component's {block}.image.tag_from exited {code}; its output is not "
+            f"the component's {asked} exited {code}; its output is not "
             f"reproduced here, since it can carry a home path. Run it in the pinned "
             f"checkout to read why"
         )
     tag = printed.strip()
     if not _one_tag(tag, repository):
+        whose = f"{block}.image.repository" + ("-<profile>" if selection.profile else "")
         raise ExecutionRefused(
-            f"the component's {block}.image.tag_from printed something that is not one tag "
-            f"of its own {block}.image.repository, and a tag this skill cannot read is not "
+            f"the component's {asked} printed something that is not one tag "
+            f"of its own {whose}, and a tag this skill cannot read is not "
             f"one it will record"
         )
     return tag
@@ -166,14 +234,23 @@ def _written(root: Path, where: str, content: str) -> str:
     return where
 
 
-def text(variable: str, tag: str, *, image: str = "runner") -> str:
-    """Return one environment file's bytes: the generated sentence and the one variable."""
+def text(variable: str, tag: str, *, image: str = "runner", profile: str | None = None) -> str:
+    """Return one environment file's bytes: the generated sentence and the one variable.
+
+    ⭐ A profile's tag says so: which profile, and the contract key that printed it.
+    """
     holds = WHAT_IT_HOLDS.get(image)
     if holds is None:
         raise ExecutionRefused(
             f"an environment file is recorded for one of {sorted(WHAT_IT_HOLDS)} and for "
             f"no other image; the one asked for is not reproduced here, since a refusal never "
             f"quotes a value that may be personal"
+        )
+    if profile is not None:
+        holds = (
+            f"# The {image}'s tag for image profile {profile}, as the component's own\n"
+            "# profile_tag.printed_by printed it for this host's platform. Re-run the skill's\n"
+            "# record step when the component's pin or the host's architecture moves.\n"
         )
     return f"# {GENERATED}\n{holds}{variable}={tag}\n"
 

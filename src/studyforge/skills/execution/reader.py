@@ -74,6 +74,7 @@ def document(
         "## What this corpus declared",
         "",
         f"- runtimes: `{'`, `'.join(selection.declared)}`",
+        *([f"- profile: `{selection.profile}`"] if selection.profile else []),
         f"- the directory the editor binds: `{sources}` — the sources alone (§8.1)",
     ]
     if workspaces is not None:
@@ -101,12 +102,10 @@ def document(
         "⛔ Never pin a tag you did not compute: a tag is a function of the build's",
         f"inputs. Read the set back from `{selection.read_back_from}`.",
         "",
+        *_profile(selection, runner),
         "## Record both tags",
         "",
-        f"⭐ The skill records them: its record step runs `{' '.join(runner.selection.tag_from)}`",
-        f"with the prime above, in the pinned checkout, and writes `{runner_env}`;",
-        f"then `{' '.join(selection.tag_from)}`"
-        f"{' with the same prime' if editor_flag else ''}, and writes `{editor_env}`.",
+        *_recorded(selection, runner, runner_env, editor_env, editor_flag),
         "⛔ Never type a tag, and never edit either file: re-run the step when the",
         "component's pin, the prime or the host's architecture moves.",
         "",
@@ -176,6 +175,48 @@ def document(
     if narration_text is not None:
         lines += _narration(narration_text)
     return "\n".join(lines)
+
+
+def _profile(selection: toolchain.Selection, runner: Runner) -> list[str]:
+    """Say that a corpus naming a profile runs the profile's images, built on the two above."""
+    if selection.profile is None:
+        return []
+    return [
+        f"⭐ This corpus names the image profile `{selection.profile}`, so the runner and",
+        "the editor it runs are the profile's, which the component layers on the two",
+        f"images above: `{runner.selection.profile_repository}` and",
+        f"`{selection.profile_repository}`. ⚠️ The contract declares how a profile image's",
+        "tag is asked for (`profile_tag.printed_by`) and no command that builds one: build",
+        "both as the component's own profile instructions say, on the bases above.",
+        "",
+    ]
+
+
+def _recorded(
+    selection: toolchain.Selection,
+    runner: Runner,
+    runner_env: str,
+    editor_env: str,
+    editor_flag: str | None,
+) -> list[str]:
+    """Say which command the record step runs for each image, and which file it writes."""
+    if selection.profile is None:
+        return [
+            f"⭐ The skill records them: its record step runs "
+            f"`{' '.join(runner.selection.tag_from)}`",
+            f"with the prime above, in the pinned checkout, and writes `{runner_env}`;",
+            f"then `{' '.join(selection.tag_from)}`"
+            f"{' with the same prime' if editor_flag else ''}, and writes `{editor_env}`.",
+        ]
+    slot = toolchain.PLATFORM_SLOT
+    return [
+        "⭐ The skill records the profile's tags with the contract's `profile_tag.printed_by`,",
+        f"in the pinned checkout, `{slot}` being this host's platform (`linux/amd64` or",
+        f"`linux/arm64`): `{' '.join(runner.selection.profile_tag_from)}`, written to",
+        f"`{runner_env}`; then `{' '.join(selection.profile_tag_from)}`, written to",
+        f"`{editor_env}`. ⛔ A corpus that names a profile and has a prime is refused:",
+        "the profile's command takes no prime.",
+    ]
 
 
 #: ⭐ **Why every command above is one line, and the same line on every shell.**

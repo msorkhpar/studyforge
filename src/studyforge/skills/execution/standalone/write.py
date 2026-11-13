@@ -1,13 +1,12 @@
 r"""Write a course's learner tree: its material, and all that serves it without studyforge.
 
-**What it does.** From a course checkout, writes into an empty directory the
-tree its learner `main` holds: every tracked file `split` keeps, the vendored
-serving runtime (`closure`), the toolchain's build context at the course's
-pinned inputs (`vendor`), the build files studyforge owns (`images`), the two
-compose files (`compose`), the learner's README and settings (`learner`), and
-`.studyforge/release.json`, the manifest of every path the tree keeps. ⭐ The tree also
-carries its own Pages automation (`pages`): the workflow that deploys the read-only
-preview on every push to `main`, and the copy of the builder it runs.
+**What it does.** From a course checkout, writes into an empty directory the tree its learner `main`
+holds: every tracked file `split` keeps, the vendored serving runtime (`closure`), the toolchain's
+build context at the course's pinned inputs (`vendor`), the build files studyforge owns (`images`),
+the two compose files (`compose`), the learner's README and settings (`learner`), and
+`.studyforge/release.json`, the manifest of every path the tree keeps. ⭐ The tree also carries its
+own Pages automation (`pages`): the workflow that deploys the read-only preview on every push to
+`main`, and the copy of the builder it runs.
 
 **How you use it.**
 
@@ -149,7 +148,8 @@ def release(
         verdicts = (*verdicts, split.HOSTED)
     kept = split.kept(verdicts, files)
     prime = root / split.PRIME
-    vendor.pinned(root, toolchain, manifest.runtimes, prime, platform=platform, run=run)
+    profiled = vendor.profile_check(manifest, bases, toolchain, platform=platform, run=run)
+    vendor.pinned(root, toolchain, manifest.runtimes, prime, profiled, platform=platform, run=run)
     asked = vendor.ask(toolchain, manifest.runtimes, prime, platform=platform, run=run)
     editor = require(
         read(
@@ -160,7 +160,6 @@ def release(
         ),
         "editor",
     )
-    profiled = vendor.profile_check(manifest, bases, toolchain, platform=platform, run=run)
     if bases is not None:
         locked.check(
             bases,

@@ -158,3 +158,78 @@ def test_no_consuming_json_at_all_is_refused(tmp_path):
 
 def test_the_provisional_constant_is_gone():
     assert not hasattr(vendor, "PROFILE_TAG_BY")
+
+
+# ---------------------------------------------------------------------------
+# `vendor.pinned` for a course that names a profile: its local record holds the profile's tags.
+# ---------------------------------------------------------------------------
+
+
+#: What `profile_check` returns for a course naming the profile, over the synthetic answers.
+PROFILED = {
+    "profile_declared": "example-profile",
+    "profile_tags": {"runner": "runner-tag", "editor": "editor-tag"},
+}
+
+
+def test_a_profiled_course_with_no_prime_is_pinned_by_the_profile_tags_it_recorded(tmp_path):
+    from tests.studyforge.skills.execution.standalone.test_vendor import course, toolchain
+
+    asked: list = []
+    vendor.pinned(
+        course(
+            tmp_path / "c",
+            runner="t/runner-example-profile:runner-tag",
+            editor="t/editor-example-profile:editor-tag",
+        ),
+        toolchain(tmp_path / "tc"),
+        RUNTIMES,
+        tmp_path / "no-prime",
+        PROFILED,
+        platform="linux/amd64",
+        run=answering(asked),
+    )
+    assert asked == [], "the profile's tags were computed once, by profile_check"
+
+
+@pytest.mark.parametrize(
+    "runner",
+    [
+        "t/runner:primed",  # the plain base's, which lacks what the profile adds
+        "t/runner-other-profile:runner-tag",  # another profile's
+        "t/runner-example-profile:other-tag",  # a tag this checkout does not compute
+    ],
+)
+def test_a_profiled_course_that_recorded_another_runner_is_refused(tmp_path, runner):
+    from tests.studyforge.skills.execution.standalone.test_vendor import course, toolchain
+
+    with pytest.raises(vendor.VendorRefused, match="profile runner.*re-onboard"):
+        vendor.pinned(
+            course(tmp_path / "c", runner=runner, editor="t/editor-example-profile:editor-tag"),
+            toolchain(tmp_path / "tc"),
+            RUNTIMES,
+            tmp_path / "no-prime",
+            PROFILED,
+            platform="linux/amd64",
+            run=answering([]),
+        )
+
+
+def test_a_profiled_course_with_a_prime_is_still_pinned_by_its_primed_base_tags(tmp_path):
+    # ⭐ A profile and a prime do not combine in the local record, which refuses such a course,
+    # so its recorded tags are its primed bases' and the export's course layer adds the profile.
+    from tests.studyforge.skills.execution.standalone.test_vendor import TAGS, course, toolchain
+    from tests.studyforge.skills.execution.standalone.test_vendor import answering as builds
+
+    prime = tmp_path / "prime"
+    (prime / "maven").mkdir(parents=True)
+    (prime / "maven" / "pom.xml").write_text("<project/>\n", encoding="utf-8")
+    vendor.pinned(
+        course(tmp_path / "c"),
+        toolchain(tmp_path / "tc"),
+        RUNTIMES,
+        prime,
+        PROFILED,
+        platform="linux/amd64",
+        run=builds(TAGS),
+    )
