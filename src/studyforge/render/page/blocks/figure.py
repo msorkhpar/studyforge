@@ -69,6 +69,17 @@ UNLABELLED_CODE = "code"
 #: What a code caption adds when its language renders as the plain fallback.
 FALLBACK_NOTE = "plain text"
 
+#: The languages whose listing is a program's OUTPUT, framed as a terminal
+#: (`data-frame="terminal"`, dark in both themes) so a reader never mistakes a
+#: log for source they type. ⭐ `text` is here because, across the corpora this
+#: was written against, an unlabelled-language block is almost always what a
+#: program printed.
+TERMINAL_LANGUAGES = frozenset({"text", "output", "console", "stdout", "shell-session"})
+
+#: The language a diagram is written in; `mermaid.js` draws it in place, and
+#: with scripting off the reader keeps the diagram's source.
+DIAGRAM_LANGUAGE = "mermaid"
+
 #: What a remote video's link says when the archive recorded no title.
 REMOTE_VIDEO_LABEL = "Watch this video on the original site"
 
@@ -106,18 +117,48 @@ def _code(block: dict, placement: Placement | None) -> str:
     """
     del placement
     language = (block.get("lang") or "").strip()
+    title = (block.get("title") or "").strip()
     return templates.fill(
         "code.html",
-        caption=escape(language or UNLABELLED_CODE),
+        frame=_frame(language),
+        caption=escape(title or _caption_for(language)),
         fallback=_fallback_note(language),
         language=f' class="language-{escape_attribute(grammar_for(language))}"' if language else "",
         text=escape(block.get("text") or ""),
     )
 
 
+#: What a diagram's caption says when the fence names no title.
+DIAGRAM_CAPTION = "diagram"
+
+#: What an output listing's caption says when the fence names no title.
+OUTPUT_CAPTION = "output"
+
+
+def _caption_for(language: str) -> str:
+    """Return the caption for a listing the fence gave no title."""
+    if language == DIAGRAM_LANGUAGE:
+        return DIAGRAM_CAPTION
+    if language in TERMINAL_LANGUAGES:
+        return OUTPUT_CAPTION
+    return language or UNLABELLED_CODE
+
+
+def _frame(language: str) -> str:
+    """Return the figure's `data-frame` attribute, or `''` for source code."""
+    if language in TERMINAL_LANGUAGES:
+        return ' data-frame="terminal"'
+    if language == DIAGRAM_LANGUAGE:
+        return ' data-frame="diagram"'
+    return ""
+
+
 def _fallback_note(language: str) -> str:
     """Return the caption's plain-text note, or `''` when the language is covered or absent."""
     if not language or not falls_back(language):
+        return ""
+    if language in TERMINAL_LANGUAGES or language == DIAGRAM_LANGUAGE:
+        # ⭐ Output and a diagram are never highlighted, so "plain text" says nothing.
         return ""
     klass = escape_attribute(SURFACE_HOOKS["code_fallback"])
     return f'<span class="{klass}">{escape(FALLBACK_NOTE)}</span>'

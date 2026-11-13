@@ -14,9 +14,15 @@
    - ⛔ CRISP, NOT DIM. Body text is about 12:1 in both themes, and each quieter
      ink sits in a band around 8.3:1 and 5.6:1. ⛔ Text is never pure white on
      dark and never pure black on light.
-   - ⛔ NO GREEN ANYWHERE. `test_identity` reads the hue of every token and
-     refuses a saturated green, both ways. *Done, passed, settled* is the slate
-     ink itself: the road behind you is solid, the road ahead is dashed.
+   - ⛔ NO GREEN, EXCEPT AS A STATUS. `test_identity` reads the hue of every
+     token and refuses a saturated green, both ways, outside the status tokens.
+     *Done, read, settled* is still the slate ink itself: the road behind you is
+     solid, the road ahead is dashed.
+   - ⭐ STATUS COLOURS (the 2026-11 redesign, the user's decision): `--ok`,
+     `--bad` and `--warn`, each with a `-soft` ground, mark a verdict and
+     nothing else — a quiz answer right or wrong, a run that passed or failed,
+     a caution. ⛔ A status colour is never the only signal: it always comes
+     with an icon and a word, so the page reads the same without colour.
    - ⭐ ONE LIVE ACCENT, AND IT IS ALLOWED TO BE LOUD. A
      warning yellow `#ffc933` by night and a deep amber by day. It means *next*,
      *here* and *speaking* and nothing else, and it is a mark, a line, a ring or
@@ -44,7 +50,7 @@
   /* The faces are vendored and embedded in the stylesheet (`pageassets.faces`).
      ⛔ No banned face in any fallback: the first name is always the one used. */
   --font-prose: "Charis", Georgia, serif;
-  --font-ui: "Andika", Verdana, sans-serif;
+  --font-ui: "Plus Jakarta Sans", Verdana, sans-serif;
   --font-mono: "JetBrains Mono", "DejaVu Sans Mono", monospace;
 
   /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED. ⚠️ Charis's `ch` is its zero,
@@ -96,6 +102,9 @@
   --radius-tight: 2px;
   --radius-control: 4px;
   --radius-sign: 10px;
+  /* ⭐ A card: the opening scenario, a note, a practice, the quiz, the hub's
+     group cards. One radius and one shadow so every card is the same object. */
+  --radius-card: 12px;
 
   /* Motion answers an action and nothing moves on load. */
   --dur-quick: 120ms;
@@ -103,8 +112,8 @@
   --dur-fill: 350ms;
   --ease: cubic-bezier(.2, .7, .2, 1);
 
-  --bg: #f1f5f9;
-  --surface: #f8fafc;
+  --bg: #f8fafc;
+  --surface: #ffffff;
   --surface-2: #e2e8f0;
   --fg: #22304a;
   --fg-soft: #445366;
@@ -140,8 +149,18 @@
   --hl-fg: #22304a;
   --hl-code: rgba(166, 77, 7, .14);
 
-  --panel: #f8fafc;
+  --panel: #ffffff;
   --shadow: 0 -1px 0 #dbe3ec;
+  --ok: #15803d;
+  --ok-soft: #f0fdf4;
+  --bad: #b91c1c;
+  --bad-soft: #fef2f2;
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --term-bg: #0f172a;
+  --term-fg: #e2e8f0;
+  --term-muted: #94a3b8;
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, .06);
   --scrim: rgba(15, 23, 42, .45);
   --focus: #0369a1;
 }
@@ -185,6 +204,16 @@
 
     --panel: #1e293b;
     --shadow: 0 -1px 0 #27354a;
+    --ok: #4ade80;
+    --ok-soft: #052e16;
+    --bad: #f87171;
+    --bad-soft: #2a1215;
+    --warn: #fbbf24;
+    --warn-soft: #2b2110;
+    --term-bg: #020617;
+    --term-fg: #e2e8f0;
+    --term-muted: #94a3b8;
+    --card-shadow: 0 1px 2px rgba(2, 6, 23, .5);
     --scrim: rgba(2, 6, 23, .7);
     --focus: #38bdf8;
   }
@@ -225,6 +254,16 @@
   --hl-code: rgba(255, 201, 51, .12);
   --panel: #1e293b;
   --shadow: 0 -1px 0 #27354a;
+  --ok: #4ade80;
+  --ok-soft: #052e16;
+  --bad: #f87171;
+  --bad-soft: #2a1215;
+  --warn: #fbbf24;
+  --warn-soft: #2b2110;
+  --term-bg: #020617;
+  --term-fg: #e2e8f0;
+  --term-muted: #94a3b8;
+  --card-shadow: 0 1px 2px rgba(2, 6, 23, .5);
   --scrim: rgba(2, 6, 23, .7);
   --focus: #38bdf8;
 }

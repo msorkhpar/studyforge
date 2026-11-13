@@ -10,20 +10,24 @@ licence beside a face.
 
 **Depends on.** `base64`, `hashlib`, and `source` for the bytes.
 
-## ⭐ Why these three (the plan's §5)
+## ⭐ Why these three (the plan's §5, revised by the 2026-11 redesign)
 
-Charis and Andika come from SIL's literacy work, faces drawn for people
-learning to read, and learning is the one subject every studyforge site shares.
-Charis sets the prose. Andika sets headings, navigation and controls. JetBrains
+Charis comes from SIL's literacy work, a face drawn for people learning to
+read, and it sets the prose. Plus Jakarta Sans, a crisp geometric sans, sets
+headings, navigation and controls: the redesign replaced Andika, whose
+primer-like shapes read as a children's book beside technical prose. JetBrains
 Mono sets code and nothing else. All three are SIL Open Font License 1.1.
 
-## ⛔ Unmodified, because two of them carry Reserved Font Names
+## ⛔ Unmodified where a name is reserved
 
-Charis and Andika reserve their names ("Charis", "Andika", "SIL"). A subset is
-a Modified Version, which may not carry the name, so every file here is the
-release's own file, byte for byte. `test_faces` recomputes every sha256 below
-against the bytes on disk. ⚠️ Base64 is an encoding of those bytes, not a
-modification of the font software.
+Charis reserves its names ("Charis", "SIL"). A subset is a Modified Version,
+which may not carry the name, so its files are the release's own, byte for
+byte. Plus Jakarta Sans reserves no name; its release ships TTF only, so its
+three weights are the release's TTFs compressed to WOFF2 with fontTools 4.55.3
+(`fonttools ttLib.woff2 compress`, lossless: the glyphs, metrics and tables are
+the release's). `test_faces` recomputes every sha256 below against the bytes on
+disk. ⚠️ Base64 is an encoding of those bytes, not a modification of the font
+software.
 
 ## ⛔ Base64 in the stylesheet, never a relative `url()`
 
@@ -36,9 +40,9 @@ font at all.
 ## ⚠️ The weight set is small on purpose, because the bytes are real
 
 Each SIL file is about 300 KB. Charis has regular, italic and bold (prose uses
-all three); Andika has regular and bold, and its bold is the heaviest heading
-weight because Andika ships no 800; JetBrains Mono has regular and bold (bold
-keywords). No mono italic is vendored: a code comment keeps its slant as the
+all three); Plus Jakarta Sans has regular (controls, navigation), semibold
+(labels, emphasis in the chrome) and bold (headings), about 42 KB each;
+JetBrains Mono has regular and bold (bold keywords). No mono italic is vendored: a code comment keeps its slant as the
 browser's synthesised oblique, and is told apart by its pencil colour first.
 A weight is added only with a stated reason.
 """
@@ -89,12 +93,15 @@ ARCHIVES: tuple[Archive, ...] = (
         licence="Charis.LICENSE",
     ),
     Archive(
-        family="Andika",
-        release="v7.000",
-        url="https://github.com/silnrsi/font-andika/releases/download/v7.000/Andika-7.000.zip",
-        sha256="88ba6ea41ef4a8e5214b090df8fa2983be1babe4843efaa99cdb6078b0e2c070",
-        second_source="GitHub's published asset digest agrees",
-        licence="Andika.LICENSE",
+        family="Plus Jakarta Sans",
+        release="2.7.1",
+        url=(
+            "https://github.com/tokotype/PlusJakartaSans/releases/download/2.7.1/"
+            "PlusJakartaSans-2.7.1.zip"
+        ),
+        sha256="4bfc5cdf97d750423bb3d1d40ed8e529bc92288924d9c65e18ff486acefac66c",
+        second_source="none published; single-source",
+        licence="PlusJakartaSans.LICENSE",
     ),
     Archive(
         family="JetBrains Mono",
@@ -133,18 +140,25 @@ FACES: tuple[Face, ...] = (
         "8a7151f0308d399f5d5d78fb09570acc858bfc675779c469735b602b13d05b7f",
     ),
     Face(
-        "Andika-Regular.woff2",
-        "Andika",
+        "PlusJakartaSans-Regular.woff2",
+        "Plus Jakarta Sans",
         400,
         "normal",
-        "bd46cba17fb1ee30023f88376810cee1787c918d34933e0d761485375e2c1bcb",
+        "e4d379687af7adac1578def9018df7d6262e499c4cdd25aad0fe4d6413770ce0",
     ),
     Face(
-        "Andika-Bold.woff2",
-        "Andika",
+        "PlusJakartaSans-SemiBold.woff2",
+        "Plus Jakarta Sans",
+        600,
+        "normal",
+        "ac18183f39185bf599f70b235ef68b2063906abc283ba1a6531cc1069875f170",
+    ),
+    Face(
+        "PlusJakartaSans-Bold.woff2",
+        "Plus Jakarta Sans",
         700,
         "normal",
-        "d42a45070e8e85ed4122a56c826fd3e894ba5ea205fcda6c6bcd000efabff208",
+        "cc61cf218bdc47cdb3737a1b3686ae9f2a8e0cfe4ffd5e3908d0e9f78c897846",
     ),
     Face(
         "JetBrainsMono-Regular.woff2",
@@ -165,14 +179,14 @@ FACES: tuple[Face, ...] = (
 #: The licence file of every archive, sha256-pinned like the faces.
 LICENCE_PINS = {
     "Charis.LICENSE": "07b1a63504f43e26b07a8017cd5803da86badb1bc1432470869ec48ad76958ee",
-    "Andika.LICENSE": "fd0f044f061aa463fa1675a71fa0c229a067e2062c321c89e5f20965883f23b2",
+    "PlusJakartaSans.LICENSE": "995c7199cab65954f545996326755daee7b63cc6b42b06c13da1f9502ab08a99",
     "JetBrainsMono.LICENSE": "30f0c136e3c88e422d0791acd97238870f9054a9729bc34cf2ff0d4ed8cac4ad",
 }
 
 #: What the composed block opens with: the provenance, in the stylesheet itself.
 HEADER = (
-    "/* Faces: Charis and Andika (SIL Global) and JetBrains Mono, SIL Open Font\n"
-    "   License 1.1; each licence ships beside its files in the asset directory.\n"
+    "/* Faces: Charis (SIL Global), Plus Jakarta Sans (Tokotype) and JetBrains\n"
+    "   Mono, SIL Open Font License 1.1; each licence ships beside its files.\n"
     "   Embedded unmodified as base64 so no page requests a font. */\n"
 )
 
