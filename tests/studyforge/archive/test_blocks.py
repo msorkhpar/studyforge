@@ -446,10 +446,16 @@ def test_a_nested_list_is_not_a_block_in_reading_order():
     assert list(walk([block])) == [block]
 
 
-def test_start_title_and_output_are_the_optional_keys_a_list_a_code_and_an_example_carry():
+def test_start_title_kind_and_output_are_the_optional_keys_of_list_code_quote_and_example():
     # ⛔ An optional key sits after a block's fields, so the fields keep
-    # their order and a block without it is unchanged.
-    optional = {"list": ("start",), "code": ("title",), "example": ("output", "support")}
+    # their order and a block without it is unchanged. ⭐ A quote's `kind` (the 2026-11
+    # redesign) is a GitHub alert's word, written only for a marked quote.
+    optional = {
+        "list": ("start",),
+        "code": ("title",),
+        "quote": ("kind",),
+        "example": ("output", "support"),
+    }
     assert BLOCK_OPTIONAL == {name: optional.get(name, ()) for name in BLOCK_TYPES}
 
 

@@ -76,9 +76,14 @@ FALLBACK_NOTE = "plain text"
 #: program printed.
 TERMINAL_LANGUAGES = frozenset({"text", "output", "console", "stdout", "shell-session"})
 
-#: The language a diagram is written in; `mermaid.js` draws it in place, and
-#: with scripting off the reader keeps the diagram's source.
+#: The language a diagram is written in; `diagram.js` draws it in place with the
+#: vendored Mermaid (`page.diagram`), and with scripting off the reader keeps the
+#: diagram's source.
 DIAGRAM_LANGUAGE = "mermaid"
+
+#: The attribute that frames a figure as a diagram. ⭐ It is also the mark
+#: `page.diagram` looks for to link Mermaid, so the two cannot drift.
+DIAGRAM_FRAME = 'data-frame="diagram"'
 
 #: What a remote video's link says when the archive recorded no title.
 REMOTE_VIDEO_LABEL = "Watch this video on the original site"
@@ -149,7 +154,7 @@ def _frame(language: str) -> str:
     if language in TERMINAL_LANGUAGES:
         return ' data-frame="terminal"'
     if language == DIAGRAM_LANGUAGE:
-        return ' data-frame="diagram"'
+        return f" {DIAGRAM_FRAME}"
     return ""
 
 

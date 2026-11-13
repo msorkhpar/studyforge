@@ -117,6 +117,11 @@ from studyforge.unit import bare_lesson
 #: `page.practice.PRACTICE` selects its panel on.
 PRACTICE = "practice"
 
+#: The block a lesson's lead is, the tag it renders as, and the attribute that marks it.
+LEAD_TYPE = "para"
+PARAGRAPH = "<p"
+LEAD_ATTRIBUTE = "data-lead"
+
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"
 
@@ -168,6 +173,8 @@ def render(
     body = blocks.render_all(
         contents, placement=placement, section=key, narration=heard, omit=withheld
     )
+    if heads_page and section.get("kind") != PRACTICE:
+        body = _lead(contents, body)
     wrapper = templates.fill(
         "section.html",
         id=escape_attribute(section_anchor(key)),
@@ -181,6 +188,25 @@ def render(
     deck = _deck(section.get("video"), placement)
     files = _attachments(section.get("attachments"), placement)
     return blocks.JOIN.join(part for part in (deck, wrapper, files) if part)
+
+
+def _lead(contents: list, body: str) -> str:
+    """Return `body` with its opening paragraph marked as the lesson's lead, when it opens on one.
+
+    ⭐ **The lead is the paragraph right under the page's title** — the situation a unit
+    opens on — and it stands on a card (`callouts.css`). It is marked with an attribute
+    and nothing else: no new block, no archive change, the same words and the same clip.
+    ⛔ **Only a paragraph, and only the first block shown.** A lesson that opens on a
+    heading, a list, a figure or a callout has no lead, and nothing else is promoted
+    into one.
+    """
+    first = TITLE_POSITION + 1
+    opens = len(contents) > first and isinstance(contents[first], dict)
+    if not opens or contents[first].get("type") != LEAD_TYPE:
+        return body
+    if not body.startswith(PARAGRAPH) or body[len(PARAGRAPH)] not in " >":
+        return body
+    return f"{PARAGRAPH} {LEAD_ATTRIBUTE}{body[len(PARAGRAPH):]}"
 
 
 def _edition(lang: object) -> str:

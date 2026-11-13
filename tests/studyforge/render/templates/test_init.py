@@ -22,6 +22,7 @@ LIBRARY_CLASS = re.compile(r"^language-")
 ONE_LINE = (
     "between-units.html",
     "breadcrumb.html",
+    "callout.html",
     "code.html",
     "crumb-separator.html",
     "example.html",

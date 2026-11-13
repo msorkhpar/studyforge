@@ -327,3 +327,41 @@ def test_the_language_is_escaped_as_an_attribute_and_an_empty_one_is_no_tag():
     assert 'data-lang="a&quot;b"' in render(headed(lang='a"b'))
     assert " data-lang=" not in render(headed(lang=""))
     assert " data-lang=" not in render(headed(lang=None))
+
+
+# --- the lesson's lead ------------------------------------------------------------------------
+
+
+def lesson_opening(*rest: dict, kind: str = "lang") -> str:
+    """The section that opens a unit page: its title, withheld, then `rest`."""
+    title = {"type": "heading", "level": 2, "text": "Your first class"}
+    material = headed(kind=kind, blocks=[title, *rest])
+    return section_module.render(material, sample_placement(), heads_page=True)
+
+
+PARA = {"type": "para", "text": "A terminal sends a purchase and waits."}
+
+
+def test_the_paragraph_under_the_page_title_is_the_lead():
+    page = lesson_opening(PARA, {"type": "para", "text": "Then the host answers."})
+    assert '<p data-lead>A terminal sends a purchase and waits.</p>' in page
+    assert page.count("data-lead") == 1 and "<p>Then the host answers.</p>" in page
+
+
+@pytest.mark.parametrize(
+    "first",
+    [
+        {"type": "heading", "level": 2, "text": "Setup"},
+        {"type": "list", "ordered": False, "items": ["one"]},
+        {"type": "quote", "blocks": [PARA], "kind": "scenario"},
+        {"type": "code", "lang": "java", "text": "class A {}"},
+    ],
+)
+def test_a_lesson_that_opens_on_anything_but_a_paragraph_has_no_lead(first):
+    assert "data-lead" not in lesson_opening(first, PARA)
+
+
+def test_only_the_opening_section_of_a_lesson_has_a_lead():
+    later = headed(blocks=[{"type": "heading", "level": 2, "text": "A"}, PARA])
+    assert "data-lead" not in render(later)
+    assert "data-lead" not in lesson_opening(PARA, kind="practice")

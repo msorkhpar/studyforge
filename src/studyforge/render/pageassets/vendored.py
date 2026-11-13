@@ -43,6 +43,7 @@ VENDORED = {
     "minisearch.js": "minisearch.LICENSE",
     "katex.min.js": "katex.LICENSE",
     "katex.min.css": "katex.LICENSE",
+    "mermaid.min.js": "mermaid.LICENSE",
 }
 
 #: Every vendored header must say all three, or "unedited" is unverifiable:

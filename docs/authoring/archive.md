@@ -312,6 +312,18 @@ dollar signs, $`x_{i,t}`$, kept in the text as written. A page whose body carrie
 KaTeX's files and draws the formulas after load (`render.page.math`); a formula KaTeX cannot parse
 stays visible as its code. A corpus with no formula writes none of those files.
 
+**A diagram is a `mermaid` fence, drawn by the page.** It is kept as a `code` block with `lang`
+`mermaid`. A page whose body carries one links the vendored Mermaid and `diagram.js`, which draws
+it in place after load, in the palette's colours, and draws it again when the theme changes
+(`render.page.diagram`); with scripting off, or a diagram Mermaid refuses, the source stays on the
+page. A corpus with no diagram writes none of those files.
+
+**A quote may be marked as a callout, in GitHub's syntax.** A quote whose first line is `[!NOTE]`,
+`[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` or `[!SCENARIO]` keeps that word, lower
+case, as the quote's optional `kind`, and the marker line is not part of its blocks
+(`archive.callouts`). An unmarked quote is written exactly as before. The page draws a marked quote
+under a label: an icon and the kind's word.
+
 ## Four rules that are not negotiable
 
 ### An address is recorded, never derived

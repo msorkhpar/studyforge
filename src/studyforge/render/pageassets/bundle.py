@@ -103,11 +103,15 @@ from studyforge.render.pageassets.source import text
 #: this framework emits inside the masthead, reached by role and `data-*` hook, and the rail's
 #: offset under the bar (`topbar.css`) has to come after the rail's own rules in `chrome.css`
 #: because at equal specificity the last rule wins.
+#:
+#: ⭐ `callouts.css` follows `reading.css` (the 2026-11 redesign): a callout is a quote, and
+#: its kind refines the card `reading.css` gives every quote, so it must come after it.
 STYLE_PARTS = (
     "reset.css",
     "palette.css",
     "focus.css",
     "reading.css",
+    "callouts.css",
     "chrome.css",
     "lists.css",
     "onward.css",
