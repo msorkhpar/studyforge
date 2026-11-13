@@ -198,8 +198,9 @@ your adapter produced itself. `local` is the file's path **inside that unit's
 own archive directory** — `<address>/units/unit-NN/` — so `media/diagram.svg`
 means `<address>/units/unit-02/media/diagram.svg`.
 
-**A Markdown lesson's figures need no code of yours.** A line that is only
-`![what it shows](figures/region.png)` becomes an `image` block, and a
+**A Markdown lesson's figures need no code of yours.** A line that is only an
+image, its alternative text in brackets and its path beside the lesson in
+parentheses, becomes an `image` block, and a
 scaffolded adapter's `emit.py` copies the file beside the lesson into the
 unit's `media/` and writes its `assets` entry. It refuses a figure with no
 alternative text, one it cannot find inside the corpus, a type a browser does
