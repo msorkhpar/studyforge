@@ -7,6 +7,7 @@ the main file and the further files out as the reference's blocks and the starti
 blocks. ⭐ An exercise of one file passes no `files` and gets the blocks it always did.
 ⭐ A project's read-only files (`read_only`) are read and kept apart here too: `read_read_only`,
 `require_read_only_apart`, and `read_only_files` and `read_only_record` for what `emit` writes.
+⭐ A project's record names its build files read-only too, since its workspace holds them.
 """
 
 from __future__ import annotations
@@ -95,10 +96,16 @@ def read_only_files(base: Path, bundle: Bundle, where: str) -> tuple[tuple[str, 
 
 
 def read_only_record(bundle: Bundle) -> dict:
-    """The record's `read_only` key, each path as the corpus root sees it; empty for most."""
+    """The record's `read_only` key, each path as the corpus root sees it; empty for most.
+
+    ⭐ A project's build files (`pytest.ini`) follow its read-only files: the workspace holds
+    them, every file of a project is visible, and none is the reader's to edit. ⚠️ The bundle
+    still keeps them in the build role, so they ship from `build/` and are digested as such.
+    """
     if not bundle.read_only:
         return {}
-    return {"read_only": [bundle.places.in_workspace(path) for path in bundle.read_only]}
+    shown = (*bundle.read_only, *bundle.build)
+    return {"read_only": [bundle.places.in_workspace(path) for path in shown]}
 
 
 def require_try_file(bundle: Bundle, where: str) -> None:

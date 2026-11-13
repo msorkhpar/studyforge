@@ -1145,8 +1145,8 @@ course that grows one project over several lessons gives each lesson one project
   reader's to edit or read-only, in a closed list that works on a page opened as a file. When
   the editor is running, the tabs over it become an explorer: one button per file, under its
   folder's name, each opening that file in the editor's one frame. Source files are editable.
-  Tests, fixtures, data and the expected report are read-only, locked the same way a practice's
-  test file is.
+  Tests, fixtures, data, the expected report and the build file (`pytest.ini`) are read-only,
+  locked the same way a practice's test file is.
 - **A blueprint on the statement.** For each method to write: its signature, its contract (what
   goes in, what comes out, what stays true), the modeling idea it needs, and a link to the lesson
   that taught it.
@@ -1159,7 +1159,8 @@ course that grows one project over several lessons gives each lesson one project
   The breakdown says *Main ask*, *Edge cases n of m*, and *Earlier steps: n of m still pass*.
 
 **What the record says.** A project is a code practice whose record carries `read_only`: the
-corpus-relative paths of every read-only file beside `test_path`. `main_path` and `files` are
+corpus-relative paths of every read-only file beside `test_path`, the bundle's build files
+(`pytest.ini`) last. `main_path` and `files` are
 every source file, `test_path` is the expected-output check, and `test_command` runs pytest over
 the tests folder. `studyforge validate` reports `project-files` when the workspace and the record
 disagree: a file the record names that is not there, or a file in the workspace the record does
@@ -1186,7 +1187,7 @@ after lesson `NN`. Lesson `NN`'s practice is the pair `NN-1` → `NN`:
 | every `.py` outside `tests/` | a file the reader edits, the entry point included |
 | `tests/test_*.py` in `NN` | the grade, read-only |
 | every other file in `NN` (a `conftest.py` under `tests/`, fixtures, data, `expected/…`) | read-only |
-| `pytest.ini` at the root of `NN` | the build file; one with `pythonpath = .` is written when there is none |
+| `pytest.ini` at the root of `NN` | the build file, shown read-only; one with `pythonpath = .` is written when there is none |
 
 The snapshot's `pytest.ini` makes the workspace pytest's root, so a case id is the node id as the
 project spells it, `tests/test_model.py::test_caps_hold`, wherever the practice sits in the

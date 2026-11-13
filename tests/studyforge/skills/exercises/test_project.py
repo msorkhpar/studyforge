@@ -8,6 +8,7 @@ kept requirement still passes on it, and each planted defect is caught by its ow
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -16,6 +17,7 @@ from studyforge.exercise.bundle import bundle_of, emit
 from studyforge.exercise.gates import G1, G2, G3, G4, G5
 from studyforge.skills.exercises import AuthoringError
 from studyforge.skills.exercises.project import project_draft, read_manifest
+from studyforge.validate.projects import check_project_files
 from tests.studyforge.skills.exercises.project_sample import MANIFEST, copy_sample, gated
 
 WS = "practice/seeds/prose/unit-01/practice-1"
@@ -109,7 +111,28 @@ def test_the_bundle_ships_the_read_only_files_and_the_record_names_them(tmp_path
         (out / path).write_bytes(data)
     emitted = emit(out, bundle_of(document, "bundle.json"), source="demo", ingested="2026-01-05")
     record = from_document(emitted.document["exercise"], "w")
-    assert record.read_only == tuple(f"{WS}/{path}" for path in draft.read_only)
+    assert record.read_only == tuple(f"{WS}/{path}" for path in (*draft.read_only, *draft.build))
+
+
+def test_the_emitted_practice_names_every_file_its_workspace_holds(tmp_path):
+    """The build file (`pytest.ini`) is named read-only, so the project audit finds nothing."""
+    result, _ = gated(tmp_path)
+    shipped = dict(result.files)
+    bundle = result.places.bundle
+    document = json.loads(shipped[f"{bundle}/bundle.json"])
+    out = tmp_path / "out"
+    for path, data in result.files:
+        (out / path).parent.mkdir(parents=True, exist_ok=True)
+        (out / path).write_bytes(data)
+    emitted = emit(out, bundle_of(document, "bundle.json"), source="demo", ingested="2026-01-05")
+    corpus = tmp_path / "corpus-root"
+    for path, data in emitted.files:
+        (corpus / path).parent.mkdir(parents=True, exist_ok=True)
+        (corpus / path).write_bytes(data)
+    assert f"{WS}/pytest.ini" in emitted.document["exercise"]["read_only"]
+    unit = SimpleNamespace(where="u1", document=emitted.document)
+    found = list(check_project_files(SimpleNamespace(root=corpus, units=[unit])))
+    assert [finding.message for finding in found] == []
 
 
 #: A module new in step 01 with a blueprint method: its import, constant and helper must survive.
