@@ -108,14 +108,14 @@ def _g1(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdic
     missing = _unread(G1, (first, second), report)
     if missing is not None:
         return missing
-    if first.passed_ids != second.passed_ids or first.exit_code != second.exit_code:
+    if _outcome(first) != _outcome(second):
         return _refused(
             G1,
             "the reference solution reported a different outcome on its two runs, so "
             "at least one of these tests is flaky and a reader's Submit would be "
             "decided by luck",
         )
-    failed = [case for case in cases if not first.passed(case)]
+    failed = [case for case in cases if not (first.passed(case) or first.skipped(case))]
     if failed:
         return _refused(
             G1,
@@ -123,7 +123,9 @@ def _g1(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdic
             f"reference solution, so the exercise is not solvable as written: "
             + _sentences(failed),
         )
-    return _held(G1, f"all {len(cases)} cases passed on the reference, on two runs alike")
+    ran = sum(1 for case in cases if not first.skipped(case))
+    said = f"all {ran} cases passed on the reference, on two runs alike"
+    return _held(G1, said + _skips(cases, first))
 
 
 def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
@@ -173,7 +175,7 @@ def _kept_on_the_starter(cases: tuple[Case, ...], starter: Run) -> Verdict | Non
     that step's finished code, passes it. One that fails there is work this step asks for, and
     calling it kept would hide it from the count of what a reader is to do.
     """
-    broken = [case for case in cases if case.kind == KEPT and not starter.passed(case)]
+    broken = [c for c in cases if c.kind == KEPT and not (starter.passed(c) or starter.skipped(c))]
     if not broken:
         return None
     return _refused(
@@ -212,12 +214,22 @@ def _g3(exercise: Exercise, evidence: Evidence, where: str) -> Verdict:
     ]
     if stray:
         return _refused(G3, _not_an_assertion(len(stray), "plant"))
-    unproven = [case for case in declared if _g3_fails(exercise, evidence, case)]
+    skipped = [c for c, run in zip(declared, plants, strict=True) if run and run.skipped(c)]
+    if len(skipped) == len(declared):
+        return _refused(G3, "every edge case's test was skipped, so no plant proved anything")
+    unproven = [c for c in declared if c not in skipped and _g3_fails(exercise, evidence, c)]
     if unproven:
         return _refused(
             G3,
             f"{len(unproven)} of this exercise's {len(declared)} edge cases are not "
             f"caught by a test of their own: " + _sentences(unproven),
+        )
+    if skipped:
+        return _held(
+            G3,
+            f"each of the {len(declared) - len(skipped)} edge cases that ran was caught by its "
+            f"own plant; {len(skipped)} skipped where their capability was absent, so nothing "
+            f"proved them here: " + _sentences(skipped),
         )
     return _held(G3, f"each of the {len(declared)} edge cases was caught by its own plant")
 
@@ -246,7 +258,7 @@ def _g4(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdic
             "the reference run wrote no report" + _at(report) + ", so nothing says the "
             "Submit breakdown covers what actually ran",
         )
-    unbacked = [case for case in cases if not reference.passed(case)]
+    unbacked = [c for c in cases if not (reference.passed(c) or reference.skipped(c))]
     if unbacked:
         return _refused(
             G4,
@@ -351,6 +363,17 @@ def _not_an_assertion(count: int, role: str) -> str:
         f"assertion (an exception the code raised, such as an unimplemented starter), so the "
         f"failure says nothing about the task and the draft asked for assertion failures only"
     )
+
+
+def _outcome(run: Run) -> tuple:
+    """What two runs of the reference must agree on."""
+    return run.passed_ids, run.skipped_ids, run.exit_code
+
+
+def _skips(cases: tuple[Case, ...], run: Run) -> str:
+    """`; n skipped where …` for a run that skipped cases that may (`skips`), else nothing."""
+    count = sum(1 for case in cases if run.skipped(case))
+    return f"; {count} skipped where the capability they need was absent" if count else ""
 
 
 def _sentences(cases: list[Case]) -> str:

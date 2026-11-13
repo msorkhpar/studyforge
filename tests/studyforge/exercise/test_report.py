@@ -400,3 +400,53 @@ def test_a_breakdown_answers_per_case_for_whoever_records_it(tmp_path):
     assert tuple(case.id for case in breakdown.cases) == (ASK, SHORT, EMPTY)
     assert tuple(breakdown.passed(case) for case in breakdown.cases) == (True, False, True)
     assert tuple(case.id for case in breakdown.edges) == (SHORT, EMPTY)
+
+
+# --------------------------------------------------------------------------
+# ⭐ a case that declares the capability it skips without is held apart when skipped
+# --------------------------------------------------------------------------
+
+#: The same map, with one edge that runs only where a GPU is present.
+SKIPPABLE = [CASES[0], {**CASES[1], "skips_without": "gpu"}, CASES[2]]
+
+
+def test_a_declared_skip_leaves_the_count_and_the_rest_carries_the_grade(tmp_path):
+    breakdown = run(
+        tmp_path, surefire((ASK, PASS), (SHORT, SKIPPED), (EMPTY, PASS)), cases=SKIPPABLE
+    )
+    assert breakdown.skipped_ids == frozenset({SHORT})
+    assert tuple(case.id for case in breakdown.not_run) == (SHORT,)
+    assert (breakdown.edges_passed, breakdown.edges_total) == (1, 1)
+    assert breakdown.failed_edges == ()
+    assert breakdown.complete is True
+    assert breakdown.passed(breakdown.cases[1]) is False, "a skip is never a pass"
+
+
+def test_a_declared_skip_where_the_rest_fails_is_still_incomplete(tmp_path):
+    breakdown = run(
+        tmp_path, surefire((ASK, PASS), (SHORT, SKIPPED), (EMPTY, FAILURE)), cases=SKIPPABLE
+    )
+    assert (breakdown.edges_passed, breakdown.edges_total) == (0, 1)
+    assert breakdown.failed_edges == (SAYS[EMPTY],)
+
+
+@pytest.mark.parametrize("body", [FAILURE, ERROR, SKIPPED + FAILURE])
+def test_a_skippable_case_that_failed_failed(tmp_path, body):
+    # ⛔ The key excuses a skip and nothing else, and a skip beside a failure is a failure.
+    breakdown = run(tmp_path, surefire((ASK, PASS), (SHORT, body), (EMPTY, PASS)), cases=SKIPPABLE)
+    assert breakdown.skipped_ids == frozenset()
+    assert breakdown.failed_edges == (SAYS[SHORT],)
+
+
+def test_a_skip_that_ran_where_the_capability_is_present_counts_as_any_pass(tmp_path):
+    breakdown = run(tmp_path, surefire((ASK, PASS), (SHORT, PASS), (EMPTY, PASS)), cases=SKIPPABLE)
+    assert breakdown.skipped_ids == frozenset()
+    assert (breakdown.edges_passed, breakdown.edges_total) == (2, 2)
+
+
+def test_without_the_key_a_skip_is_a_failure_by_default(tmp_path):
+    # ⛔ Strict by default: the same report, folded through the map with no key.
+    breakdown = run(tmp_path, surefire((ASK, PASS), (SHORT, SKIPPED), (EMPTY, PASS)))
+    assert breakdown.skipped_ids == frozenset()
+    assert (breakdown.edges_passed, breakdown.edges_total) == (1, 2)
+    assert breakdown.complete is False

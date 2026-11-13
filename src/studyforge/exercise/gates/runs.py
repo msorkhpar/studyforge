@@ -95,6 +95,8 @@ class Run:
     #: and failed, or `None` when none was declared or it passed. ⛔ Never a test case: a gate
     #: names it as its own finding.
     typecheck_failed: int | None = None
+    #: ⭐ Optional: the cases that declare `skips_without` and that this run's report skipped.
+    skipped_ids: frozenset[str] = frozenset()
 
     @property
     def reported(self) -> bool:
@@ -104,6 +106,10 @@ class Run:
     def passed(self, case: Case) -> bool:
         """Did this case pass? ⛔ A case nothing reported did not pass."""
         return self.passed_ids is not None and case.id in self.passed_ids
+
+    def skipped(self, case: Case) -> bool:
+        """Was this case skipped where it declared it may be? ⛔ Neither passed nor failed."""
+        return case.skips_without is not None and case.id in self.skipped_ids
 
 
 class Attempt(Protocol):
@@ -165,6 +171,7 @@ def folded(
         unasserted=breakdown.unasserted,
         assertions_only=assertions_only,
         typecheck_failed=typecheck_failed,
+        skipped_ids=breakdown.skipped_ids,
     )
 
 

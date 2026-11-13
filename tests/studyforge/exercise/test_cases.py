@@ -559,3 +559,19 @@ def test_r5_is_unchanged_by_any_of_this():
 
 def test_a_case_map_does_not_reach_a_lesson():
     assert "'lesson'" in refuse(of, {"kind": "lesson", "exercise": AUTHORED}, WHERE)
+
+
+# --- skips_without: the one optional key of a case ---------------------------
+
+
+def test_a_case_that_may_skip_round_trips_and_one_that_may_not_writes_no_key():
+    written = [CASES[0], {**CASES[1], "skips_without": "gpu"}]
+    read = cases_of(written, WHERE)
+    assert [one.skips_without for one in read] == [None, "gpu"]
+    assert cases_document(read) == written
+    assert list(cases_document(read)[1]) == [*CASE_KEYS, "skips_without"]
+
+
+def test_the_main_ask_may_not_carry_skips_without():
+    main = next(one for one in CASES if one["kind"] == "main")
+    assert "always runs" in refuse(cases_of, [{**main, "skips_without": "gpu"}], WHERE)
