@@ -198,6 +198,7 @@ figure.code pre {
 }
 figure.code code {
   background: none;
+  border: 0;
   padding: 0;
   font-size: inherit;
   line-height: inherit;
