@@ -564,3 +564,29 @@ def test_a_page_with_neither_feature_is_byte_identical_to_the_earlier_output(tmp
         '<main id="content"><p>Text</p></main>'
         '<script src="page.js" defer></script></body></html>'
     )
+
+
+def test_a_page_with_the_redesigned_top_bar_gets_run_locally_there_and_no_strip():
+    # ⭐ The 2026-11 redesign: where the top bar's search is, the banner's words go into a
+    # "Run locally" disclosure just before it, and no strip is drawn above the page.
+    page = (
+        '<!doctype html><html><head><title>t</title></head><body>\n'
+        '<a href="#content">Skip</a>\n<header>\n'
+        '<div role="toolbar" aria-label="Site tools" data-section="topbar">'
+        '<a href="index.html" data-section="brand">Course</a>'
+        '<button type="button" data-section="search-open" hidden>Search</button>'
+        "</div>\n</header>\n<main id=\"content\"></main>\n</body></html>"
+    )
+    finished = preview.finish(page, assets="assets")
+    assert "data-preview-banner" not in finished
+    assert finished.count("data-preview-run-locally") == 1
+    assert finished.index("data-preview-run-locally") < finished.index('data-section="search-open"')
+    assert finished.index('data-section="brand"') < finished.index("data-preview-run-locally")
+    assert "docker compose up" in finished
+
+
+def test_a_page_without_the_top_bar_still_gets_the_strip():
+    page = "<!doctype html><html><head></head><body>\n<main></main>\n</body></html>"
+    finished = preview.finish(page, assets="assets")
+    assert "data-preview-banner" in finished
+    assert "data-preview-run-locally" not in finished
