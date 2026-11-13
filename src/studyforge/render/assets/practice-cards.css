@@ -18,6 +18,10 @@
    stretched over it — so there is still one link, one name and one tab stop. */
 section[data-practices] ol[data-practices-part="cards"] {
   display: grid;
+  /* ⚠️ One column that may be narrower than a card's longest word: a grid
+     track is at least its content's min-content by default, and a long
+     identifier in "what it practises" pushed the card past a phone's edge. */
+  grid-template-columns: minmax(0, 1fr);
   gap: .85rem;
   margin: 1rem 0 0;
   padding: 0;

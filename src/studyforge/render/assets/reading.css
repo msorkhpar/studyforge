@@ -85,6 +85,12 @@ code {
   padding: .05em .32em;
 }
 
+/* ⚠️ A long identifier in running text, a title or a list row
+   (`SufficientAssumptionsForInfeasibility`) is one word with no place to break,
+   and on a phone it pushed the whole page sideways. Inline code may break
+   anywhere when nothing else fits; a listing keeps its lines whole and scrolls. */
+:not(pre) > code { overflow-wrap: anywhere; }
+
 /* A thematic break: one feint ruled line. */
 hr {
   border: 0;
@@ -246,8 +252,11 @@ figure.video video {
 
 /* ⛔ The wrapper is not decoration. A table wider than the column must scroll
    inside its own box; without this the page itself scrolls sideways and every
-   paragraph goes with it. */
+   paragraph goes with it. ⚠️ It is positioned so that it also holds what is
+   positioned inside it: KaTeX writes each formula's MathML copy absolutely
+   placed, and a formula in a far column would otherwise widen the page. */
 .scroll {
+  position: relative;
   overflow-x: auto;
   margin: 0 0 1.6rem;
   border: 1px solid var(--rule);

@@ -47,6 +47,10 @@ body {
   position: relative;
   min-height: 100vh;
   padding-left: calc(var(--gutter) + .75rem);
+  /* ⚠️ A title may hold a long identifier as plain text
+     (`sufficient_assumptions_for_infeasibility`); on a phone it would push the
+     page sideways. A word that cannot fit on a line breaks; nothing else moves. */
+  overflow-wrap: break-word;
 }
 
 body::before {
@@ -121,8 +125,10 @@ nav[aria-label="Breadcrumb"] ol {
 }
 
 /* The trail keeps to one line: the first crumb (the whole corpus's title)
-   gives way with an ellipsis before the page's own name does. */
-nav[aria-label="Breadcrumb"] li { flex: 0 0 auto; }
+   gives way with an ellipsis before the page's own name does. ⚠️ A middle
+   crumb may be a whole sentence too, so on a phone every crumb gives way, none
+   below a few letters, rather than the trail pushing the page sideways. */
+nav[aria-label="Breadcrumb"] li { flex: 0 1 auto; min-width: 3rem; overflow: hidden; text-overflow: ellipsis; }
 nav[aria-label="Breadcrumb"] li:first-child {
   flex: 0 1 auto;
   min-width: 3rem;
