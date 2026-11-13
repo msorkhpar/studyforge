@@ -26,8 +26,8 @@ ASSETS = Path(__file__).resolve().parents[2] / "src" / "studyforge" / "render" /
 
 HEADER = f"""/* Mermaid {VERSION} -- mermaid.js.org -- MIT, see mermaid.LICENSE beside this file.
    VENDORED, UNMODIFIED apart from this header. Do not edit: re-vendor with
-   `npm pack mermaid@{VERSION}` and `python3 tools/vendor/mermaid.py`, which takes
-   dist/mermaid.min.js. The bundle carries its own dependencies under their licences. */
+   `npm pack mermaid@{VERSION}` and take dist/mermaid.min.js, checked against the
+   registry's sha512. The bundle carries its own dependencies under their licences. */
 """
 
 

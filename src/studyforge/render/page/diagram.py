@@ -45,7 +45,7 @@ SCRIPT_NAME = "diagram.js"
 PARTS = (MERMAID_SCRIPT, STYLESHEET_NAME, SCRIPT_NAME)
 
 #: Mermaid's version and the sha256 of `dist/mermaid.min.js` as the npm registry shipped it
-#: (`tools/vendor/mermaid.py` prints it, after checking the tarball's sha512).
+#: (the re-vendoring script prints it, after checking the tarball's sha512).
 VERSION = "11.4.1"
 SHA256 = "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e"
 

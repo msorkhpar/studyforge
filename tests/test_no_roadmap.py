@@ -54,6 +54,9 @@ NOT_READ = {
     "src/studyforge/render/assets/katex.min.js": (
         "vendored SVG path data, where `M40` is a drawing command"
     ),
+    "src/studyforge/render/assets/mermaid.min.js": (
+        "vendored minified code, where `M0` is a generated name or a drawing command"
+    ),
     "tests/test_no_roadmap.py": "this module spells every pattern it looks for",
 }
 

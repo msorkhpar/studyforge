@@ -203,8 +203,8 @@ def _quote(block, position, section, children, path, narration) -> str:
 #: `quote kind -> (the word its label says, its icon's path)`, one per `QUOTE_KINDS`.
 #: ⭐ Each kind has a shape of its own, so the label reads without colour: a circled
 #: `i`, a bulb, a speech mark, a triangle, an octagon, a flag. ⚠️ A space after each
-#: command letter, as `page.html` writes its icons: `M10` reads as a milestone to the
-#: roadmap sweep (`tests/test_no_roadmap.py`).
+#: command letter, as `page.html` writes its icons: a command letter run into its
+#: number reads as a roadmap milestone to `tests/test_no_roadmap.py`.
 CALLOUTS = {
     "note": ("Note", "M 12 22a 10 10 0 1 1 0-20 10 10 0 0 1 0 20z M 12 16v -4 M 12 8h .01"),
     "tip": (
