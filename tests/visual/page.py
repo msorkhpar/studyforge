@@ -238,11 +238,18 @@ class OpenPage:
         return str(outer["outerHTML"])
 
     def requests(self) -> list[str]:
-        """Every URL the page asked for while loading, in the order it asked."""
+        """Every URL the page asked for while loading, in the order it asked.
+
+        ⭐ A `data:` URL is left out (the 2026-11 redesign): the browser reports one as a
+        request when a stylesheet's icon mask is drawn, but it is decoded from the page's own
+        bytes and reaches no origin, which is what every reading of this list is about.
+        """
         return [
-            event["params"]["request"]["url"]
+            url
             for event in self.browser.events
             if event.get("method") == "Network.requestWillBeSent"
+            for url in (event["params"]["request"]["url"],)
+            if not url.startswith("data:")
         ]
 
     def capture(self, destination: Path, *, whole: bool = True) -> Path:

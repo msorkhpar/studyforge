@@ -73,12 +73,39 @@
 
   /* ⛔ Shown from the STORE's answer, never from what was just pressed: a
      write the browser refused must not leave the page claiming it happened. */
-  function show(marked) {
+  function shown(marked) {
     control.setAttribute(MARKED, marked ? 'true' : 'false');
     button.setAttribute('aria-pressed', marked ? 'true' : 'false');
     labels.forEach(function (label) {
       label.hidden = label.getAttribute(STATE) !== (marked ? READ : UNREAD);
     });
+  }
+
+  /* ⭐ THE NEXT UNIT MARKS THIS ONE READ AND CONTINUES (the 2026-11 redesign).
+     Each next link carries two labels (`link-next.html`): *Up next*, shown, and
+     *Mark read & continue*, hidden. While this unit is unmarked the second is
+     the one shown, and following the link marks the unit before the browser
+     leaves. ⛔ The link is still a plain link: with no script it navigates and
+     marks nothing. Every next link of a chain is relabelled, because a reading
+     mode may show another one; and, as everywhere here, no word is typed. */
+  var NEXT = 'nav[aria-label="Between units"] a[rel="next"], nav[aria-label="Between units"] a[data-pager="next"]';
+  var CONTINUE = 'data-continue';
+  var nexts = [].slice.call(document.querySelectorAll(NEXT));
+
+  function relabel(marked) {
+    nexts.forEach(function (link) {
+      var going = link.querySelector('span[' + CONTINUE + ']');
+      var plain = link.querySelector('span:not([' + CONTINUE + '])');
+      if (going && plain) {
+        going.hidden = marked;
+        plain.hidden = !marked;
+      }
+    });
+  }
+
+  function show(marked) {
+    shown(marked);
+    relabel(marked);
   }
 
   show(store.marked(key));
@@ -87,5 +114,11 @@
   button.addEventListener('click', function () {
     if (store.marked(key)) { store.unmark(key); } else { store.mark(key); }
     show(store.marked(key));
+  });
+
+  nexts.forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (!store.marked(key)) { store.mark(key); }
+    });
   });
 }());

@@ -66,7 +66,7 @@ def test_four_language_editions_are_one_card_with_one_status_and_the_languages_n
     found = cards(markup)
     assert len(found) == 1
     card = found[0]
-    assert ">Keep a conversation</a>" in card, "the title carries no language"
+    assert ">Keep a conversation<svg data-practices-part=\"chevron\"" in card, "the title carries no language"
     assert card.count('data-practices-part="state"') == 1
     assert "Available in: " in card
     for lang in LANGS:
@@ -149,7 +149,7 @@ def test_editions_of_different_practices_are_different_cards_in_the_order_they_f
 
 def test_a_title_that_names_no_language_in_parentheses_is_kept_as_it_is():
     same = [edition(lang, title="Keep a conversation") for lang in LANGS]
-    assert ">Keep a conversation</a>" in cards(page(same))[0]
+    assert ">Keep a conversation<svg data-practices-part=\"chevron\"" in cards(page(same))[0]
     odd = [edition(lang, title=f"Keep a conversation ({lang} edition)") for lang in LANGS]
     assert "Keep a conversation (python edition)" in cards(page(odd))[0]
 

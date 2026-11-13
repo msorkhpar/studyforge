@@ -109,6 +109,9 @@ def asked_since(page: OpenPage, mark: int) -> list[str]:
         for event in page.browser.events[mark:]
         if event.get("method") == "Network.requestWillBeSent"
         and not event["params"]["request"]["url"].endswith("/favicon.ico")
+        # ⭐ A `data:` icon mask (the 2026-11 redesign's verdict icons) is decoded from the
+        # page's own bytes and reaches no origin.
+        and not event["params"]["request"]["url"].startswith("data:")
     ]
 
 

@@ -1,5 +1,6 @@
-/* A lesson's practices: the Practice (n) list of cards, and the one workspace a
-   card opens in.
+/* A lesson's practices: the one workspace a card opens in. ⭐ The Practice (n)
+   list of cards is `practice-cards.css` (split out in the 2026-11 redesign,
+   when the card grew past what one part may hold).
 
    ⛔ NO CLASS, the standing rule for a region the framework emits: the list is
    reached by `data-practices`, a card by `data-practice-card` and the workspace
@@ -26,83 +27,6 @@
    is already `hidden` — out of flow — once the script has run, and an open one
    is `fixed`, out of flow too; so the scroll position `practice-workspace.js`
    puts back on Close is one the page can still hold. */
-
-/* --- the list ------------------------------------------------------------- */
-
-section[data-practices] ol[data-practices-part="cards"] {
-  display: grid;
-  gap: .75rem;
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-section[data-practices] li[data-practice-card] {
-  max-width: none;
-  margin: 0;
-  padding: .75rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--rule-strong);
-  border-radius: var(--radius-control);
-  font-family: var(--font-ui);
-}
-
-/* ⭐ A passed practice is told apart by its WORD first — *Passed* — and by the
-   ink of its edge second, never by colour alone. */
-section[data-practices] li[data-practice-card][data-practice-state="passed"] {
-  border-left-color: var(--done);
-}
-
-section[data-practices] li[data-practice-card] h3 {
-  margin: 0;
-  font-size: 1.02rem;
-}
-
-section[data-practices] ul[data-practices-part="concepts"] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
-  margin: .45rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-section[data-practices] ul[data-practices-part="concepts"] li {
-  margin: 0;
-  padding: .1rem .5rem;
-  font-size: .82rem;
-  color: var(--fg-soft);
-  background: var(--practice-soft);
-  border-radius: var(--radius-tight);
-}
-
-section[data-practices] p[data-practices-part="state"] {
-  margin: .45rem 0 0;
-  font-size: .85rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-section[data-practices] li[data-practice-state="passed"] p[data-practices-part="state"] {
-  color: var(--done);
-}
-
-/* ⭐ A practice written in several languages is ONE card: the sentence naming its editions, each
-   marked once it is passed, and a status that says how many are. ⛔ A mark is a word first
-   (*passed*), never colour alone. */
-section[data-practices] p[data-practices-part="editions"] {
-  margin: .35rem 0 0;
-  max-width: none;
-  font-size: .82rem;
-  color: var(--muted);
-}
-
-section[data-practices] [data-edition-mark] { color: var(--done); font-weight: 700; }
-
-section[data-practices] li[data-practice-state="partial"] p[data-practices-part="state"] {
-  color: var(--fg-soft);
-}
 
 /* --- the workspace -------------------------------------------------------- */
 
@@ -138,7 +62,8 @@ div[data-workspace] h2[data-workspace-part="title"] {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
-  font-size: 1rem;
+  font-size: .95rem;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,19 +77,22 @@ div[data-workspace] p[data-workspace-part="acts"] {
   max-width: none;
 }
 
+/* ⭐ The 2026-11 redesign: the bar's acts are quiet hairline controls, the
+   card language of the lesson, so the practice's title leads the bar. */
 div[data-workspace] button {
   font: inherit;
-  font-weight: 700;
-  font-size: .9rem;
-  padding: .35rem .8rem;
+  font-weight: 600;
+  font-size: .85rem;
+  padding: .32rem .75rem;
   color: var(--fg);
   background: var(--surface);
-  border: 1px solid var(--rule-strong);
+  border: 1px solid var(--rule);
   border-radius: var(--radius-control);
+  box-shadow: var(--card-shadow);
   cursor: pointer;
 }
 
-div[data-workspace] button:hover { background: var(--surface-2); }
+div[data-workspace] button:hover { border-color: var(--rule-strong); background: var(--surface-2); }
 
 /* ⭐ The statement on the left, always visible and scrolled inside itself; the
    panel on the right. ⛔ Above the shell, which is their ground. */

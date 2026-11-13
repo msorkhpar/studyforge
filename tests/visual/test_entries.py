@@ -50,8 +50,10 @@ RAIL_ROWS = ROWS.replace("<scope>", 'nav[aria-label="Containers"]').replace("<ke
 PAGER = """
 Array.from(document.querySelectorAll('nav[aria-label="Between units"] a'))
   .filter(a => getComputedStyle(a).display !== 'none')
-  .map(a => [a.getAttribute('rel'), a.lastChild.textContent.trim()])
+  .map(a => [a.getAttribute('rel'), Array.from(a.childNodes).filter(n => n.nodeType === 3)
+    .map(n => n.textContent).join('').trim()])
 """
+# ⚠️ A link's title is its own text, read past its label and (the 2026-11 redesign) its arrow icon.
 TALLY = """
 Array.from(document.querySelectorAll('nav[aria-label="Contents"] summary > small'))
   .map(t => [t.hidden, t.textContent.trim()])

@@ -39,60 +39,8 @@ body > section[data-section="practices-pending"] p {
 
 /* --- the read control ---------------------------------------------------- */
 
-/* ⭐ The reader's own record: a button that looks like one, with the
-   tick box it sets drawn inside it — empty, then solid ink once pressed — and
-   one quiet line about where the mark lives. ⚠️ The region ships `hidden` and
-   `read-mark.js` unhides it only with a working store. The state is told apart
-   by the box and the words, not by colour alone. */
-body > section[data-section="read-mark"] {
-  margin: 2.5rem 0 0;
-  padding-top: .75rem;
-  border-top: 1px solid var(--rule);
-  font-family: var(--font-ui);
-}
-
-body > section[data-section="read-mark"] button {
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-  font: inherit;
-  font-weight: 700;
-  padding: .45rem .9rem;
-  color: var(--fg);
-  background: var(--surface);
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-control);
-  cursor: pointer;
-}
-
-body > section[data-section="read-mark"] button:hover { background: var(--surface-2); }
-
-body > section[data-section="read-mark"] button::before {
-  content: "";
-  display: grid;
-  place-items: center;
-  width: .95rem;
-  height: .95rem;
-  font-size: .7rem;
-  line-height: 1;
-  border: 1.5px solid var(--rule-strong);
-  border-radius: var(--radius-tight);
-}
-
-body > section[data-section="read-mark"][data-marked="true"] button::before {
-  content: "\2713";
-  color: var(--bg);
-  background: var(--done);
-  border-color: var(--done);
-}
-
-body > section[data-section="read-mark"] p {
-  margin: .6rem 0 0;
-  font-size: .9rem;
-  color: var(--muted);
-}
-
-body > section[data-section="read-mark"] p:first-child { margin: 0; }
+/* ⭐ Moved to `onward.css` in the 2026-11 redesign: the read control is the top
+   of the unit's footer card, with the between-units bar under it. */
 
 /* --- the index's plain explanation ------------------------------------- */
 

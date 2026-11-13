@@ -1,0 +1,195 @@
+/* A lesson's practice cards: the Practice (n) list, and a placed practice's card.
+
+   ⛔ NO CLASS but the card's `.eyebrow`, the standing rule for a region the
+   framework emits: the list is reached by `data-practices` and a card by
+   `data-practice-card`, both emitted by `render/page/practices.py` alone; the
+   workspace a card opens is `practice-workspace.css`.
+
+   ⛔ NO COLOUR OF ITS OWN. Every value is a palette token. */
+
+/* --- the list ------------------------------------------------------------- */
+
+/* ⭐ THE 2026-11 REDESIGN: A CARD THAT OPENS A PRACTICE. It stays compact (the
+   user's decision: the practice's material is never inlined into the lesson)
+   and reads like the header of the practice it opens: the kind label (an
+   `.eyebrow`: *Coding practice*, *Concept check*, and the practice's language
+   when it names one), the title, what it practises, its state, and a chevron.
+   ⭐ The WHOLE CARD is the link's hit area — the title link's `::after` is
+   stretched over it — so there is still one link, one name and one tab stop. */
+section[data-practices] ol[data-practices-part="cards"] {
+  display: grid;
+  gap: .85rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+section[data-practices] li[data-practice-card] {
+  position: relative;
+  max-width: none;
+  margin: 0;
+  padding: 1rem 3.25rem 1.05rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  font-family: var(--font-ui);
+  transition: border-color var(--dur-quick) var(--ease);
+}
+
+section[data-practices] li[data-practice-card]:hover { border-color: var(--rule-strong); }
+
+section[data-practices] li[data-practice-card]:has(a[data-practices-part="open"]:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* The kind label, its parts parted by a drawn dot. ⛔ Never a middle-dot
+   character: the dot is a 3px circle. */
+section[data-practices] li[data-practice-card] .eyebrow {
+  margin: 0 0 .3rem;
+  max-width: none;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+section[data-practices] p[data-practices-part="kind"] > span + span { color: var(--muted); }
+
+section[data-practices] p[data-practices-part="kind"] > span + span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 .55rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+section[data-practices] li[data-practice-card] h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  line-height: 1.35;
+}
+
+section[data-practices] a[data-practices-part="open"] {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+/* ⛔ No focus ring of its own: the card draws it (above), around the whole hit area. */
+section[data-practices] a[data-practices-part="open"]:focus-visible { outline: none; }
+
+section[data-practices] a[data-practices-part="open"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+section[data-practices] li[data-practice-card]:hover a[data-practices-part="open"] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+
+/* The open affordance: a chevron at the card's right, which takes the accent
+   when the card is pointed at. */
+section[data-practices] svg[data-practices-part="chevron"] {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  margin-top: -10px;
+  color: var(--muted);
+}
+
+section[data-practices] li[data-practice-card]:hover svg[data-practices-part="chevron"] { color: var(--accent); }
+
+/* What it practises: a short bulleted list under the title. */
+section[data-practices] ul[data-practices-part="concepts"] {
+  margin: .5rem 0 0;
+  padding: 0 0 0 1.1rem;
+  max-width: none;
+  list-style: disc;
+}
+
+section[data-practices] ul[data-practices-part="concepts"] li {
+  margin: .15rem 0 0;
+  padding: 0;
+  max-width: none;
+  font-size: .88rem;
+  line-height: 1.45;
+  color: var(--fg-soft);
+}
+
+section[data-practices] ul[data-practices-part="concepts"] li::marker { color: var(--muted); }
+
+/* ⭐ The state, a small pill: *Not started* with an empty ring, *Passed* with
+   the `--ok` tick. ⛔ A state is told by its WORD first and its icon second,
+   and the colour is only the third signal. */
+section[data-practices] p[data-practices-part="state"] {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin: .65rem 0 0;
+  padding: .12rem .55rem .12rem .45rem;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sign);
+}
+
+section[data-practices] p[data-practices-part="state"][hidden] { display: none; }
+
+section[data-practices] p[data-practices-part="state"]::before {
+  content: "";
+  width: .7rem;
+  height: .7rem;
+  box-sizing: border-box;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+section[data-practices] li[data-practice-state="passed"] p[data-practices-part="state"] {
+  color: var(--ok);
+  background: var(--ok-soft);
+  border-color: var(--ok);
+}
+
+section[data-practices] li[data-practice-state="passed"] p[data-practices-part="state"]::before {
+  width: .9rem;
+  height: .9rem;
+  border: 0;
+  border-radius: 0;
+  background: currentColor;
+  mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPSdjdXJyZW50Q29sb3InIHN0cm9rZS13aWR0aD0nMi4yJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxjaXJjbGUgY3g9JzEyJyBjeT0nMTInIHI9JzkuNScvPjxwYXRoIGQ9J003LjUgMTIuNWwzIDMgNi02LjUnLz48L3N2Zz4=") center / contain no-repeat;
+}
+
+/* ⭐ A practice written in several languages is ONE card: the sentence naming its editions, each
+   marked once it is passed, and a status that says how many are. ⛔ A mark is a word first
+   (*passed*), never colour alone. */
+section[data-practices] p[data-practices-part="editions"] {
+  margin: .45rem 0 0;
+  max-width: none;
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+section[data-practices] [data-edition-mark] { color: var(--done); font-weight: 700; }
+
+section[data-practices] li[data-practice-state="partial"] p[data-practices-part="state"] {
+  color: var(--fg-soft);
+}
+
+@media (max-width: 40rem) {
+  section[data-practices] li[data-practice-card] { padding: .9rem 2.75rem .95rem 1rem; }
+  section[data-practices] svg[data-practices-part="chevron"] { top: 2.1rem; right: .75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section[data-practices] li[data-practice-card] { transition: none; }
+}

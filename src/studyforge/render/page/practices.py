@@ -62,7 +62,7 @@ from collections.abc import Callable
 from studyforge.exercise import Exercise, ExerciseError, from_document
 from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors, editions, placed
+from studyforge.render.page import anchors, editions, mockform, placed, quiz
 from studyforge.render.page import practice as practice_module
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
@@ -94,6 +94,18 @@ CODE_KIND = "code"
 
 #: What separates two cards, and two concepts.
 JOIN = "\n"
+
+#: A card's kind label (its `.eyebrow`, the 2026-11 redesign): what sort of practice it opens.
+#: ⭐ The language a practice is written in follows, by the name the corpus declares for it, and
+#: only when the practice names one: nothing course-specific is ever typed here.
+KIND_TEMPLATE = "practice-kind.html"
+KINDS = {
+    "code": "Coding practice",
+    "quiz": quiz.KIND,
+    "mock": mockform.EXAM_KIND,
+    "review": "Review questions",
+    "deck": "Flashcards",
+}
 
 
 def of(document: dict) -> list[dict]:
@@ -147,6 +159,7 @@ def card(section: dict, document: dict, placement: Placement, unit: object) -> s
         kind=QUIZ_KIND if quiz else CODE_KIND,
         anchor=escape_attribute(anchors.section_anchor(section.get("key"))),
         title=inline(anchors.practice_title(section, unit)),
+        label=kind(exercise, section.get("lang"), placement),
         concepts=_region(concepts(exercise)),
         state=_region(templates.fill(STATE_TEMPLATE) if graded else ""),
         lang=modes.card_attributes(placement.offer, section.get("lang")),
@@ -183,6 +196,7 @@ def _edited_card(entry: editions.Entry, document: dict, placement: Placement, un
         kind=CODE_KIND,
         anchor=escape_attribute(anchors.section_anchor(section.get("key"))),
         title=inline(editions.title(anchors.practice_title(section, unit), entry, offer)),
+        label=kind(exercise, None, placement),
         concepts=_region(concepts(exercise)),
         state=_region(
             templates.fill(STATE_EDITIONS_TEMPLATE, total=str(len(entry.sections)))
@@ -191,6 +205,22 @@ def _edited_card(entry: editions.Entry, document: dict, placement: Placement, un
         ),
         lang=EDITIONS_ATTRIBUTE,
         carriers=_region(templates.fill(EDITIONS_TEMPLATE, items=items)),
+    )
+
+
+def kind(exercise: Exercise | None, lang: object, placement: Placement) -> str:
+    """Return a card's kind label: what sort of practice it is, then any language it names."""
+    if exercise is not None and exercise.is_deck:
+        said = KINDS["deck"]
+    elif exercise is not None and exercise.is_quiz:
+        said = KINDS["review" if exercise.review else "mock" if exercise.mock else "quiz"]
+    else:
+        said = KINDS["code"]
+    parts = [said]
+    if isinstance(lang, str) and lang:
+        parts.append(editions.label(placement.offer, lang))
+    return templates.fill(
+        KIND_TEMPLATE, parts="".join(f"<span>{escape(one)}</span>" for one in parts)
     )
 
 
