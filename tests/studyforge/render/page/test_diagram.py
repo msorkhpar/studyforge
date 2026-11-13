@@ -8,6 +8,7 @@ import re
 import pytest
 
 from studyforge.archive.markdown import parse
+from studyforge.archive.scrub import assert_clean
 from studyforge.render.page import blocks, diagram
 from studyforge.render.page.blocks import figure
 from studyforge.render.pageassets import vendored
@@ -66,7 +67,8 @@ def test_the_files_are_the_three_parts_and_mermaid_is_vendored_with_its_licence(
     assert vendored.is_vendored("mermaid.min.js")
     assert vendored.licence_for("mermaid.min.js") == "mermaid.LICENSE"
     header = files["mermaid.min.js"][:1100]
-    for marker in ("MIT", "VENDORED, UNMODIFIED", "re-vendor", diagram.VERSION):
+    claim = "VENDORED, UNMODIFIED apart from this header and one checked rewrite"
+    for marker in ("MIT", claim, "re-vendor", diagram.VERSION):
         assert marker in header
 
 
@@ -77,6 +79,25 @@ def test_the_bundle_is_mermaid_as_pinned_and_an_edited_one_is_refused():
         diagram.checked(stored.replace("mermaid", "Mermaid", 1).replace("*/\n", "*/\n;", 1))
     with pytest.raises(AssetError, match="no vendoring header"):
         diagram.checked("globalThis.mermaid = {};")
+
+
+def test_the_served_bundle_passes_the_personal_data_gate_the_study_server_runs():
+    # ⛔ The gate is the server's own, unloosened: before the rewrite it refused the bundle and
+    # no diagram drew in a served course.
+    assert_clean(text("mermaid.min.js"), "mermaid.min.js")
+
+
+def test_the_rewrite_is_exactly_invertible_and_a_half_reverted_bundle_is_refused():
+    stored = text("mermaid.min.js")
+    at = stored.find(diagram.HEADER_END) + len(diagram.HEADER_END)
+    served = stored[at:]
+    assert diagram.served_form(diagram.shipped_form(served)) == served
+    assert served.count(diagram.LOCAL_SERVED) > 0
+    with pytest.raises(AssetError, match="served form"):
+        half = served.replace(diagram.LOCAL_SERVED, diagram.LOCAL_SHIPPED, 1)
+        diagram.checked(stored[:at] + half)
+    with pytest.raises(AssetError, match="not invertible"):
+        diagram.served_form('a["local"]')
 
 
 def test_the_authored_pair_names_no_host_draws_no_colour_and_pins_nothing():

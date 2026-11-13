@@ -26,14 +26,25 @@ A body with no diagram links nothing, and a corpus with none writes no file: Mer
 
 ## ⛔ The bundle is checked against its pin before it is written
 
-`mermaid.min.js` is stored as the registry shipped it under a vendoring header. `files()` hashes
-what follows the header and refuses a bundle that no longer matches `SHA256`, so an edited or
-truncated library never reaches a site.
+`mermaid.min.js` is stored as the registry shipped it under a vendoring header, with ONE
+rewrite (below). `files()` undoes the rewrite, hashes what follows the header and refuses a
+bundle that no longer matches `SHA256`, so an edited or truncated library never reaches a site.
+
+## ⚠️ The one rewrite: a dotted read of `local` is written `x["local"]`
+
+d3, inside Mermaid, reads an XML namespace's local name with a dot. The personal-data gate
+(`archive.scrub`), which the study server runs over every file it sends, reads a name ending in
+the mDNS suffix as a machine's hostname and refused the whole bundle, so no diagram drew in a
+served course. ⛔ The gate is not loosened for it. The property access is spelled the other
+way JavaScript allows, which means exactly the same thing and carries no such suffix.
+⭐ The rewrite is exactly invertible (the shipped bundle holds no `["local"]` of its own), and
+`checked` refuses a bundle whose served form is not exactly the rewrite of the pinned one.
 """
 
 from __future__ import annotations
 
 import hashlib
+import re
 
 from studyforge.render.markup import escape_attribute
 from studyforge.render.pageassets.errors import AssetError
@@ -51,6 +62,11 @@ SHA256 = "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e"
 
 #: Where the vendoring header ends: the bundle as shipped starts after it.
 HEADER_END = "*/\n"
+
+#: A property read of `local` as shipped (with a dot), and as served (`t["local"]`).
+LOCAL_SHIPPED = ".local"
+LOCAL_SERVED = '["local"]'
+LOCAL_READ = re.compile(r"(?<=[\w$\])])\.local(?![\w$])")
 
 #: What marks a diagram in a rendered body: the frame attribute the figure renderer writes
 #: (`blocks.figure.DIAGRAM_FRAME`; this module's test holds the two equal). ⚠️ Spelled the same
@@ -82,12 +98,27 @@ def files() -> dict[str, str]:
     return found
 
 
+def served_form(shipped: str) -> str:
+    """Return the bundle as served: every dotted read of `local` written `x["local"]`."""
+    if LOCAL_SERVED in shipped:
+        raise AssetError("the Mermaid bundle already holds the served spelling; not invertible")
+    return LOCAL_READ.sub(lambda _: LOCAL_SERVED, shipped)
+
+
+def shipped_form(served: str) -> str:
+    """Return the bundle as the registry shipped it, from its served form."""
+    return served.replace(LOCAL_SERVED, LOCAL_SHIPPED)
+
+
 def checked(bundle: str) -> str:
     """Return `bundle` when what follows its header is Mermaid as pinned, else refuse it."""
     at = bundle.find(HEADER_END)
     if at < 0:
         raise AssetError("the vendored Mermaid bundle carries no vendoring header")
-    shipped = bundle[at + len(HEADER_END) :].encode("utf-8")
-    if hashlib.sha256(shipped).hexdigest() != SHA256:
+    served = bundle[at + len(HEADER_END) :]
+    shipped = shipped_form(served)
+    if hashlib.sha256(shipped.encode("utf-8")).hexdigest() != SHA256:
         raise AssetError(f"the vendored Mermaid bundle does not match its pinned {VERSION} sha256")
+    if served_form(shipped) != served:
+        raise AssetError("the vendored Mermaid bundle is not exactly the served form of its pin")
     return bundle

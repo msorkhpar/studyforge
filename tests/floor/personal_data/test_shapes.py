@@ -322,13 +322,17 @@ def test_the_mermaid_pin_is_the_builds_own_pin():
     assert VENDORED_ALLOWANCES[MERMAID][3]  # the reason is recorded
 
 
-def test_the_real_mermaid_bundle_passes_over_only_its_allowed_token():
+def test_the_real_mermaid_bundle_needs_no_allowance_at_all():
+    # ⭐ The vendored bundle spells d3's property read the other way JavaScript allows
+    # (`render.page.diagram`), because the study server's own gate refused the shipped form
+    # and no diagram drew in a served course. So the stored file is not the raw pin, the
+    # allowance lapses, and the floor sweeps the bundle in full and finds nothing. The
+    # allowance stays for a bundle vendored as shipped.
     text = (repository_root() / MERMAID).read_text(encoding="utf-8")
     from tests.floor.personal_data.shapes import vendored_allowance
 
-    allowance = vendored_allowance(MERMAID, text)
-    assert allowance is not None and allowance[0] == "local hostname"
-    assert shape_matches(text, allowance) == []
+    assert vendored_allowance(MERMAID, text) is None
+    assert shape_matches(text) == []
 
 
 def test_the_allowance_passes_only_the_token_only_in_the_pinned_file(tmp_path, monkeypatch):

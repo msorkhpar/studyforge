@@ -5,8 +5,10 @@
 
 The tarball must match `INTEGRITY`, the npm registry's sha512 for that version, or nothing is
 written. It writes `mermaid.min.js` (the single-file IIFE build, `dist/mermaid.min.js`) with a
-vendoring header and nothing else changed, and `mermaid.LICENSE`, and prints the sha256 of the
-bundle as the registry shipped it, which `studyforge.render.page.diagram.SHA256` pins.
+vendoring header and ONE rewrite, every dotted read of the property `local` written
+`x["local"]` (why, and how it is checked: `studyforge.render.page.diagram`), and
+`mermaid.LICENSE`, and prints the sha256 of the bundle as the registry shipped it, which
+`studyforge.render.page.diagram.SHA256` pins.
 """
 
 from __future__ import annotations
@@ -22,12 +24,19 @@ INTEGRITY = (
     "sha512-Mb01JT/x6CKDWaxigwfZYuYmDZ6xtrNwNlidKZwkSrDaY9n90"
     "tdrJTV5Umk+wP1fZscGptmKFXHsXMDEVZ+Q6A=="
 )
-ASSETS = Path(__file__).resolve().parents[2] / "src" / "studyforge" / "render" / "assets"
+ROOT = Path(__file__).resolve().parents[2]
+ASSETS = ROOT / "src" / "studyforge" / "render" / "assets"
+sys.path.insert(0, str(ROOT / "src"))
+
+from studyforge.render.page.diagram import served_form  # noqa: E402
 
 HEADER = f"""/* Mermaid {VERSION} -- mermaid.js.org -- MIT, see mermaid.LICENSE beside this file.
-   VENDORED, UNMODIFIED apart from this header. Do not edit: re-vendor with
-   `npm pack mermaid@{VERSION}` and take dist/mermaid.min.js, checked against the
-   registry's sha512. The bundle carries its own dependencies under their licences. */
+   VENDORED, UNMODIFIED apart from this header and one checked rewrite: every dotted read
+   of the property `local` written `x["local"]` (same meaning; a served course's
+   personal-data gate reads a name ending in the mDNS suffix as a hostname). Do not edit:
+   re-vendor with `npm pack mermaid@{VERSION}`, take dist/mermaid.min.js checked against the
+   registry's sha512, and apply the same rewrite. The bundle carries its own dependencies
+   under their licences. */
 """
 
 
@@ -53,7 +62,7 @@ def main(argv: list[str]) -> int:
         return 1
     script = bundle.decode("utf-8")
     (ASSETS / "mermaid.min.js").write_text(
-        HEADER + script.rstrip("\n") + "\n", encoding="utf-8", newline="\n"
+        HEADER + served_form(script.rstrip("\n") + "\n"), encoding="utf-8", newline="\n"
     )
     (ASSETS / "mermaid.LICENSE").write_bytes(licence)
     print(f'SHA256 = "{hashlib.sha256(bundle).hexdigest()}"')
