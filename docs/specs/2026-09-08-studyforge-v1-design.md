@@ -2009,7 +2009,9 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   (`see 3.2.4`) is shown and narrated as that unit's title, and a link to the
   source file a unit was read from (`README_3.2.4.md`) links the unit's page,
   its label shown as the title. A number that names no unit of the corpus is
-  kept. ⭐ **Every other link leads where its author meant.** A relative link
+  kept, and so is one directly after a word that names a version (`version`,
+  `v`, or a product's name with a capital after its first letter, as in
+  `PuLP 3.3.2`). ⭐ **Every other link leads where its author meant.** A relative link
   is read from the unit's `origin`, and a link to a regular file under the
   corpus root is addressed from the page, on every placement profile, when the
   site is written into the corpus root. ⛔ The file is the author's: nothing is
