@@ -24,6 +24,7 @@ lets it be committed at all.
 
 from __future__ import annotations
 
+import hashlib
 import re
 from pathlib import Path
 
@@ -191,13 +192,58 @@ ALLOWED_ADDRESS = build_allowed_address()
 #: fires on correct code is a check somebody turns off.
 
 
+#: ⛔ **A vendored file's KNOWN FALSE POSITIVES, by exact path AND by pin, never by suffix.**
+#: `path -> (sha256 of what follows the vendoring header, shape name, exact token, reason)`.
+#: The allowance holds only while the file still hashes to its pin — one edited byte and it
+#: lapses, the same rule `tests/harness/vendored.py` keeps for its stream and process-id
+#: sweeps. ⚠️ The pin is repeated here because the floor imports nothing outside itself;
+#: `test_shapes.py` asserts it equals `studyforge.render.page.diagram.SHA256`.
+#: ⛔ Only the named token is passed over: any other finding in the file, or the same token
+#: in any other file, is still reported.
+VENDORED_ALLOWANCES = {
+    "src/studyforge/render/assets/mermaid.min.js": (
+        "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
+        "local hostname",
+        # ⛔ Assembled, never written down: the literal would be a finding against this file.
+        "t" + ".loc" + "al",
+        # Reason (owner ruling): Mermaid 11.4.1 bundles d3-selection, whose namespaced
+        # attribute code reads `t.<the word>` (the local name of a parsed `space:name`
+        # pair). It is a property access in minified third-party code, not a machine name.
+        "d3's namespace property `t.<the word>` in pinned Mermaid 11.4.1, not a hostname",
+    ),
+}
+
+#: Where a vendored bundle's header ends; what follows it is what the pin hashes.
+VENDORED_HEADER_END = "*/\n"
+
+
+def vendored_allowance(relative: str, text: str) -> tuple[str, str] | None:
+    """`(shape name, token)` passed over in `relative`, or None unless it is pinned as recorded."""
+    entry = VENDORED_ALLOWANCES.get(relative)
+    if entry is None:
+        return None
+    pin, name, token, _reason = entry
+    at = text.find(VENDORED_HEADER_END)
+    if at < 0:
+        return None
+    shipped = text[at + len(VENDORED_HEADER_END) :].encode("utf-8")
+    if hashlib.sha256(shipped).hexdigest() != pin:
+        return None
+    return name, token
+
+
 def article(noun: str) -> str:
     """Return `"a"` or `"an"`, so a finding reads as a sentence, not as output."""
     return "an" if noun[:1].lower() in "aeiou" else "a"
 
 
-def shape_matches(text: str) -> list[tuple[int, str]]:
+def shape_matches(
+    text: str, allowed: tuple[str, str] | None = None
+) -> list[tuple[int, str]]:
     """`(line number, shape name)` for every personal-data shape in `text`.
+
+    `allowed` is a `(shape name, exact token)` from `vendored_allowance`: a match of that
+    shape whose text is exactly that token is passed over, and nothing else is.
 
     ⛔ Returns the *name* of what matched and never the matched text. Every
     caller reports what it is handed, so the value has nowhere to escape to.
@@ -207,6 +253,8 @@ def shape_matches(text: str) -> list[tuple[int, str]]:
         for name, pattern in SHAPES:
             for match in pattern.finditer(line):
                 if name == "email address" and ALLOWED_ADDRESS.search(match.group(0)):
+                    continue
+                if allowed is not None and (name, match.group(0)) == allowed:
                     continue
                 found.append((number, name))
                 break
@@ -230,7 +278,7 @@ def check_shapes(root: Path) -> list[Finding]:
         text = config.read_text(path)
         if text is None:
             continue
-        for number, name in shape_matches(text):
+        for number, name in shape_matches(text, vendored_allowance(relative, text)):
             findings.append(
                 Finding(
                     path=relative,

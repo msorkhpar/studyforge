@@ -292,3 +292,70 @@ def test_a_kotlin_label_is_not_an_email_address(text):
 @pytest.mark.parametrize("local", ["this.person", "thisx", "contact.person"])
 def test_a_label_lookalike_local_part_is_still_an_address(local):
     assert shape_matches("write to " + local + "@" + "mailhost.org") == [(1, "email address")]
+
+
+# --- the vendored allowance ------------------------------------------------
+
+MERMAID = "src/studyforge/render/assets/mermaid.min.js"
+LOCAL_TOKEN = "t" + ".loc" + "al"
+
+
+def _pinned_bundle(body: str):
+    """A header plus `body`, with the Mermaid allowance re-pinned to that body."""
+    import hashlib
+
+    from tests.floor.personal_data import shapes
+
+    header = "/* vendored */\n"
+    pin = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    entry = shapes.VENDORED_ALLOWANCES[MERMAID]
+    return header + body, {MERMAID: (pin, *entry[1:])}
+
+
+def test_the_mermaid_pin_is_the_builds_own_pin():
+    from studyforge.render.page import diagram
+    from tests.floor.personal_data.shapes import VENDORED_ALLOWANCES, VENDORED_HEADER_END
+
+    assert VENDORED_ALLOWANCES[MERMAID][0] == diagram.SHA256
+    assert VENDORED_HEADER_END == diagram.HEADER_END
+    assert VENDORED_ALLOWANCES[MERMAID][2] == LOCAL_TOKEN
+    assert VENDORED_ALLOWANCES[MERMAID][3]  # the reason is recorded
+
+
+def test_the_real_mermaid_bundle_passes_over_only_its_allowed_token():
+    text = (repository_root() / MERMAID).read_text(encoding="utf-8")
+    from tests.floor.personal_data.shapes import vendored_allowance
+
+    assert vendored_allowance(MERMAID, text) == ("local hostname", LOCAL_TOKEN)
+
+
+def test_the_allowance_passes_only_the_token_only_in_the_pinned_file(tmp_path, monkeypatch):
+    from tests.floor.personal_data import shapes
+
+    body = "a.setAttributeNS(t.space," + LOCAL_TOKEN + ")\n"
+    text, allowances = _pinned_bundle(body)
+    monkeypatch.setattr(shapes, "VENDORED_ALLOWANCES", allowances)
+
+    # Pinned, and only the allowed token: nothing reported.
+    write(tmp_path, MERMAID, text)
+    assert check_shapes(tmp_path) == []
+
+    # The same token anywhere else is still a finding.
+    write(tmp_path, "src/studyforge/render/assets/other.min.js", text)
+    assert [f.path for f in check_shapes(tmp_path)] == [
+        "src/studyforge/render/assets/other.min.js"
+    ]
+    (tmp_path / "src/studyforge/render/assets/other.min.js").unlink()
+
+    # Any other finding in the pinned file still fails: re-pin a body that adds one.
+    for extra in (HOSTNAME, "x = r" + ".loc" + "al", ADDRESS, HOME_SHAPE):
+        text, allowances = _pinned_bundle(body + extra + "\n")
+        monkeypatch.setattr(shapes, "VENDORED_ALLOWANCES", allowances)
+        write(tmp_path, MERMAID, text)
+        assert [(f.path, f.line) for f in check_shapes(tmp_path)] == [(MERMAID, 3)], extra
+
+    # One edited byte and the allowance lapses, so the token is reported again.
+    text, allowances = _pinned_bundle(body)
+    monkeypatch.setattr(shapes, "VENDORED_ALLOWANCES", allowances)
+    write(tmp_path, MERMAID, text + " ")
+    assert [(f.path, f.line) for f in check_shapes(tmp_path)] == [(MERMAID, 2)]
