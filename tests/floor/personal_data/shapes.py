@@ -193,23 +193,25 @@ ALLOWED_ADDRESS = build_allowed_address()
 
 
 #: ⛔ **A vendored file's KNOWN FALSE POSITIVES, by exact path AND by pin, never by suffix.**
-#: `path -> (sha256 of what follows the vendoring header, shape name, exact token, reason)`.
+#: `path -> (sha256 of what follows the vendoring header, shape name, token pattern, reason)`.
 #: The allowance holds only while the file still hashes to its pin — one edited byte and it
 #: lapses, the same rule `tests/harness/vendored.py` keeps for its stream and process-id
 #: sweeps. ⚠️ The pin is repeated here because the floor imports nothing outside itself;
 #: `test_shapes.py` asserts it equals `studyforge.render.page.diagram.SHA256`.
-#: ⛔ Only the named token is passed over: any other finding in the file, or the same token
-#: in any other file, is still reported.
+#: ⛔ Only a match the pattern FULLY matches is passed over: any other shape in the file, any
+#: longer name, or the same token in any other file, is still reported.
 VENDORED_ALLOWANCES = {
     "src/studyforge/render/assets/mermaid.min.js": (
         "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
         "local hostname",
         # ⛔ Assembled, never written down: the literal would be a finding against this file.
-        "t" + ".loc" + "al",
+        re.compile(r"[a-z]\.loc" + "al"),
         # Reason (owner ruling): Mermaid 11.4.1 bundles d3-selection, whose namespaced
-        # attribute code reads `t.<the word>` (the local name of a parsed `space:name`
-        # pair). It is a property access in minified third-party code, not a machine name.
-        "d3's namespace property `t.<the word>` in pinned Mermaid 11.4.1, not a hostname",
+        # attribute code reads `<id>.<the word>` (the local name of a parsed `space:name`
+        # pair) through single-letter minified identifiers (e, i, n, r, t, ...). It is a
+        # property access in minified third-party code, not a machine name.
+        "d3's minified namespace property `<one letter>.<the word>` in pinned Mermaid "
+        "11.4.1, not a hostname",
     ),
 }
 
@@ -217,8 +219,10 @@ VENDORED_ALLOWANCES = {
 VENDORED_HEADER_END = "*/\n"
 
 
-def vendored_allowance(relative: str, text: str) -> tuple[str, str] | None:
-    """`(shape name, token)` passed over in `relative`, or None unless it is pinned as recorded."""
+def vendored_allowance(
+    relative: str, text: str
+) -> tuple[str, re.Pattern[str]] | None:
+    """`(shape name, token pattern)` passed over in `relative`, or None unless pinned."""
     entry = VENDORED_ALLOWANCES.get(relative)
     if entry is None:
         return None
@@ -238,12 +242,12 @@ def article(noun: str) -> str:
 
 
 def shape_matches(
-    text: str, allowed: tuple[str, str] | None = None
+    text: str, allowed: tuple[str, re.Pattern[str]] | None = None
 ) -> list[tuple[int, str]]:
     """`(line number, shape name)` for every personal-data shape in `text`.
 
-    `allowed` is a `(shape name, exact token)` from `vendored_allowance`: a match of that
-    shape whose text is exactly that token is passed over, and nothing else is.
+    `allowed` is a `(shape name, token pattern)` from `vendored_allowance`: a match of
+    that shape whose text the pattern fully matches is passed over, and nothing else is.
 
     ⛔ Returns the *name* of what matched and never the matched text. Every
     caller reports what it is handed, so the value has nowhere to escape to.
@@ -254,7 +258,11 @@ def shape_matches(
             for match in pattern.finditer(line):
                 if name == "email address" and ALLOWED_ADDRESS.search(match.group(0)):
                     continue
-                if allowed is not None and (name, match.group(0)) == allowed:
+                if (
+                    allowed is not None
+                    and name == allowed[0]
+                    and allowed[1].fullmatch(match.group(0))
+                ):
                     continue
                 found.append((number, name))
                 break
