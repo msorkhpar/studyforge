@@ -208,8 +208,25 @@ transcribes them. In a real course, readers named exactly this as the problem.
   options and names any wording cue. Rewrite and run a new reader until every question comes back
   `null`. In the pilot, the first version gave away all four answers, and it took five rounds to
   get to none.
+- ⛔ **Give the page-free reader `Q2_PROMPT` word for word, and anonymised keys.** Number the
+  questions and options (`q1`, `a`, `b`) for the reader and map them back yourself: an id such as
+  `q-refuse` names the answer, and a reader that reads it has judged the id, not the wording.
 - **Run the page reader after the last wording change.** It checks that the page decides each
   answer and refutes each wrong option. It also finds options that are partly true.
+- ⚠️ **A wrong option is refuted only where the page contradicts it outright**, and the reader
+  quotes the sentence that does. A reader that marks an option unrefuted without a quote has made
+  a weak read: re-read that one question with a fresh one-question reader before you edit the
+  page.
+
+#### ⛔ A project practice grows one snapshot at a time
+
+A course that grows one project keeps a complete snapshot per lesson (*A project practice* in
+`docs/authoring/exercises.md`). Lesson `NN`'s practice takes **snapshot `NN-1` as the starter
+and snapshot `NN` as the reference**. The grade is `NN`'s tests plus an expected-output check
+that runs `main.py` and compares its report with the reference's: keep `main.py` fast (seconds)
+and seeded, so the report is the same on every run. ⛔ **A plant must not change that report**:
+`G3` needs each plant to pass every main case, the check included, so an edge is tested with a
+fixture under `tests/`, never through the data `main.py` reads.
 
 #### ⛔ Write a draft the gates can prove
 
