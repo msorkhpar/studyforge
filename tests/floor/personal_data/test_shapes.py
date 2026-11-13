@@ -16,6 +16,8 @@ import pytest
 
 import tests.floor.reserved_addresses as reserved
 from tests.floor import config
+
+REPO = Path(__file__).resolve().parents[3]
 from tests.floor.personal_data.shapes import (
     ALLOWED_ADDRESS,
     SHAPES,
@@ -313,11 +315,13 @@ def _pinned_bundle(body: str):
 
 
 def test_the_mermaid_pin_is_the_builds_own_pin():
-    from studyforge.render.page import diagram
+    # The pin is read from the build's own source text, not imported: the floor stands apart from
+    # the package, and render.page keeps diagram off its public surface.
     from tests.floor.personal_data.shapes import VENDORED_ALLOWANCES, VENDORED_HEADER_END
 
-    assert VENDORED_ALLOWANCES[MERMAID][0] == diagram.SHA256
-    assert VENDORED_HEADER_END == diagram.HEADER_END
+    source = (REPO / "src" / "studyforge" / "render" / "page" / "diagram.py").read_text(encoding="utf-8")
+    assert f'SHA256 = "{VENDORED_ALLOWANCES[MERMAID][0]}"' in source
+    assert 'HEADER_END = "' + VENDORED_HEADER_END.replace("\n", "\\n") + '"' in source
     assert VENDORED_ALLOWANCES[MERMAID][2].fullmatch(LOCAL_TOKEN)
     assert VENDORED_ALLOWANCES[MERMAID][3]  # the reason is recorded
 

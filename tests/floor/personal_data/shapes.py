@@ -206,7 +206,7 @@ VENDORED_ALLOWANCES = {
         "local hostname",
         # ⛔ Assembled, never written down: the literal would be a finding against this file.
         re.compile(r"[a-z]\.loc" + "al"),
-        # Reason (owner ruling): Mermaid 11.4.1 bundles d3-selection, whose namespaced
+        # Reason (allowed on purpose): Mermaid 11.4.1 bundles d3-selection, whose namespaced
         # attribute code reads `<id>.<the word>` (the local name of a parsed `space:name`
         # pair) through single-letter minified identifiers (e, i, n, r, t, ...). It is a
         # property access in minified third-party code, not a machine name.
