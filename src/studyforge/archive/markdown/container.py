@@ -35,6 +35,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from studyforge.archive.callouts import marked
 from studyforge.archive.markdown import patterns
 from studyforge.archive.markdown.errors import MarkdownError
 from studyforge.archive.markdown.leaf import read_code
@@ -46,7 +47,8 @@ def read_quote(lines: list[str], start: int, lang_default: str, parse: Parse):
     """Return `(block, next_index)` for the block quote opening at `start`.
 
     The markers come off and the content goes back through `parse`, so a quote
-    holds whatever any other place holds — a list, a fence, a table.
+    holds whatever any other place holds — a list, a fence, a table. A first line
+    that is a GitHub alert (`[!WARNING]`) becomes the quote's `kind`.
     """
     index = start
     inner: list[str] = []
@@ -56,8 +58,14 @@ def read_quote(lines: list[str], start: int, lang_default: str, parse: Parse):
             break
         inner.append(match.group(1) or "")
         index += 1
+    # ⭐ A GitHub alert's `[!NOTE]` line marks the quote's kind and is not its text
+    # (`archive.callouts`); an unmarked quote is read exactly as before.
+    kind, inner = marked(inner)
     blocks = parse("\n".join(inner), lang_default=lang_default)
-    return {"type": "quote", "blocks": blocks}, index
+    block = {"type": "quote", "blocks": blocks}
+    if kind:
+        block["kind"] = kind
+    return block, index
 
 
 def find_close(lines: list[str], start: int) -> int | None:

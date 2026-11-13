@@ -92,7 +92,8 @@ BLOCKS = (
     BlockType("image", "images", ("type", "src", "alt", "width")),
     BlockType("video", "videos", ("type", "src", "title")),
     BlockType("rule", "rules", ("type",)),
-    BlockType("quote", "quotes", ("type", "blocks"), holds_blocks=True),
+    # ⭐ `kind` (the 2026-11 redesign): a `> [!NOTE]` quote's word, from `archive.callouts`.
+    BlockType("quote", "quotes", ("type", "blocks"), holds_blocks=True, optional=("kind",)),
     BlockType("html", "html", ("type", "text")),
     BlockType(
         "disclosure",

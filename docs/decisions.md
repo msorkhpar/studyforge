@@ -1633,3 +1633,19 @@ What it reads, and the choices in it:
 **Why.** A course that grows a project one requirement per lesson needs the reader to see and change the whole package while being graded only by tests, and a step's starter is the previous step's finished code, so most of its tests already pass on it: without a kept kind, `G2` would refuse every step, and dropping those tests would stop the grade from catching a regression. Making the expected-output check a test keeps one grader, one report and one Submit; making the explorer the tablist keeps the editor's one frame and its lock, and the lockdown extension that closes the editor's own explorer stays as it is. Reading the role of each file off its path, and deriving every unchanged test as kept, keeps a lesson's manifest to what only its author knows.
 
 **Serves.** `R1`, `R5`, `R8`, `R12`
+
+### A page draws diagrams with vendored Mermaid, only where a lesson carries one, themed from the palette
+
+**Decision.** A diagram is a fenced block whose language is mermaid (GitHub's syntax), kept as any fence is, and the figure renderer frames it as `data-frame="diagram"`. `render.page.diagram.links` adds three tags to a body that carries that frame: Mermaid 11.4.1's single-file build, vendored under `mermaid.LICENSE` by `tools/vendor/mermaid.py` (which checks the npm registry's sha512 and changes nothing but the header), and this framework's `diagram.css` and `diagram.js`. `diagram.js` initialises Mermaid with `startOnLoad: false` and `securityLevel: 'strict'`, reads the palette's tokens with `getComputedStyle` and hands them to the `base` theme, draws each figure into a box inside it, hides the source it keeps, and draws again when `data-theme` or the system scheme changes. `render.page.diagram.files` refuses a bundle whose body no longer matches its pinned sha256. `generate.site` writes the three files only when `generate.diagrampages.wanted` finds a mermaid block in some lesson, at any depth.
+
+**Why.** Diagrams written as text in a code box are the part of a protocol lesson a reader most needs to see; drawing in the browser keeps the build pure Python, the bundle beside the page keeps a page opened from a file working with no request (R8), and reading the tokens keeps both themes native without a colour outside the palette. Mermaid is about 2.5 MB, which no corpus and no page without a diagram should carry.
+
+**Serves.** `R8`, `R10`, `R13`
+
+### A quote marked with a GitHub alert is a callout, and a unit's opening paragraph is its lead
+
+**Decision.** A quote whose first line is `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` or `[!SCENARIO]` records the word as the quote's optional `kind` (`archive.callouts`) and loses the marker line; the page renders it as `blockquote[data-callout]` under an `.eyebrow` label carrying an icon and the word (`templates/callout.html`). A unit page whose lesson opens, under its title, on a paragraph marks that paragraph `data-lead` (`render.page.section`), and `callouts.css` stands it on a card.
+
+**Why.** Every archive without a marker is byte-identical and every speech unit is unchanged, so no corpus re-gates or re-records for a feature it does not use; a marked quote loses only a label nobody was meant to hear. The kind is said by a word and a shape, never by colour alone. The lead is the paragraph every unit already opens on, so it needs no new block and no new prose.
+
+**Serves.** `R10`, `R13`

@@ -1,0 +1,67 @@
+/* Callouts and the lesson's lead: two cards a lesson's prose stands on (the 2026-11 redesign).
+
+   ⭐ A CALLOUT is a quote the author marked with a GitHub alert, `> [!WARNING]`
+   (`archive.callouts`, `page.blocks.prose`): `blockquote[data-callout]`, the same card every
+   quote stands on (`reading.css`), under a small label — an icon and the kind's word. ⛔ The
+   kind never rests on colour alone: the word and the icon's shape say it in every theme.
+   ⛔ A hairline and a subtle tint, NEVER a coloured stripe down one side.
+   - note and tip stay on the neutral card: they are asides, not alarms.
+   - important takes the accent on its label and a hint of it in its hairline. ⛔ Never the
+     accent as a ground under running text (`palette.css`).
+   - warning and caution take the status tint, `--warn-soft`, and `--warn` on the label.
+   - scenario is the situation a unit opens on, labelled because the author asked for it.
+
+   ⭐ The LEAD is the paragraph right under a unit's title (`p[data-lead]`, `page.section`):
+   the same card as a scenario, with no label. Its words and its clip are the paragraph's own. */
+
+blockquote[data-callout] > .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 0 0 .4rem;
+  font-family: var(--font-ui);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+blockquote[data-callout] > .eyebrow svg { flex: 0 0 auto; }
+
+blockquote[data-callout="important"] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--rule));
+}
+blockquote[data-callout="important"] > .eyebrow,
+blockquote[data-callout="scenario"] > .eyebrow { color: var(--accent); }
+
+blockquote[data-callout="warning"],
+blockquote[data-callout="caution"] {
+  background: var(--warn-soft);
+  border-color: color-mix(in srgb, var(--warn) 35%, var(--rule));
+}
+blockquote[data-callout="warning"] > .eyebrow,
+blockquote[data-callout="caution"] > .eyebrow { color: var(--warn); }
+
+/* ⭐ The opening cards read as the lesson's own text, in its own ink, a little larger than a
+   note's aside. */
+blockquote[data-callout="scenario"],
+p[data-lead] {
+  color: var(--fg);
+  font-size: 1.04em;
+}
+blockquote[data-callout="scenario"] { padding: 1.05rem 1.35rem 1.15rem; }
+
+p[data-lead] {
+  margin: 1.4rem 0 2rem;
+  padding: 1.05rem 1.35rem 1.15rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 40rem) {
+  blockquote[data-callout="scenario"],
+  p[data-lead] { padding: .9rem 1rem 1rem; font-size: 1em; }
+}

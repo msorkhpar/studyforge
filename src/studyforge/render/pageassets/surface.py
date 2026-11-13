@@ -108,6 +108,7 @@ _FORM_OF = {
     "numbering": KIND_FORM,
     "level": KIND_FORM,
     "read_state": KIND_FORM,
+    "eyebrow": CLASS_FORM,
 }
 
 #: Wrappers, controls and states the surface styles that are not block types.
@@ -154,6 +155,10 @@ _FORM_OF = {
 #: one template, and `progress-view.js` shows it on the rows the store holds —
 #: so a built page stays byte-identical whoever opens it (R10). `chrome.css`
 #: keeps it off the screen: the tick is the visual mark, the words are not.
+#:
+#: ⭐ **`eyebrow` is a card's small kind label** (the 2026-11 redesign): a callout's
+#: "Warning", drawn in small capitals. ⛔ The one class `text-transform: uppercase` may
+#: be written on (`test_identity`), so capitals stay a label's and never a heading's.
 SURFACE_HOOKS = {
     "table_scroll": "scroll",
     "copy_button": "copy",
@@ -165,6 +170,7 @@ SURFACE_HOOKS = {
     "numbering": "numbering",
     "level": "level",
     "read_state": "read-state",
+    "eyebrow": "eyebrow",
 }
 
 #: `hook -> the class its element carries`, for the hooks that are classes.

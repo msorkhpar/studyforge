@@ -155,3 +155,42 @@ def test_not_one_class_name_is_typed_in_this_module():
     ]
     typed = [value for value in literals if re.search(r'class="[a-z]', value)]
     assert typed == [], f"a class name is typed here rather than published: {typed}"
+
+
+# --- a quote marked with a kind is a callout ----------------------------------------------------
+
+
+def _quote(markdown: str) -> str:
+    from studyforge.archive.markdown import parse
+    from studyforge.render.page import blocks as dispatcher
+
+    (block,) = parse(markdown)
+    return dispatcher.render_one(block, 0, section="prose")
+
+
+@pytest.mark.parametrize(
+    ("kind", "word"),
+    [("NOTE", "Note"), ("TIP", "Tip"), ("IMPORTANT", "Important"), ("WARNING", "Warning"),
+     ("CAUTION", "Caution"), ("SCENARIO", "Scenario")],
+)
+def test_a_marked_quote_is_a_callout_labelled_with_an_icon_and_its_word(kind, word):
+    page = _quote(f"> [!{kind}]\n> Mind the *gap*.\n")
+    assert page.startswith(f'<blockquote data-callout="{kind.lower()}"><p class="eyebrow"><svg ')
+    assert f'aria-hidden="true" focusable="false"><path d="' in page
+    assert f"</svg>{word}</p><p>Mind the <em>gap</em>.</p></blockquote>" in page
+    assert "[!" not in page
+
+
+def test_every_quote_kind_has_a_label_and_an_icon_of_its_own():
+    from studyforge.archive.callouts import QUOTE_KINDS
+    from studyforge.render.page.blocks.prose import CALLOUTS
+
+    assert tuple(CALLOUTS) == QUOTE_KINDS
+    icons = [icon for _word, icon in CALLOUTS.values()]
+    assert len(set(icons)) == len(icons)
+
+
+def test_a_plain_quote_and_a_bold_lead_quote_stay_plain_blockquotes():
+    assert _quote("> A plain note.\n") == "<blockquote><p>A plain note.</p></blockquote>"
+    lead = _quote("> **In jPOS 3.** The packager moved.\n")
+    assert lead.startswith("<blockquote><p><strong>In jPOS 3.</strong>")

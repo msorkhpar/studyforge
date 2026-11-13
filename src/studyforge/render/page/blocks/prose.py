@@ -37,6 +37,7 @@ that names `quote` itself is the next `disclosure` waiting to be forgotten.*
 from __future__ import annotations
 
 from studyforge.archive.blocks import BLOCK_TYPES, item_parts, list_start
+from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page.anchors import block_anchor, heading_level
 from studyforge.render.page.blocks import figure
@@ -176,9 +177,57 @@ def _quote(block, position, section, children, path, narration) -> str:
     ⛔ **The quote itself is never narrated** — `SPEECH_OF` calls it `recurse`,
     so the clips belong to the blocks inside it, which the dispatcher has already
     rendered against this block's own path.
+
+    ⭐ **A quote the archive marked with a kind is a callout** (`> [!WARNING]`,
+    `archive.callouts`): the same container under a small label, an icon and the
+    kind's word, so the kind never rests on colour alone. ⛔ The label carries no
+    audio attribute: narration speaks the quote's blocks, never its label.
     """
-    del block, position, section, path, narration
-    return f"<blockquote>{children}</blockquote>"
+    del position, section, path, narration
+    kind = block.get("kind")
+    # ⚠️ A kind this page has no label for (a hand-written archive) is drawn as a plain quote:
+    # its words are kept and nothing is invented for it.
+    if kind not in CALLOUTS:
+        return f"<blockquote>{children}</blockquote>"
+    label, icon = CALLOUTS[kind]
+    return templates.fill(
+        "callout.html",
+        kind=escape_attribute(kind),
+        eyebrow=escape_attribute(SURFACE_HOOKS["eyebrow"]),
+        icon=icon,
+        label=escape(label),
+        children=children,
+    )
+
+
+#: `quote kind -> (the word its label says, its icon's path)`, one per `QUOTE_KINDS`.
+#: ⭐ Each kind has a shape of its own, so the label reads without colour: a circled
+#: `i`, a bulb, a speech mark, a triangle, an octagon, a flag. ⚠️ A space after each
+#: command letter, as `page.html` writes its icons: `M10` reads as a milestone to the
+#: roadmap sweep (`tests/test_no_roadmap.py`).
+CALLOUTS = {
+    "note": ("Note", "M 12 22a 10 10 0 1 1 0-20 10 10 0 0 1 0 20z M 12 16v -4 M 12 8h .01"),
+    "tip": (
+        "Tip",
+        "M 9 18h 6 M 10 22h 4 M 15.09 14c .18-.98.65-1.74 1.41-2.5"
+        "A 4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c 0 1 .23 2.23 1.5 3.5A 4.61 4.61 0 0 1 8.91 14",
+    ),
+    "important": (
+        "Important",
+        "M 21 15a 2 2 0 0 1-2 2H 7l -4 4V 5a 2 2 0 0 1 2-2h 14a 2 2 0 0 1 2 2z"
+        " M 12 7v 4 M 12 14h .01",
+    ),
+    "warning": (
+        "Warning",
+        "M 10.29 3.86 1.82 18a 2 2 0 0 0 1.71 3h 16.94a 2 2 0 0 0 1.71-3"
+        "L 13.71 3.86a 2 2 0 0 0-3.42 0z M 12 9v 4 M 12 17h .01",
+    ),
+    "caution": (
+        "Caution",
+        "M 7.86 2h 8.28L 22 7.86v 8.28L 16.14 22H 7.86L 2 16.14V 7.86z M 12 8v 4 M 12 16h .01",
+    ),
+    "scenario": ("Scenario", "M 4 22V 4 M 4 4h 13l -2.5 4 2.5 4H 4"),
+}
 
 
 def _disclosure(block, position, section, children, path, narration) -> str:
