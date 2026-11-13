@@ -56,6 +56,9 @@ nav[aria-label="Outline"] a:hover { color: var(--fg); }
 nav[aria-label="Outline"] a[aria-current] { color: var(--accent); font-weight: 600; border-left-color: var(--accent); }
 nav[aria-label="Outline"] li[data-level="2"] { padding-left: .9rem; }
 nav[aria-label="Outline"] li[data-level="3"] { padding-left: 1.8rem; font-size: .95em; }
+/* ⭐ An outline whose shallowest entries are level 3 (a unit with no level-2
+   headings) starts them flush: the indent says "nested", and nothing is above them. */
+nav[aria-label="Outline"] ol:not(:has(li[data-level="2"])) li[data-level="3"] { padding-left: 0; font-size: inherit; }
 
 /* --- the two lists that ARE their pages ---------------------------------- */
 

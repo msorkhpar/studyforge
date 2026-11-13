@@ -169,7 +169,9 @@ _CODE_ATOM = r"`[^`\n]+`"
 _INLINE = re.compile(
     r"\\([`*_\[\]\\])"  # 1    \` an escaped marker character, shown literally
     r"|`([^`]+)`"  # 2    `code`
-    r"|\[([^\]\n]+)\]\(([^)\s]*)\)"  # 3,4  [label](href)
+    # 3,4  [label](href). ⭐ The label may hold ONE level of balanced brackets, as a
+    # title with `x[i,t]` in it does; ⛔ two levels stay text (tested).
+    r"|\[((?:[^\[\]\n]|\[[^\[\]\n]*\])+)\]\(([^)\s]*)\)"
     # 5  **strong**
     r"|\*\*(?=[^\s*])((?:" + _CODE_ATOM + r"|\*[^\s*][^*\n]*\*|[^*\n])*?)(?<![\s*])\*\*"
     # 6  *em*

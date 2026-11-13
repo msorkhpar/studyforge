@@ -428,3 +428,9 @@ body > header ul[data-section="unit-meta"] li + li::before {
   background: currentColor;
   opacity: .6;
 }
+/* ⚠️ Where the line wraps (a phone), a drawn dot would open the second line, so
+   the parts are told apart by the gap alone. */
+@media (max-width: 40rem) {
+  body > header ul[data-section="unit-meta"] { gap: .25rem 1.1rem; }
+  body > header ul[data-section="unit-meta"] li + li::before { display: none; }
+}
