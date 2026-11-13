@@ -234,6 +234,19 @@ at. **At least one case is `main`, the ids are distinct, and every case is
 backed by a test** — what the reader is shown is *main ask* plus *edge cases
 n/m*, so a map that names no ask describes a run nothing reports.
 
+**A case may skip only where it says so.** An `edge` or `kept` case whose test
+runs only where a capability is present (a GPU) carries a fourth field,
+`"skips_without": "gpu"`, a lowercase token. When the report marks that case
+skipped and nothing else, it is left out of *edge cases n/m* and of the kept
+count, and the rest carry the grade; the test itself skips only when the
+capability is absent (`pytest.mark.skipif(not gpu_available(), reason=...)`).
+**Without the field a skipped case did not pass**, as before, and the `main`
+case may never carry it. The gates say how many cases were skipped: `G1`, `G2`
+and `G4` leave them out, and `G3`, which cannot prove an edge whose test did
+not run, says which and refuses when every edge was skipped. Run the gates where
+the capability is present to prove every case. ⚠️ The run panel still counts a
+skipped case as failed until its page script draws a third verdict.
+
 **`origin` is the material the exercise was built from** — a path inside your
 source, or a region of one written `{"path": …, "section": …}`, where `section`
 is the exact text of a heading. **It is a fact about the material and not about

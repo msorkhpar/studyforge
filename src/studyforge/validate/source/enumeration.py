@@ -43,6 +43,17 @@ to exist. A placed path doesn't. ⛔ A planned path the manifest includes as
 material is `contested`, never resolved by precedence. A plan that refused
 recognises nothing, and the report says so.
 
+## ⛔ An ignored directory is pruned as the walk reaches it, and the answer does not move
+
+⚠️ **Walking everything and only then asking git is the slow half**: a
+virtualenv or a worktree under an ignored folder is gigabytes thrown away. ⭐
+So git is asked once, before the walk, which directories it holds wholly
+ignored and untracked (`_ignored_directories`), and the walk never enters
+them. ⛔ **A scan returns exactly what the full walk returns**: each file under
+such a directory is one `repository_ignores` drops, a directory holding a
+planned path is still walked, and when git cannot judge the files the scan
+walks everything again.
+
 ⛔ **A root that is not a git working tree gets the old walk and an
 `Unchecked`** (`ignore-declaration`), never a guess. Same rule as the absent
 source tree in `completeness`, for the same reason: a half-applied ignore rule
@@ -51,6 +62,7 @@ is a half-present input, and the dangerous half is the one that looks clean.
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -120,27 +132,54 @@ def source_files(root: Path) -> Scan:
     (R2: an archive is a shippable artifact on its own), and quietly scanning
     everything is worse than either, because it looks like a clean run.
     """
-    walked, stores = _walk(root)
-    recognised = _generated_output(root, walked)
+    planned = _planned(root)
+    pruned = _ignored_directories(root, planned)
+    scan = _scan(root, planned, pruned)
+    if pruned and not scan.consulted:
+        # ⛔ The fallback lists everything, so nothing may have been pruned.
+        return _scan(root, planned, frozenset())
+    return scan
+
+
+def _scan(root: Path, planned: _Planned | None, pruned: frozenset[Path]) -> Scan:
+    """`source_files`' answer for one walk that never enters `pruned`."""
+    walked, stores = _walk(root, pruned)
+    recognised = _generated_output(planned, walked)
     generated = tuple(path for path in walked if recognised and path in recognised)
     candidates = [path for path in walked if not recognised or path not in recognised]
     declared = repository_ignores(root, candidates + stores)
-    planned = recognised is not None
     if declared is None:
         return Scan(
             tuple(candidates),
             consulted=False,
             generated=generated,
-            planned=planned,
+            planned=planned is not None,
             stores=tuple(stores),
         )
     files = tuple(path for path in candidates if path not in declared)
     refused = tuple(store for store in stores if store not in declared)
-    return Scan(files, consulted=True, generated=generated, planned=planned, stores=refused)
+    return Scan(
+        files, consulted=True, generated=generated, planned=planned is not None, stores=refused
+    )
 
 
-def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
-    """Which of `candidates` a build of this corpus writes, by the plan's own enumeration.
+@dataclass(frozen=True, slots=True)
+class _Planned:
+    """What a build of this corpus writes: exact files, and directories it fills."""
+
+    files: frozenset[Path]
+    directories: tuple[Path, ...]
+
+    def touches(self, directory: Path) -> bool:
+        """Whether anything planned lies under `directory`, or `directory` under a planned one."""
+        return any(path.is_relative_to(directory) for path in self.files) or any(
+            planned.is_relative_to(directory) or directory.is_relative_to(planned)
+            for planned in self.directories
+        )
+
+
+def _planned(root: Path) -> _Planned | None:
+    """The plan's own enumeration of what a build writes, or `None` when the plan refused.
 
     ⛔ **The plan's answer, never a list here**. A plan line
     ending in `/` is a directory whose contents a build or `narrate` fill, and
@@ -148,9 +187,6 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
     `generate.footprint` reads the same way. ⚠️ Unlike a footprint, a unit's
     audio directory IS a prefix here: narrate's clips are generated media
     whoever wrote them.
-
-    ⛔ **`None` when the plan refused.** An incomplete enumeration recognises
-    nothing, and the caller says so.
 
     ⚠️ **The import is deferred, for `generate.footprint`'s reason:** `cli`
     imports the dispatcher, which imports this package.
@@ -160,40 +196,111 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
     plan = plan_for(root)
     if plan.refusals:
         return None
-    files = {root / path for path in plan.paths if not path.endswith("/")}
-    directories = [root / path.rstrip("/") for path in plan.paths if path.endswith("/")]
-    return frozenset(
-        path
-        for path in candidates
-        if path in files or any(path.is_relative_to(directory) for directory in directories)
+    return _Planned(
+        files=frozenset(root / path for path in plan.paths if not path.endswith("/")),
+        directories=tuple(root / path.rstrip("/") for path in plan.paths if path.endswith("/")),
     )
 
 
-def _walk(root: Path) -> tuple[list[Path], list[Path]]:
+def _generated_output(planned: _Planned | None, candidates: list[Path]) -> frozenset[Path] | None:
+    """Which of `candidates` a build of this corpus writes, by the plan's own enumeration.
+
+    ⛔ **`None` when the plan refused.** An incomplete enumeration recognises
+    nothing, and the caller says so.
+    """
+    if planned is None:
+        return None
+    # ⚠️ A set of directories asked once per ancestor, never every directory per file:
+    # a course plans hundreds of directories and holds thousands of files.
+    directories = frozenset(planned.directories)
+    return frozenset(
+        path
+        for path in candidates
+        if path in planned.files
+        or path in directories
+        or not directories.isdisjoint(path.parents)
+    )
+
+
+def _ignored_directories(root: Path, planned: _Planned | None) -> frozenset[Path]:
+    """The directories under `root` that git holds wholly ignored and untracked.
+
+    ⭐ **One question to git, asked before the walk**: `ls-files --others
+    --ignored --directory` names a directory, rather than its files, when
+    everything in it is ignored and nothing in it is tracked, and it does not
+    descend into an ignored directory to say so. That is what keeps a
+    virtualenv or a worktree under an ignored folder out of the walk.
+
+    ⛔ **Only a pruning hint**: `repository_ignores` still judges every file
+    the walk finds, and an empty set (no git, no answer) prunes nothing.
+    ⚠️ A directory that holds or lies under a planned path is not pruned: the
+    scan reports those files as `generated` whether or not git ignores them.
+    """
+    git = shutil.which("git")
+    if git is None:
+        return frozenset()
+    try:
+        result = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [git, "ls-files", "-z", "--others", "--ignored", "--exclude-standard", "--directory"],
+            capture_output=True,
+            text=True,
+            cwd=root,
+            check=False,
+            timeout=IGNORE_TIMEOUT,
+        )
+    except OSError, subprocess.SubprocessError:
+        return frozenset()
+    if result.returncode != 0:
+        return frozenset()
+    directories = {
+        root / name.rstrip("/") for name in result.stdout.split("\0") if name.endswith("/")
+    }
+    if planned is None:
+        return frozenset(directories)
+    return frozenset(directory for directory in directories if not planned.touches(directory))
+
+
+def _walk(root: Path, pruned: frozenset[Path] = frozenset()) -> tuple[list[Path], list[Path]]:
     """Every file under `root` that is not the framework's own writing, and every nested store.
 
     ⛔ **`SKIP_DIRS` is asked of the first part only**: a nested
     `.studyforge` is walked like any directory. A nested `.git`, directory or
-    gitfile, is returned as a store and never entered.
+    gitfile, is returned as a store and never entered. ⭐ A directory in
+    `pruned` is never entered either.
+
+    ⚠️ **Symbolic links are not followed**: a link to a file is read as that
+    file, and a link to a directory is neither a file nor entered.
     """
     found: list[Path] = []
     stores: set[Path] = set()
-    for path in sorted(root.rglob("*")):
-        parts = path.relative_to(root).parts
-        if parts[0] in SKIP_DIRS:
-            continue
-        if len(parts) > 1 and parts[0] == ARCHIVE_DIRNAME:
-            # ⛔ Not silent: `membership` accounts for every file here.
-            continue
-        if REPOSITORY_STORE in parts:
-            stores.add(root.joinpath(*parts[: parts.index(REPOSITORY_STORE) + 1]))
-            continue
-        if not path.is_file():
-            continue
-        if len(parts) == 1 and parts[0] == "corpus.json":
-            continue
-        found.append(path)
-    return found, sorted(stores)
+    if root in pruned:
+        return found, []
+    for directory, dirnames, filenames in os.walk(root):
+        here = Path(directory)
+        at_root = here == root
+        kept = []
+        for name in dirnames:
+            path = here / name
+            if at_root and (name in SKIP_DIRS or name == ARCHIVE_DIRNAME):
+                # ⛔ Not silent: `membership` accounts for every archive file.
+                continue
+            if name == REPOSITORY_STORE:
+                stores.add(path)
+                continue
+            if path in pruned:
+                continue
+            kept.append(name)
+        dirnames[:] = kept
+        for name in filenames:
+            path = here / name
+            if at_root and (name in SKIP_DIRS or name == "corpus.json"):
+                continue
+            if name == REPOSITORY_STORE:
+                stores.add(path)
+                continue
+            if path.is_file():
+                found.append(path)
+    return sorted(found), sorted(stores)
 
 
 def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | None:

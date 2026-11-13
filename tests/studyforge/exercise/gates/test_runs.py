@@ -9,6 +9,7 @@ doing its job.
 
 from __future__ import annotations
 
+import dataclasses
 import time
 
 import pytest
@@ -102,3 +103,13 @@ def test_a_gate_reads_the_run_it_asked_for_and_refuses_any_other():
 
 def test_a_plants_role_names_the_edge_it_is_planted_for():
     assert plant_role(EDGE_CASE) == f"plant:{EDGE_CASE.id}"
+
+
+def test_a_declared_skip_is_carried_as_skipped_and_never_as_passed(tmp_path):
+    gpu = Case(id="test_empty", kind=EDGE, says="an empty basket is zero", skips_without="gpu")
+    record = dataclasses.replace(exercise(), cases=(ASK, gpu))
+    skipped = PASSING.replace('name="test_empty"/>', 'name="test_empty"><skipped/></testcase>')
+    started = write(tmp_path, skipped)
+    run = folded(record, tmp_path, REFERENCE, FIRST, 0, WHERE, started=started)
+    assert run.skipped(gpu) and not run.passed(gpu)
+    assert not run.skipped(EDGE_CASE), "a case that declares no capability never reads as skipped"

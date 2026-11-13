@@ -92,6 +92,12 @@ a list of failure tags nobody finished. ⚠️ A case the report never names did
 not pass either: a run that stops early names fewer tests, and a case with no
 result is not a case that succeeded.
 
+## ⛔ A skipped case did not pass, unless it declared the capability it skips without
+
+⭐ A case that carries `skips_without` (`skips`) and that the report marks
+skipped, and nothing else, is held in `skipped_ids`: neither passed nor failed,
+and out of every count. ⛔ Any other skipped case did not pass, as before.
+
 ⭐ **The breakdown is a REPORT and never a second definition of a pass** (spec
 §7). `is_pass` stays what it is — a test-mode run that exited zero —
 and a reader shown *edge cases 2/3* is looking at an incomplete practice.
@@ -106,6 +112,7 @@ from xml.etree import ElementTree
 from studyforge.exercise.cases import EDGE, JUNIT, KEPT, Case
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import Exercise
+from studyforge.exercise.skips import skipped_only
 from studyforge.exercise.spelling import asserted, file_level_failure, spells
 
 #: What a report directory's members are named. ⚠️ Surefire writes a DIRECTORY
@@ -147,10 +154,22 @@ class Breakdown:
     #: an assertion failed them (see `ASSERTION_TYPE`). Nothing shown to a reader reads it;
     #: a gate suite that asks for assertion-only failures does.
     unasserted: frozenset[str] = frozenset()
+    #: ⭐ Optional and defaulted: the ids of cases that declare `skips_without` and that the
+    #: report marks skipped. Neither passed nor failed, and left out of every count.
+    skipped_ids: frozenset[str] = frozenset()
 
     def passed(self, case: Case) -> bool:
         """Did this case pass? ⛔ A case the report did not name did not pass."""
         return case.id in self.passed_ids
+
+    def skipped(self, case: Case) -> bool:
+        """Was this case skipped where it declared it may be? ⛔ Never true for any other."""
+        return case.skips_without is not None and case.id in self.skipped_ids
+
+    @property
+    def not_run(self) -> tuple[Case, ...]:
+        """The cases skipped where their capability was absent, in declared order."""
+        return tuple(case for case in self.cases if self.skipped(case))
 
     @property
     def ask(self) -> bool:
@@ -159,8 +178,11 @@ class Breakdown:
 
     @property
     def edges(self) -> tuple[Case, ...]:
-        """The declared edge cases, in the order the corpus wrote them."""
-        return tuple(case for case in self.cases if case.kind == EDGE)
+        """The declared edge cases that count, in the order the corpus wrote them.
+
+        ⚠️ An edge skipped where it may be is not one of them: the grade is the rest's.
+        """
+        return tuple(case for case in self.cases if case.kind == EDGE and not self.skipped(case))
 
     @property
     def edges_passed(self) -> int:
@@ -184,7 +206,11 @@ class Breakdown:
     @property
     def broken_kept(self) -> tuple[str, ...]:
         """Each kept requirement (`KEPT`) that did not pass, by its `says`, in declared order."""
-        return tuple(c.says for c in self.cases if c.kind == KEPT and not self.passed(c))
+        return tuple(
+            c.says
+            for c in self.cases
+            if c.kind == KEPT and not self.passed(c) and not self.skipped(c)
+        )
 
     @property
     def complete(self) -> bool:
@@ -214,8 +240,8 @@ def breakdown_of(exercise: Exercise, root: Path, where: str, *, started: float) 
     if not files:
         return None
     _require_fresh(files, report.path, where, started=started)
-    passed, unasserted = _fold(files, cases, report.path, where)
-    return Breakdown(cases=cases, passed_ids=passed, unasserted=unasserted)
+    passed, unasserted, skipped = _fold(files, cases, report.path, where)
+    return Breakdown(cases=cases, passed_ids=passed, unasserted=unasserted, skipped_ids=skipped)
 
 
 def _files(target: Path) -> tuple[Path, ...]:
@@ -248,15 +274,18 @@ def _require_fresh(files: tuple[Path, ...], declared: str, where: str, *, starte
 
 def _fold(
     files: tuple[Path, ...], cases: tuple[Case, ...], declared: str, where: str
-) -> tuple[frozenset[str], frozenset[str]]:
-    """Return the ids the report says passed, and the failed ones no assertion failed.
+) -> tuple[frozenset[str], frozenset[str], frozenset[str]]:
+    """Return the ids the report says passed, the failed ones no assertion failed, and the
+    skippable ones it skipped.
 
     Refuses a test the cases do not name.
     """
     ids = tuple(case.id for case in cases)
+    skippable = {case.id for case in cases if case.skips_without is not None}
     reported: set[str] = set()
     failed: set[str] = set()
     unasserted: set[str] = set()
+    skipped: set[str] = set()
     for path in files:
         for element in _parse(path, declared, where).iter("testcase"):
             if file_level_failure(element) and not any(spells(element, i) for i in ids):
@@ -266,11 +295,14 @@ def _fold(
                 continue
             case_id = _identify(element, ids, declared, path, where)
             reported.add(case_id)
-            if not _passed(element):
+            if case_id in skippable and skipped_only(element, PASSING_CHILDREN):
+                skipped.add(case_id)
+            elif not _passed(element):
                 failed.add(case_id)
                 if not asserted(element, PASSING_CHILDREN):
                     unasserted.add(case_id)
-    return frozenset(reported - failed), frozenset(unasserted)
+    skipped -= failed  # ⛔ One report naming a case twice: a failure is never excused.
+    return frozenset(reported - failed - skipped), frozenset(unasserted), frozenset(skipped)
 
 
 def _parse(path: Path, declared: str, where: str) -> ElementTree.Element:

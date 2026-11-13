@@ -913,7 +913,7 @@ What it reads, and the choices in it:
 
 **Decision.** `studyforge.generate.declarations` gives every unit a `studyforge.unit.mentions.Mentions`: the corpus's units by recorded label and by recorded origin, and the unit's own origin and page. `build_unit(mentions=...)` serves a dotted number of three parts or more that is exactly a label as that unit's title, a link to a unit's source file as a link to its page, and a link label that is, or opens with, its target's number as the title. Every consumer of a served unit passes the same value, so the page and its narration agree.
 
-**Why.** Once the headings lose the source's numbers, `see 3.2.4` names nothing a reader can find, and a link to `README_3.2.4.md` points at no file of the built site. Only what names a unit of this corpus is touched, so a JLS section, a version or a quantity keeps every character. A two-part number in a sentence is far likelier a version than a reference, so it is replaced only inside a link's label.
+**Why.** Once the headings lose the source's numbers, `see 3.2.4` names nothing a reader can find, and a link to `README_3.2.4.md` points at no file of the built site. Only what names a unit of this corpus is touched, so a JLS section, a version or a quantity keeps every character. A two-part number in a sentence is far likelier a version than a reference, so it is replaced only inside a link's label. A three-part number directly after `version`, `v` or a product's name with a capital after its first letter (`PuLP 3.3.2`, `HiGHS 1.14.0`) is a release and is kept (`studyforge.unit.versions`); a name with one capital is not read as one, because `Lesson 3.3.2` looks the same.
 
 **Serves.** `R1`, `R8`
 

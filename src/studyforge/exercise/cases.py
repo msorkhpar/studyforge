@@ -9,7 +9,8 @@ them can be wrong.
 `report_of` / `report_document`; `origin_of` / `origin_document`.
 
 **Depends on.** `errors` for the one exception this package raises, `safety`
-for the rule a path inside the workspace obeys, **`corpus.container.fields` for
+for the rule a path inside the workspace obeys, `skips` for a case's one
+optional key, **`corpus.container.fields` for
 what an `origin` is**, and `studyforge.describe` for naming a value without
 reproducing it (R7).
 
@@ -74,6 +75,9 @@ version bump's cost under R10. ⭐ **An absent `kind` is unambiguous precisely
 because every record written without it is `code`**, which is the claim a
 defaulted `trust` could not make.
 
+⭐ **A case's one optional key, `skips_without`, is `skips`'s**, which says
+why it exists and why the main ask may never carry it.
+
 ## ⛔ Every set here is closed, and each one is enumerable
 
 The kinds, the case kinds, the report formats, the keys of a case, a report and
@@ -93,6 +97,7 @@ from studyforge.corpus.container import ContainerError, fields
 from studyforge.describe import describe, describe_keys
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_path
+from studyforge.exercise.skips import SKIPS_WITHOUT, skips_without_of
 
 #: The exercise with no quiz and no cases: a workspace the reader writes code
 #: in.
@@ -133,6 +138,9 @@ CASE_KINDS = (MAIN, EDGE, KEPT)
 #: else: an `id` as the test report spells it, a `kind`, and the one sentence
 #: the reader is shown.
 CASE_KEYS = ("id", "kind", "says")
+
+#: ⛔ Closed: the keys a case may carry beyond `CASE_KEYS`.
+CASE_OPTIONAL_KEYS = (SKIPS_WITHOUT,)
 
 #: JUnit XML, as Maven's surefire writes it with no configuration and pytest
 #: writes it on one flag. ⭐ Named here and read by `report`; console output is
@@ -188,6 +196,8 @@ class Case:
     id: str
     kind: str
     says: str
+    #: ⭐ The capability whose absence lets this case's test skip, or `None`: it may not.
+    skips_without: str | None = None
 
     @property
     def ask(self) -> bool:
@@ -247,8 +257,19 @@ def cases_of(value: object, where: str) -> tuple[Case, ...]:
 
 
 def cases_document(cases: tuple[Case, ...]) -> list[dict]:
-    """Return the cases as decoded objects, each in `CASE_KEYS` order (R10)."""
-    return [{"id": case.id, "kind": case.kind, "says": case.says} for case in cases]
+    """Return the cases as decoded objects, each in `CASE_KEYS` order (R10).
+
+    ⭐ `skips_without` follows `says`, and only on a case that carries it.
+    """
+    return [_case_document(case) for case in cases]
+
+
+def _case_document(case: Case) -> dict:
+    """One case as its decoded object."""
+    written = {"id": case.id, "kind": case.kind, "says": case.says}
+    if case.skips_without is not None:
+        written[SKIPS_WITHOUT] = case.skips_without
+    return written
 
 
 def report_of(value: object, where: str) -> Report:
@@ -306,18 +327,20 @@ def _case(value: object, where: str) -> Case:
         raise ExerciseError(
             f"{where}: a case is an object, {list(CASE_KEYS)}. This one is {describe(value)}."
         )
-    if set(value) != set(CASE_KEYS):
-        unknown = [key for key in value if key not in CASE_KEYS]
-        missing = [key for key in CASE_KEYS if key not in value]
+    unknown = [key for key in value if key not in CASE_KEYS + CASE_OPTIONAL_KEYS]
+    missing = [key for key in CASE_KEYS if key not in value]
+    if unknown or missing:
         raise ExerciseError(
-            f"{where}: a case is {list(CASE_KEYS)}, all of them required and "
-            f"nothing else. This one is missing {missing} and carries "
+            f"{where}: a case is {list(CASE_KEYS)}, all of them required, and may carry "
+            f"{list(CASE_OPTIONAL_KEYS)}. This one is missing {missing} and carries "
             f"{describe_keys(unknown)} the case does not define."
         )
+    kind = _case_kind(value["kind"], where)
     return Case(
         id=_case_id(value["id"], where),
-        kind=_case_kind(value["kind"], where),
+        kind=kind,
         says=_says(value["says"], where),
+        skips_without=skips_without_of(value, kind, where),
     )
 
 

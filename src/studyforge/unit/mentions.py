@@ -35,6 +35,7 @@ quiz's answer say the same words. `mentions.unreached(sections)` counts the
 corpus-file links a page outside the corpus root cannot keep.
 
 **Depends on.** `re`, `unit.prose` for every run of words a unit shows,
+`unit.versions` for the word that makes a number a release,
 `unit.headings` for what a unit's headings are called, and
 `corpus.placement.relative_href` for the one way a page addresses another file.
 ⛔ Not on `render`: the inline markers read here are the archive's own
@@ -53,6 +54,10 @@ the corpus declares keep every character.
 two-part label (`3.2`) is replaced only inside a link's label, because
 `Java 1.4` or `JDBC 4.2` sitting in a sentence is far likelier to be a version
 than a reference, and a wrong title in a sentence is worse than a number.
+
+⚠️ **A number directly after a word that names a version stays a number**
+(`PuLP 3.3.2`, `version 3.3.2`), even when it is also a unit's label;
+`unit.versions` says which words name one, and why so few do.
 
 ⚠️ **A link's fragment is kept only when it names a heading of the target
 unit.** It names an anchor of the SOURCE file, and the generated page keys its
@@ -101,6 +106,7 @@ from studyforge.corpus.placement import relative_href
 from studyforge.unit.headings import Heading, by_number, by_slug
 from studyforge.unit.outline import without_outline_number
 from studyforge.unit.prose import quiz, walk
+from studyforge.unit.versions import follows_version_word
 
 
 @dataclass(frozen=True, slots=True)
@@ -276,7 +282,7 @@ class Mentions:
     def _bare(self, text: str, *, plain: bool = False) -> str:
         def named(match: re.Match[str]) -> str:
             target = self.labels.get(match.group(0))
-            if target is None:
+            if target is None or follows_version_word(match.string[: match.start()]):
                 return match.group(0)
             return target.title if plain else f"*{target.title}*"
 

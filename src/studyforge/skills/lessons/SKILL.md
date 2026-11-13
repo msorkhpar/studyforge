@@ -22,6 +22,10 @@ fixed that, and those readers accepted it. Every rule here comes from that rewri
    directory for the programs you run.
 3. **You have read the neighbouring pages.** A page builds on the ones before it and refers back
    to them; it does not repeat them.
+4. **Your scratch work and git worktrees sit outside the corpus root**, or in a folder the
+   repository ignores. `emit` and `validate` walk every folder git does not ignore, so an
+   unignored worktree under the root is walked file by file and its `.git` file is refused as a
+   nested repository.
 
 ## 1. Plan the page by its ideas, before writing a word
 
@@ -71,6 +75,18 @@ and keep the idea in the prose.
 
 ⛔ **Version and vendor differences do not interrupt the main line.** Put each one in a side note
 (`> **Networks differ.** …`), one per difference.
+
+⚠️ **Two Markdown traps change what the reader is served:**
+
+- **A bare lesson number becomes that lesson's title.** `see 6.2.1` is served as *see
+  Presolve: what the solver removes first*, so never write the title beside the number
+  (`6.2.1, Presolve`), which serves it twice. A number right after `version`, `v` or a product
+  name with a capital after its first letter (`PuLP 3.3.2`, `HiGHS 1.14.0`) stays a number; any
+  other version (`Gurobi 13.0.0`, `highspy 1.14.0`) goes in a code span. A corpus on a framework
+  older than that rule writes every version in a code span.
+- **A line that starts with digits and `.` or `)` and a space is a list item.** A sentence that
+  happens to open with `2026. The plan` or `3) costs` becomes a numbered list; reword it or
+  start it otherwise.
 
 ## 3. The voice
 

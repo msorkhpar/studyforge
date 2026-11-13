@@ -22,11 +22,13 @@ is asserted too, with the sentence each of them gives.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from studyforge.exercise import ExerciseError
 from studyforge.exercise.gates import G1, G2, G3, G4, G5, Evidence, check
-from studyforge.exercise.gates.runs import FIRST, REFERENCE, SECOND, STARTER, plant_role
+from studyforge.exercise.gates.runs import FIRST, REFERENCE, SECOND, STARTER, Run, plant_role
 from tests.studyforge.exercise.gates.workspace import (
     DRIFTED_ORIGIN,
     EMPTY_EDGE,
@@ -193,3 +195,56 @@ def test_a_gate_with_nothing_to_read_does_not_hold(tmp_path):
     refused = [verdict.id for verdict in verdicts if not verdict.held]
     assert refused == [G1, G2, G3, G4]
     assert [verdict.id for verdict in verdicts] == [G1, G2, G3, G4, G5]
+
+
+# --- a case that declares the capability it skips without --------------------
+# ⭐ Read over runs built by hand: what is under test is how each gate reads a
+# declared skip, and `test_report` proves a report folds to one.
+
+#: The empty-basket edge, as a test that runs only where a GPU is present.
+GPU_EDGE = replace(EMPTY_EDGE, skips_without="gpu")
+
+
+def _skipping(tmp_path, *, skipped_on_plants=(GPU_EDGE,)):
+    """The bundle with its empty edge skippable, and runs on a machine with no GPU."""
+    bundle = Bundle(tmp_path)
+    exercise = replace(bundle.exercise, cases=(MAIN_CASE, GPU_EDGE, NEGATIVE_EDGE))
+    gone = frozenset({GPU_EDGE.id})
+    on_plant = frozenset(case.id for case in skipped_on_plants)
+    runs = (
+        Run(REFERENCE, FIRST, 0, frozenset({MAIN_CASE.id, NEGATIVE_EDGE.id}), skipped_ids=gone),
+        Run(REFERENCE, SECOND, 0, frozenset({MAIN_CASE.id, NEGATIVE_EDGE.id}), skipped_ids=gone),
+        Run(STARTER, FIRST, 1, frozenset(), skipped_ids=gone),
+        Run(plant_role(GPU_EDGE), FIRST, 1, frozenset({MAIN_CASE.id}), skipped_ids=on_plant),
+        Run(plant_role(NEGATIVE_EDGE), FIRST, 1, frozenset({MAIN_CASE.id}), skipped_ids=gone),
+    )
+    return bundle, exercise, Evidence(runs=runs)
+
+
+def test_a_declared_skip_is_said_and_the_rest_clears_the_gates(tmp_path):
+    bundle, exercise, evidence = _skipping(tmp_path)
+    verdicts = {v.id: v for v in check(exercise, evidence, bundle.origins, bundle.ledger, WHERE)}
+    assert [gate for gate in (G1, G2, G3, G4) if not verdicts[gate].held] == []
+    assert "all 2 cases passed" in verdicts[G1].says
+    assert "1 skipped" in verdicts[G1].says
+    assert "1 skipped" in verdicts[G3].says and GPU_EDGE.says in verdicts[G3].says
+
+
+def test_the_same_runs_without_the_key_are_refused(tmp_path):
+    # ⛔ The negative control: the runs are identical, the case map declares no skip.
+    bundle, exercise, evidence = _skipping(tmp_path)
+    strict = replace(exercise, cases=(MAIN_CASE, EMPTY_EDGE, NEGATIVE_EDGE))
+    verdicts = {v.id: v for v in check(strict, evidence, bundle.origins, bundle.ledger, WHERE)}
+    assert not verdicts[G1].held
+    assert not verdicts[G4].held
+
+
+def test_g3_refuses_when_every_edge_was_skipped(tmp_path):
+    bundle, exercise, evidence = _skipping(tmp_path)
+    both = replace(NEGATIVE_EDGE, skips_without="gpu")
+    exercise = replace(exercise, cases=(MAIN_CASE, GPU_EDGE, both))
+    skipped = frozenset({GPU_EDGE.id, both.id})
+    evidence = Evidence(runs=tuple(replace(run, skipped_ids=skipped) for run in evidence.runs))
+    verdicts = {v.id: v for v in check(exercise, evidence, bundle.origins, bundle.ledger, WHERE)}
+    assert not verdicts[G3].held
+    assert "every edge case's test was skipped" in verdicts[G3].says

@@ -83,6 +83,46 @@ def test_a_number_or_link_that_names_no_unit_is_kept(written):
     assert mentions().text(written) == written
 
 
+@pytest.mark.parametrize(
+    "written",
+    [
+        "the pinned PuLP 3.2.4 bundles CBC",
+        "HiGHS 3.2.4, CUDA 3.2.4 and OR-Tools 3.2.4 ship together",
+        "OpenAPI 3.2.4 describes it",
+        "since version 3.2.4, and Version 3.2.4 too",
+        "tagged v 3.2.4 and V 3.2.4",
+        "PuLP 3.2.4 across a no-break space",
+    ],
+)
+def test_a_label_right_after_a_word_that_names_a_version_stays_a_number(written):
+    # ⭐ The number IS a unit's label here, so only the word before it keeps it.
+    assert mentions().text(written) == written
+    assert mentions().words(written) == written
+
+
+TITLE = "*Checked vs. unchecked*"
+
+
+@pytest.mark.parametrize(
+    ("written", "served"),
+    [
+        # ⛔ Running prose still names its units: no word, or a word that names none.
+        ("as 3.2.4 showed", f"as {TITLE} showed"),
+        ("lesson 3.2.4 and Lesson 3.2.4", f"lesson {TITLE} and Lesson {TITLE}"),
+        ("(3.2.4)", f"({TITLE})"),
+        ("3.2.1, 3.2.4", f"*Creating custom exceptions*, {TITLE}"),
+        # ⚠️ Punctuation between the name and the number breaks it: a list, not a release.
+        ("PuLP, 3.2.4 and HiGHS: 3.2.4", f"PuLP, {TITLE} and HiGHS: {TITLE}"),
+        # ⚠️ A stop ends the sentence, and the name with it.
+        ("It runs on HiGHS. 3.2.4 says why", f"It runs on HiGHS. {TITLE} says why"),
+        # ⚠️ One capital is not a product's name: `See` and `Gurobi` look the same.
+        ("See 3.2.4", f"See {TITLE}"),
+    ],
+)
+def test_a_label_after_any_other_word_still_names_its_unit(written, served):
+    assert mentions().text(written) == served
+
+
 def test_a_label_two_units_share_names_neither():
     labels, _ = Mentions.of(
         (

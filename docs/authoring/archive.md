@@ -198,6 +198,14 @@ your adapter produced itself. `local` is the file's path **inside that unit's
 own archive directory** — `<address>/units/unit-NN/` — so `media/diagram.svg`
 means `<address>/units/unit-02/media/diagram.svg`.
 
+**A Markdown lesson's figures need no code of yours.** A line that is only an
+image, its alternative text in brackets and its path beside the lesson in
+parentheses, becomes an `image` block, and a
+scaffolded adapter's `emit.py` copies the file beside the lesson into the
+unit's `media/` and writes its `assets` entry. It refuses a figure with no
+alternative text, one it cannot find inside the corpus, a type a browser does
+not show, and one over 2 MB.
+
 **They differ in what they are for, and that decides where each reaches the
 reader:**
 

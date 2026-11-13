@@ -205,3 +205,110 @@ def test_restorable_reads_a_path_as_written_never_as_a_glob(tmp_path):
     (root / "kXpt").mkdir()
     (root / "kXpt" / "b.txt").write_text("untracked\n", encoding="utf-8")
     assert enumeration.restorable(root, ["k?pt"]) is True, "a glob matched another folder"
+
+
+# --- pruning: an ignored directory is never entered, and the answer does not move ---
+
+
+def _crowded(root):
+    """A corpus whose ignored folders hold what a working course keeps beside its material.
+
+    ⭐ Every shape the pruning must agree with the full walk on: a virtualenv
+    and a worktree (a `.git` gitfile) under ignored folders, a folder whose
+    files are each ignored by pattern, a tracked file under an ignored
+    pattern, a nested repository that is not ignored, a nested `.studyforge`,
+    and a link to a file and to a folder.
+    """
+    root = corpora.one_unit(root, source=corpora.SOURCE)
+    files = {
+        ".venv/lib/site.py": "x\n",
+        ".worktrees/feature/.git": "gitdir: elsewhere\n",
+        ".worktrees/feature/src/one.md": "# Copy\n",
+        "logs/run.log": "log\n",
+        "kept/held.md": "# Held\n",
+        "kept/stray.md": "# Stray\n",
+        "nested/.git/HEAD": "ref: refs/heads/main\n",
+        "nested/inner.md": "# Inner\n",
+        "notes/.studyforge/own.md": "# Own\n",
+        "notes/plain.md": "# Plain\n",
+    }
+    for name, text in files.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text, encoding="utf-8")
+    (root / "notes" / "linked.md").symlink_to(root / "notes" / "plain.md")
+    (root / "notes" / "linked-folder").symlink_to(root / "kept", target_is_directory=True)
+    declared_output(root, ".venv/", ".worktrees/", "*.log", "kept/")
+    track(root, "kept/held.md")
+    return root
+
+
+def _unpruned(root, monkeypatch):
+    """The scan the full walk gives: nothing is pruned."""
+    with monkeypatch.context() as patched:
+        patched.setattr(enumeration, "_ignored_directories", lambda root, planned: frozenset())
+        return source_files(root)
+
+
+def test_pruning_returns_exactly_the_scan_the_full_walk_returns(tmp_path, monkeypatch):
+    # ⛔ **The whole contract of the pruning, in one assertion.** Every field of
+    # the scan, against the walk that enters every folder.
+    root = _crowded(tmp_path / "c")
+    pruned = source_files(root)
+    assert pruned == _unpruned(root, monkeypatch)
+    assert pruned.consulted
+    assert {"kept/held.md", "notes/plain.md", "notes/linked.md", "notes/.studyforge/own.md"} <= {
+        path.relative_to(root).as_posix() for path in pruned.files
+    }
+    assert "kept/stray.md" not in scanned(root), "the control: the pattern still bites"
+
+
+def test_an_ignored_folder_is_never_entered(tmp_path, monkeypatch):
+    # ⭐ What makes a worktree or a virtualenv cost nothing: the walk does not
+    # list it. ⚠️ A folder that holds a tracked file is still entered.
+    root = _crowded(tmp_path / "c")
+    entered = []
+    walk = enumeration.os.walk
+
+    def recording(top, *args, **kwargs):
+        for directory, dirnames, filenames in walk(top, *args, **kwargs):
+            entered.append(enumeration.Path(directory).relative_to(root).as_posix())
+            yield directory, dirnames, filenames
+
+    monkeypatch.setattr(enumeration.os, "walk", recording)
+    source_files(root)
+    assert not {".venv", ".venv/lib", ".worktrees", ".worktrees/feature", "logs"} & set(entered)
+    assert {"kept", "notes", "nested"} <= set(entered)
+
+
+def test_a_folder_that_holds_planned_output_is_walked_even_when_ignored(tmp_path, monkeypatch):
+    # ⛔ The scan reports a build's output as `generated` whether or not git
+    # ignores it, so pruning may not take a planned file out of that list.
+    root = _crowded(tmp_path / "c")
+    (root / "site" / "page").mkdir(parents=True)
+    (root / "site" / "page" / "index.html").write_text("<p></p>\n", encoding="utf-8")
+    declared_output(root, ".venv/", ".worktrees/", "*.log", "kept/", "site/")
+    planned = enumeration._Planned(files=frozenset(), directories=(root / "site" / "page",))
+    monkeypatch.setattr(enumeration, "_planned", lambda root: planned)
+    scan = source_files(root)
+    assert root / "site" / "page" / "index.html" in scan.generated
+    assert scan == _unpruned(root, monkeypatch)
+
+
+def test_when_git_cannot_judge_the_files_nothing_is_pruned(tmp_path, monkeypatch):
+    # ⛔ The fallback lists every file, so a folder pruned on git's first
+    # answer must come back when its second answer is missing.
+    root = _crowded(tmp_path / "c")
+    monkeypatch.setattr(enumeration, "repository_ignores", lambda root, candidates: None)
+    scan = source_files(root)
+    assert not scan.consulted
+    assert root / ".venv" / "lib" / "site.py" in scan.files
+    assert root / ".worktrees" / "feature" / ".git" in scan.stores
+
+
+def test_without_git_the_walk_is_the_full_one(tmp_path, monkeypatch):
+    root = _crowded(tmp_path / "c")
+    monkeypatch.setattr(enumeration.shutil, "which", lambda name: None)
+    assert enumeration._ignored_directories(root, None) == frozenset()
+    scan = source_files(root)
+    assert not scan.consulted
+    assert root / "logs" / "run.log" in scan.files
