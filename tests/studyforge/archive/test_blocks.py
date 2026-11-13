@@ -446,13 +446,17 @@ def test_a_nested_list_is_not_a_block_in_reading_order():
     assert list(walk([block])) == [block]
 
 
-def test_start_and_output_are_the_optional_keys_a_list_and_an_example_carry():
+def test_start_title_kind_and_output_are_the_optional_keys_of_list_code_quote_and_example():
     # ⛔ An optional key sits after a block's fields, so the fields keep
-    # their order and a block without it is unchanged.
-    assert BLOCK_OPTIONAL == {
-        name: ("start",) if name == "list" else ("output", "support") if name == "example" else ()
-        for name in BLOCK_TYPES
+    # their order and a block without it is unchanged. ⭐ A quote's `kind` (the 2026-11
+    # redesign) is a GitHub alert's word, written only for a marked quote.
+    optional = {
+        "list": ("start",),
+        "code": ("title",),
+        "quote": ("kind",),
+        "example": ("output", "support"),
     }
+    assert BLOCK_OPTIONAL == {name: optional.get(name, ()) for name in BLOCK_TYPES}
 
 
 @pytest.mark.parametrize(
@@ -552,3 +556,22 @@ def test_an_example_holds_its_blocks_so_walk_reaches_them():
     code = {"type": "code", "lang": "aa", "text": "x"}
     example = {"type": "example", "id": "e", "tabs": [{"lang": "aa", "span": 1}], "blocks": [code]}
     assert code in list(walk([example]))
+
+
+@pytest.mark.parametrize(
+    ("info", "expected"),
+    [
+        ("java", ("java", "")),
+        ("Java", ("java", "")),
+        ("", ("", "")),
+        ("java extra words", ("java extra words", "")),  # no title: read exactly as before
+        ('java title="FirstMessage.java"', ("java", "FirstMessage.java")),
+        ("xml title='deploy/50_txnmgr.xml'", ("xml", "deploy/50_txnmgr.xml")),
+        ("text title=output.txt", ("text", "output.txt")),
+        ('title="Only a title"', ("", "Only a title")),
+    ],
+)
+def test_a_fence_title_is_split_from_the_language_only_when_one_is_written(info, expected):
+    from studyforge.archive.markdown.leaf import fence_label
+
+    assert fence_label(info) == expected

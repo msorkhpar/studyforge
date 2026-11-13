@@ -33,6 +33,11 @@ BANNED_FACES = (
     "Segoe UI",
 )
 
+#: ⭐ The one class a small capital label may be set on (the 2026-11 redesign,
+#: the user's decision): a card's kind above its title — "Coding practice",
+#: "Concept check", "On this page". ⛔ Everything else stays in sentence case.
+EYEBROW = ".eyebrow"
+
 #: The slip is the ONE filled area of the sign colour, on these selectors only.
 SLIP_SELECTORS = (
     'nav[aria-label="Between units"] a[rel="next"]',
@@ -77,6 +82,7 @@ def shouted_labels(css: str) -> list[str]:
         selector.strip()
         for selector, block in re.findall(r"([^{}]+)\{([^{}]*)\}", css)
         if re.search(r"text-transform\s*:\s*uppercase", block)
+        and not all(part.strip().endswith(EYEBROW) for part in selector.split(","))
     ]
 
 
@@ -144,6 +150,13 @@ def test_a_planted_capital_eyebrow_is_caught_by_name():
     assert shouted_labels(planted) == ["nav p"]
 
 
+def test_the_eyebrow_class_alone_may_be_set_in_capitals():
+    # ⭐ Both ways: the one published class passes, a selector list that sneaks
+    # another element in beside it does not.
+    assert shouted_labels(".card .eyebrow { text-transform: uppercase; }") == []
+    assert shouted_labels(".eyebrow, nav p { text-transform: uppercase; }") == [".eyebrow, nav p"]
+
+
 @pytest.mark.parametrize("planted", ['#counter::before { content: " · "; }', "<p>a &middot; b</p>"])
 def test_a_planted_middle_dot_is_caught(planted):
     assert dotted(planted)
@@ -205,6 +218,14 @@ PAIRS = (
     ("--hl-bar", "--surface-2", 3.0),
     ("--focus", "--bg", 3.0),
     ("--accent", "--accent-soft", 3.0),
+    # ⭐ The status verdicts and the terminal frame (the 2026-11 redesign).
+    ("--ok", "--ok-soft", 4.5),
+    ("--bad", "--bad-soft", 4.5),
+    ("--warn", "--warn-soft", 4.5),
+    ("--ok", "--surface", 3.0),
+    ("--bad", "--surface", 3.0),
+    ("--term-fg", "--term-bg", 4.5),
+    ("--term-muted", "--term-bg", 4.5),
 )
 
 
@@ -275,12 +296,15 @@ AT_REST = {"--rule": RULE_CHROMA, "--rule-strong": RULE_CHROMA, "--margin": RULE
 LIVE = ("--accent", "--sign", "--focus", "--hl-bar")
 
 #: The hue arc a colour is called green over, in degrees, and the chroma below
-#: which a hue is not worth naming. ⛔ The palette has no green, though both
-#: reference pages use one: the route planner's guide-sign green and the
-#: documentation site's emerald are the one thing taken from neither.
+#: which a hue is not worth naming. ⛔ The palette has no green outside the
+#: status tokens: the 2026-11 redesign (the user's decision) lets a verdict —
+#: an answer right, a run passed — be green, always beside an icon and a word.
 #: ⚠️ Read over every colour token in both themes, not only the accent.
 GREEN = (70.0, 170.0)
 NAMEABLE = 0.15
+
+#: The only tokens a green may be painted with: a verdict and its ground.
+STATUS_GREENS = ("--ok", "--ok-soft")
 
 
 def chroma(colour: str) -> float:
@@ -318,6 +342,7 @@ def greens(values: dict[str, str]) -> list[str]:
         token
         for token, colour in values.items()
         if colour.startswith("#")
+        and token not in STATUS_GREENS
         and chroma(colour) >= NAMEABLE
         and GREEN[0] <= hue(colour) <= GREEN[1]
     )

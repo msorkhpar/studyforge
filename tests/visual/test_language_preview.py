@@ -25,7 +25,10 @@ from tests.visual.four import ASKING, CLEAR, STATE, SWITCHED, VISIBLE, greyed
 from tests.visual.page import WIDE, OpenPage
 from tests.visual.test_preview import static
 
-BANNER = "document.querySelector('[data-preview-banner]').textContent.replace(/\\s+/g, ' ').trim()"
+BANNER = (
+    "document.querySelector('[data-preview-banner], details[data-preview-run-locally] > [role=note]')"
+    ".textContent.replace(/\\s+/g, ' ').trim()"
+)
 NOTES = "document.querySelectorAll('[data-preview-note=practice]').length"
 UNIT = "course/demo/units/unit-05/unit-05-practices-5.unit.html"
 EXAMPLES = "course/demo/units/unit-01/unit-01-shared-ideas-1.unit.html"

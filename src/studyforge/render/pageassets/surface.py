@@ -102,17 +102,21 @@ _FORM_OF = {
     "copy_button": CLASS_FORM,
     "code_caption": CLASS_FORM,
     "code_fallback": CLASS_FORM,
+    "eyebrow": CLASS_FORM,
     "readable": ATTRIBUTE_FORM,
     "kind": ATTRIBUTE_FORM,
     "marked": ATTRIBUTE_FORM,
     "numbering": KIND_FORM,
     "level": KIND_FORM,
     "read_state": KIND_FORM,
+    "eyebrow": CLASS_FORM,
 }
 
 #: Wrappers, controls and states the surface styles that are not block types.
 #: ⭐ `code_fallback` marks a code caption whose language the vendored
 #: highlighter does not cover (`grammars`), so the reader sees why it is plain.
+#: ⭐ `eyebrow` is a card's small kind label (*Concept check*, *Coding practice*) — the 2026-11
+#: redesign's one class allowed to set text in capitals (`test_identity`).
 #: ⛔ The scroll wrapper is not decoration: a table wider than the column must
 #: scroll inside its own box, or the page scrolls sideways and every paragraph
 #: with it.
@@ -154,17 +158,23 @@ _FORM_OF = {
 #: one template, and `progress-view.js` shows it on the rows the store holds —
 #: so a built page stays byte-identical whoever opens it (R10). `chrome.css`
 #: keeps it off the screen: the tick is the visual mark, the words are not.
+#:
+#: ⭐ **`eyebrow` is a card's small kind label** (the 2026-11 redesign): a callout's
+#: "Warning", drawn in small capitals. ⛔ The one class `text-transform: uppercase` may
+#: be written on (`test_identity`), so capitals stay a label's and never a heading's.
 SURFACE_HOOKS = {
     "table_scroll": "scroll",
     "copy_button": "copy",
     "code_caption": "what",
     "code_fallback": "unhighlighted",
+    "eyebrow": "eyebrow",
     "readable": "data-readable",
     "kind": "data-kind",
     "marked": "data-marked",
     "numbering": "numbering",
     "level": "level",
     "read_state": "read-state",
+    "eyebrow": "eyebrow",
 }
 
 #: `hook -> the class its element carries`, for the hooks that are classes.

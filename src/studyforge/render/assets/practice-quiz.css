@@ -6,14 +6,24 @@
    `data-practice` — the code panel wears that, and the two shapes share a look
    but not a surface: a quiz has no editor slot, no controls row and no terminal,
    so a selector that covered both would carry rules for parts that are not
-   there.
+   there. ⭐ The one exception is the head's `.eyebrow`, the kind label every
+   card of the 2026-11 redesign carries, and the only class allowed capitals.
 
    ⛔ **ITS OWN PART, and the split is the same one the script took**:
    `practice.css` is *the panel, the editor and the run*; this is *the
    questions*. ⚠️ It follows `practice.css` in `pageassets.bundle` so the two
    read together, and it shares every one of that file's rules about colour —
-   ⛔ **no colour and no measure of its own**, every value a palette token, and
-   the ground `--practice-soft` because this is the same workbench.
+   ⛔ **no colour and no measure of its own**, every value a palette token.
+
+   ⭐ **THE 2026-11 REDESIGN: A CARD OF OPTION CARDS.** The quiz stands on a
+   card (`--radius-card`, a hairline, `--card-shadow`), each question on a
+   quieter panel inside it, and each option is a full-width card whose WHOLE
+   ROW is the label. After Check, the chosen option turns `--ok` or `--bad` —
+   ⛔ never colour alone: it carries an icon and the verdict's word, and the
+   sentence under the question starts with the same word.
+
+   ⭐ The exam form (`mock-form.css`) wears these rules too: a quiz drawn one
+   question at a time is the same card and the same options.
 
    ⛔ **NO DEAD CONTROL ANYWHERE BELOW.** There is no rule here for a disabled
    Run or a greyed Submit, because the page emits neither: a quiz has no file to
@@ -21,23 +31,58 @@
 
 section[data-practice-quiz] {
   margin: 2rem 0 0;
-  padding: .85rem 1rem 1rem;
-  background: var(--practice-soft);
-  border-top: 1px solid var(--rule);
+  padding: 1.25rem 1.5rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
   font-family: var(--font-ui);
-  color: var(--practice);
+  color: var(--fg);
+}
+
+/* The kind label: *Concept check*, a drawn dot, and how many questions. ⛔ The
+   dot is a 3px circle, never a middle-dot character. */
+section[data-practice-quiz] .eyebrow {
+  margin: 0 0 .3rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+section[data-practice-quiz] p.eyebrow > span + span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 .5rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 section[data-practice-quiz] h2 {
-  margin: 0 0 .4rem;
-  font-size: 1rem;
-  color: var(--practice);
+  margin: 0 0 .35rem;
+  font-size: 1.3rem;
+  line-height: 1.3;
+  color: var(--fg);
 }
 
 section[data-practice-quiz] p {
   margin: 0 0 .5rem;
   font-size: .95rem;
   color: var(--fg-soft);
+}
+
+/* "2 of 4 answered": the line the script keeps up to date as options are
+   chosen, and the rule under the head. */
+section[data-practice-quiz] p[data-practice-part="count"] {
+  margin: .5rem 0 1rem;
+  padding: 0 0 .9rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: .85rem;
+  color: var(--muted);
 }
 
 /* ⭐ The questions are an ordered list and they keep their numbers: a reader
@@ -54,24 +99,37 @@ section[data-practice-quiz] p {
    announced, and the legend's text — the group's name — now starts with the
    number. */
 section[data-practice-quiz] ol[data-practice-part="questions"] {
-  margin: 0 0 .75rem;
+  margin: 0 0 1rem;
   padding: 0;
   list-style: none;
   counter-reset: question;
 }
 
+/* Each question on its own quieter panel inside the card. */
 section[data-practice-quiz] li[data-practice-question] {
   margin: 0 0 1rem;
+  padding: 1rem 1rem 1.05rem;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
   counter-increment: question;
 }
 
-section[data-practice-quiz] legend::before { content: counter(question) ". "; }
+section[data-practice-quiz] legend::before {
+  content: counter(question) ". ";
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  font-size: .85em;
+  color: var(--accent);
+}
 
 /* ⛔ A REAL `<fieldset>` AND A REAL `<legend>`, so the stem is announced as the
    group's question before each option is read — which a styled `div` around
    loose radios is not. ⚠️ The border is removed and the grouping is not: the
    element is what carries the meaning, and the look is the list's. */
 section[data-practice-quiz] fieldset {
+  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
@@ -80,57 +138,196 @@ section[data-practice-quiz] fieldset {
 section[data-practice-quiz] legend {
   padding: 0;
   font-weight: 700;
-  color: var(--practice);
+  line-height: 1.5;
+  color: var(--fg);
 }
 
 section[data-practice-quiz] ul[data-practice-part="options"] {
-  margin: .4rem 0 0;
+  display: grid;
+  gap: .5rem;
+  margin: .75rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-section[data-practice-quiz] li[data-practice-option] { margin: 0 0 .2rem; }
+section[data-practice-quiz] li[data-practice-option] { margin: 0; }
 
-/* ⭐ The whole option is the label, so the hit area is the sentence and not the
-   twelve pixels of the radio — which is the difference between a control that
-   works on a phone and one that does not. */
+/* ⭐ The whole option is the label, so the hit area is the whole card and not
+   the twelve pixels of the radio — which is the difference between a control
+   that works on a phone and one that does not. Hover, chosen and focus are
+   three different looks: a darker hairline, an accent edge on a soft ground,
+   and the focus ring around the card. */
 section[data-practice-quiz] label {
-  display: block;
-  padding: .3rem .45rem;
-  border-radius: var(--radius-tight);
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  padding: .65rem .9rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
   font-size: .95rem;
-  color: var(--fg-soft);
+  line-height: 1.45;
+  color: var(--fg);
+  /* ⚠️ A flex row sizes its text to its longest word; a long one breaks rather
+     than pushing the card past a phone's width. */
+  overflow-wrap: anywhere;
   cursor: pointer;
+  transition: border-color var(--dur-quick) var(--ease), background-color var(--dur-quick) var(--ease);
 }
 
-section[data-practice-quiz] label:hover { background: var(--surface); }
+section[data-practice-quiz] label:hover { border-color: var(--rule-strong); }
+
+section[data-practice-quiz] label:has(input:checked) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+section[data-practice-quiz] label:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+section[data-practice-quiz] label input {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin: .18rem 0 0;
+  accent-color: var(--accent);
+}
+
+/* --- after Check: the chosen option's verdict ------------------------------ */
+
+/* ⭐ Right is `--ok` and wrong is `--bad`, on the CHOSEN option only, and each
+   says so twice more: the mark in the option (an icon and the word) and the
+   sentence under the question. ⛔ The key is never shown — a reader told why
+   their choice fails can try again. */
+section[data-practice-quiz] li[data-practice-verdict="correct"] label:has(input:checked) {
+  background: var(--ok-soft);
+  border-color: var(--ok);
+}
+
+section[data-practice-quiz] li[data-practice-verdict="wrong"] label:has(input:checked) {
+  background: var(--bad-soft);
+  border-color: var(--bad);
+}
+
+section[data-practice-quiz] [data-practice-part="mark"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: .3rem;
+  margin: .12rem 0 0 auto;
+  padding-left: .5rem;
+  font-size: .8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+section[data-practice-quiz] li[data-practice-verdict="correct"] [data-practice-part="mark"] { color: var(--ok); }
+section[data-practice-quiz] li[data-practice-verdict="wrong"] [data-practice-part="mark"] { color: var(--bad); }
 
 /* ⛔ The sentence behind whatever the reader chose, right or wrong, and it is
    told apart by the WORD in front of it — *Right.* or *Not this one.* — which
-   `practice-quiz.js` reads off the markup. ⚠️ The ink is a second signal and
-   never the only one, exactly as in the Submit breakdown. */
-section[data-practice-quiz] p[data-practice-part="says"] {
-  margin: .35rem 0 0;
-  padding: .35rem .6rem;
+   `practice-quiz.js` reads off the markup, by the icon before it, and only
+   then by its ground. The exam form's verdict line is the same object. */
+section[data-practice-quiz] p[data-practice-part="says"],
+section[data-practice-quiz] [data-form-part="review"] p[data-form-part="verdict"] {
+  position: relative;
+  margin: .75rem 0 0;
+  padding: .6rem .85rem;
   background: var(--surface);
-  border-left: 3px solid var(--rule-strong);
-  border-radius: var(--radius-tight);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
   font-size: .9rem;
+  line-height: 1.5;
+  color: var(--fg);
 }
 
-section[data-practice-quiz] li[data-practice-verdict="correct"] p[data-practice-part="says"] {
-  border-left-color: var(--done);
+section[data-practice-quiz] p[data-practice-part="says"][hidden] { display: none; }
+
+section[data-practice-quiz] p[data-practice-part="says"] strong { margin-right: .1rem; }
+
+section[data-practice-quiz] li[data-practice-verdict="correct"] p[data-practice-part="says"],
+section[data-practice-quiz] li[data-practice-verdict="correct"] > [data-form-part="review"] p[data-form-part="verdict"] {
+  background: var(--ok-soft);
+  border-color: var(--ok);
 }
 
-section[data-practice-quiz] li[data-practice-verdict="wrong"] p[data-practice-part="says"] {
-  border-left-color: var(--accent);
+section[data-practice-quiz] li[data-practice-verdict="wrong"] p[data-practice-part="says"],
+section[data-practice-quiz] li[data-practice-verdict="wrong"] > [data-form-part="review"] p[data-form-part="verdict"] {
+  background: var(--bad-soft);
+  border-color: var(--bad);
 }
+
+/* The two icons, drawn as masks over the verdict's ink so they take its
+   colour. ⚠️ Shapes only, no colour written inside them: the palette is the
+   only place a colour is written. */
+section[data-practice-quiz] li[data-practice-verdict] [data-practice-part="mark"]::before,
+section[data-practice-quiz] li[data-practice-verdict] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict] > [data-form-part="review"] p[data-form-part="verdict"]::before {
+  content: "";
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: currentColor;
+}
+
+/* ⚠️ The sentence is running text with inline code in it, so it stays a block
+   and the icon is placed in its left padding rather than made a flex item. */
+section[data-practice-quiz] li[data-practice-verdict] p[data-practice-part="says"],
+section[data-practice-quiz] li[data-practice-verdict] > [data-form-part="review"] p[data-form-part="verdict"] {
+  padding-left: 2.2rem;
+}
+
+section[data-practice-quiz] li[data-practice-verdict] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict] > [data-form-part="review"] p[data-form-part="verdict"]::before {
+  position: absolute;
+  top: .78rem;
+  left: .8rem;
+}
+
+section[data-practice-quiz] li[data-practice-verdict="correct"] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict="correct"] > [data-form-part="review"] p[data-form-part="verdict"]::before { color: var(--ok); }
+
+section[data-practice-quiz] li[data-practice-verdict="wrong"] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict="wrong"] > [data-form-part="review"] p[data-form-part="verdict"]::before { color: var(--bad); }
+
+section[data-practice-quiz] li[data-practice-verdict="correct"] [data-practice-part="mark"]::before,
+section[data-practice-quiz] li[data-practice-verdict="correct"] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict="correct"] > [data-form-part="review"] p[data-form-part="verdict"]::before {
+  mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPSdjdXJyZW50Q29sb3InIHN0cm9rZS13aWR0aD0nMi4yJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxjaXJjbGUgY3g9JzEyJyBjeT0nMTInIHI9JzkuNScvPjxwYXRoIGQ9J003LjUgMTIuNWwzIDMgNi02LjUnLz48L3N2Zz4=") center / contain no-repeat;
+}
+
+section[data-practice-quiz] li[data-practice-verdict="wrong"] [data-practice-part="mark"]::before,
+section[data-practice-quiz] li[data-practice-verdict="wrong"] p[data-practice-part="says"]::before,
+section[data-practice-quiz] li[data-practice-verdict="wrong"] > [data-form-part="review"] p[data-form-part="verdict"]::before {
+  mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPSdjdXJyZW50Q29sb3InIHN0cm9rZS13aWR0aD0nMi4yJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnPjxjaXJjbGUgY3g9JzEyJyBjeT0nMTInIHI9JzkuNScvPjxwYXRoIGQ9J005IDlsNiA2TTE1IDlsLTYgNicvPjwvc3ZnPg==") center / contain no-repeat;
+}
+
+/* --- the controls and the score -------------------------------------------- */
+
+section[data-practice-quiz] p[data-practice-part="controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+section[data-practice-quiz] p[data-practice-part="controls"][hidden] { display: none; }
 
 section[data-practice-quiz] button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
   font: inherit;
   font-weight: 700;
   font-size: .95rem;
-  padding: .4rem .95rem;
+  padding: .45rem 1rem;
   color: var(--fg);
   background: var(--surface);
   border: 1px solid var(--rule-strong);
@@ -138,10 +335,56 @@ section[data-practice-quiz] button {
   cursor: pointer;
 }
 
+section[data-practice-quiz] button[hidden] { display: none; }
+
 section[data-practice-quiz] button:hover { background: var(--surface-2); }
 
+/* ⭐ The one primary act of a quiz: Check answers (Finish quiz in the exam
+   form). An accent ground with the surface's ink — a control, never running
+   text. */
+section[data-practice-quiz] button[data-practice-part="check"],
+section[data-practice-quiz] button[data-form-part="submit"] {
+  color: var(--surface);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+section[data-practice-quiz] button[data-practice-part="check"]:hover,
+section[data-practice-quiz] button[data-form-part="submit"]:hover {
+  color: var(--surface);
+  background: var(--accent);
+  text-decoration: underline;
+}
+
+section[data-practice-quiz] button[data-practice-part="reset"] { margin-right: auto; }
+
+/* The score line: "2 of 4 answered correctly." */
 section[data-practice-quiz] p[data-practice-part="status"] {
-  margin: .5rem 0 0;
+  margin: .75rem 0 0;
   font-size: .9rem;
-  color: var(--muted);
+  font-weight: 600;
+  color: var(--fg-soft);
+}
+
+section[data-practice-quiz] p[data-practice-part="status"]:empty { display: none; }
+
+@media (max-width: 40rem) {
+  section[data-practice-quiz] { padding: 1rem .9rem 1.1rem; }
+  section[data-practice-quiz] li[data-practice-question] { padding: .8rem .7rem .85rem; }
+  section[data-practice-quiz] label { padding: .6rem .7rem; }
+  /* ⚠️ On a phone the mark takes its own line under the option's words, so the
+     sentence keeps the width: it sits in the label's bottom padding. */
+  section[data-practice-quiz] label { position: relative; }
+  section[data-practice-quiz] label:has([data-practice-part="mark"]) { padding-bottom: 1.9rem; }
+  section[data-practice-quiz] [data-practice-part="mark"] {
+    position: absolute;
+    bottom: .55rem;
+    left: 2.4rem;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section[data-practice-quiz] label { transition: none; }
 }

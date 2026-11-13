@@ -20,6 +20,8 @@ from tests.studyforge.render.index.indexes import case, cases
 #: an assertion about the skeleton rather than a restatement of the module.
 FILLED_SLOTS = (
     "body",
+    "brand",
+    "sections",
     "heading",
     "modehead",
     "modeswitch",

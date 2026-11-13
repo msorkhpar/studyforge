@@ -319,3 +319,17 @@ def test_a_stale_report_costs_the_detail_and_never_raises(tmp_path):
 
 def test_the_detail_line_has_one_spelling():
     assert DETAIL_LINE.format(json="{}") == "--- detail {} ---"
+
+
+def test_a_skipped_case_is_said_with_the_third_word_and_what_it_needed():
+    # ⭐ A case that declared `skips_without` and was reported skipped is neither passed nor
+    # failed: its line says so with `exercise.skips.SKIPPED` and names the capability, and the
+    # page's CASE_LINE reads that shape (`practice.js`).
+    from studyforge.exercise.skips import SKIPPED
+    from studyforge.serve.routes.breakdown import CASE_SKIPPED
+
+    line = said("test_on_gpu", passed=False, skipped_without="gpu")
+    assert CASE_SKIPPED == SKIPPED
+    assert line == "--- case test_on_gpu: skipped without gpu ---"
+    assert said("test_on_gpu", passed=False) == "--- case test_on_gpu: failed ---"
+    assert said("test_on_gpu", passed=True, skipped_without=None) == "--- case test_on_gpu: passed ---"

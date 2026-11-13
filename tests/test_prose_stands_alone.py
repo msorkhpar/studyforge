@@ -36,6 +36,7 @@ import re
 import tokenize
 from pathlib import Path
 
+from tests.harness import vendored
 from tests.support import git, repository_root, run
 from tests.test_decisions import population, scratch_repository
 
@@ -115,6 +116,10 @@ def prose(root: Path) -> dict[str, str]:
     for name in tracked(root):
         if name.startswith("src/"):
             text = _text(root / name)
+            # ⭐ A vendored bundle exactly as its release pins it is not this framework's prose:
+            # its minified identifiers are not ids (`tests/harness/vendored.py`).
+            if text is not None and vendored.pristine(name, text):
+                continue
         elif _is_test_code(name):
             source = _text(root / name)
             text = None if source is None else "\n".join(docstrings(source) + comments(source))

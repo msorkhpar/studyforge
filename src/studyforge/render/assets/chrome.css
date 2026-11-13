@@ -86,8 +86,9 @@ body > a[href="#content"]:focus-visible { top: .75rem; }
    rule under it and no capitals: the brief's eyebrow tell is gone. */
 
 body > header {
-  padding: 2rem 0 .5rem;
-  margin-bottom: 1.25rem;
+  padding: 2rem 0 1.25rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rule);
 }
 
 body > header h1 { margin: 0 0 .35rem; }
@@ -167,15 +168,17 @@ nav[aria-label="Containers"] span[data-kind="level"] { display: none; }
 nav[aria-label="Containers"] {
   margin: 0 0 1.5rem;
   font-family: var(--font-ui);
-  font-size: .92rem;
+  font-size: .86rem;
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
 nav[aria-label="Containers"] > details > summary {
-  padding: .4rem 0;
+  padding: .4rem 0 .6rem;
+  font-size: .8rem;
   font-weight: 700;
-  color: var(--fg);
+  letter-spacing: .02em;
+  color: var(--muted);
   cursor: pointer;
 }
 
@@ -186,13 +189,12 @@ nav[aria-label="Containers"] ol {
 }
 
 nav[aria-label="Containers"] ol ol {
-  margin: .1rem 0 .5rem .45rem;
-  padding-left: .9rem;
-  border-left: 1px solid var(--rule);
+  margin: .1rem 0 .6rem;
+  padding: 0;
 }
 
 nav[aria-label="Containers"] li details > summary {
-  padding: .35rem 0;
+  padding: .45rem 0 .3rem;
   font-weight: 700;
   color: var(--fg);
   cursor: pointer;
@@ -207,17 +209,23 @@ nav[aria-label="Containers"] li li > a,
 nav[aria-label="Containers"] li li[aria-current="page"],
 nav[aria-label="Containers"] li li[data-readable="false"] {
   display: flex;
-  padding: .28rem .4rem .28rem 0;
+  position: relative;
+  padding: .32rem 1.5rem .32rem .2rem;
   color: var(--fg-soft);
   text-decoration: none;
-  border-radius: var(--radius-tight);
+  border-radius: 6px;
 }
 
 nav[aria-label="Containers"] li li > a:hover { color: var(--fg); background: var(--surface-2); }
 
 nav[aria-label="Containers"] span[data-kind="numbering"] {
-  flex: 0 0 1.8rem;
+  flex: 0 0 1.9rem;
   color: var(--muted);
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  font-size: .74rem;
+  line-height: 1.75;
   font-variant-numeric: tabular-nums;
   text-align: right;
   padding-right: .55rem;
@@ -232,10 +240,13 @@ nav[aria-label="Containers"] li[aria-current="page"] {
   color: var(--fg);
 }
 
+/* ⭐ The 2026-11 redesign: the current unit is a soft wash with the accent
+   ink, and no stripe down one side. */
 nav[aria-label="Containers"] li li[aria-current="page"] {
   background: var(--accent-soft);
-  box-shadow: inset 2px 0 0 var(--accent);
+  color: var(--accent);
 }
+nav[aria-label="Containers"] li li[aria-current="page"] span[data-kind="numbering"] { color: var(--accent); }
 
 /* ⛔ `data-readable="false"` is §7's third state — listed, not openable — and
    is legible without colour: italic, and no pointer affordance. */
@@ -250,8 +261,11 @@ nav[aria-label="Containers"] li[data-readable="false"] {
 nav[aria-label="Containers"] li li[data-marked="true"] > a::after,
 nav[aria-label="Containers"] li li[data-marked="true"]:not(:has(> a))::after {
   content: "\2713";
-  margin-left: auto;
-  padding-left: .4rem;
+  /* ⚠️ Out of the flow, in room every row reserves: a tick that joined the
+     row's text could wrap its title and move the row (`test_rail_marks`). */
+  position: absolute;
+  right: .5rem;
+  top: .32rem;
   font-weight: 700;
   color: var(--done);
 }
@@ -387,4 +401,36 @@ span[data-kind="read-state"] {
   /* The fold is a narrow-width device: beside the column the list is always
      shown, and the page script reopens it if the window widens. */
   nav[aria-label="Containers"] > details > summary { display: none; }
+}
+
+/* ⭐ The unit's second line (the 2026-11 redesign, `page.unitmeta`): container,
+   place, minutes, practices, questions. ⛔ The separator is DRAWN — a small
+   circle — never a typed middle dot. */
+body > header ul[data-section="unit-meta"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem .7rem;
+  margin: .2rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-ui);
+  font-size: .86rem;
+  color: var(--muted);
+}
+body > header ul[data-section="unit-meta"] li { display: inline-flex; align-items: center; gap: .7rem; }
+body > header ul[data-section="unit-meta"] li:first-child { color: var(--accent); font-weight: 600; }
+body > header ul[data-section="unit-meta"] li + li::before {
+  content: "";
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .6;
+}
+/* ⚠️ Where the line wraps (a phone), a drawn dot would open the second line, so
+   the parts are told apart by the gap alone. */
+@media (max-width: 40rem) {
+  body > header ul[data-section="unit-meta"] { gap: .25rem 1.1rem; }
+  body > header ul[data-section="unit-meta"] li + li::before { display: none; }
 }

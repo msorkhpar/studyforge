@@ -84,13 +84,16 @@ class BlockType:
 BLOCKS = (
     BlockType("heading", "headings", ("type", "level", "text")),
     BlockType("para", "paras", ("type", "text")),
-    BlockType("code", "code", ("type", "lang", "text")),
+    # ⭐ `title` (the 2026-11 redesign): the file a listing is, from a fence's
+    # `title="X.java"`, written only when the fence names one.
+    BlockType("code", "code", ("type", "lang", "text"), optional=("title",)),
     BlockType("table", "tables", ("type", "headers", "rows")),
     BlockType("list", "lists", ("type", "ordered", "items"), optional=("start",)),
     BlockType("image", "images", ("type", "src", "alt", "width")),
     BlockType("video", "videos", ("type", "src", "title")),
     BlockType("rule", "rules", ("type",)),
-    BlockType("quote", "quotes", ("type", "blocks"), holds_blocks=True),
+    # ⭐ `kind` (the 2026-11 redesign): a `> [!NOTE]` quote's word, from `archive.callouts`.
+    BlockType("quote", "quotes", ("type", "blocks"), holds_blocks=True, optional=("kind",)),
     BlockType("html", "html", ("type", "text")),
     BlockType(
         "disclosure",

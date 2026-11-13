@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.harness import streams
+from tests.harness import streams, vendored
 
 #: Floors on coverage, not counts: the emitted streams — the goldens plus the
 #: composed assets — and the authorable sources, templates and asset parts.
@@ -53,7 +53,15 @@ def test_nothing_that_can_be_authored_into_a_stream_carries_one_either(authorabl
     # ⚠️ The second population: a control byte in a template no
     # renderer fills yet, or an asset part no bundle includes yet, is invisible to
     # the emitted census until the day something starts emitting it.
-    assert streams.offenders(authorable) == []
+    # ⭐ A vendored bundle shipped exactly as its release pins it is passed over: a minified
+    # library's own string literals (Mermaid's graph-key separator is a U+0001) are not this
+    # framework's text. `harness.vendored` says why, and when that stops holding.
+    authored = {
+        name: data
+        for name, data in authorable.items()
+        if not vendored.pristine(name, data.decode("utf-8", "replace"))
+    }
+    assert streams.offenders(authored) == []
 
 
 def test_every_authorable_source_is_inside_what_is_scanned(emitted, authorable):

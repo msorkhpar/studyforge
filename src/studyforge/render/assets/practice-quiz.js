@@ -21,6 +21,12 @@
    ⚠️ The answers themselves are not kept: a reload clears the choices, and the
    pass stays.
 
+   ⭐ **The 2026-11 redesign adds three things and removes none**: the "N of M
+   answered" line, kept up to date as options are chosen; the chosen option's
+   own mark after Check (an icon the stylesheet draws, and the verdict's word);
+   and Reset, offered once the quiz is checked, which clears the page and never
+   the reader's recorded pass.
+
    ⛔ **A quiz has no file, no command and no grader to submit to, so it renders
    no Run and no Submit — and not disabled ones.** With no script at all, the
    Check control stays hidden and the page says why.
@@ -80,11 +86,32 @@
     return answers;
   }
 
+  /* The chosen option's own mark: an icon (drawn by `practice-quiz.css`) and the verdict's
+     word, inside the option's label so it is read with it. ⭐ The 2026-11 redesign: a status
+     colour is never the only signal, so the card that turns green or red also says so in words.
+     ⛔ Only the CHOSEN option is marked, never the key (see the rule above). */
+  function unmark(question) {
+    [].slice.call(question.querySelectorAll('[' + PART + '="mark"]')).forEach(function (mark) {
+      mark.parentNode.removeChild(mark);
+    });
+  }
+
+  function markChosen(question, said) {
+    var picked = question.querySelector('input[type="radio"]:checked');
+    var label = picked && picked.closest('label');
+    if (!label) { return; }
+    var mark = document.createElement('span');
+    mark.setAttribute(PART, 'mark');
+    mark.textContent = said.replace(/\.$/, '');
+    label.appendChild(mark);
+  }
+
   /* One question graded and drawn; answers whether it is right. ⭐ The sentence
      is the one for whatever the reader CHOSE, right or wrong. */
   function draw(question, entry, answer) {
     var says = part(question, 'says');
     var hasSaid = entry && entry.says && Object.prototype.hasOwnProperty.call(entry.says, answer);
+    unmark(question);
     if (answer === undefined || !hasSaid) {
       question.removeAttribute(VERDICT);
       if (says) { says.textContent = ''; says.hidden = true; }
@@ -92,10 +119,15 @@
     }
     var right = answer === entry.key;
     question.setAttribute(VERDICT, right ? 'correct' : 'wrong');
+    markChosen(question, words(says, right ? RIGHT : WRONG));
     if (says) {
       /* ⚠️ The sentence is markup the BUILD rendered (`markup.inline`: escaped,
          its inline code as code); the verdict's own word stays text. */
-      says.textContent = words(says, right ? RIGHT : WRONG) + ' ';
+      var word = document.createElement('strong');
+      word.textContent = words(says, right ? RIGHT : WRONG);
+      says.textContent = '';
+      says.appendChild(word);
+      says.appendChild(document.createTextNode(' '));
       says.insertAdjacentHTML('beforeend', entry.says[answer]);
       says.hidden = false;
     }
@@ -123,20 +155,62 @@
     quiz.dispatchEvent(new CustomEvent(SETTLED, { bubbles: true }));
   }
 
+  /* "N of M answered", counted off the radios as the reader chooses. ⭐ The 2026-11 redesign:
+     the reader sees how far through the check they are before they ask for a verdict. */
+  function count(quiz) {
+    var line = part(quiz, 'count');
+    if (!line) { return; }
+    var asked = quiz.querySelectorAll('[' + QUESTION + ']').length;
+    line.textContent = words(line, 'data-practice-count')
+      .replace('{answered}', Object.keys(chosen(quiz)).length).replace('{asked}', asked);
+    line.hidden = false;
+  }
+
+  /* Back to the quiz as it was opened: no choice, no verdict, no sentence. ⛔ A pass already
+     recorded stays recorded: Reset clears the page, never the reader's record. */
+  function reset(quiz) {
+    [].slice.call(quiz.querySelectorAll('input[type="radio"]:checked')).forEach(function (input) {
+      input.checked = false;
+    });
+    [].slice.call(quiz.querySelectorAll('[' + QUESTION + ']')).forEach(function (question) {
+      draw(question, null, undefined);
+    });
+    var status = part(quiz, 'status');
+    if (status) { status.textContent = ''; }
+    count(quiz);
+  }
+
   function wire(quiz) {
     var key = keyOf(quiz);
     var check = part(quiz, 'check');
+    var again = part(quiz, 'reset');
     var controls = part(quiz, 'controls');
     var offline = part(quiz, 'offline');
     if (!key || !check || !controls) { return; }
     if (offline) { offline.hidden = true; }
     controls.hidden = false;
+    count(quiz);
     var graded = false;
     /* ⭐ Re-graded as soon as a reader changes an answer, once they have asked
        once, so the sentence under a question can never describe an option that
        is no longer chosen. */
-    check.addEventListener('click', function () { graded = true; grade(quiz, key); });
-    quiz.addEventListener('change', function () { if (graded) { grade(quiz, key); } });
+    check.addEventListener('click', function () {
+      graded = true;
+      grade(quiz, key);
+      if (again) { again.hidden = false; }
+    });
+    quiz.addEventListener('change', function () {
+      count(quiz);
+      if (graded) { grade(quiz, key); }
+    });
+    if (again) {
+      again.addEventListener('click', function () {
+        graded = false;
+        again.hidden = true;
+        reset(quiz);
+        quiz.focus();
+      });
+    }
   }
 
   [].slice.call(document.querySelectorAll(QUIZ)).forEach(wire);

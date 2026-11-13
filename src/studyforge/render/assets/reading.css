@@ -9,11 +9,15 @@
    controls and practice panels are NOT here: they belong to the tasks that
    render them, and each adds its own part beside this one.
 
-   ⭐ THE TYPE: prose is Charis at 1.1875rem, headings are Andika at
-   its heaviest shipped weight (700 — Andika has no 800, so the contrast with
-   the prose is weight AND family rather than 800 against 400 in one face), on
-   a scale with real jumps: 2.5 / 1.6 / 1.2rem. Sentence case is the corpus's
-   to write; nothing here transforms case.
+   ⭐ THE TYPE (the 2026-11 redesign): prose is Charis at 1.125rem on a
+   1.72 line, headings are Plus Jakarta Sans at 700 with a slight negative
+   track, on a scale with real jumps: 2.25 / 1.5 / 1.2rem. Sentence case is the
+   corpus's to write; nothing here transforms case.
+
+   ⭐ CARDS: the redesign lets a block that is not running text stand on a card
+   — a quote or note, a disclosure, a code figure, a table. One radius
+   (`--radius-card`), a hairline and `--card-shadow`; ⛔ never a coloured stripe
+   down one side.
 
    ⚠️ Every selector here names a class this package publishes in
    `pageassets.surface`. A renderer that invents its own class names gets an
@@ -24,7 +28,7 @@ body {
   padding: 0 var(--gutter);
   background: var(--bg);
   color: var(--fg);
-  font: 400 1.1875rem/1.65 var(--font-prose);
+  font: 400 1.125rem/1.72 var(--font-prose);
   text-rendering: optimizeLegibility;
 }
 
@@ -35,11 +39,11 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   text-wrap: balance;
 }
-h1 { font-size: 2.5rem; line-height: 1.12; margin: 0 0 .6rem; letter-spacing: -.01em; }
-h2, h3, h4, h5, h6 { line-height: 1.25; margin: 2.2rem 0 .6rem; }
-h2 { font-size: 1.6rem; }
+h1 { font-size: 2.25rem; line-height: 1.15; margin: 0 0 .6rem; letter-spacing: -.02em; }
+h2, h3, h4, h5, h6 { line-height: 1.3; margin: 2.4rem 0 .7rem; letter-spacing: -.01em; }
+h2 { font-size: 1.5rem; }
 h3 { font-size: 1.2rem; }
-h4, h5, h6 { font-size: 1.05rem; }
+h4, h5, h6 { font-size: 1.05rem; font-weight: 600; }
 
 p { margin: 0 0 1.1rem; }
 
@@ -74,10 +78,11 @@ code {
   font-family: var(--font-mono);
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0;
-  font-size: .84em;
+  font-size: .82em;
   background: var(--code-bg);
-  border-radius: var(--radius-tight);
-  padding: .08em .3em;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: .05em .32em;
 }
 
 /* A thematic break: one feint ruled line. */
@@ -89,15 +94,21 @@ hr {
 }
 
 /* A quote holds arbitrary blocks, so it is a container and not a paragraph
-   with italics. ⚠️ Its left rule is the quotation convention and is grey — not
-   a coloured stripe on a card (the brief's §2). */
+   with italics. ⭐ In a course a quote is almost always a NOTE — what changes in
+   a later version, a caution, an aside — so it stands on a card: a full hairline and the raised
+   ground, ⛔ never a coloured stripe down one side. A note opened with a bold
+   lead keeps that lead as its title. */
 blockquote {
-  margin: 1.6rem 0;
-  padding: .1rem 0 .1rem 1.15rem;
-  border-left: 2px solid var(--rule-strong);
+  margin: 1.8rem 0;
+  padding: .9rem 1.15rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
   color: var(--fg-soft);
   max-width: var(--measure);
 }
+blockquote strong:first-child { color: var(--fg); font-family: var(--font-ui); font-size: .95em; }
 blockquote > :last-child { margin-bottom: 0; }
 
 /* --- present but withheld ---------------------------------------------- */
@@ -112,28 +123,38 @@ blockquote > :last-child { margin-bottom: 0; }
    is outside the disclosure. */
 details.disclosure {
   margin: 1.6rem 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
+/* ⚠️ The card's inset is on its children, not on the card, and a code figure
+   inside takes none: a worked solution must lay out exactly as wide as a code
+   figure in the flow (`test_reading_width`), the card's hairline included. */
+details.disclosure > :not(figure) { margin-left: 1rem; margin-right: 1rem; }
+details.disclosure > figure { margin-left: -1px; margin-right: -1px; border-radius: 0; }
+details.disclosure > figure:last-child { border-radius: 0 0 var(--radius-card) var(--radius-card); margin-bottom: -1px; }
 details.disclosure > summary {
   font-family: var(--font-ui);
-  font-size: .95rem;
+  font-size: .92rem;
+  font-weight: 600;
   cursor: pointer;
-  padding: .6rem 0;
+  padding: .75rem 0;
   color: var(--fg-soft);
 }
-details.disclosure[open] > summary { color: var(--fg); }
-details.disclosure > :last-child { margin-bottom: .8rem; }
+details.disclosure[open] > summary { color: var(--fg); border-bottom: 1px solid var(--rule); margin-bottom: .9rem; }
+details.disclosure > :last-child:not(figure) { margin-bottom: 1rem; }
 
 /* --- figures ----------------------------------------------------------- */
 
 figure { margin: 1.6rem 0; }
 
-/* ⛔ Code is a different kind of text, so it keeps a ground of its own — and
-   nothing else a card has: no border, no shadow, a tight radius. */
+/* ⭐ Code is a different kind of text, so it keeps a ground of its own, on a
+   card: a hairline, the card radius and a caption bar naming the file or the
+   language, with the copy control at its right. */
 figure.code {
   background: var(--code-bg);
-  border-radius: var(--radius-tight);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 figure.code figcaption {
@@ -141,10 +162,26 @@ figure.code figcaption {
   gap: .75rem;
   align-items: center;
   font-family: var(--font-ui);
-  font-size: .82rem;
+  font-size: .8rem;
+  font-weight: 600;
   color: var(--muted);
-  padding: .4rem .9rem 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  padding: .4rem .6rem .4rem .9rem;
 }
+/* ⭐ A program's OUTPUT is not code the reader writes, so it is framed as a
+   terminal, dark in both themes: a reader scanning the page never mistakes a
+   log for source. `data-frame="terminal"` is set by the renderer for the
+   output languages (`text`, `output`, `console`, `stdout`). */
+figure.code[data-frame="terminal"] { background: var(--term-bg); border-color: var(--term-bg); }
+figure.code[data-frame="terminal"] figcaption {
+  background: var(--term-bg);
+  color: var(--term-muted);
+  border-bottom-color: color-mix(in srgb, var(--term-muted) 25%, transparent);
+}
+figure.code[data-frame="terminal"] code { color: var(--term-fg); }
+figure.code[data-frame="terminal"] button.copy { color: var(--term-muted); border-color: color-mix(in srgb, var(--term-muted) 45%, transparent); }
+figure.code[data-frame="terminal"] button.copy:hover { color: var(--term-fg); border-color: var(--term-muted); }
 figure.code figcaption .what { flex: 1 1 auto; }
 /* A language the vendored highlighter does not cover renders plain, and the
    caption says so, so a plain block never looks like a broken highlighter. */
@@ -159,13 +196,14 @@ figure.code pre {
   font-family: var(--font-mono);
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0;
-  padding: .7rem 1rem 1rem;
+  padding: .85rem 1rem 1rem;
   overflow-x: auto;
   font-size: .82rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 figure.code code {
   background: none;
+  border: 0;
   padding: 0;
   font-size: inherit;
   line-height: inherit;
@@ -174,11 +212,12 @@ figure.code code {
 
 button.copy {
   font: inherit;
+  font-weight: 600;
   color: var(--muted);
   background: none;
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-control);
-  padding: .1rem .5rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: .15rem .55rem;
   cursor: pointer;
 }
 button.copy:hover { color: var(--fg); border-color: var(--fg-soft); }
@@ -208,15 +247,22 @@ figure.video video {
 /* ⛔ The wrapper is not decoration. A table wider than the column must scroll
    inside its own box; without this the page itself scrolls sideways and every
    paragraph goes with it. */
-.scroll { overflow-x: auto; margin: 0 0 1.6rem; }
+.scroll {
+  overflow-x: auto;
+  margin: 0 0 1.6rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
 table { border-collapse: collapse; width: 100%; font-size: .92rem; font-variant-numeric: tabular-nums; }
 th, td {
   border-bottom: 1px solid var(--rule);
-  padding: .45rem .6rem;
+  padding: .55rem .8rem;
   text-align: left;
   vertical-align: top;
 }
-th { font-family: var(--font-ui); font-size: .85rem; border-bottom-color: var(--rule-strong); }
+th { font-family: var(--font-ui); font-size: .8rem; font-weight: 600; color: var(--muted); background: var(--bg); }
+tr:last-child > td { border-bottom: 0; }
 
 /* --- what the reader asked for ----------------------------------------- */
 

@@ -59,8 +59,15 @@ def test_the_body_is_the_renderers_own_and_not_a_second_spelling(tmp_path):
     from tests.studyforge.render.page import pages as harness
 
     def without_chrome(body: str) -> str:
-        """The page minus every `<nav>` region, and minus the gap each one leaves."""
+        """The page minus every `<nav>` region and the top bar's brand, and the gaps they leave.
+
+        ⭐ The brand and the unit's second line (the 2026-11 redesign) are chrome
+        the build adds: the bare render has no masthead, and no rail to say
+        "Unit n of m" from, exactly as it has no rail.
+        """
         body = re.sub(r"<nav[^>]*>.*?</nav>", "", body, flags=re.DOTALL)
+        body = re.sub(r'<a href="[^"]*" data-section="brand">.*?</a>', "", body)
+        body = re.sub(r'<ul data-section="unit-meta">.*?</ul>', "", body)
         return re.sub(r"\n{2,}", "\n", body)
 
     case = harness.depth1_unit_02()

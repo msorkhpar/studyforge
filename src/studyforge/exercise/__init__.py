@@ -167,6 +167,7 @@ from studyforge.exercise.record import (
     of,
     to_document,
 )
+from studyforge.exercise.skips import SKIPPED
 from studyforge.exercise.report import (
     CLOCK_SLACK,
     PASSING_CHILDREN,
@@ -202,6 +203,7 @@ from studyforge.exercise.states import (
 #: R17 makes the package's `__init__.py` its contract, and
 #: this is what it says.
 __all__ = [
+    "SKIPPED",
     "ARGUMENT_PERMITTED",
     "AUTHORED_KEYS",
     "BREAKDOWN_KEYS",

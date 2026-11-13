@@ -290,3 +290,28 @@ def test_an_escaped_backtick_stays_literal():
 
 def test_a_code_span_nested_in_strong_still_escapes_its_body():
     assert text.inline("**`<b>`**") == "<strong><code>&lt;b&gt;</code></strong>"
+
+
+def test_a_link_label_may_hold_one_level_of_balanced_brackets():
+    # ⭐ A practice's "Taught in" names a lesson by its title, and a title such as
+    # "Start-Time Variables x[i,t]" carries brackets: the link still renders.
+    out = text.inline("Taught in [6.4.1 Start x[i,t] and W](../a.html).")
+    assert '<a href="../a.html"' in out
+    assert ">6.4.1 Start x[i,t] and W</a>" in out
+
+
+def test_the_ordinary_link_and_a_label_of_brackets_alone_still_render():
+    assert '<a href="b.html"' in text.inline("see [plain](b.html)")
+    assert ">[x]</a>" in text.inline("see [[x]](b.html)")
+
+
+def test_an_unbalanced_bracket_stays_text_and_the_link_inside_it_renders():
+    # ⭐ CommonMark's own reading: the stray `[` is text, the well-formed link after it is a link.
+    assert text.inline("a [label with [unclosed](b.html)") == (
+        'a [label with <a href="b.html" rel="noopener noreferrer">unclosed</a>'
+    )
+
+
+def test_two_levels_of_brackets_stay_text_deliberately():
+    # ⛔ The rule balances one level only; no lesson title needs two.
+    assert text.inline("a [two [levels [deep]] here](b.html)") == "a [two [levels [deep]] here](b.html)"

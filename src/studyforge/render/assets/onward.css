@@ -1,65 +1,222 @@
-/* Where the reader goes next: the between-pages bar and the Up next slip.
+/* Where the reader goes next: the unit's footer card and the Up next slip.
 
    ⭐ ONE OF THE CHROME PARTS (`chrome.css` says how they divide). It is
-   its own part because it holds THE ONE BOLD ELEMENT: the Up next slip, the
-   label on the next exercise book in the pile, filled with `--sign` on exactly
-   one element per page and nowhere else in any part (`test_identity` asserts
-   it). Everything else on the page uses the accent as a line, a ring or a word.
+   its own part because it holds THE ONE BOLD ELEMENT: the next link, filled
+   with `--sign` on exactly one element per page and nowhere else in any part
+   (`test_identity` asserts it). Everything else on the page uses the accent as
+   a line, a ring or a word.
 
-   ⛔ No colour, no class, no second width threshold: see `chrome.css`. */
+   ⭐ THE 2026-11 REDESIGN: ONE FOOTER CARD. A unit page ends on a card that
+   holds the read control (`read-mark.html`), the way up to the unit's list and
+   Previous / next. The next unit is the card's primary button — still the
+   sign-filled slip — and, while the unit is unmarked, `read-mark.js` labels it
+   *Mark read & continue* and marks the unit as the reader follows it. ⛔ With
+   no script the read control stays hidden, the bar is the whole card, and the
+   next link is a plain link that navigates.
 
-/* --- the between-pages bar, and the Up next slip ------------------------- */
+   ⚠️ The read control and the bar are two regions of the skeleton (the
+   narration transport may stand between them), so the card is drawn as two
+   halves: the control's top half and the bar's bottom half, joined only when
+   the control is shown.
 
-/* ⭐ Previous and the way up are one quiet line, each a small label over its
-   title; the next page is THE SLIP: the one filled area of the sign colour on
-   the page, with its label on a tab on its top edge. ⛔ No arrow glyphs (B1).
-   Told apart from body text by face, size, weight, layout and a rule — none of
-   them a colour, so a reader who cannot tell colours apart still can. */
+   ⛔ No colour, no class, no second width threshold: see `chrome.css`. The two
+   columns of Previous and next stack by wrapping, never by a media query. */
+
+/* --- the read control: the top half of the card ---------------------------- */
+
+/* ⭐ The reader's own record: a button that looks like one, with the
+   tick box it sets drawn inside it — empty, then solid ink once pressed — and
+   one quiet line about where the mark lives. ⚠️ The region ships `hidden` and
+   `read-mark.js` unhides it only with a working store. The state is told apart
+   by the box and the words, not by colour alone. */
+body > section[data-section="read-mark"] {
+  margin: 2.5rem 0 0;
+  padding: 1.25rem 1.5rem .25rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-bottom: 0;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  font-family: var(--font-ui);
+}
+
+body > section[data-section="read-mark"] button {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font: inherit;
+  font-weight: 700;
+  padding: .5rem 1rem;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+body > section[data-section="read-mark"] button:hover { background: var(--surface-2); }
+
+body > section[data-section="read-mark"] button::before {
+  content: "";
+  display: grid;
+  place-items: center;
+  width: .95rem;
+  height: .95rem;
+  font-size: .7rem;
+  line-height: 1;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+}
+
+body > section[data-section="read-mark"][data-marked="true"] button::before {
+  content: "\2713";
+  color: var(--bg);
+  background: var(--done);
+  border-color: var(--done);
+}
+
+body > section[data-section="read-mark"] p {
+  margin: .6rem 0 0;
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+body > section[data-section="read-mark"] p:first-child { margin: 0; }
+
+/* --- the between-pages bar: the bottom half, or the whole card ------------- */
+
+/* ⭐ The way up is a quiet line of its own across the top; Previous and next
+   are two cards side by side, each a small label over its title. ⛔ No arrow
+   glyphs: each carries an inline SVG arrow (`link-*.html`). Told apart by
+   face, size, weight, layout and the slip's fill — never a colour alone. */
 nav[aria-label="Between units"] {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 2rem;
-  align-items: flex-end;
-  margin: 2rem 0 2.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule);
+  gap: .75rem;
+  margin: 2.5rem 0;
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
   font-family: var(--font-ui);
-  font-size: .95rem;
+  font-size: 1rem;
   font-weight: 700;
+}
+
+/* Joined to the read control above it: no gap, no top edge, and a hairline
+   inside the card between the two halves. */
+section[data-section="read-mark"]:not([hidden]) ~ nav[aria-label="Between units"] {
+  margin-top: 0;
+  border-top: 0;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+}
+
+section[data-section="read-mark"]:not([hidden]) ~ nav[aria-label="Between units"]::before {
+  content: "";
+  flex: 1 0 100%;
+  order: 0;
+  height: 1px;
+  margin: 0 0 .5rem;
+  background: var(--rule);
 }
 
 nav[aria-label="Between units"] a {
   min-width: 0;
-  color: var(--fg-soft);
+  color: var(--fg);
   text-decoration: none;
 }
-
-nav[aria-label="Between units"] a:hover { color: var(--fg); text-decoration: underline; }
 
 nav[aria-label="Between units"] a > span,
 nav[aria-label="Up next"] a > span {
   display: block;
-  font-size: .82rem;
+  font-size: .8rem;
   font-weight: 400;
   color: var(--muted);
 }
 
+/* The way up: one quiet line, the label and the list's name on it. */
 nav[aria-label="Between units"] a[rel="up"] {
-  font-weight: 400;
-  flex: 0 1 24rem;
+  flex: 1 0 100%;
+  order: 1;
   overflow: hidden;
+  font-size: .9rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--fg-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: .2em;
 }
 
-/* THE SLIP. */
-nav[aria-label="Between units"] a[rel="next"],
+nav[aria-label="Between units"] a[rel="up"] > span {
+  display: inline;
+  margin-right: .35rem;
+  font-size: inherit;
+}
+
+nav[aria-label="Between units"] a[rel="up"]:hover { color: var(--fg); }
+
+/* Previous and next: two cards, side by side while there is room, each with
+   its arrow in its padding. */
+nav[aria-label="Between units"] a:is([rel="prev"], [data-pager="previous"], [rel="next"], [data-pager="next"]) {
+  position: relative;
+  display: block;
+  flex: 1 1 15rem;
+  order: 2;
+  padding: .75rem 1rem .8rem 2.85rem;
+  line-height: 1.3;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+}
+
+nav[aria-label="Between units"] a:is([rel="prev"], [data-pager="previous"]):hover {
+  border-color: var(--rule-strong);
+  background: var(--surface-2);
+}
+
+nav[aria-label="Between units"] a > svg {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  margin-top: -9px;
+  color: var(--muted);
+}
+
+/* THE SLIP: the next unit, the card's primary button, its arrow on the right. */
+nav[aria-label="Between units"] a:is([rel="next"], [data-pager="next"]) { padding: .75rem 2.85rem .8rem 1rem; }
+
+nav[aria-label="Between units"] a:is([rel="next"], [data-pager="next"]) > svg { left: auto; right: 1rem; }
+
+nav[aria-label="Between units"] a[rel="next"] {
+  order: 3;
+  color: var(--sign-ink);
+  background: var(--sign);
+  border-color: var(--sign);
+}
+
+nav[aria-label="Between units"] a[rel="next"]:hover { color: var(--sign-ink); text-decoration: underline; }
+
+nav[aria-label="Between units"] a[rel="next"] > :is(span, svg) {
+  color: var(--sign-ink);
+  font-weight: 600;
+}
+
+/* The label the script is not showing (*Up next* or *Mark read & continue*). */
+nav[aria-label="Between units"] a > span[hidden] { display: none; }
+
+/* ⚠️ A chain's other neighbours ship `hidden`; this comes after the card rules
+   above, which would otherwise outweigh the attribute. */
+nav[aria-label="Between units"] a:is([rel], [data-pager])[hidden] { display: none; }
+
+/* --- the Up next slip of a container page and the root index --------------- */
+
+/* ⭐ The next page in the order, as THE SLIP: the one filled area of the sign
+   colour on the page, with its label on a tab on its top edge. */
 nav[aria-label="Up next"] a,
 nav[aria-label="Up next"] > p {
   position: relative;
   display: block;
-  flex: 1 0 100%;
-  order: 1;
   margin-top: 1.6rem;
   padding: 1rem 1.25rem 1.1rem;
   font-family: var(--font-ui);
@@ -73,11 +230,9 @@ nav[aria-label="Up next"] > p {
   text-wrap: balance;
 }
 
-nav[aria-label="Between units"] a[rel="next"]:hover,
 nav[aria-label="Up next"] a:hover { text-decoration: underline; color: var(--sign-ink); }
 
 /* The tab: the slip's label, standing on its top edge at the right. */
-nav[aria-label="Between units"] a[rel="next"] > span,
 nav[aria-label="Up next"] a > span,
 nav[aria-label="Up next"] > p > span {
   position: absolute;
@@ -94,23 +249,15 @@ nav[aria-label="Up next"] > p > span {
 nav[aria-label="Up next"] { margin: 1.25rem 0 0; }
 
 /* ⛔ A container page carries its own Up next (the first unread unit in it),
-   so the bar's next CONTAINER steps down to a quiet link there: one slip per
+   so the bar's next CONTAINER steps down to a quiet card there: one slip per
    page, never two. */
 body:has(nav[aria-label="Up next"]) nav[aria-label="Between units"] a[rel="next"] {
-  flex: 0 1 auto;
-  order: 0;
-  margin: 0;
-  padding: 0;
-  font-size: .95rem;
-  color: var(--fg-soft);
+  color: var(--fg);
   background: none;
-  border-radius: 0;
+  border-color: var(--rule);
 }
 
-body:has(nav[aria-label="Up next"]) nav[aria-label="Between units"] a[rel="next"] > span {
-  position: static;
-  padding: 0;
+body:has(nav[aria-label="Up next"]) nav[aria-label="Between units"] a[rel="next"] > :is(span, svg) {
   color: var(--muted);
   font-weight: 400;
-  background: none;
 }

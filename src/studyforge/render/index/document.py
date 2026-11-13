@@ -94,7 +94,13 @@ from studyforge.render.index import disclosure
 from studyforge.render.index.entries import Document
 from studyforge.render.index.placement import Placement
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import PageError, RailContainer
+from studyforge.render.page import (
+    Masthead,
+    PageError,
+    RailContainer,
+    masthead_brand,
+    masthead_sections,
+)
 from studyforge.render.page import rail as render_rail
 
 #: The skeleton every page of this site is filled from — the unit page's own.
@@ -127,6 +133,7 @@ def compose(
     document: Document,
     placement: Placement,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> str:
     """Return the root index's exact text.
 
@@ -142,6 +149,8 @@ def compose(
                 stylesheet=escape_attribute(placement.stylesheet()),
                 script=escape_attribute(placement.script()),
                 rail=render_rail(rail),
+                brand=masthead_brand(masthead),
+                sections=masthead_sections(masthead),
                 outline=f"{ABOUT}\n",
                 body=head(document) + disclosure.render(document),
                 **placement.mode_slots(),

@@ -15,7 +15,7 @@ from studyforge.render.pageassets import ASSET_DIR, AssetError, faces, licence_n
 from studyforge.render.pageassets.source import FONT_SUFFIX, data, font_names
 
 #: Every family the palette names first in a font stack.
-FAMILIES = ("Charis", "Andika", "JetBrains Mono")
+FAMILIES = ("Charis", "Plus Jakarta Sans", "JetBrains Mono")
 
 
 def test_every_vendored_face_matches_its_pinned_sha256():
@@ -49,9 +49,9 @@ def test_every_face_ships_beside_its_open_font_licence():
         assert "SIL Open Font License, Version 1.1" in licence, face.name
 
 
-@pytest.mark.parametrize("family", ["Charis", "Andika"])
+@pytest.mark.parametrize("family", ["Charis"])
 def test_a_family_with_a_reserved_name_is_vendored_whole(family):
-    # ⛔ Charis and Andika reserve their names, a subset
+    # ⛔ Charis reserves its names, a subset
     # is a Modified Version that may not carry them, so no file is subset. The
     # licence says which names are reserved; this checks the claim is still true
     # of the file that ships, and that every face of the family is a full release

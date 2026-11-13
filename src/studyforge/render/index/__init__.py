@@ -102,7 +102,7 @@ from studyforge.render.page import ENCODING, PageError
 if typing.TYPE_CHECKING:  # ⛔ Annotation-only: neither name joins this surface.
     from collections.abc import Sequence
 
-    from studyforge.render.page import RailContainer
+    from studyforge.render.page import Masthead, RailContainer
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.render.index.disclosure` directly is a consumer this contract
@@ -134,6 +134,7 @@ def render(
     document: Document,
     placement: Placement,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> bytes:
     """Render the root index, with the rail across containers when one is handed in.
 
@@ -142,4 +143,4 @@ def render(
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
     """
-    return compose(document, placement, rail).encode(ENCODING)
+    return compose(document, placement, rail, masthead).encode(ENCODING)

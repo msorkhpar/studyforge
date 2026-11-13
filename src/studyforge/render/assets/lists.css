@@ -22,28 +22,43 @@
 nav[aria-label="Outline"] {
   margin: 0 0 .5rem;
   font-family: var(--font-ui);
-  font-size: .95rem;
+  font-size: .84rem;
   line-height: 1.45;
 }
 
 nav[aria-label="Outline"] > p {
-  margin: 0 0 .35rem;
+  margin: 0 0 .6rem;
+  font-size: .78rem;
   font-weight: 700;
+  letter-spacing: .02em;
   color: var(--muted);
 }
 
 nav[aria-label="Outline"] ol {
   margin: 0;
-  padding: 0 0 0 .9rem;
+  padding: 0;
   list-style: none;
-  border-left: 1px solid var(--rule);
 }
 
-nav[aria-label="Outline"] li { margin: .12rem 0; }
-nav[aria-label="Outline"] a { color: var(--fg-soft); text-decoration: none; }
-nav[aria-label="Outline"] a:hover { color: var(--fg); text-decoration: underline; }
+nav[aria-label="Outline"] li { margin: 0; }
+nav[aria-label="Outline"] ol ol { margin: 0 0 0 .75rem; }
+nav[aria-label="Outline"] a {
+  display: block;
+  padding: .3rem 0 .3rem .75rem;
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+nav[aria-label="Outline"] a:hover { color: var(--fg); }
+/* ⭐ Scroll-spy (the 2026-11 redesign): `reading-progress.js` marks the link
+   of the section being read with `aria-current="location"`, told apart by
+   colour AND weight AND the rule beside it. */
+nav[aria-label="Outline"] a[aria-current] { color: var(--accent); font-weight: 600; border-left-color: var(--accent); }
 nav[aria-label="Outline"] li[data-level="2"] { padding-left: .9rem; }
-nav[aria-label="Outline"] li[data-level="3"] { padding-left: 1.8rem; font-size: .9rem; }
+nav[aria-label="Outline"] li[data-level="3"] { padding-left: 1.8rem; font-size: .95em; }
+/* ⭐ An outline whose shallowest entries are level 3 (a unit with no level-2
+   headings) starts them flush: the indent says "nested", and nothing is above them. */
+nav[aria-label="Outline"] ol:not(:has(li[data-level="2"])) li[data-level="3"] { padding-left: 0; font-size: inherit; }
 
 /* --- the two lists that ARE their pages ---------------------------------- */
 
@@ -199,7 +214,12 @@ nav[aria-label="Contents"] details > ol { padding-bottom: .6rem; }
    whole region stays hidden, because the marks live in the browser. */
 section[aria-label="Progress"] {
   margin: 1.75rem 0 0;
+  padding: 1.1rem 1.25rem 1.25rem;
   font-family: var(--font-ui);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
 }
 
 section[aria-label="Progress"] > p {
@@ -274,19 +294,21 @@ form[role="search"] input {
   padding: .45rem .7rem;
   color: var(--fg);
   background: var(--surface);
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
 }
 
 form[role="search"] input::placeholder { color: var(--muted); }
 
 form[role="search"] button {
   font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
   padding: .4rem .85rem;
-  color: var(--fg);
+  color: var(--fg-soft);
   background: var(--surface);
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -298,3 +320,61 @@ form[role="search"] p {
   font-size: .9rem;
   color: var(--muted);
 }
+
+/* ⭐ GROUP CARDS (the 2026-11 redesign). A course with a handful of top-level
+   groups shows each as a card — its title, and its own bar filled to what is
+   read — instead of one thin strip: the sample's "track" cards. ⛔ Only up to
+   six groups: past that the strip above stays, because sixty cards are a wall
+   and the strip is what `test_scale` holds to one row. */
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) {
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1rem;
+}
+/* ⚠️ A wrapping flex row, not a grid: the page's layout is the one grid
+   `chrome.css` declares under its threshold, and a card row is not a layout. */
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li { flex: 1 1 12rem; min-width: 0; }
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li > a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: .85rem 1rem .9rem;
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--fg);
+  white-space: normal;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li > a::before {
+  order: 2;
+  height: 6px;
+  margin: auto 0 0;
+  padding-top: 0;
+  border-top: .75rem solid var(--bg);
+  box-sizing: content-box;
+  border-radius: 3px;
+}
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li > a:hover { border-color: var(--rule-strong); }
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li[aria-current="step"] > a { border-color: var(--accent); color: var(--fg); }
+section[aria-label="Progress"] ol:not(:has(> li:nth-child(7))) > li[aria-current="step"] > a::before { box-shadow: none; }
+
+/* ⭐ The index's top-level groups each stand on a card, their rows inside. */
+nav[aria-label="Contents"] > ol > li > details {
+  margin: 0 0 1rem;
+  padding: 0 1.1rem .4rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+}
+nav[aria-label="Contents"] > ol > li > details > summary { padding: 1rem 0 .7rem; }
+nav[aria-label="Contents"] > ol > li > details[open] > summary { border-bottom: 1px solid var(--rule); margin-bottom: .3rem; }
+nav[aria-label="Contents"] li[id] { padding: .5rem 0; background: none; border-bottom: 1px solid var(--rule); }
+nav[aria-label="Contents"] li[id]:last-child { border-bottom: 0; }
+nav[aria-label="Contents"] li[id]::before { border-radius: var(--radius-control); }
+nav[aria-label="Contents"] li > a { align-items: baseline; }
+nav[aria-label="Contents"] span[data-kind="numbering"] { font-family: var(--font-mono); font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; font-size: .8rem; }

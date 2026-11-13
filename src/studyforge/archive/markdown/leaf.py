@@ -23,6 +23,8 @@ opposite; it is, deliberately.
 
 from __future__ import annotations
 
+import re
+
 from html import unescape
 
 from studyforge.archive.markdown import fences, patterns, scan
@@ -46,6 +48,27 @@ def read_rule() -> dict:
     return {"type": "rule"}
 
 
+#: A fence's title attribute: ``title="FirstMessage.java"`` (or single quotes,
+#: or a bare word) after the language.
+FENCE_TITLE = re.compile(r"""\btitle=(?:"([^"]*)"|'([^']*)'|(\S+))""")
+
+
+def fence_label(info: str) -> tuple[str, str]:
+    """Return `(language, title)` from a fence's info string.
+
+    ⛔ An info string that names no title is read EXACTLY as before — the whole
+    string, lower-cased, is the language — so every archive written before
+    titles existed is byte-identical. Only a fence carrying `title=` is split:
+    its first word is the language and the attribute is the title.
+    """
+    match = FENCE_TITLE.search(info)
+    if not match:
+        return info.strip().lower(), ""
+    title = next(group for group in match.groups() if group is not None).strip()
+    words = info[: match.start()].split()
+    return (words[0].lower() if words else ""), title
+
+
 def read_code(lines: list[str], start: int, lang_default: str, indent: int | None = None):
     """Return `(block, next_index)` for the fenced code block opening at `start`.
 
@@ -60,7 +83,8 @@ def read_code(lines: list[str], start: int, lang_default: str, indent: int | Non
     if indent is None:
         indent = len(match.group(1)) if match else 0
     ticks, info = (match.group(2), match.group(3)) if match else scan.fence_parts(lines[start])
-    lang = info.strip().lower() or lang_default
+    lang, title = fence_label(info)
+    lang = lang or lang_default
     # ⛔ Where the fence closes is `fences.closes`'s, the one grammar the
     # exercise ledger reads fences by too: at most three spaces of indent MORE
     # than the opener, relative to it, so a fence inside a list item closes at
@@ -69,7 +93,10 @@ def read_code(lines: list[str], start: int, lang_default: str, indent: int | Non
     for index in range(start + 1, len(lines)):
         if fences.closes(lines[index], opened):
             body = [scan.dedent(line, indent) for line in lines[start + 1 : index]]
-            return {"type": "code", "lang": lang, "text": "\n".join(body)}, index + 1
+            block = {"type": "code", "lang": lang, "text": "\n".join(body)}
+            if title:
+                block["title"] = title
+            return block, index + 1
     raise MarkdownError(
         f"a code fence opened at line {start + 1} is never closed — absorbing the "
         f"rest of the document as code would be exactly the silent loss this "

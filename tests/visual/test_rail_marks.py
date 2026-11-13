@@ -305,3 +305,45 @@ def test_the_index_filter_matches_a_title_and_never_the_read_words(
     )
     assert fresh.evaluate(f"{shown}({title!r})") == [marked]
     assert fresh.evaluate(f"{shown}({said!r})") == []
+
+
+#: The between-units bar's next link: which of its two labels shows, and where it goes.
+NEXT_SELECTOR = 'nav[aria-label="Between units"] a[rel="next"]'
+NEXT_LINK = (
+    "(() => { const a = document.querySelector('" + NEXT_SELECTOR + "');"
+    " if (!a) return null;"
+    " const shown = Array.from(a.querySelectorAll('span')).filter(s => !s.hidden);"
+    " return {label: shown.map(s => s.textContent.trim()), href: a.href}; })()"
+)
+
+
+def test_the_next_unit_marks_this_one_read_and_continues(fresh: OpenPage, built: Built) -> None:
+    # ⭐ The 2026-11 redesign: while a unit is unmarked its next link reads "Mark read &
+    # continue", and following it marks the unit; once marked, the link reads "Up next" again.
+    for key in built.pages:
+        fresh.open(built.url(key))
+        before = fresh.evaluate(NEXT_LINK)
+        if before:
+            break
+    else:
+        raise AssertionError("no unit page of the fixture has a next link")
+    assert before["label"] == ["Mark read & continue"]
+    fresh.evaluate("document.querySelector('" + NEXT_SELECTOR + "').click()")
+    fresh.open(built.url(key))
+    assert fresh.evaluate(CONTROL_KEY) == key
+    assert fresh.evaluate(
+        "document.querySelector('section[data-section=\"read-mark\"]').getAttribute('data-marked')"
+    ) == "true"
+    assert fresh.evaluate(NEXT_LINK)["label"] == ["Up next"]
+
+
+def test_with_no_script_the_next_link_says_up_next_and_still_goes(
+    open_page: OpenPage, built: Built
+) -> None:
+    for key in built.pages:
+        open_page.open(built.url(key), scripts=False)
+        found = open_page.evaluate(NEXT_LINK)
+        if found:
+            assert found["label"] == ["Up next"] and found["href"]
+            return
+    raise AssertionError("no unit page of the fixture has a next link")

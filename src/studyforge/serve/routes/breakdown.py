@@ -84,6 +84,7 @@ from pathlib import Path
 
 from studyforge.archive.scrub import scrub
 from studyforge.exercise import (
+    SKIPPED,
     TEST,
     CaseDetail,
     Detail,
@@ -119,6 +120,13 @@ CASE_LINE = "--- case {id}: {verdict} ---"
 CASE_PASSED = "passed"
 CASE_FAILED = "failed"
 
+#: ⭐ The third word: a case that declared `skips_without` and was reported skipped (the run
+#: lacked that capability, e.g. no GPU). Neither passed nor failed, and the line names what was
+#: missing — `--- case {id}: skipped without gpu ---` — so the panel can say why. ⛔ Only
+#: `report.Breakdown.skipped` decides it; a case that did not declare the capability is failed.
+CASE_SKIPPED = SKIPPED
+SKIPPED_LINE = "--- case {id}: " + CASE_SKIPPED + " without {reason} ---"
+
 
 def fold(
     mode: str, workspace: dict | None, root: Path, started: float | None
@@ -139,11 +147,16 @@ def fold(
     if folded is None:
         return None, ()
     verdicts = {case.id: folded.passed(case) for case in folded.cases}
-    return verdicts, tuple(said(case.id, verdicts[case.id]) for case in folded.cases)
+    return verdicts, tuple(
+        said(case.id, verdicts[case.id], case.skips_without if folded.skipped(case) else None)
+        for case in folded.cases
+    )
 
 
-def said(case: str, passed: bool) -> str:
+def said(case: str, passed: bool, skipped_without: str | None = None) -> str:
     """Return the one line that says what this run's report made of one case."""
+    if skipped_without:
+        return scrub(SKIPPED_LINE.format(id=case, reason=skipped_without))
     return scrub(CASE_LINE.format(id=case, verdict=CASE_PASSED if passed else CASE_FAILED))
 
 

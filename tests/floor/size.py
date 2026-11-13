@@ -95,6 +95,9 @@ VENDORED = {
     "src/studyforge/render/assets/plyr.css": (
         "Plyr's stylesheet, vendored minified third-party code under plyr.LICENSE"
     ),
+    "src/studyforge/render/assets/mermaid.min.js": (
+        "Mermaid, vendored minified third-party code under mermaid.LICENSE"
+    ),
 }
 
 #: The remedy for an authored non-Python file: it has no docstring to carry an

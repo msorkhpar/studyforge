@@ -76,6 +76,7 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import (
     anchors,
+    diagram,
     editions,
     examplerun,
     math,
@@ -87,12 +88,15 @@ from studyforge.render.page import (
 from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import practices as practices_region
+from studyforge.render.page import masthead as masthead_region
+from studyforge.render.page import unitmeta
 from studyforge.render.page import rail as rail_region
 from studyforge.render.page.anchors import TITLE_POSITION
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Links
+from studyforge.render.page.masthead import Masthead
 from studyforge.render.page.rail import RailContainer
 
 #: The skeleton every unit page is filled from.
@@ -127,6 +131,7 @@ def compose(
     trail: Sequence[Crumb] | None = None,
     narration: Narration = SILENT,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> str:
     """Return one unit page's exact text.
 
@@ -170,6 +175,7 @@ def compose(
     body = code_region.examples(*code_region.mark(joined, placement), placement)
     body += examplerun.links(body, placement)
     body += math.links(body, placement)
+    body += diagram.links(body, placement)
     return (
         templates.fill(
             SKELETON,
@@ -179,9 +185,13 @@ def compose(
             identity=_region(identity(document, placement)),
             stylesheet=escape_attribute(placement.stylesheet()),
             script=escape_attribute(placement.script()),
-            meta=_region(meta(document)),
+            # ⭐ The 2026-11 redesign's second line (`unitmeta`): container, place,
+            # minutes, practices, questions. ⛔ Still no address slugs and no variant.
+            meta=_region(unitmeta.line(body, trail, rail)),
             breadcrumb=_region(navigation.breadcrumb(trail)),
             rail=_region(rail_region.render(rail)),
+            brand=masthead_region.brand(masthead),
+            sections=masthead_region.sections(masthead),
             outline=_region(anchors.outline(placed.outlined(editions.collapsed(document), spots))),
             body=body,
             pending=_region(pending(document)),
@@ -261,20 +271,6 @@ def heading_attributes(document: dict, narration: Narration = SILENT) -> str:
     key = section.get("key")
     anchor = escape_attribute(anchors.block_anchor(key, TITLE_POSITION))
     return f' id="{anchor}"{narration.attribute(key, (TITLE_POSITION,))}'
-
-
-def meta(document: dict) -> str:
-    """Return the masthead's quieter second line — which a unit page does not have.
-
-    ⛔ **No address slugs**: builder identifiers joined by middle dots, while
-    the trail above the title already names every container by its title.
-    ⛔ **No variant**: shown alone under the title it is a bare kind word
-    (`prose`, `java`) that tells a reader nothing the page does not.
-    ⭐ The variant is still the page's, in R4's identity block and the served
-    document; it is just not printed as a line of its own.
-    """
-    del document
-    return ""
 
 
 def pending(document: dict) -> str:

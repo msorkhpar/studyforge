@@ -91,7 +91,15 @@ from collections.abc import Sequence
 from studyforge.render.container.document import KIND, compose
 from studyforge.render.container.entries import Document, Item
 from studyforge.render.container.placement import Placement
-from studyforge.render.page import ENCODING, Link, Links, PageError, RailContainer, RailUnit
+from studyforge.render.page import (
+    ENCODING,
+    Link,
+    Links,
+    Masthead,
+    PageError,
+    RailContainer,
+    RailUnit,
+)
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.render.container.document` directly is a consumer this contract
@@ -117,6 +125,7 @@ def render(
     placement: Placement,
     links: Links | None = None,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> bytes:
     """Render one container page.
 
@@ -125,4 +134,4 @@ def render(
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
     """
-    return compose(document, placement, links, rail).encode(ENCODING)
+    return compose(document, placement, links, rail, masthead).encode(ENCODING)

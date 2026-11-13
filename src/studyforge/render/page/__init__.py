@@ -132,9 +132,15 @@ from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.deck import PARTS as DECK_PARTS
 from studyforge.render.page.math import PARTS as MATH_PARTS
 from studyforge.render.page.deck import files as deck_files
+from studyforge.render.page.diagram import PARTS as DIAGRAM_PARTS
+from studyforge.render.page.diagram import files as diagram_files
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.examplerun import files as example_run_files
+from studyforge.render.page.masthead import Masthead
+from studyforge.render.page.masthead import brand as masthead_brand
+from studyforge.render.page.masthead import sections as masthead_sections
+from studyforge.render.page.diagram import checked as diagram_checked
 from studyforge.render.page.math import files as math_files
 from studyforge.render.page.mock import PARTS as MOCK_PARTS
 from studyforge.render.page.mock import files as mock_files
@@ -158,6 +164,7 @@ __all__ = [
     "AUDIO_ATTRIBUTE",
     "Claim",
     "DECK_PARTS",
+    "DIAGRAM_PARTS",
     "MATH_PARTS",
     "ENCODING",
     "REVIEW_PARTS",
@@ -167,6 +174,7 @@ __all__ = [
     "Crumb",
     "Link",
     "Links",
+    "Masthead",
     "Narration",
     "PageError",
     "Placement",
@@ -178,7 +186,11 @@ __all__ = [
     "claims",
     "compose",
     "deck_files",
+    "diagram_checked",
+    "diagram_files",
     "example_run_files",
+    "masthead_brand",
+    "masthead_sections",
     "math_files",
     "review_files",
     "mock_files",
@@ -195,6 +207,7 @@ def render(
     trail: Sequence[Crumb] | None = None,
     narration: Narration = SILENT,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> bytes:
     """Render one unit page.
 
@@ -207,4 +220,6 @@ def render(
     a corpus with no clips renders exactly as it did before narration existed,
     with no transport at all (R6, spec §11.0).
     """
-    return compose(document, placement, links, trail, narration, rail).encode(ENCODING)
+    return compose(document, placement, links, trail, narration, rail, masthead).encode(
+        ENCODING
+    )

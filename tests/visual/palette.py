@@ -161,6 +161,16 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
         None,
         "a read unit's solid tick box; a mark, taken at 3:1 against `--bg` by `test_identity`",
     ),
+    # ⭐ The 2026-11 redesign: verdicts, the terminal frame, the card's shadow.
+    "--ok": (MEASURED, "--ok-soft", "a right answer or a passing run, beside an icon and a word"),
+    "--ok-soft": (SURFACE, None, "the ground of a right answer's explanation"),
+    "--bad": (MEASURED, "--bad-soft", "a wrong answer or a failing run, beside an icon and a word"),
+    "--bad-soft": (SURFACE, None, "the ground of a wrong answer's explanation"),
+    "--warn": (MEASURED, "--warn-soft", "a caution note's icon and lead"),
+    "--warn-soft": (SURFACE, None, "the ground of a caution note"),
+    "--term-bg": (SURFACE, None, "the terminal frame a program's output is shown in"),
+    "--term-fg": (MEASURED, "--term-bg", "a program's output inside the terminal frame"),
+    "--term-muted": (MEASURED, "--term-bg", "the terminal frame's caption"),
 }
 
 
