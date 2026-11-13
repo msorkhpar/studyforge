@@ -1235,8 +1235,9 @@ One manifest, `project.json`, declares the practice. Paths are relative to the m
   refuses).
 - **`plants`** are `[file, old, new]` replacements against the reference, any source file, one
   list per edge case.
-- **`assertions_only`** is `true` unless the manifest says otherwise, and **`origin`**
-  (`{"path": …, "section": …}`) may be given here or passed to `project_draft` by the author.
+- **`assertions_only`** is `true` unless the manifest says otherwise, and **`cites`**
+  (`{"path": …, "section": …}`, the lesson the practice is built from, which becomes the record's
+  `origin`) may be given here or passed to `project_draft` as `origin` by the author.
 
 The author's `draft` hands the manifest to the helper, with the brief's own workspace:
 

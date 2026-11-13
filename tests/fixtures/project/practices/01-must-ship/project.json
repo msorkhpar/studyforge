@@ -62,5 +62,5 @@
       ["seedcrate/model.py", "    forced = [lot for lot in lots if lot.must]", "    forced = [lot for lot in lots if lot.must and lot.value > 0]"]
     ]
   },
-  "origin": {"path": "lessons/fixing.md", "section": null}
+  "cites": {"path": "lessons/fixing.md", "section": null}
 }

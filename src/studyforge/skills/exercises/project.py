@@ -58,7 +58,8 @@ from studyforge.skills.exercises.expected import (
     Expected,
     check_source,
 )
-from studyforge.skills.exercises.snapshot import Snapshot, read_snapshot, declared_tests
+from studyforge.skills.exercises.snapshot import Snapshot, declared_tests, read_snapshot
+from studyforge.version import check as check_version
 
 #: The manifest format's version.
 PROJECT_API = 1
@@ -80,11 +81,11 @@ MANIFEST_KEYS = (
     "cases",
     "plants",
     "assertions_only",
-    "origin",
+    "cites",
 )
 
 #: The keys a manifest may leave out, with what leaving one out means.
-OPTIONAL = {"tests": "tests", "plants": {}, "assertions_only": True, "origin": None}
+OPTIONAL = {"tests": "tests", "plants": {}, "assertions_only": True, "cites": None}
 
 #: Where every run's report lands, inside the workspace.
 REPORT = "target/report.xml"
@@ -128,8 +129,9 @@ def read_manifest(path: Path) -> Manifest:
             f"{where}: a project manifest carries {list(MANIFEST_KEYS)}; this one is missing "
             f"{missing} and carries {unknown}, which the format does not define"
         )
-    if value["project_api"] != PROJECT_API:
-        raise AuthoringError(f"{where}: 'project_api' is {PROJECT_API}")
+    check_version(
+        "project_api", value["project_api"], (PROJECT_API,), where=where, error=AuthoringError
+    )
     value = {**OPTIONAL, **value}
     base = Path(path).parent
     expected = _object(value["expected"], "expected", where)
@@ -154,7 +156,7 @@ def read_manifest(path: Path) -> Manifest:
             for case, edits in _object(value["plants"], "plants", where).items()
         },
         assertions_only=bool(value["assertions_only"]),
-        origin=_origin(value["origin"], where),
+        origin=_cited(value["cites"], where),
     )
 
 
@@ -314,13 +316,16 @@ def _edit(value: object, where: str) -> tuple[str, str, str]:
     return value[0], value[1], value[2]
 
 
-def _origin(value: object, where: str) -> Origin | None:
-    """Read `origin`: absent is none; present is `{"path": ..., "section": ...}`."""
+def _cited(value: object, where: str) -> Origin | None:
+    """Read `cites`, the lesson the practice is built from: absent is none, else path and section.
+
+    ⭐ Named `cites` rather than `origin`: the record's `origin` has one reader
+    (`cases.origin_in`), and this is the manifest's own word for the value handed to it.
+    """
     if value is None:
         return None
-    entry = _object(value, "origin", where)
-    section = entry.get("section")
-    return Origin(_text(entry.get("path"), "origin.path", where), section)
+    entry = _object(value, "cites", where)
+    return Origin(_text(entry.get("path"), "cites.path", where), entry.get("section"))
 
 
 def _required_origin(origin: Origin | None, where: str) -> Origin:
@@ -328,7 +333,7 @@ def _required_origin(origin: Origin | None, where: str) -> Origin:
     if origin is None:
         raise AuthoringError(
             f"{where}: a project practice cites the lesson it practises; pass 'origin' to "
-            f"project_draft or declare it in the manifest"
+            f"project_draft or declare it as 'cites' in the manifest"
         )
     return origin
 

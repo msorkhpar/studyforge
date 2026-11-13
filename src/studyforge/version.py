@@ -115,6 +115,7 @@ CONTRACT_FIELDS = (
     "pin_api",
     "written_api",
     "release_api",
+    "project_api",
 )
 
 
