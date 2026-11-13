@@ -212,12 +212,21 @@ section[data-practice] li[data-practice-case] span[data-practice-part="verdict"]
   font-weight: 700;
 }
 
+/* ⭐ The 2026-11 redesign: a case's verdict is a status, so it takes the status inks — always
+   beside its word ("Done", "Not yet", "Skipped"), never colour alone. A skipped case (it
+   declared `skips_without` and the run lacked that) is neither: quiet and slanted. */
 section[data-practice] li[data-practice-case][data-practice-verdict="passed"] span {
-  color: var(--done);
+  color: var(--ok);
 }
 
 section[data-practice] li[data-practice-case][data-practice-verdict="failed"] span {
-  color: var(--accent);
+  color: var(--bad);
+}
+
+section[data-practice] li[data-practice-case][data-practice-verdict="skipped"] span {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 400;
 }
 
 /* ⭐ The link that opens the editor in a tab of its own is a line of its own above the frame, so

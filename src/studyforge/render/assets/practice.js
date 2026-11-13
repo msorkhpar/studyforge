@@ -86,6 +86,7 @@
   var KEPT = 'kept';
   var PASSED = 'passed';
   var FAILED = 'failed';
+  var SKIPPED = 'skipped';
 
   /* Every word the breakdown says, kept where the markup is: a label spelled
      in the script too would be a second place for it to drift. */
@@ -95,7 +96,8 @@
     edges: 'data-practice-edges',
     kept: 'data-practice-kept',
     passed: 'data-practice-passed',
-    failed: 'data-practice-failed'
+    failed: 'data-practice-failed',
+    skipped: 'data-practice-skipped'
   };
 
   /* What one case's verdict looks like on the stream. ⛔ Anchored whole, and the
@@ -103,7 +105,14 @@
      this shape out of a grader's own output reaches a case set that does not
      match and is shown as nothing. ⚠️ The record is unaffected either way: it is
      folded from the grader's report on the server, never from this text. */
-  var CASE_LINE = /^--- case (.+): (passed|failed) ---$/;
+  var CASE_LINE = /^--- case (.+): (passed|failed|skipped without ([a-z0-9_-]+)) ---$/;
+
+  /* ⭐ A case the server reported SKIPPED (it declared `skips_without` and the run lacked that
+     capability): neither passed nor failed, drawn as such with what it needed, and left out of
+     every count. It is said as an object so `true`/`false` keep meaning passed/failed. */
+  function skippedFor(value) {
+    return value && typeof value === 'object' && value.skipped ? value.skipped : '';
+  }
 
   function part(panel, name) {
     return panel.querySelector('[' + PART + '="' + name + '"]');
@@ -181,6 +190,12 @@
         var right = said[row.getAttribute(CASE)];
         var edge = row.getAttribute(CASE_KIND) === EDGE;
         var mark = part(row, 'verdict');
+        var without = skippedFor(right);
+        if (without) {
+          row.setAttribute(VERDICT, SKIPPED);
+          if (mark) { mark.textContent = (words(region, 'skipped') || 'Skipped') + ' (needs ' + without + ')'; }
+          return;
+        }
         row.setAttribute(VERDICT, right ? PASSED : FAILED);
         if (mark) { mark.textContent = words(region, right ? 'passed' : 'failed'); }
         if (edge) { edges += 1; }
@@ -301,9 +316,12 @@
           var record = !found && detail ? detail.add(line) : null;
           if (record && !record.run && typeof record.case === 'string') {
             said = said || {};
-            said[record.case] = record.passed === true;
+            /* ⛔ A detail never undoes a skip the case line already said. */
+            if (!skippedFor(said[record.case])) { said[record.case] = record.passed === true; }
           }
-          if (found) { said[found[1]] = found[2] === PASSED; } else if (!record) { append(output, line); }
+          if (found) {
+            said[found[1]] = found[3] ? { skipped: found[3] } : found[2] === PASSED;
+          } else if (!record) { append(output, line); }
         }, { detail: true }).then(
           function (answer) { settle(verdict(answer, mode), said); },
           function (answer) { settle(refusal(answer), null); }
