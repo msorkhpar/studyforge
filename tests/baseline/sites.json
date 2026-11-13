@@ -23,7 +23,7 @@
    "advanced/02-going-further/study/going-further.section.html": "46197dac0298938056d1fff9646688d50ef0fdb884fc030abe3b63eab81d15f4",
    "advanced/03-putting-it-together/study/advanced.03-putting-it-together.unit-01-one-small-program.unit.html": "1e36f8aeb810fdd8c805c3239cbf4100660e179e2181b0ecaa89fae02ff64ade",
    "advanced/03-putting-it-together/study/putting-it-together.section.html": "131a86f4b4447364fc09bb7407210473901cca064f1efb301c7a77caa3987981",
-   "basics/01-getting-started/study/basics.01-getting-started.unit-01-your-first-class.unit.html": "075c11787c58faceeafeb02c4fb063f3843d1f9d28b3a21aab2b04180d3f98c1",
+   "basics/01-getting-started/study/basics.01-getting-started.unit-01-your-first-class.unit.html": "58024643efa918e255cbc8693a6343f90b634bfc540bec2cfce0ebccb1be45f8",
    "basics/01-getting-started/study/basics.01-getting-started.unit-02-fields-and-constructors.unit.html": "9c73d61d8e7db667a9de3cece7abccfe1c3018c1437b5f3fb8e786470f664023",
    "basics/01-getting-started/study/basics.01-getting-started.unit-03-watching-it-run.unit.html": "7a63b347f8e577c0efb506c4822b8d28162ddaa6193d1ea66204043463456301",
    "basics/01-getting-started/study/getting-started.section.html": "b5acc2168a8836a4e9df25fab2734eb94915c9e169641f4002d71dd5809f6351",
@@ -36,10 +36,10 @@
    ".studyforge/assets/search-index.js": "acfd65ffa0226253750acb237649ba7aa0a5db9ce3e631ac903e4884a8e55d95",
    "index.html": "7c1dcee05a138ebb95faa9cb61b02583e89af8705d3bcf9ee2bd30d095402c87",
    "kata/study/kata.section.html": "5556c81ea6cfeaaa97494b414742676657d1f5cb10f67930b47cfadfa8fcb1d9",
-   "kata/study/kata.unit-01-greeting.unit.html": "edc4d9db1cc13a50d0898b56ac960d205c7f5e67b78d00ff337c7c80bb93dc4f",
-   "kata/study/kata.unit-02-totals.unit.html": "01847379d345852926cc979664d1af0ba22b846f107542b4c39f24c7b2f253b6",
-   "kata/study/kata.unit-03-hello.unit.html": "7804f8b58e357c04f44e09f32416894ade860475c6784c81c04f8b8859213830",
-   "kata/study/kata.unit-04-area.unit.html": "39b9b4ef4bf9fd1c0df0ed7754cbc504872e139a27de8fca1f5bf817f3425fc0",
+   "kata/study/kata.unit-01-greeting.unit.html": "7991da304f1d3298588ad24a49bebdbbceb9de8e14ff2feb80fa077989aec1a5",
+   "kata/study/kata.unit-02-totals.unit.html": "98ec607a31a16e7c43ed1172b502dd8544179509aba1a3da291411685a7d257a",
+   "kata/study/kata.unit-03-hello.unit.html": "cd26570d27ac4ee4f3a6f470c2176691e6d6789b6e5fe6ae46930421d53d266f",
+   "kata/study/kata.unit-04-area.unit.html": "d49f57a46759464b4cd4715bd2f0e7013fbc23a253e8bb041e903affd2a08180",
    "kata/study/kata.unit-05-reading-on.unit.html": "f1b25677770140747c9391178c3dc9283ba71da98a1de54181b9f110a5b281d1"
   },
   "shared-origin": {
