@@ -1,0 +1,4 @@
+name,weight,value,must
+oat,4,6.00,no
+rye,3,1.00,yes
+flax,2,2.50,no

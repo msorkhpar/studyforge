@@ -59,7 +59,7 @@ pretend to be.
 
 ---
 
-## The thirty-one checks
+## The thirty-two checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -97,13 +97,14 @@ checker check* is this table and nothing else.
 | 29 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
 | 30 | `check_run_is_not_submit` | where a corpus has a practice with a `try_file`, does any graded code practice still run its tests on Run? |
 | 31 | `check_editions_are_shared` | where `corpus.json` declares `languages`, do two practices of one unit that are one task in two languages share one `edition`? |
+| 32 | `check_project_files` | where a practice is a project (its record names `read_only` files), does its workspace hold every file the record names, and no file the record does not? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 to 16 about your
 source repository, 17–20 and 22 about the authored exercises a corpus commits,
 21 about the graders that claim to be your material's own, 23 about the links
-its pages carry, 24 about its narration, and 25–29 about the languages its documents are tagged with and the files its examples run.
+its pages carry, 24 about its narration, 25–29 about the languages its documents are tagged with and the files its examples run, and 32 about a project practice's workspace.
 **Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
@@ -126,7 +127,7 @@ file in both.
 
 ---
 
-## The fifty-seven rule ids
+## The fifty-eight rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -183,6 +184,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
+| `project-files` | a project practice's workspace and its record disagree: the record names a file the workspace does not hold, or the workspace holds a file the record does not name, so the reader could not see it. A run's `target/`, a `__pycache__` and dot-files are not judged |
 | `run-is-submit` | a graded code practice's run command equals its test command, in a corpus where another practice carries a `try_file`: Run would grade like Submit. A corpus with no try-it file anywhere is not judged |
 | `derivation-record` | an `authoritative` grader ships no record of its derivation's two gates, one nothing can read, or one that does not support the claim: another family's gates, no blanked method named, a starter or test that is not the exercise's own, or a starter identical to the original |
 | `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |

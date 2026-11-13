@@ -278,13 +278,13 @@
   function windows(panel, where) {
     var slot = panel.querySelector('[' + FRAME + '="main"]');
     if (!slot) { return; }
-    var tested = !!(where.test && where.test.url);
-    var more = (where.files || []).length > 0;
     var bar = part(panel, 'tabs');
     files.tabs(where, bar, bar ? bar.querySelector('[' + TAB + '="test"]') : null);
+    /* ⭐ A tab whose window the server did not answer (no test, a file the editor lacks) hides. */
     var buttons = [].slice.call(panel.querySelectorAll('[' + TAB + ']')).filter(
       function (button) {
-        var keep = tested || button.getAttribute(TAB) !== 'test';
+        var found = files.windowOf(where, button.getAttribute(TAB));
+        var keep = !!(found && found.url);
         if (!keep) { button.hidden = true; }
         return keep;
       }
@@ -319,7 +319,9 @@
          as promising. Without them the roles say one thing and the keyboard
          does another. */
       button.addEventListener('keydown', function (event) {
-        var step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        var key = event.key;
+        var step = key === 'ArrowRight' || key === 'ArrowDown' ? 1 :
+          key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 0;
         var next = buttons.indexOf(button) + step;
         if (!step || next < 0 || next >= buttons.length) { return; }
         event.preventDefault();
@@ -330,7 +332,7 @@
     select('main');
     /* ⭐ One tab is no choice, so the tablist stays hidden where the material
        names no test — the same honesty as offering no Submit. */
-    show(part(panel, 'tabs'), tested || more);
+    show(part(panel, 'tabs'), buttons.length > 1);
     show(part(panel, 'no-editor'), false);
   }
 

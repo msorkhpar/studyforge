@@ -1,12 +1,11 @@
 r"""The practice panel: the reader-facing surface of one graded or ungraded exercise.
 
-**What it does.** Renders the controls a practice is worked with — where the
-reader's file is, the editor slot and its two tabs, Run and Submit, the streamed
-result, and the label saying what a pass here is worth.
+**What it does.** Renders the controls a practice is worked with — where the reader's file is,
+the editor slot and its tabs (a project's explorer, `page.project`), Run and Submit, the
+streamed result, and the label saying what a pass here is worth.
 
-**How you use it.** `practice.render(section, document, placement)` returns the
-panel's markup, or `''` for a section that sets no work; `page.document` joins
-it after the section it belongs to.
+**How you use it.** `practice.render(section, document, placement)` returns the panel's markup,
+or `''` for a section that sets no work; `page.document` joins it after its section.
 
 **Depends on.** `studyforge.exercise` for what a workspace *is* — ⛔ the record's
 own predicates, never a second reading of `provenance` and `trust`;
@@ -118,6 +117,7 @@ from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import deck, editions, mark, mock, mockform, quiz, review, scope
+from studyforge.render.page import project
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -238,9 +238,9 @@ def render(section: dict, document: dict, placement: Placement, *, embedded: boo
         key=escape_attribute(key),
         corpus=escape_attribute(placement.corpus),
         **editions.slots(many, section, placement.offer),
-        file=files_sentence(exercise),
+        file=project.files_part(exercise, files_sentence),
         grader=_region(grader(exercise)),
-        tabs=_region(tabs(exercise)),
+        tabs=_region(project.tabs_part(exercise, tabs)),
         controls=controls(exercise),
         breakdown=_region(breakdown(exercise)),
     )
@@ -379,7 +379,7 @@ def breakdown(exercise: Exercise) -> str:
         + JOIN
         for case in exercise.cases
     )
-    return templates.fill(BREAKDOWN_TEMPLATE, cases=cases)
+    return templates.fill(BREAKDOWN_TEMPLATE, cases=cases, kept=project.kept_words(exercise))
 
 
 def _exercise(workspace: dict) -> Exercise:

@@ -69,7 +69,8 @@ from dataclasses import dataclass
 
 from studyforge.address import Address, require_ordinal
 from studyforge.describe import describe, describe_keys
-from studyforge.exercise.bundle.files import read_files, require_files_apart, require_try_file
+from studyforge.exercise.bundle.files import read_files, read_read_only, require_files_apart
+from studyforge.exercise.bundle.files import require_read_only_apart, require_try_file
 from studyforge.exercise.bundle.layout import (
     RUN_OUTPUT_DIRNAME,
     Places,
@@ -110,6 +111,7 @@ BUNDLE_KEYS = (
     "files",
     "try_file",
     "test_file",
+    "read_only",
     "build",
     "run_command",
     "test_command",
@@ -124,7 +126,7 @@ BUNDLE_KEYS = (
 #: exception, for the reason `unit.trust` gives: a field an author fills in to
 #: say the obvious is a field an author fills in wrongly. ⭐ `build` is absent
 #: for an exercise whose tests need nothing but the language.
-OPTIONAL_KEYS = ("trust", "build", "files", "try_file")
+OPTIONAL_KEYS = ("trust", "build", "files", "try_file", "read_only")
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,6 +160,8 @@ class Bundle:
     #: ⭐ The "try it" file (one of `files`) that `run_command` executes. `None` is every bundle
     #: before this key: Run is whatever `run_command` says.
     try_file: str | None = None
+    #: ⭐ A project's read-only files beside `test_file`, workspace-relative; `()` is every other.
+    read_only: tuple[str, ...] = ()
 
     @property
     def edited(self) -> tuple[str, ...]:
@@ -206,12 +210,14 @@ def bundle_of(value: object, where: str) -> Bundle:
         build=_build(document.get("build"), where),
         files=read_files(document.get("files"), where),
         try_file=_try_file(document, where),
+        read_only=read_read_only(document.get("read_only"), where),
     )
     _require_derivable(bundle, where)
     _require_report_in_workspace(bundle, where)
     _require_build_apart(bundle, where)
     require_files_apart(bundle, where)
     require_try_file(bundle, where)
+    require_read_only_apart(bundle, where)
     return bundle
 
 
@@ -232,6 +238,8 @@ def bundle_document(bundle: Bundle) -> dict:
     if bundle.try_file is not None:
         document["try_file"] = bundle.try_file
     document["test_file"] = bundle.test_file
+    if bundle.read_only:
+        document["read_only"] = list(bundle.read_only)
     if bundle.build:
         document["build"] = list(bundle.build)
     document |= {

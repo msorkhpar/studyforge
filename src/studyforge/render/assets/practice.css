@@ -227,3 +227,54 @@ section[data-practice] a[data-practice-popout] {
   margin: 0 0 .5rem;
   font-size: .9rem;
 }
+
+/* ⭐ **A project's explorer is the tablist, laid out as a folder tree** (`render/page/project.py`):
+   one button per file, a folder's name above its files, read-only files told apart by a word as
+   well as by ink. Beside the frame when the workspace is open, above it otherwise. */
+section[data-practice] div[data-practice-explorer] {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: .15rem;
+  max-height: 24rem;
+  overflow: auto;
+}
+
+section[data-practice] div[data-practice-explorer] p[data-practice-folder] {
+  margin: .4rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+section[data-practice] div[data-practice-explorer] button {
+  text-align: left;
+}
+
+section[data-practice] div[data-practice-explorer] button[data-practice-readonly]::after,
+section[data-practice] [data-practice-part="tree"] span[data-practice-readonly] {
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+section[data-practice] div[data-practice-explorer] button[data-practice-readonly]::after {
+  content: " read-only";
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"]:has(> div[data-practice-explorer]:not([hidden])) {
+  grid-template-columns: minmax(9rem, 15rem) minmax(0, 1fr) auto;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] > div[data-practice-explorer] {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: stretch;
+  max-height: none;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"]:has(> div[data-practice-explorer]:not([hidden]))
+  div[data-practice-frame] {
+  grid-column: 2 / -1;
+}

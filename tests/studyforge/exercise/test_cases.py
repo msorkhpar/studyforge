@@ -153,6 +153,7 @@ def test_the_four_keys_round_trip_through_the_record():
             "cards",
             "layout",
             "try_file",
+            "read_only",
         )
     )
     assert tuple(again) == written, "the authored keys are not in the record's order"
@@ -212,6 +213,7 @@ def test_the_authored_keys_are_appended_never_inserted():
         "cards",
         "layout",
         "try_file",
+        "read_only",
     )
 
 

@@ -103,7 +103,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree
 
-from studyforge.exercise.cases import EDGE, JUNIT, Case
+from studyforge.exercise.cases import EDGE, JUNIT, KEPT, Case
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import Exercise
 from studyforge.exercise.spelling import asserted, file_level_failure, spells
@@ -182,9 +182,14 @@ class Breakdown:
         return tuple(case.says for case in self.edges if not self.passed(case))
 
     @property
+    def broken_kept(self) -> tuple[str, ...]:
+        """Each kept requirement (`KEPT`) that did not pass, by its `says`, in declared order."""
+        return tuple(c.says for c in self.cases if c.kind == KEPT and not self.passed(c))
+
+    @property
     def complete(self) -> bool:
         """Did every declared case pass? ⛔ A report about a run, never a pass rule."""
-        return self.ask and self.edges_passed == self.edges_total
+        return self.ask and self.edges_passed == self.edges_total and not self.broken_kept
 
 
 def breakdown_of(exercise: Exercise, root: Path, where: str, *, started: float) -> Breakdown | None:

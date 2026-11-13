@@ -156,8 +156,9 @@ def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between
     # choice, and a tab over a file the material does not have is a dead
     # control — the same honesty that offers no Submit there.
     body = behaviour()
-    assert "show(part(panel, 'tabs'), tested || more);" in body
-    assert "var tested = !!(where.test && where.test.url);" in body
+    assert "show(part(panel, 'tabs'), buttons.length > 1);" in body
+    # ⭐ A tab whose window the server did not answer (no test named) is hidden, not dead.
+    assert "var keep = !!(found && found.url);" in body
 
 
 # --- ⛔ The ONE reload a genuinely cold instance's first page needs ---

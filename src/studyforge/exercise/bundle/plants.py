@@ -272,7 +272,8 @@ def roles_of(
 
     ⭐ A spec plant's input is its spec file, the file the bundle holds. ⭐ Each further file
     the reader edits adds two inputs, `starter:<path>` and `reference:<path>`, after the main
-    file's own pair; an exercise of one file has none, so its record is what it was.
+    file's own pair; an exercise of one file has none, so its record is what it was. ⭐ A
+    project's read-only file adds `tests:<path>` after the test file's own input.
     """
     main = bundle.main_file
     return (
@@ -285,6 +286,7 @@ def roles_of(
             for role in ("starter", "reference")
         ),
         ("tests", f"tests/{bundle.test_file}"),
+        *((f"tests:{path}", f"tests/{path}") for path in bundle.read_only),
         *(
             (
                 plant_role(case),

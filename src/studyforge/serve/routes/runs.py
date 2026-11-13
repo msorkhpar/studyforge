@@ -216,6 +216,7 @@ class Runs:
         test: str | None,
         named: tuple[str, ...] = (),
         files: tuple[str, ...] = (),
+        read_only: tuple[str, ...] = (),
     ) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.
 
@@ -235,10 +236,9 @@ class Runs:
         asked = self._probe(corpus).editor()
         if asked is None:
             return None
-        where = practice_folder(
-            self._remember(asked), main, test, root=corpus.root, named=(*named, *files)
-        )
-        return None if where is None else prepared(where, corpus.root, main, test, files)
+        held = (*named, *files, *read_only)
+        where = practice_folder(self._remember(asked), main, test, root=corpus.root, named=held)
+        return None if where is None else prepared(where, corpus.root, main, test, files, read_only)
 
     def _probe(self, corpus: ServedCorpus) -> EditorProbe:
         """Return the one probe held for `corpus`, made on first ask."""

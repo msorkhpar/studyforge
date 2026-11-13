@@ -1,24 +1,22 @@
 r"""The editor's workbench for ONE practice: which file each window opens, and what it may edit.
 
-**What it does.** Three things, and the last two are two because only one of
-them can tell the two windows apart:
+**What it does.** Three things, and the last two are two because only one of them can tell the
+two windows apart:
 
-- `practice_folder(editor, main, test, root=, named=)` — the practice's OWN
-  folder of the editor's bind, which its windows open and its settings live in;
-- `open_url(editor, path)` — the URL that opens ONE file in a code-server
-  window, or `None` for a path that editor does not hold;
-- `settings(main, test)` and `write_settings(folder, main, test)` — the
-  workspace settings a practice gets: everything read-only with the reader's
-  own file excluded back out, the workbench closed, the two keys the
-  lockdown extension declares, and the page's colours (`editor_theme`).
+- `practice_folder(editor, main, test, root=, named=)` — the practice's OWN folder of the
+  editor's bind, which its windows open and its settings live in;
+- `open_url(editor, path)` — the URL that opens ONE file in a code-server window, or `None`
+  for a path that editor does not hold;
+- `settings(main, test)` and `write_settings(folder, main, test)` — the workspace settings a
+  practice gets: everything read-only with the reader's own file excluded back out, the
+  workbench closed, the two keys the lockdown extension declares, and the page's colours.
 
-**How you use it.** `serve.routes.runs` calls all three when a page asks for a
-practice's editor: the folder is found, the settings are written into it, and
-the two URLs are answered.
+**How you use it.** `serve.routes.runs` calls all three when a page asks for a practice's
+editor: the folder is found, the settings are written into it, and the URLs are answered.
 
-**Depends on.** `editor` for where an editor is and what it holds, `editor_theme`
-for its colours, `json`, `os`, `tempfile` and `pathlib`. No `subprocess` —
-nothing here starts anything.
+**Depends on.** `editor` for where an editor is and what it holds, `editor_theme` for its
+colours, `projectwindows` for a project's read-only windows, `json`, `os`, `tempfile` and
+`pathlib`. No `subprocess` — nothing here starts anything.
 
 ## ⛔ The window's own URL is the ONLY thing that can tell two windows apart
 
@@ -151,6 +149,7 @@ from urllib.parse import quote
 from studyforge.execute.closed import CLOSED
 from studyforge.execute.editor import Editor
 from studyforge.execute.editor_theme import EditorColoursUnread, editor_colours
+from studyforge.execute.projectwindows import read_only_windows
 
 #: The directory a folder's own settings live in, and the file. ⛔ The
 #: workbench's names, not this framework's, so neither is a choice.
@@ -262,13 +261,14 @@ def open_url(editor: Editor, path: str) -> str | None:
 
 
 def prepared(
-    editor: Editor, root: Path, main: str, test: str | None, files: Iterable[str] = ()
+    editor: Editor, root: Path, main: str, test: str | None, files: Iterable[str] = (),
+    read_only: Iterable[str] = (),
 ) -> dict | None:
     """Write one practice's settings into its folder and return where its windows are, or `None`.
 
     ⭐ `files` are the further files the reader edits, a window each; ⛔ one the editor or the
-    corpus lacks is left out, as a window on it would show an empty, dirty buffer.
-    """
+    corpus lacks is left out, as a window on it would show an empty, dirty buffer. ⭐ A project's
+    `read_only` files are windows too, locked like the test (`projectwindows`)."""
     inside_main = editor.inside(main)
     if inside_main is None:
         return None
@@ -280,7 +280,7 @@ def prepared(
     answer["test"] = {"path": inside_test, "url": open_url(editor, test)} if inside_test else None
     if held:
         answer["files"] = [{"path": i, "url": open_url(editor, p)} for p, i in held]
-    return answer
+    return answer | read_only_windows(editor, root, read_only, open_url)
 
 
 def authority(editor: Editor) -> str:

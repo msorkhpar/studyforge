@@ -65,6 +65,7 @@ from typing import Protocol
 
 from studyforge.archive.scrub import scrub
 from studyforge.exercise import (
+    EDGE,
     QUIZ,
     Exercise,
     Origin,
@@ -196,6 +197,7 @@ def gate_code(
         **{f"starter/{p}": f.starter.encode("utf-8") for p, f in draft.files.items()},
         **{f"reference/{p}": f.reference.encode("utf-8") for p, f in draft.files.items()},
         f"tests/{draft.test_file}": draft.tests.encode("utf-8"),
+        **{f"tests/{path}": text.encode("utf-8") for path, text in draft.read_only.items()},
         **{places.build_path(path): text.encode("utf-8") for path, text in draft.build.items()},
         **{
             f"plants/{plant_dirname(positions[case])}/{main}": text.encode("utf-8")
@@ -312,7 +314,7 @@ class _Runs:
                     },
                     **{
                         self.places.in_workspace(path): text.encode()
-                        for path, text in self.draft.build.items()
+                        for path, text in {**self.draft.build, **self.draft.read_only}.items()
                     },
                 },
             )
@@ -348,6 +350,7 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
     build = {"build": list(draft.build)} if draft.build else {}
     files = {"files": list(draft.files)} if draft.files else {}
     tried = {"try_file": draft.try_file} if draft.try_file else {}
+    fixed = {"read_only": list(draft.read_only)} if draft.read_only else {}
     return {
         "bundle_api": BUNDLE_API,
         "address": list(places.address.segments),
@@ -360,6 +363,7 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
         **files,
         **tried,
         "test_file": draft.test_file,
+        **fixed,
         **build,
         "run_command": list(draft.run_command),
         "test_command": list(draft.test_command),
@@ -372,8 +376,8 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
 
 
 def _edges(cases):
-    """Return the edge cases, in the order the draft declares them."""
-    return tuple(case for case in cases if not case.ask)
+    """Return the edge cases, in the order the draft declares them (never a kept one)."""
+    return tuple(case for case in cases if case.kind == EDGE)
 
 
 def _relative(output: str, root: Path) -> str:

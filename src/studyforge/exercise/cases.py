@@ -119,9 +119,15 @@ MAIN = "main"
 #: One named edge of that ask, backed by its own test (spec §7, gate G3).
 EDGE = "edge"
 
-#: ⛔ Closed, and two rather than a scale: the breakdown a reader is shown is
-#: *main ask* plus *edge cases n/m*, and a third kind would have nowhere to go.
-CASE_KINDS = (MAIN, EDGE)
+#: ⭐ A requirement an earlier step of a growing project already met, which this step must keep
+#: meeting: it passes on the starter as on the reference (gate G2 checks both), and a Submit that
+#: breaks one says how many it broke. ⚠️ Not a third grade of the ask: it is the regression half
+#: of a project practice, whose starter is the previous step's finished code.
+KEPT = "kept"
+
+#: ⛔ Closed: the breakdown a reader is shown is *main ask* plus *edge cases n/m*, plus, for a
+#: project step, how many kept requirements still hold.
+CASE_KINDS = (MAIN, EDGE, KEPT)
 
 #: One case, in the order it is written. ⛔ All three required and nothing
 #: else: an `id` as the test report spells it, a `kind`, and the one sentence
@@ -330,7 +336,8 @@ def _case_kind(value: object, where: str) -> str:
     if value not in CASE_KINDS:
         raise ExerciseError(
             f"{where}: a case's 'kind' is one of {list(CASE_KINDS)} — the ask "
-            f"itself, or one named edge of it. The value is {describe(value)}."
+            f"itself, one named edge of it, or a requirement an earlier step already met. "
+            f"The value is {describe(value)}."
         )
     return value
 

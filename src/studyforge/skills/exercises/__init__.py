@@ -42,6 +42,11 @@ runner is the caller's.
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
 | `quizdoc` | a quiz's own document read back, through R9's guard, as an adapter reads it |
 | `tryit` | a practice's try-it file: its name, skeleton and Run command per language |
+| `snapshot` | a project snapshot's files sorted into roles, and the test ids its tests declare |
+| `blueprint` | a project's methods to write: shown on the statement, and stubbed in the starter |
+| `expected` | a project's expected-output check: the test that runs the entry point and diffs it |
+| `project` | a project practice from a before/after pair of snapshots and one manifest |
+| `projectcli` | the project helper's two commands: a manifest to fill in, and what one ships |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |

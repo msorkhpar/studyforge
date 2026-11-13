@@ -329,9 +329,12 @@ def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
     )
     files = workspace.get("files")
     more = tuple(one for one in files if isinstance(one, str)) if isinstance(files, list) else ()
+    # ⭐ A project's read-only files are windows too, locked as the test is (`execute.workbench`).
+    fixed = workspace.get("read_only")
+    shown = tuple(one for one in fixed if isinstance(one, str)) if isinstance(fixed, list) else ()
     try:
         where = runs.practice_editor(
-            corpus, main, test if isinstance(test, str) and test else None, named, more
+            corpus, main, test if isinstance(test, str) and test else None, named, more, shown
         )
     except WorkbenchRefused:
         # ⛔ The refusal's own sentence names a file inside somebody else's

@@ -1,0 +1,6 @@
+name,weight,value,must
+bean,4,7.50,no
+beet,3,4.25,yes
+carrot,2,3.10,no
+kale,5,8.00,no
+leek,1,0.90,no

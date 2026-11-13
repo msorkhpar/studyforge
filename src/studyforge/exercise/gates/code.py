@@ -23,7 +23,7 @@ and `errors`. Standard library only.
 | gate | what must hold | what it proves |
 |---|---|---|
 | **G1** | every case passes on the reference, twice, alike | it is solvable, and not flaky |
-| **G2** | **no** case passes on the starter | no test is vacuous |
+| **G2** | **no** case passes on the starter; each kept case does | no test is vacuous |
 | **G3** | per edge: its plant passes the ask, fails it | each edge test catches its omission |
 | **G4** | every reported test maps to one case; every case is reported | the breakdown is total |
 | **G5** | each cited passage still digests to the ledger's value | it is built from the source |
@@ -64,7 +64,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from studyforge.exercise.cases import MAIN, Case
+from studyforge.exercise.cases import KEPT, MAIN, Case
 from studyforge.exercise.gates.digests import ORIGIN_ROLE, Cited
 from studyforge.exercise.gates.evidence import Evidence, declared_cases, edges
 from studyforge.exercise.gates.families import Family, register
@@ -137,6 +137,8 @@ def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
     if starter.refusal is not None:
         return _refused(G2, _UNFOLDABLE)
     if not starter.reported:
+        if any(case.kind == KEPT for case in cases):
+            return _refused(G2, "the starter run wrote no report, so no kept case passed on it")
         if starter.exit_code == 0:
             return _refused(
                 G2,
@@ -149,7 +151,8 @@ def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
         )
     if starter.assertions_only and starter.unasserted:
         return _refused(G2, _not_an_assertion(len(starter.unasserted), "starter"))
-    passed = [case for case in cases if starter.passed(case)]
+    asked = [case for case in cases if case.kind != KEPT]
+    passed = [case for case in asked if starter.passed(case)]
     if passed:
         return _refused(
             G2,
@@ -157,7 +160,34 @@ def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
             f"many of its tests are vacuous — a reader would start with the work "
             f"already done for: " + _sentences(passed),
         )
-    return _held(G2, f"none of the {len(cases)} cases passed on the starter")
+    kept = _kept_on_the_starter(cases, starter)
+    if kept is not None:
+        return kept
+    return _held(G2, f"none of the {len(asked)} cases passed on the starter" + _kept_said(cases))
+
+
+def _kept_on_the_starter(cases: tuple[Case, ...], starter: Run) -> Verdict | None:
+    """⛔ Refuse a kept case that fails on the starter: it is new work, not a kept requirement.
+
+    ⭐ A kept case (`KEPT`) is what a project's earlier step already met, so the starter, which is
+    that step's finished code, passes it. One that fails there is work this step asks for, and
+    calling it kept would hide it from the count of what a reader is to do.
+    """
+    broken = [case for case in cases if case.kind == KEPT and not starter.passed(case)]
+    if not broken:
+        return None
+    return _refused(
+        G2,
+        f"{len(broken)} of this exercise's kept cases did not pass on the starter, so they are "
+        f"work this step asks for rather than requirements an earlier step met: "
+        + _sentences(broken),
+    )
+
+
+def _kept_said(cases: tuple[Case, ...]) -> str:
+    """`, and its n kept cases all passed on it` where the exercise declares any, else nothing."""
+    count = sum(1 for case in cases if case.kind == KEPT)
+    return f", and all {count} kept cases passed on it" if count else ""
 
 
 def _g3(exercise: Exercise, evidence: Evidence, where: str) -> Verdict:

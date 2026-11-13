@@ -5,16 +5,19 @@ non-empty list of distinct workspace paths), `require_files_apart` refuses an ed
 shares its path with the main file, the test file, a build file or run output, and `shown` lays
 the main file and the further files out as the reference's blocks and the starting code's
 blocks. ⭐ An exercise of one file passes no `files` and gets the blocks it always did.
+⭐ A project's read-only files (`read_only`) are read and kept apart here too: `read_read_only`,
+`require_read_only_apart`, and `read_only_files` and `read_only_record` for what `emit` writes.
 """
 
 from __future__ import annotations
 
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
 from studyforge.describe import describe
 from studyforge.exercise.bundle.layout import RUN_OUTPUT_DIRNAME, is_run_output
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.gates import TESTS
 from studyforge.exercise.safety import require_path
 
 if TYPE_CHECKING:
@@ -50,6 +53,52 @@ def require_files_apart(bundle: Bundle, where: str) -> None:
                 f"{where}: an edited file sits in '{RUN_OUTPUT_DIRNAME}/', which every run "
                 f"writes and a corpus ignores, so it would be neither kept nor tracked."
             )
+
+
+def read_read_only(value: object, where: str) -> tuple[str, ...]:
+    """Read a project's read-only files: absent is none, present is non-empty and distinct."""
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not value:
+        raise ExerciseError(
+            f"{where}: 'read_only' lists a project's read-only files beside the test file, as a "
+            f"non-empty array of workspace-relative paths, and it is {describe(value)}."
+        )
+    paths = tuple(require_path(one, "a read-only file", where) for one in value)
+    if len(set(paths)) != len(paths):
+        raise ExerciseError(f"{where}: 'read_only' names one file more than once.")
+    return paths
+
+
+def require_read_only_apart(bundle: Bundle, where: str) -> None:
+    """Refuse a read-only file that is an edited file, the test file, a build file or run output."""
+    for path in bundle.read_only:
+        if path in (*bundle.edited, bundle.test_file, *bundle.build) or is_run_output(path):
+            raise ExerciseError(
+                f"{where}: a read-only file shares its path with a file of another role, or sits "
+                f"in '{RUN_OUTPUT_DIRNAME}/', so the workspace would hold one file for two roles."
+            )
+
+
+def read_only_files(base: Path, bundle: Bundle, where: str) -> tuple[tuple[str, bytes], ...]:
+    """Each read-only file as the workspace gets it, read from the bundle's `tests/` folder."""
+    out = []
+    for path in bundle.read_only:
+        held = bundle.places.in_bundle(f"{TESTS}/{path}")
+        try:
+            out.append((bundle.places.in_workspace(path), (base / held).read_bytes()))
+        except OSError:
+            raise ExerciseError(
+                f"{where}: the bundle declares a read-only file at '{held}' and holds none."
+            ) from None
+    return tuple(out)
+
+
+def read_only_record(bundle: Bundle) -> dict:
+    """The record's `read_only` key, each path as the corpus root sees it; empty for most."""
+    if not bundle.read_only:
+        return {}
+    return {"read_only": [bundle.places.in_workspace(path) for path in bundle.read_only]}
 
 
 def require_try_file(bundle: Bundle, where: str) -> None:

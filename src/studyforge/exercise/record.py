@@ -124,6 +124,7 @@ from studyforge.exercise.keys import (
 )
 from studyforge.exercise.safety import require_command, require_path
 from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
+from studyforge.exercise.workfiles import files_in, read_only_in, try_file_in
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
 
@@ -175,6 +176,9 @@ class Exercise:
     #: ⭐ The "try it" file, one of `files`: the reader's own small entry point, which `run_command`
     #: executes (no tests, no grade). `None` is a practice whose Run is whatever `run_command` says.
     try_file: str | None = None
+    #: ⭐ A project's read-only files beside `test_path`: more tests, fixtures, data, an expected
+    #: report. `None` is every practice that is not a project (`exercise.workfiles`).
+    read_only: tuple[str, ...] | None = None
 
     @property
     def graded(self) -> bool:
@@ -316,6 +320,7 @@ def to_document(exercise: Exercise) -> dict:
         "cards": cards_document(exercise.cards or ()),
         quiz.LAYOUT: exercise.layout,
         "try_file": exercise.try_file,
+        "read_only": list(exercise.read_only or ()),
     }
     return {key: values[key] for key in written_keys(exercise)}
 
@@ -333,50 +338,13 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         quiz.QUESTIONS: quiz.questions_in(value, where),
         quiz.MOCK: quiz.mock_in(value, where) if kind == QUIZ else None,
         CONCEPTS: concepts_in(value, where),
-        "files": _files(value, where) if kind == DEFAULT_KIND else None,
-        "try_file": _try_file(value, where) if kind == DEFAULT_KIND else None,
+        "files": files_in(value, where) if kind == DEFAULT_KIND else None,
+        "try_file": try_file_in(value, where) if kind == DEFAULT_KIND else None,
+        "read_only": read_only_in(value, where) if kind == DEFAULT_KIND else None,
         "review": quiz.review_in(value, where) if kind == QUIZ else None,
         "cards": cards_in(value, where) if kind == FLASHCARDS else None,
         quiz.LAYOUT: quiz.layout_in(value, where) if kind == QUIZ else None,
     }
-
-
-def _files(value: dict, where: str) -> tuple[str, ...] | None:
-    """Read `files`: absent is none; present is a non-empty list of distinct workspace paths."""
-    if "files" not in value:
-        return None
-    listed = value["files"]
-    if not isinstance(listed, list) or not listed:
-        raise ExerciseError(
-            f"{where}: 'files' lists the further files the reader edits, as a non-empty array "
-            f"of paths. A practice of one file leaves the key out."
-        )
-    paths = tuple(require_path(one, "a file the reader edits", where) for one in listed)
-    taken = {value.get("main_path"), value.get("test_path")}
-    if len(set(paths)) != len(paths) or any(path in taken for path in paths):
-        raise ExerciseError(
-            f"{where}: 'files' names a file twice, or one that is already the main file or "
-            f"the test file."
-        )
-    return paths
-
-
-def _try_file(value: dict, where: str) -> str | None:
-    """Read `try_file`: absent is none; present is one of `files`, and Run is not the grader."""
-    if "try_file" not in value:
-        return None
-    path = require_path(value["try_file"], "try_file", where)
-    if path not in (value.get("files") or ()):
-        raise ExerciseError(
-            f"{where}: 'try_file' names a file that 'files' does not list. The try-it file is one "
-            f"of the files the reader edits, so it is listed there too."
-        )
-    if "test_command" in value and value.get("run_command") == value["test_command"]:
-        raise ExerciseError(
-            f"{where}: 'try_file' is set but 'run_command' equals 'test_command'. Run executes "
-            f"the try-it file and Submit grades; the two commands are different."
-        )
-    return path
 
 
 def _trust(value: dict, where: str) -> tuple[str, str]:

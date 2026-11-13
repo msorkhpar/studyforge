@@ -186,6 +186,9 @@ class CodeDraft:
     #: ⭐ Optional: the "try it" file, one of `files`, that `run_command` executes (no tests, no
     #: grade). `None` is every draft's behaviour until now.
     try_file: str | None = None
+    #: ⭐ Optional: a project's read-only files beside `test_file` (more tests, fixtures, data, an
+    #: expected report), workspace-relative path to text. Empty is every draft until now.
+    read_only: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)

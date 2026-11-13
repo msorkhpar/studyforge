@@ -83,6 +83,7 @@
   var VERDICT = 'data-practice-verdict';
   var MAIN = 'main';
   var EDGE = 'edge';
+  var KEPT = 'kept';
   var PASSED = 'passed';
   var FAILED = 'failed';
 
@@ -92,6 +93,7 @@
     done: 'data-practice-ask-done',
     missed: 'data-practice-ask-missed',
     edges: 'data-practice-edges',
+    kept: 'data-practice-kept',
     passed: 'data-practice-passed',
     failed: 'data-practice-failed'
   };
@@ -174,6 +176,7 @@
       var edges = 0;
       var passed = 0;
       var ask = true;
+      var kept = [0, 0];
       rows.forEach(function (row) {
         var right = said[row.getAttribute(CASE)];
         var edge = row.getAttribute(CASE_KIND) === EDGE;
@@ -183,10 +186,14 @@
         if (edge) { edges += 1; }
         if (edge && right) { passed += 1; }
         if (row.getAttribute(CASE_KIND) === MAIN && !right) { ask = false; }
+        if (row.getAttribute(CASE_KIND) === KEPT) { kept[1] += 1; kept[0] += right ? 1 : 0; }
       });
       if (summary) {
         summary.textContent = words(region, ask ? 'done' : 'missed') + ' ' +
-          words(region, 'edges').replace('{passed}', passed).replace('{total}', edges);
+          words(region, 'edges').replace('{passed}', passed).replace('{total}', edges) +
+          /* ⭐ A project step says how many earlier requirements still hold. */
+          (kept[1] ? ' ' + words(region, 'kept').replace('{passed}', kept[0])
+            .replace('{total}', kept[1]) : '');
       }
       show(region, true);
     }

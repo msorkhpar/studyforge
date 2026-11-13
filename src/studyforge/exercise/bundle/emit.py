@@ -1,9 +1,8 @@
 r"""Turning a bundle into `practice-M.json`, and into the reader's own workspace.
 
-**What it does.** The emission an adapter calls: reads one bundle off disk and
-answers with the archive document it becomes plus the files the reader works
-in. ⛔ It writes nothing until it is asked to, and what it writes is new files
-only (R3).
+**What it does.** The emission an adapter calls: reads one bundle off disk and answers with the
+archive document it becomes plus the files the reader works in (a project's read-only files
+too). ⛔ It writes nothing until it is asked to, and what it writes is new files only (R3).
 
 **How you use it.**
 
@@ -76,7 +75,7 @@ from studyforge.archive.document import build
 from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
-from studyforge.exercise.bundle.files import shown
+from studyforge.exercise.bundle.files import read_only_files, read_only_record, shown
 from studyforge.exercise.bundle.layout import (
     BUILD,
     STATEMENT,
@@ -171,6 +170,7 @@ def emit(
         (bundle.places.in_workspace(bundle.main_file), starter.encode("utf-8")),
         *((bundle.places.in_workspace(path), text.encode("utf-8")) for path, text, _ in more),
         (bundle.places.in_workspace(bundle.test_file), tests.encode("utf-8")),
+        *read_only_files(base, bundle, where),
         *((bundle.places.in_workspace(path), data) for path, data in built),
     )
     return Emission(document=document, files=files)
@@ -257,6 +257,7 @@ def _record(bundle: Bundle, where: str) -> dict:
     record["report"] = report_document(report)
     record["origin"] = origin_document(bundle.origin)
     record |= {"try_file": places.in_workspace(bundle.try_file)} if bundle.try_file else {}
+    record |= read_only_record(bundle)
     return record
 
 

@@ -91,6 +91,7 @@ AFTER = {
     "cards": [{"id": "c-1", "front": "What does a greeter return?", "back": "A greeting."}],
     "layout": "page",
     "try_file": "practice/basics-01/notes.md",
+    "read_only": ["practice/basics-01/data.csv"],
 }
 
 #: ⭐ A whole quiz as the quiz shape shipped it — the shape the previous reader cannot

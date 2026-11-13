@@ -33,6 +33,7 @@ from studyforge.validate import (
     links,
     narration,
     paths,
+    projects,
     source,
     structure,
 )
@@ -48,6 +49,7 @@ CHECKS = (
     *paths.CHECKS,
     *source.CHECKS,
     *exercises.CHECKS,
+    *projects.CHECKS,
     *derived.CHECKS,
     *ledger.CHECKS,
     *links.CHECKS,

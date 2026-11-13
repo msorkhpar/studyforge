@@ -1,0 +1,5 @@
+crate capacity: 10 kg
+  bean       4 kg     7.50
+  kale       5 kg     8.00
+  leek       1 kg     0.90
+total value: 16.40

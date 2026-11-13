@@ -94,7 +94,7 @@ from dataclasses import dataclass
 
 from studyforge.address import Address, require_ordinal, unit_name
 from studyforge.corpus.placement import PRACTICE_DIRNAME
-from studyforge.exercise.cases import Case
+from studyforge.exercise.cases import EDGE, Case
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates import REFERENCE, STARTER, TESTS
 from studyforge.exercise.safety import require_path
@@ -245,8 +245,8 @@ def plant_positions(cases: tuple[Case, ...]) -> dict[str, int]:
 
 
 def edges_of(cases: tuple[Case, ...]) -> tuple[Case, ...]:
-    """Return the edge cases, in the order the record declares them."""
-    return tuple(case for case in cases if not case.ask)
+    """Return the edge cases, in the order the record declares them (never a kept one)."""
+    return tuple(case for case in cases if case.kind == EDGE)
 
 
 def ordinals(count: int) -> tuple[int, ...]:

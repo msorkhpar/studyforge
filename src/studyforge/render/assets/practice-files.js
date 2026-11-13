@@ -17,6 +17,8 @@
   var EXTRA = 'data-practice-extra';
   var POP = 'data-practice-popout';
   var FILE_TAB = 'file:';
+  /* ⭐ A project's read-only file (`render/page/project.py`): `ro:N` is `where.read_only[N]`. */
+  var RO_TAB = 'ro:';
   /* The two windows, and what the frame is called to a screen reader. ⚠️ These are the
      framework's own words for its own controls, not the material's (R1). */
   var TITLES = { main: 'Your code', test: 'Tests' };
@@ -25,16 +27,21 @@
     if (name.indexOf(FILE_TAB) === 0) {
       return (where.files || [])[Number(name.slice(FILE_TAB.length))] || null;
     }
-    return where[name];
+    if (name.indexOf(RO_TAB) === 0) {
+      return (where.read_only || [])[Number(name.slice(RO_TAB.length))] || null;
+    }
+    return where[name] || null;
   }
 
   function titleOf(where, name) {
-    var found = name.indexOf(FILE_TAB) === 0 ? windowOf(where, name) : null;
+    var found = name in TITLES ? null : windowOf(where, name);
     return found ? String(found.path || '').split('/').pop() : TITLES[name];
   }
 
-  /* One tab, named for its file, before the Tests tab (`after`). */
+  /* One tab, named for its file, before the Tests tab (`after`). ⭐ A project's explorer already
+     has a button for every file, so it gets none. */
   function tabs(where, bar, after) {
+    if (bar && bar.hasAttribute('data-practice-explorer')) { return; }
     (where.files || []).forEach(function (one, index) {
       if (!bar || !one || !one.url) { return; }
       var tab = document.createElement('button');

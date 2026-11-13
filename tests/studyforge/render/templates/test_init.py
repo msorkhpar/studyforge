@@ -97,6 +97,8 @@ MULTI_LINE = (
     "practice-review-question.html",
     "practice-review.html",
     "practice-breakdown.html",
+    "practice-explorer.html",
+    "practice-project-files.html",
     "practice-panel.html",
     "practice-card.html",
     "practice-concepts.html",

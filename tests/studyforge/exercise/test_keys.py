@@ -27,7 +27,9 @@ ORIGINAL = ("main_path", "test_path", "run_command", "test_command", "provenance
 def test_the_original_six_keep_their_order_and_every_later_key_is_appended():
     assert EXERCISE_KEYS[: len(ORIGINAL)] == ORIGINAL
     assert EXERCISE_KEYS[len(ORIGINAL) :] == AUTHORED_KEYS
-    assert AUTHORED_KEYS[-6:] == ("concepts", "files", "review", "cards", "layout", "try_file")
+    assert AUTHORED_KEYS[-7:] == (
+        "concepts", "files", "review", "cards", "layout", "try_file", "read_only"
+    )
 
 
 def test_every_key_group_is_drawn_from_the_record_s_own_keys():

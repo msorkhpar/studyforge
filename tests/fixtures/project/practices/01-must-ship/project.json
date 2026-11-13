@@ -1,0 +1,66 @@
+{
+  "project_api": 1,
+  "title": "Must-ship lots",
+  "before": "../../steps/00",
+  "after": "../../steps/01",
+  "tests": "tests",
+  "entry": "main.py",
+  "statement": "statement.md",
+  "expected": {
+    "output": "expected/report.txt",
+    "abs_tol": 0.005,
+    "rel_tol": 0,
+    "says": "the report for this season's lots matches the expected report"
+  },
+  "blueprint": [
+    {
+      "file": "seedcrate/model.py",
+      "signature": "def must_ship(lots: list[Lot]) -> tuple[str, ...]",
+      "contract": "Takes the lots as read. Returns the names of the must-ship lots, in input order; an empty tuple when there are none.",
+      "idea": "A must-ship lot is a variable fixed to 1 before the search starts.",
+      "lesson": {"title": "Fixing a variable", "href": "../lessons/fixing.html"},
+      "stub": "return ()"
+    },
+    {
+      "file": "seedcrate/model.py",
+      "signature": "def best_selection(lots: list[Lot], capacity: int) -> tuple[str, ...]",
+      "contract": "Returns the names of the chosen lots in input order: every must-ship lot, then the most valuable fit for the room they leave. Raises ValueError when the must-ship lots alone weigh more than the capacity.",
+      "idea": "Fix the forced variables, take their weight off the capacity, and solve the smaller knapsack over the free lots.",
+      "lesson": {"title": "Fixing a variable", "href": "../lessons/fixing.html"}
+    },
+    {
+      "file": "seedcrate/data.py",
+      "signature": "def read_lots(path: Path) -> list[Lot]",
+      "contract": "Reads name, weight, value and an optional must column. A must cell of yes, y or true, in any case, marks the lot; anything else, or no column, does not.",
+      "idea": "Input data decides which variables are fixed, so read it strictly and once.",
+      "lesson": {"title": "Reading model input", "href": "../lessons/input.html"}
+    },
+    {
+      "file": "seedcrate/report.py",
+      "signature": "def render(lots: list[Lot], chosen: tuple[str, ...], capacity: int) -> str",
+      "contract": "One line per chosen lot in input order, starred when it must ship, then the total weight and the total value.",
+      "idea": "A report says which decisions were forced and which were chosen.",
+      "lesson": {"title": "Explaining a plan", "href": "../lessons/report.html"}
+    }
+  ],
+  "cases": [
+    ["tests/test_data.py::test_reads_the_must_ship_flag", "main", "the must column marks the lots that have to ship"],
+    ["tests/test_model.py::test_a_must_ship_lot_is_always_chosen", "main", "a must-ship lot is in the crate even where a better fit leaves it out"],
+    ["tests/test_report.py::test_must_ship_lots_are_starred_and_the_weight_totalled", "main", "the report stars each must-ship lot and prints the total weight"],
+    ["tests/test_data.py::test_the_flag_is_read_without_case", "edge", "YES and True mark a must-ship lot as yes does"],
+    ["tests/test_model.py::test_must_ship_lots_over_capacity_are_refused", "edge", "must-ship lots heavier than the crate are refused"],
+    ["tests/test_model.py::test_a_worthless_must_ship_lot_still_ships", "edge", "a must-ship lot worth nothing still ships"]
+  ],
+  "plants": {
+    "tests/test_data.py::test_the_flag_is_read_without_case": [
+      ["seedcrate/data.py", "(row.get(\"must\") or \"\").strip().lower() in YES", "row.get(\"must\") == \"yes\""]
+    ],
+    "tests/test_model.py::test_must_ship_lots_over_capacity_are_refused": [
+      ["seedcrate/model.py", "    if room < 0:\n        raise ValueError(\"the must-ship lots alone weigh more than the crate holds\")\n", ""]
+    ],
+    "tests/test_model.py::test_a_worthless_must_ship_lot_still_ships": [
+      ["seedcrate/model.py", "    forced = [lot for lot in lots if lot.must]", "    forced = [lot for lot in lots if lot.must and lot.value > 0]"]
+    ]
+  },
+  "origin": {"path": "lessons/fixing.md", "section": null}
+}

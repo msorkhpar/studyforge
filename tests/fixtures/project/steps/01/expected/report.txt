@@ -1,0 +1,7 @@
+crate capacity: 10 kg
+  bean       4 kg     7.50
+* beet       3 kg     4.25
+  carrot     2 kg     3.10
+  leek       1 kg     0.90
+total weight: 10 kg
+total value: 15.75

@@ -171,7 +171,8 @@ further down.
     "review": null,
     "cards": [],
     "layout": null,
-    "try_file": null
+    "try_file": null,
+    "read_only": []
   }
 }
 ```
@@ -225,8 +226,9 @@ because this fence lists every key.
 
 **`cases` and `report` are one claim and go together**, and only beside a
 grader. A case is three fields: `id`, exactly as the test report spells it; a
-`kind` of `main` — the ask itself — or `edge`, one named edge of it; and `says`,
-the one sentence the reader is shown when it fails. The `report` names the
+`kind` of `main` — the ask itself — or `edge`, one named edge of it, or `kept` — a
+requirement an earlier step of a growing project already met (see *A project practice*); and
+`says`, the one sentence the reader is shown when it fails. The `report` names the
 format the grader writes (`junit`) and the path inside the workspace it lands
 at. **At least one case is `main`, the ids are distinct, and every case is
 backed by a test** — what the reader is shown is *main ask* plus *edge cases
@@ -236,6 +238,10 @@ n/m*, so a map that names no ask describes a run nothing reports.
 source, or a region of one written `{"path": …, "section": …}`, where `section`
 is the exact text of a heading. **It is a fact about the material and not about
 a grader**, so it is the one of these an *ungraded* record may carry.
+
+**`read_only` is a project practice's**: the files beside `test_path` a project shows the reader and
+grades them with, which they may read and not edit. A record that carries it is a project; see
+*A project practice* below. Every other record leaves it out.
 
 **`questions` is a quiz's, and only a quiz's.** Writing it on any other record
 is a refusal; see *A practice for material that is not code* below.
@@ -972,6 +978,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
 | `files` | optional, empty by default: the further files the reader edits beside `main_file`, each workspace-relative path mapped to `EditedFile(starter, reference)`; see *A practice of several files* |
 | `try_file` | optional, `None` by default: the try-it file, one of the keys of `files`, that `run_command` executes (no tests, no grade); see *A try-it file: what Run executes* |
+| `read_only` | optional, empty by default: a project's read-only files beside `test_file` (its other tests, their fixtures, its data, the expected report), each workspace-relative path mapped to its text; see *A project practice* |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 | `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 
@@ -1110,6 +1117,157 @@ any corpus where another practice already carries a `try_file`.
   file starts as the author wrote it, and the reference is the same text), `try_file` names
   it, and `run_command` is the command in the table. A practice with no try-it file leaves
   `try_file` unset.
+
+### A project practice
+
+A project practice is a whole package, not a file or two: for example `data.py`, `model.py`,
+`solve.py`, `report.py`, an entry point and a `tests/` folder. The reader sees every file, may
+change any source file as much as they like, and is graded only by the tests and by an
+expected-output check that runs the entry point and compares its report with a reference. A
+course that grows one project over several lessons gives each lesson one project practice.
+
+**What the reader gets.**
+
+- **Every file, in a tree.** The page lists every file of the project, each marked as the
+  reader's to edit or read-only, in a closed list that works on a page opened as a file. When
+  the editor is running, the tabs over it become an explorer: one button per file, under its
+  folder's name, each opening that file in the editor's one frame. Source files are editable.
+  Tests, fixtures, data and the expected report are read-only, locked the same way a practice's
+  test file is.
+- **A blueprint on the statement.** For each method to write: its signature, its contract (what
+  goes in, what comes out, what stays true), the modeling idea it needs, and a link to the lesson
+  that taught it.
+- **Run and Submit as for any practice.** Run runs the entry point and shows what it printed.
+  Submit runs the whole `tests/` folder: a unit test per method, end-to-end tests, and the
+  expected-output check. When the report differs, the check names each differing line and why
+  (`line 3: 16.50 is not 16.40 within abs 0.005`, or `the text differs`) and shows a unified diff
+  of the expected report against the reader's.
+- **Earlier requirements are counted.** A test an earlier lesson already passed is a `kept` case.
+  The breakdown says *Main ask*, *Edge cases n of m*, and *Earlier steps: n of m still pass*.
+
+**What the record says.** A project is a code practice whose record carries `read_only`: the
+corpus-relative paths of every read-only file beside `test_path`. `main_path` and `files` are
+every source file, `test_path` is the expected-output check, and `test_command` runs pytest over
+the tests folder. `studyforge validate` reports `project-files` when the workspace and the record
+disagree: a file the record names that is not there, or a file in the workspace the record does
+not name, which the reader could never see.
+
+**The gates are the five every code practice clears.** `G1`: every case passes on the reference,
+twice. `G2`: every `main` and `edge` case fails on the starter, on an assertion when the draft asks
+for assertions only, and every `kept` case passes on it (a kept case that fails on the starter is
+work this step asks for, and is refused as kept). `G3`: each edge case's plant passes every main
+case, the expected-output check included, and fails its own edge. `G4` and `G5` as always. ⚠️
+Because a plant must pass the expected-output check, the entry point's own data should not reach
+an edge case: test edges with fixtures under `tests/`.
+
+#### From a before/after pair of snapshots
+
+A course that grows a project keeps each step as a complete snapshot, `<module>/steps/NN/`, with
+the package and its tests. `00` is the project before the first lesson, and `NN` the project
+after lesson `NN`. Lesson `NN`'s practice is the pair `NN-1` → `NN`:
+
+| from the snapshots | becomes |
+|---|---|
+| every `.py` file outside `tests/` in `NN-1` | the starter, file for file (a file new in `NN` starts empty) |
+| the same files in `NN` | the reference |
+| every `.py` outside `tests/` | a file the reader edits, the entry point included |
+| `tests/test_*.py` in `NN` | the grade, read-only |
+| every other file in `NN` (a `conftest.py` under `tests/`, fixtures, data, `expected/…`) | read-only |
+| `pytest.ini` at the root of `NN` | the build file; one with `pythonpath = .` is written when there is none |
+
+The snapshot's `pytest.ini` makes the workspace pytest's root, so a case id is the node id as the
+project spells it, `tests/test_model.py::test_caps_hold`, wherever the practice sits in the
+corpus. Data is read relative to the module's own file (`Path(__file__)`), never the working
+directory, because Run and the check start the entry point from the corpus root. Caches, `target/`
+and dot-files are skipped, and a file that is not UTF-8 text is refused.
+
+One manifest, `project.json`, declares the practice. Paths are relative to the manifest:
+
+```json
+{
+  "project_api": 1,
+  "title": "Must-ship lots",
+  "before": "../../steps/00",
+  "after": "../../steps/01",
+  "tests": "tests",
+  "entry": "main.py",
+  "statement": "statement.md",
+  "expected": {"output": "expected/report.txt", "abs_tol": 0.005, "rel_tol": 0},
+  "blueprint": [
+    {
+      "file": "seedcrate/model.py",
+      "signature": "def must_ship(lots: list[Lot]) -> tuple[str, ...]",
+      "contract": "Returns the names of the must-ship lots, in input order.",
+      "idea": "A must-ship lot is a variable fixed to 1 before the search starts.",
+      "lesson": {"title": "Fixing a variable", "href": "../lessons/fixing.html"},
+      "stub": "return ()"
+    }
+  ],
+  "cases": [
+    ["tests/test_model.py::test_a_must_ship_lot_is_always_chosen", "main",
+     "a must-ship lot is in the crate even where a better fit leaves it out"],
+    ["tests/test_model.py::test_must_ship_lots_over_capacity_are_refused", "edge",
+     "must-ship lots heavier than the crate are refused"]
+  ],
+  "plants": {
+    "tests/test_model.py::test_must_ship_lots_over_capacity_are_refused": [
+      ["seedcrate/model.py", "    if room < 0:\n        raise ValueError(\"too heavy\")\n", ""]
+    ]
+  }
+}
+```
+
+- **`cases` declares only what the step adds or changes**: each test that is new in `NN`, or
+  whose source differs from `NN-1`'s, as `main` or `edge` with the sentence a reader is shown. A
+  new or changed test the manifest leaves out is refused by id. Every unchanged test becomes a
+  `kept` case on its own, worded by the first line of its docstring. A parametrised test reports
+  one id per parameter, which no static reading can spell, so declare each of its ids
+  (`tests/test_x.py::test_y[a]`).
+- **`expected`** names the reference report inside `NN` and the tolerances numbers are compared
+  within (`math.isclose`); text between numbers must match exactly, and trailing spaces and
+  blank lines are not compared. Produce the report by running `NN`'s entry point in the runner.
+  `kind` (`main` by default) and `says` are optional.
+- **`blueprint`** lists the methods to write, the first one's file being the one the editor opens.
+  Every field but `stub` is required, and each method must be defined in `NN`'s file. A
+  module-level function `NN-1` lacks is appended to the starter as a stub: its signature, its
+  contract as the docstring, and the `stub` body, so the step's tests fail on an assertion rather
+  than on an import (a stub with no body raises `NotImplementedError`, which `assertions_only`
+  refuses).
+- **`plants`** are `[file, old, new]` replacements against the reference, any source file, one
+  list per edge case.
+- **`assertions_only`** is `true` unless the manifest says otherwise, and **`origin`**
+  (`{"path": …, "section": …}`) may be given here or passed to `project_draft` by the author.
+
+The author's `draft` hands the manifest to the helper, with the brief's own workspace:
+
+```python
+from pathlib import Path
+
+from studyforge.exercise import Origin
+from studyforge.skills.exercises.project import project_draft
+
+
+def draft(brief):
+    manifest = Path("exercise-src/m/1.1/must-ship/project.json")
+    return project_draft(manifest, brief.places.workspace, origin=Origin(brief.page.path, None))
+```
+
+Two commands help write and check a manifest; neither runs a test:
+
+```
+python -m studyforge.skills.exercises.project new steps/00 steps/01 > project.json
+python -m studyforge.skills.exercises.project check project.json
+```
+
+`new` fills in everything the pair already says (the folders, the entry point, the expected
+report, one case per new or changed test, one blueprint entry per new or changed function with
+its docstring as the contract) and leaves the modeling idea and the lesson empty; `check` refuses
+an empty field, so a skeleton never ships unread. `check` then lists the files the reader edits,
+the cases by kind and the plants.
+
+**The worked sample** is `tests/fixtures/project/`: a fictional seed-crate planner, its snapshots
+`steps/00` and `steps/01`, and the manifest of its one practice. The test suite gates it with
+every run a real `pytest` process.
 
 ### A plant as replacements
 
