@@ -4,7 +4,9 @@ r"""A project practice from a before/after pair of snapshots, declared in one sm
 and answers with the `CodeDraft` the authoring gates read: the **before** snapshot's code is the
 starter, the **after** snapshot's code is the reference, and the **after** snapshot's tests are the
 grade. ⭐ It writes the expected-output check (`expected`), appends the blueprint to the statement
-(`blueprint`), stubs each blueprint method the starter lacks, and derives a case for every test.
+(`blueprint`), stubs each blueprint method the starter lacks, starts a file new in the step as the
+after snapshot's file with only its blueprint methods' bodies stubbed, and derives a case for every
+test.
 
 **How you use it.**
 
@@ -47,6 +49,7 @@ from studyforge.skills.exercises.blueprint import (
     Lesson,
     Method,
     blueprint_markdown,
+    stub_bodies,
     stubbed,
     undefined,
 )
@@ -171,7 +174,15 @@ def project_draft(
     check = f"{found.tests}/{CHECK_FILE}"
     _require_project(found, before, after, check, where)
     references = dict(after.sources)
-    starters = stubbed({p: before.sources.get(p, "") for p in references}, found.methods)
+    starters = stubbed(
+        {
+            path: before.sources[path]
+            if path in before.sources
+            else stub_bodies(text, path, found.methods)
+            for path, text in references.items()
+        },
+        found.methods,
+    )
     main = found.methods[0].file
     depth = check.count("/")
     return CodeDraft(

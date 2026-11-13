@@ -1181,7 +1181,7 @@ after lesson `NN`. Lesson `NN`'s practice is the pair `NN-1` → `NN`:
 
 | from the snapshots | becomes |
 |---|---|
-| every `.py` file outside `tests/` in `NN-1` | the starter, file for file (a file new in `NN` starts empty) |
+| every `.py` file outside `tests/` in `NN-1` | the starter, file for file (a file new in `NN` starts as `NN`'s file, with only its blueprint methods' bodies stubbed) |
 | the same files in `NN` | the reference |
 | every `.py` outside `tests/` | a file the reader edits, the entry point included |
 | `tests/test_*.py` in `NN` | the grade, read-only |
@@ -1245,7 +1245,11 @@ One manifest, `project.json`, declares the practice. Paths are relative to the m
   module-level function `NN-1` lacks is appended to the starter as a stub: its signature, its
   contract as the docstring, and the `stub` body, so the step's tests fail on an assertion rather
   than on an import (a stub with no body raises `NotImplementedError`, which `assertions_only`
-  refuses).
+  refuses). A file new in `NN` starts as `NN`'s own file, imports, constants and other functions
+  included, with only the body of each of its blueprint methods replaced by that stub; a new file
+  with no blueprint method ships as `NN` has it. ⚠️ So a step whose new tests reach only such a
+  file passes them on the starter, and gate `G2` refuses it ("… cases passed on the starter, so
+  that many of its tests are vacuous"): put the method that file adds in the blueprint.
 - **`plants`** are `[file, old, new]` replacements against the reference, any source file, one
   list per edge case.
 - **`assertions_only`** is `true` unless the manifest says otherwise, and **`cites`**

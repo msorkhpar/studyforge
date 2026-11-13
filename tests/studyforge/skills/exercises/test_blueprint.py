@@ -10,6 +10,7 @@ from studyforge.skills.exercises.blueprint import (
     Lesson,
     Method,
     blueprint_markdown,
+    stub_bodies,
     stubbed,
     undefined,
 )
@@ -45,6 +46,36 @@ def test_a_method_the_starter_lacks_is_stubbed_and_one_it_has_is_left_alone():
     assert again == starters
     new = stubbed({}, (Method("pkg/new.py", "def f()", "c", "i", Lesson("t", "h")),))
     assert new["pkg/new.py"].endswith("    raise NotImplementedError\n")
+
+
+RULES = (
+    '"""Rules."""\n\nimport math\n\n#: The cap.\nRULES = ("a", "b")\n\n\n'
+    "@staticmethod\n"
+    "def caps(lots: list,\n         room: int) -> tuple:  # tidy\n"
+    '    """The reference docstring."""\n'
+    "    # how it works\n"
+    "    return tuple(lot for lot in lots if lot <= room)\n\n\n"
+    "def helper(x):\n    return math.floor(x)\n\n\n"
+    "class Box:\n    def caps(self):\n        return 1\n"
+)
+
+
+def test_a_new_file_keeps_everything_but_the_bodies_of_its_blueprint_methods():
+    out = stub_bodies(RULES, "pkg/model.py", (METHOD,))
+    assert out == (
+        '"""Rules."""\n\nimport math\n\n#: The cap.\nRULES = ("a", "b")\n\n\n'
+        "@staticmethod\n"
+        "def caps(lots: list,\n         room: int) -> tuple:\n"
+        '    """Returns the lots that fit."""\n'
+        "    return ()\n\n\n"
+        "def helper(x):\n    return math.floor(x)\n\n\n"
+        "class Box:\n    def caps(self):\n"
+        '        """Returns the lots that fit."""\n'
+        "        return ()\n"
+    )
+    assert stub_bodies(RULES, "pkg/other.py", (METHOD,)) == RULES, "another file's method"
+    one_line = stub_bodies("def caps(lots, room): return lots\n", "pkg/model.py", (METHOD,))
+    assert one_line == 'def caps(lots, room):\n    """Returns the lots that fit."""\n    return ()\n'
 
 
 def test_undefined_names_a_method_the_reference_does_not_define():

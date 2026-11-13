@@ -110,3 +110,45 @@ def test_the_bundle_ships_the_read_only_files_and_the_record_names_them(tmp_path
     emitted = emit(out, bundle_of(document, "bundle.json"), source="demo", ingested="2026-01-05")
     record = from_document(emitted.document["exercise"], "w")
     assert record.read_only == tuple(f"{WS}/{path}" for path in draft.read_only)
+
+
+#: A module new in step 01 with a blueprint method: its import, constant and helper must survive.
+RULES = (
+    '"""Shipping rules."""\n\nfrom seedcrate.data import Lot\n\n'
+    "#: The heaviest lot a crate takes.\nHEAVIEST = 5\n\n\n"
+    "def too_heavy(lots: list[Lot]) -> tuple[str, ...]:\n"
+    '    """The reference body."""\n'
+    "    return tuple(lot.name for lot in lots if lot.weight > HEAVIEST)\n\n\n"
+    "def names(lots: list[Lot]) -> list[str]:\n    return [lot.name for lot in lots]\n"
+)
+
+#: A module new in step 01 with no blueprint method: it ships as the reference has it.
+UNITS = '"""Units."""\n\nKG = "kg"\n'
+
+
+def test_a_file_new_in_the_step_starts_as_the_reference_with_only_blueprint_bodies_stubbed(
+    tmp_path,
+):
+    document = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    rule = {
+        **document["blueprint"][0],
+        "file": "seedcrate/rules.py",
+        "signature": "def too_heavy(lots: list[Lot]) -> tuple[str, ...]",
+        "contract": "The names of the lots heavier than HEAVIEST.",
+    }
+    manifest = copy_sample(tmp_path, {"blueprint": [*document["blueprint"], rule]})
+    after = manifest.parent / document["after"]
+    (after / "seedcrate" / "rules.py").write_text(RULES, encoding="utf-8")
+    (after / "seedcrate" / "units.py").write_text(UNITS, encoding="utf-8")
+    draft = project_draft(manifest, WS)
+    assert draft.files["seedcrate/units.py"].starter == UNITS, "a new file without methods"
+    rules = draft.files["seedcrate/rules.py"]
+    assert rules.reference == RULES
+    assert rules.starter == RULES.replace(
+        '    """The reference body."""\n'
+        "    return tuple(lot.name for lot in lots if lot.weight > HEAVIEST)\n",
+        '    """The names of the lots heavier than HEAVIEST."""\n    return ()\n',
+    )
+    assert "    return ()" in draft.starter, "a file of the before step lost its stub"
+    result, _ = gated(tmp_path / "gate", manifest)
+    assert result.clears, [verdict.says for verdict in result.refused]
