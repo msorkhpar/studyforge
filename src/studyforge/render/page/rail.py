@@ -34,6 +34,20 @@ already in the only container there is, and the trail and the bar already say
 so. ⚠️ `RAIL_MINIMUM` is the same argument `BREADCRUMB_MINIMUM` makes one module
 along: chrome that cannot say anything is chrome that is not emitted.
 
+## ⛔ A group holding ONE container is that container's row, not a second disclosure
+
+⚠️ **A section with a single module rendered as two nested disclosures that
+said the same thing twice** — *"Mock interviews"* opened onto *"Mock
+interviews"* — and the second level added a click and an indent and no
+choice. ⭐ So a group whose only child is one container renders as ONE row:
+the container's own disclosure, with its link, its `aria-current`, its readable
+state and its units, under the GROUP's title, because the group is what the
+reader is scanning the rail for. ⭐ When the two titles differ — compared with
+case and punctuation removed, which are no difference a reader can see — the
+container's title follows in a `<small>` after one space, so a screen reader
+hears two names and not one run-on word. ⛔ A group holding two containers, or
+holding a deeper group, is unchanged: there the level is a real choice.
+
 ## ⛔ Real disclosure elements, because the floor is a double-clicked file (R8)
 
 ⭐ **`<details>` opens, closes and takes keyboard focus with scripting off
@@ -86,6 +100,7 @@ in the published class vocabulary, exactly as the two lists it sits beside.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -230,7 +245,11 @@ def _rows(containers: tuple[RailContainer, ...], depth: int, said: str) -> str:
             and containers[end].within[depth].key == group.key
         ):
             end += 1
-        rows.append(_group(group, containers[index:end], depth, said))
+        members = containers[index:end]
+        if len(members) == 1 and len(members[0].within) == depth + 1:
+            rows.append(_container(members[0], said, group))
+        else:
+            rows.append(_group(group, members, depth, said))
         index = end
     return "".join(rows)
 
@@ -250,9 +269,19 @@ def _group(group: RailGroup, containers: tuple[RailContainer, ...], depth: int, 
     )
 
 
-def _container(container: RailContainer, said: str) -> str:
-    """Return one container as a disclosure holding the units under it."""
-    summary = _body(_level(container), container.title) + modes.label(container.tag)
+def _container(container: RailContainer, said: str, lone: RailGroup | None = None) -> str:
+    """Return one container as a disclosure holding the units under it.
+
+    ⭐ `lone` is the group this container is the only child of: the row then
+    carries the group's level and title, and the container's title after it
+    only when the two differ — see this module's docstring.
+    """
+    summary = _body(_level(container), container.title)
+    if lone is not None:
+        summary = _body(_level(lone), lone.title)
+        if _plain(lone.title) != _plain(container.title):
+            summary += f" <small>{inline(container.title)}</small>"
+    summary += modes.label(container.tag)
     units = "".join(_unit(unit, said) for unit in container.units)
     return (
         f"<li{CURRENT_CONTAINER if container.current else ''}{modes.attributes(container.tag)} "
@@ -317,6 +346,11 @@ def _readable(href: str | None, current: bool, tag: modes.Tag | None = None) -> 
 def _body(chip: str, title: str) -> str:
     """Return a row's visible text: its chip, if it has one, then its title."""
     return f"{chip}{inline(title)}"
+
+
+def _plain(title: str) -> str:
+    """Return `title` as a reader compares it: no case, no punctuation, no spacing."""
+    return re.sub(r"[\W_]+", "", title.casefold())
 
 
 def _level(container: RailContainer | RailGroup) -> str:

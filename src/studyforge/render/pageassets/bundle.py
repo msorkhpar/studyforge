@@ -55,11 +55,11 @@ from studyforge.render.pageassets.source import text
 #: the last rule wins. It comes *before* the highlight part because the
 #: highlight refines the inside of a code block, which no chrome rule reaches.
 #:
-#: ⭐ `lists.css`, `onward.css` and `notes.css` follow `chrome.css` directly:
-#: the four are one part split at named seams for R11 (`chrome.css`
+#: ⭐ `rail.css`, `lists.css`, `onward.css` and `notes.css` follow `chrome.css`
+#: directly: the five are one part split at named seams for R11 (`chrome.css`
 #: names them), and they share its position's argument.
 #:
-#: ⭐ `practice.css` follows those four directly and for their reason:
+#: ⭐ `practice.css` follows those five directly and for their reason:
 #: the practice panel is a region this framework emits, reached by an attribute
 #: and painted in palette tokens, so it belongs with the other authored region
 #: parts and before anything that refines the inside of a code block. ⛔ It comes
@@ -113,6 +113,7 @@ STYLE_PARTS = (
     "reading.css",
     "callouts.css",
     "chrome.css",
+    "rail.css",
     "lists.css",
     "onward.css",
     "notes.css",

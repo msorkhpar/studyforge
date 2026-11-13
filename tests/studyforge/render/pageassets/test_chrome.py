@@ -43,10 +43,10 @@ from tests.studyforge.render.pageassets import authoring
 CHROME = "chrome.css"
 
 #: ⭐ The part is split at named seams for R11: `chrome.css` is where things
-#: are, `lists.css` what the reader navigates, `onward.css` where they go
-#: next, `notes.css` what the page tells them. Every claim below is about the
-#: four together, read as one part.
-CHROME_PARTS = (CHROME, "lists.css", "onward.css", "notes.css")
+#: are, `rail.css` how the rail's tree reads, `lists.css` what the reader
+#: navigates, `onward.css` where they go next, `notes.css` what the page tells
+#: them. Every claim below is about the five together, read as one part.
+CHROME_PARTS = (CHROME, "rail.css", "lists.css", "onward.css", "notes.css")
 
 #: Who answers for a region. ⛔ Three values and no fourth: a region that fits
 #: none of them is a region whose owner nobody decided, which is the exact state

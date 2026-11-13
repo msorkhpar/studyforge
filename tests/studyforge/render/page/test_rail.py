@@ -391,9 +391,12 @@ def test_the_rail_and_both_lists_say_it_with_the_one_string():
 BASICS = RailGroup(title="Basics", level="section", key="basics")
 ADVANCED = RailGroup(title="Advanced", level="section", key="advanced")
 
-#: A depth-2 rail: one module in `basics`, two in `advanced`, the reader in the first.
+#: A depth-2 rail: two modules in each section, the reader in the first.
+#: ⚠️ TWO in `basics` on purpose: a section holding ONE module is folded into
+#: that module's row, which the clauses at the foot of this module assert.
 SECTIONED = (
     replace(TWO[0], within=(BASICS,)),
+    RailContainer(title="First steps", level="module", within=(BASICS,)),
     replace(TWO[1], within=(ADVANCED,)),
     RailContainer(title="Putting it together", level="module", within=(ADVANCED,)),
 )
@@ -412,6 +415,7 @@ def test_each_section_holds_its_own_modules_in_reading_order():
         "Course contents",
         "Basics",
         "Getting started",
+        "First steps",
         "Advanced",
         "Going further",
         "Putting it together",
@@ -438,9 +442,93 @@ def test_the_section_holding_the_reader_is_open_and_the_others_are_not():
 def test_a_section_row_is_a_label_with_no_link_and_no_readable_state():
     markup = rail(SECTIONED)
     assert "<li><details><summary><span" in markup
-    assert markup.count(f"{SURFACE_HOOKS['readable']}=") == 3 + 3
+    assert markup.count(f"{SURFACE_HOOKS['readable']}=") == 4 + 3
 
 
 def test_containers_with_no_section_stay_the_flat_list_they_were():
     assert rail(TWO) == rail(tuple(replace(container, within=()) for container in TWO))
     assert summaries(rail(TWO)) == ["Course contents", "Getting started", "Going further"]
+
+
+# --------------------------------------------------------------------------
+# ⛔ A section holding ONE module is that module's row, not a second disclosure
+# --------------------------------------------------------------------------
+
+#: A depth-2 rail where `basics` holds ONE module and `advanced` holds two.
+LONE = (
+    replace(TWO[0], within=(BASICS,)),
+    replace(TWO[1], within=(ADVANCED,)),
+    RailContainer(title="Putting it together", level="module", within=(ADVANCED,)),
+)
+
+
+def folded(markup: str) -> str:
+    """The rail inside its narrow-width fold, which is not a row of its own."""
+    return markup.split("<summary>Course contents</summary>", 1)[1]
+
+
+def test_a_section_holding_one_module_renders_a_single_disclosure():
+    # ⭐ One for `basics`' module, one for `advanced`, one for each of its two.
+    markup = folded(rail(LONE))
+    assert markup.count("<details") == 1 + 1 + 2, markup
+
+
+def test_the_lone_row_names_the_section_and_then_the_module_in_smaller_type():
+    markup = rail(LONE)
+    assert summaries(markup)[1] == "Basics Getting started"
+    # ⭐ The current row is not linked; the space keeps the two names two words
+    # for a screen reader, which joins a link's text without one.
+    assert "Basics <small>Getting started</small></summary>" in markup
+
+
+def test_a_lone_module_whose_title_is_the_sections_is_not_named_twice():
+    # ⛔ Case and punctuation are not a difference a reader can see.
+    same = RailGroup(title="Mock interviews", level="section", key="mock")
+    markup = rail((RailContainer(title="Mock Interviews.", href="m.html", within=(same,)), TWO[1]))
+    assert markup.count("Mock interviews") == 1, markup
+    assert "Mock Interviews." not in markup
+    assert "<small>" not in markup
+
+
+def test_a_section_with_two_modules_is_unchanged_by_the_fold():
+    # ⭐ `advanced` renders to the same bytes beside a one-module section as it
+    # does beside a two-module one.
+    def advanced(markup: str) -> str:
+        opening = '<li><details><summary><span data-kind="level">section</span> Advanced'
+        return markup[markup.index(opening) :]
+
+    assert advanced(rail(LONE)) == advanced(rail(SECTIONED))
+    assert summaries(rail(LONE))[2:] == ["Advanced", "Going further", "Putting it together"]
+
+
+def test_the_lone_row_carries_the_modules_current_state_readable_state_and_units():
+    markup = folded(rail(LONE))
+    row = rows(markup)[0]
+    assert 'aria-current="true"' in row, row
+    assert f'{SURFACE_HOOKS["readable"]}="true"' in row, row
+    assert markup.startswith("<ol>" + row + "<details open><summary>"), markup[:200]
+    assert markup.count('aria-current="page"') == 1
+    assert markup.count('aria-current="true"') == 1
+    assert "unit-02.unit.html" in hrefs(markup)
+
+
+def test_a_lone_row_the_reader_is_not_in_links_the_module_page_and_stays_closed():
+    away = (TWO[0], replace(TWO[1], within=(ADVANCED,)))
+    markup = folded(rail(away))
+    linked = '<summary><a href="../advanced/going-further.section.html">'
+    assert '<li data-readable="true"><details>' + linked in markup
+    named = '<span data-kind="level">section</span> Advanced <small>Going further</small>'
+    assert named + "</a></summary>" in markup
+    assert "../advanced/unit-01.unit.html" in hrefs(markup)
+
+
+def test_a_lone_container_under_a_deeper_group_is_not_folded_into_this_one():
+    # ⚠️ The fold takes a group whose ONE child is a container; a group whose one
+    # child is another group still says its own level.
+    inner = RailGroup(title="Inner", level="part", key="advanced/inner")
+    deep = (TWO[0], replace(TWO[1], within=(ADVANCED, inner)))
+    assert summaries(rail(deep))[2] == "Advanced"
+
+
+def test_the_folded_rail_still_emits_no_id():
+    assert "id=" not in rail(LONE)

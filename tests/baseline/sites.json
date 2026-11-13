@@ -2,7 +2,7 @@
  "recorded": {
   "depth1": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
-   ".studyforge/assets/page.css": "6bd20317f3433d29d65a511010d8d7e8723bec8823251c50b47f2d29a4c8a376",
+   ".studyforge/assets/page.css": "e6163debecaca044afc3e74f5c0c399f2adbf386ab64ed40d57525665f0b0d1a",
    ".studyforge/assets/page.js": "23c7c80fcc10625a7c47436c7d01739938b0eafa9fc80f34572f2132b913c29a",
    ".studyforge/assets/search-index.js": "1a8d18eafe605c5cbdc52e91036857c8802cd87cdf0f431408bc5f700c90a703",
    ".studyforge/depth-one/depth-one-demo.section.html": "372a5305de97d491e9c72b532310deaa227867dcc9800bbc5262b4c0ff87fedc",
@@ -15,23 +15,23 @@
   },
   "depth2": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
-   ".studyforge/assets/page.css": "6bd20317f3433d29d65a511010d8d7e8723bec8823251c50b47f2d29a4c8a376",
+   ".studyforge/assets/page.css": "e6163debecaca044afc3e74f5c0c399f2adbf386ab64ed40d57525665f0b0d1a",
    ".studyforge/assets/page.js": "23c7c80fcc10625a7c47436c7d01739938b0eafa9fc80f34572f2132b913c29a",
    ".studyforge/assets/search-index.js": "cc45c8ee21fa5fd4e91c5af07a43e4b0f2c94d2fa38bee5992c689b156eb6135",
-   "advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html": "b422fa0a2694d1cf51716dee5e0ae067bd95d93d27aaa0616a5cd1d5228aadbc",
-   "advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html": "5e7200d016165f32cc42d82e069aa1ada05a6985416e0eece53d1e4211fbec46",
-   "advanced/02-going-further/study/going-further.section.html": "46197dac0298938056d1fff9646688d50ef0fdb884fc030abe3b63eab81d15f4",
-   "advanced/03-putting-it-together/study/advanced.03-putting-it-together.unit-01-one-small-program.unit.html": "1e36f8aeb810fdd8c805c3239cbf4100660e179e2181b0ecaa89fae02ff64ade",
-   "advanced/03-putting-it-together/study/putting-it-together.section.html": "131a86f4b4447364fc09bb7407210473901cca064f1efb301c7a77caa3987981",
-   "basics/01-getting-started/study/basics.01-getting-started.unit-01-your-first-class.unit.html": "58024643efa918e255cbc8693a6343f90b634bfc540bec2cfce0ebccb1be45f8",
-   "basics/01-getting-started/study/basics.01-getting-started.unit-02-fields-and-constructors.unit.html": "9c73d61d8e7db667a9de3cece7abccfe1c3018c1437b5f3fb8e786470f664023",
-   "basics/01-getting-started/study/basics.01-getting-started.unit-03-watching-it-run.unit.html": "7a63b347f8e577c0efb506c4822b8d28162ddaa6193d1ea66204043463456301",
-   "basics/01-getting-started/study/getting-started.section.html": "b5acc2168a8836a4e9df25fab2734eb94915c9e169641f4002d71dd5809f6351",
-   "index.html": "f6304c1136e20543d606e95036c69b62782f861cc617081c2781a12e190b0663"
+   "advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html": "504d38f16841704c8f1e285069ff5ff1a0cbd685f0c1b5e248293b9083c6ee6f",
+   "advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html": "431edd887f313721c4308608d151120d1f9dd1dde7af9b6185caa2b08e4408bd",
+   "advanced/02-going-further/study/going-further.section.html": "6524e5eaa9e92e90628df10ae18ad8798a90b2df3eb23dd680c4e6313a12c663",
+   "advanced/03-putting-it-together/study/advanced.03-putting-it-together.unit-01-one-small-program.unit.html": "0f0395a84a20ec6bd5d2890027ff45be36ebdce7fdead3dad885cc2fd91455a0",
+   "advanced/03-putting-it-together/study/putting-it-together.section.html": "63a4d4f959bd99e32fe98158907373b7d6d8c5b70332197d4e31b787b4e1d33b",
+   "basics/01-getting-started/study/basics.01-getting-started.unit-01-your-first-class.unit.html": "d4833760e054c0c8e13693087aac5a31163ed2a9eb1ca8a86cc750f338683a99",
+   "basics/01-getting-started/study/basics.01-getting-started.unit-02-fields-and-constructors.unit.html": "58c4dcb217251bdaebb1c9acd151f9ae76288dda8be50542ac1709359125a177",
+   "basics/01-getting-started/study/basics.01-getting-started.unit-03-watching-it-run.unit.html": "c7b77b896935d809a1b91d196083db95410b38f669b6e10ac312af4291d9d23b",
+   "basics/01-getting-started/study/getting-started.section.html": "0e358b64283880dd579b9eb67028ec19220dc2609ff0674401833674be0e83fe",
+   "index.html": "e6abb8a2eae03d2ac77310b1b6f1527c8bfa4b0a44a25ff543cf005bcea42ec2"
   },
   "runnable": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
-   ".studyforge/assets/page.css": "6bd20317f3433d29d65a511010d8d7e8723bec8823251c50b47f2d29a4c8a376",
+   ".studyforge/assets/page.css": "e6163debecaca044afc3e74f5c0c399f2adbf386ab64ed40d57525665f0b0d1a",
    ".studyforge/assets/page.js": "23c7c80fcc10625a7c47436c7d01739938b0eafa9fc80f34572f2132b913c29a",
    ".studyforge/assets/search-index.js": "acfd65ffa0226253750acb237649ba7aa0a5db9ce3e631ac903e4884a8e55d95",
    "index.html": "7c1dcee05a138ebb95faa9cb61b02583e89af8705d3bcf9ee2bd30d095402c87",
@@ -44,7 +44,7 @@
   },
   "shared-origin": {
    ".studyforge/assets/minisearch.js": "219152f661e909009b1e990f6e8ff26138bbe261a806dad4b66ec7e3673b34b5",
-   ".studyforge/assets/page.css": "6bd20317f3433d29d65a511010d8d7e8723bec8823251c50b47f2d29a4c8a376",
+   ".studyforge/assets/page.css": "e6163debecaca044afc3e74f5c0c399f2adbf386ab64ed40d57525665f0b0d1a",
    ".studyforge/assets/page.js": "23c7c80fcc10625a7c47436c7d01739938b0eafa9fc80f34572f2132b913c29a",
    ".studyforge/assets/search-index.js": "6ba28b4515a0edccbda70f2aaecbbb7ddb2c2cf9d667ae4ebba714c9d6d09732",
    "field-notes/study/field-notes.section.html": "2d42e5b084c97db47a228589291012c741b3e157fb34e7bdc15f1f058b7a4426",

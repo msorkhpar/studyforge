@@ -1,11 +1,13 @@
 /* The page's frame: the column, the margin rule, the masthead and trail, and
    the rail that reaches the other containers, at both widths.
 
-   ⭐ ONE OF FOUR CHROME PARTS, SPLIT AT SEAMS BY JOB. This file
+   ⭐ ONE OF FIVE CHROME PARTS, SPLIT AT SEAMS BY JOB. This file
    was 748 lines against R11's 400 with no justification in it. It divides by
    what each part answers:
    - `chrome.css` (this): WHERE THINGS ARE — the column, the rail beside it or
      folded above it, the masthead and trail, the skip link, the margin rule.
+   - `rail.css`: HOW THE RAIL'S TREE READS — its levels, indents, disclosure
+     mark and unit rows.
    - `lists.css`: WHAT THE READER NAVIGATES AND WHERE THEY ARE IN IT — the
      outline, the unit and contents lists with their tick boxes, the index's
      progress, strip and filter.
@@ -15,7 +17,7 @@
      index's explanation, the practices note, the read control and the theme
      control.
 
-   ⛔ NOT ONE COLOUR AND NOT ONE CLASS in any of the four. Every value is a
+   ⛔ NOT ONE COLOUR AND NOT ONE CLASS in any of the five. Every value is a
    `palette.css` token and every region is reached by element, `aria-label` or
    a published `data-*` hook, so no class joins the markup contract.
 
@@ -157,124 +159,6 @@ nav[aria-label="Breadcrumb"] li[aria-current="page"] {
    markup (R1: the corpus's own word), and the index's tree keeps it. */
 nav[aria-label="Breadcrumb"] span[data-kind="level"],
 nav[aria-label="Containers"] span[data-kind="level"] { display: none; }
-
-/* --- the rail across containers, in the column --------------------------- */
-
-/* ⛔ A plain list on the ground, not a card. At a narrow width it is folded
-   into one line — `rail.html` wraps it in one `<details>`, which the page
-   script closes below the threshold and leaves open with no script (the floor
-   is today's open list). ⭐ Units are rows on one feint line, ordinals in a
-   fixed column; the current unit has the accent's wash. ⚠️ The rail does not
-   also mark the next unit: the Up next slip at the foot of the page names it,
-   and a second marker here would be chrome competing with the one bold
-   element. */
-
-/* ⛔ A title with no break in it (`RecursiveTask/RecursiveAction`) wraps
-   inside its row rather than running out of the column. */
-nav[aria-label="Containers"] {
-  margin: 0 0 1.5rem;
-  font-family: var(--font-ui);
-  font-size: .86rem;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-nav[aria-label="Containers"] > details > summary {
-  padding: .4rem 0 .6rem;
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: .02em;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-nav[aria-label="Containers"] ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-nav[aria-label="Containers"] ol ol {
-  margin: .1rem 0 .6rem;
-  padding: 0;
-}
-
-nav[aria-label="Containers"] li details > summary {
-  padding: .45rem 0 .3rem;
-  font-weight: 700;
-  color: var(--fg);
-  cursor: pointer;
-}
-
-/* ⭐ The summary's link is inline, so the disclosure mark sits on the title's
-   own line (R2: it stood alone above it and read as a stray glyph). */
-nav[aria-label="Containers"] summary a { display: inline; color: inherit; text-decoration: none; }
-nav[aria-label="Containers"] summary a:hover { text-decoration: underline; }
-
-nav[aria-label="Containers"] li li > a,
-nav[aria-label="Containers"] li li[aria-current="page"],
-nav[aria-label="Containers"] li li[data-readable="false"] {
-  display: flex;
-  position: relative;
-  padding: .32rem 1.5rem .32rem .2rem;
-  color: var(--fg-soft);
-  text-decoration: none;
-  border-radius: 6px;
-}
-
-nav[aria-label="Containers"] li li > a:hover { color: var(--fg); background: var(--surface-2); }
-
-nav[aria-label="Containers"] span[data-kind="numbering"] {
-  flex: 0 0 1.9rem;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-variant-ligatures: none;
-  font-feature-settings: "liga" 0, "calt" 0;
-  font-size: .74rem;
-  line-height: 1.75;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  padding-right: .55rem;
-}
-
-/* ⛔ The current container's mark reaches its OWN summary and never the rows
-   nested under it. The current unit is told apart by weight AND by the wash;
-   `aria-current` is the statement and this is the reinforcement. */
-nav[aria-label="Containers"] li[aria-current="true"] > details > summary,
-nav[aria-label="Containers"] li[aria-current="page"] {
-  font-weight: 700;
-  color: var(--fg);
-}
-
-/* ⭐ The 2026-11 redesign: the current unit is a soft wash with the accent
-   ink, and no stripe down one side. */
-nav[aria-label="Containers"] li li[aria-current="page"] {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-nav[aria-label="Containers"] li li[aria-current="page"] span[data-kind="numbering"] { color: var(--accent); }
-
-/* ⛔ `data-readable="false"` is §7's third state — listed, not openable — and
-   is legible without colour: italic, and no pointer affordance. */
-nav[aria-label="Containers"] li[data-readable="false"] {
-  font-style: italic;
-  color: var(--muted);
-}
-
-/* ⭐ A unit the reader marked read ends its row with a tick, in the
-   colour the listings' read box takes. ⚠️ `data-marked` is set at read time by
-   `progress-view.js` and emitted by no renderer (R10). */
-nav[aria-label="Containers"] li li[data-marked="true"] > a::after,
-nav[aria-label="Containers"] li li[data-marked="true"]:not(:has(> a))::after {
-  content: "\2713";
-  /* ⚠️ Out of the flow, in room every row reserves: a tick that joined the
-     row's text could wrap its title and move the row (`test_rail_marks`). */
-  position: absolute;
-  right: .5rem;
-  top: .32rem;
-  font-weight: 700;
-  color: var(--done);
-}
 
 /* ⭐ The words a read row says to assistive technology, in the rail
    and in both lists: kept in the accessibility tree and off the screen, so the

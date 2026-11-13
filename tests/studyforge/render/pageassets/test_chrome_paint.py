@@ -13,7 +13,7 @@ module at its ceiling is a split at a named seam, never a trim.**
 
 ## ⭐ The helpers are IMPORTED from `test_chrome`, not re-derived
 
-⚠️ `body()` and `declarations_reaching()` read the four files `CHROME_PARTS`
+⚠️ `body()` and `declarations_reaching()` read the five files `CHROME_PARTS`
 names, and that tuple is the definition of *the part read as one*. ⛔ A second
 spelling of it here would be a second answer to *which files are the chrome
 part*, and the day a fifth file joined it one of the two would go quietly stale
