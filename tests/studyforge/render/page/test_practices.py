@@ -70,7 +70,7 @@ def test_a_card_is_titled_by_its_practice_and_opens_that_practice():
     assert f'data-practice-key="{key}"' in one
     assert 'href="#s-practice-java"' in one
     assert f'data-corpus="{sample_placement().corpus}"' in one
-    assert ">Practice</a></h3>" in one
+    assert ">Practice<svg data-practices-part=\"chevron\"" in one
 
 
 def test_a_card_lists_what_its_record_says_it_practises_and_nothing_where_it_says_nothing():
@@ -139,3 +139,15 @@ def test_the_workspace_ships_hidden_with_its_title_and_three_acts():
     assert "<iframe" not in shell
     # ⛔ And a unit with no practice has none, asked of the part itself.
     assert practices.workspace(document(sections=[lesson()])) == ""
+
+
+def test_a_card_says_what_kind_of_practice_it_opens_and_its_language_only_when_named():
+    # ⭐ The 2026-11 redesign's kind label: the sort of practice, then the language the practice
+    # names, never one typed by the framework.
+    kind = re.compile(r'<p class="eyebrow" data-practices-part="kind">(.*?)</p>')
+    code = cards(page(section(workspace=SHIPPED)))[0]
+    assert kind.search(code).group(1) == "<span>Coding practice</span>"
+    quiz = cards(page(section(workspace=QUIZ)))[0]
+    assert kind.search(quiz).group(1) == "<span>Concept check</span>"
+    named = cards(page({**section(workspace=SHIPPED), "lang": "kotlin"}))[0]
+    assert kind.search(named).group(1) == "<span>Coding practice</span><span>kotlin</span>"

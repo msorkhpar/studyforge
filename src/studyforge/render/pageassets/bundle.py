@@ -117,6 +117,7 @@ STYLE_PARTS = (
     "practice.css",
     "practice-detail.css",
     "practice-quiz.css",
+    "practice-cards.css",
     "practice-workspace.css",
     "practice-panes.css",
     "code-examples.css",
