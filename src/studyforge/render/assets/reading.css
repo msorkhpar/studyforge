@@ -126,8 +126,13 @@ details.disclosure {
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
   background: var(--surface);
-  padding: 0 1rem;
 }
+/* ⚠️ The card's inset is on its children, not on the card, and a code figure
+   inside takes none: a worked solution must lay out exactly as wide as a code
+   figure in the flow (`test_reading_width`), the card's hairline included. */
+details.disclosure > :not(figure) { margin-left: 1rem; margin-right: 1rem; }
+details.disclosure > figure { margin-left: -1px; margin-right: -1px; border-radius: 0; }
+details.disclosure > figure:last-child { border-radius: 0 0 var(--radius-card) var(--radius-card); margin-bottom: -1px; }
 details.disclosure > summary {
   font-family: var(--font-ui);
   font-size: .92rem;
@@ -137,7 +142,7 @@ details.disclosure > summary {
   color: var(--fg-soft);
 }
 details.disclosure[open] > summary { color: var(--fg); border-bottom: 1px solid var(--rule); margin-bottom: .9rem; }
-details.disclosure > :last-child { margin-bottom: 1rem; }
+details.disclosure > :last-child:not(figure) { margin-bottom: 1rem; }
 
 /* --- figures ----------------------------------------------------------- */
 

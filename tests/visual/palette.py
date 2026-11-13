@@ -171,7 +171,6 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
     "--term-bg": (SURFACE, None, "the terminal frame a program's output is shown in"),
     "--term-fg": (MEASURED, "--term-bg", "a program's output inside the terminal frame"),
     "--term-muted": (MEASURED, "--term-bg", "the terminal frame's caption"),
-    "--card-shadow": (STRUCTURAL, None, "the one shadow under every card; no text sits on it"),
 }
 
 
