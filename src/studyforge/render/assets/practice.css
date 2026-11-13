@@ -238,25 +238,38 @@ section[data-practice] a[data-practice-popout] {
 }
 
 /* ⭐ **A project's explorer is the tablist, laid out as a folder tree** (`render/page/project.py`):
-   one button per file, a folder's name above its files, read-only files told apart by a word as
-   well as by ink. Beside the frame when the workspace is open, above it otherwise. */
+   one compact row per file, a folder's name above its files, read-only files told apart by a word
+   as well as by ink, the open file shaded. Above the frame when the workspace is closed; beside it,
+   down the whole height, when the workspace is open. */
 section[data-practice] div[data-practice-explorer] {
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: stretch;
-  gap: .15rem;
+  gap: 0;
   max-height: 24rem;
   overflow: auto;
 }
 
 section[data-practice] div[data-practice-explorer] p[data-practice-folder] {
-  margin: .4rem 0 0;
-  font-size: .8rem;
+  margin: .5rem 0 .1rem .5rem;
+  font-size: .75rem;
   color: var(--muted);
 }
 
 section[data-practice] div[data-practice-explorer] button {
   text-align: left;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  padding: .2rem .5rem .2rem .9rem;
+  font-size: .85rem;
+  line-height: 1.3;
+  min-height: 0;
+}
+
+section[data-practice] div[data-practice-explorer] button[aria-selected="true"] {
+  background: var(--surface-2);
+  font-weight: 600;
 }
 
 section[data-practice] div[data-practice-explorer] button[data-practice-readonly]::after,
@@ -269,21 +282,43 @@ section[data-practice] div[data-practice-explorer] button[data-practice-readonly
   content: " read-only";
 }
 
+/* ⛔ The explorer is also `data-practice-part="tabs"`, and the workspace sheet, loaded after this
+   one, puts the tabs in the row ABOVE the frame with a selector of the same weight. That row then
+   grew to the explorer's height and left the frame its 16rem minimum. So every rule below names
+   `data-practice-explorer` twice, which outweighs the tabs rule whatever the order: the explorer
+   runs the full height in the first column, the link sits on one line over the frame, and the
+   frame takes the rest. */
 html[data-workspace-open] section[data-practice][data-workspace-open]
-  div[data-practice-part="editor"]:has(> div[data-practice-explorer]:not([hidden])) {
-  grid-template-columns: minmax(9rem, 15rem) minmax(0, 1fr) auto;
+  div[data-practice-part="editor"]:has(> div[data-practice-explorer][data-practice-explorer]:not([hidden])) {
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(16rem, 1fr);
+  align-items: stretch;
 }
 
 html[data-workspace-open] section[data-practice][data-workspace-open]
-  div[data-practice-part="editor"] > div[data-practice-explorer] {
+  div[data-practice-part="editor"] > div[data-practice-explorer][data-practice-explorer] {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 1 / -1;
   align-self: stretch;
   max-height: none;
+  margin: 0;
+  padding: .25rem 0;
+  border-right: 1px solid var(--rule);
 }
 
 html[data-workspace-open] section[data-practice][data-workspace-open]
-  div[data-practice-part="editor"]:has(> div[data-practice-explorer]:not([hidden]))
+  div[data-practice-part="editor"]:has(> div[data-practice-explorer][data-practice-explorer]:not([hidden]))
+  a[data-practice-popout] {
+  grid-column: 2 / -1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"]:has(> div[data-practice-explorer][data-practice-explorer]:not([hidden]))
   div[data-practice-frame] {
   grid-column: 2 / -1;
+  grid-row: 2;
+  align-self: stretch;
 }
