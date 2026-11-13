@@ -320,6 +320,46 @@ def test_a_nested_store_turns_the_generated_test_emit_red_by_validates_own_rule(
     assert "test_what_this_adapter_emits_is_what_validate_accepts" in output
 
 
+def test_a_lessons_figure_reaches_its_unit_and_validates_clean(tmp_path):
+    # ⭐ A lesson that draws its figure shows it: the generated emit carries the
+    # file into the unit's own directory and declares it, and `validate` agrees.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    (root / "src/figures").mkdir()
+    (root / "src/figures/region.png").write_bytes(b"\x89PNG\r\n\x1a\n" + bytes(24))
+    (root / "src/01.md").write_text(
+        "# First\n\nProse.\n\n![The feasible region, shaded](figures/region.png)\n",
+        encoding="utf-8",
+    )
+    corpora.classify(root, [{"glob": "src/figures/*.png", "why": FIGURE_WHY}])
+    reader = corpora.READ.replace(PROSE_BLOCKS, "parse(text)")
+    reader = reader.replace(PATHLIB, PATHLIB + "\nfrom studyforge.archive.markdown import parse\n")
+    _written(root, made, reader)
+
+    ingested = _ingest(root)
+    assert ingested.returncode == 0, ingested.stdout + ingested.stderr
+    report = validate(root)
+    assert report.ok, "\n".join(report.lines())
+    unit = root / "archive" / "course" / "units" / "unit-01"
+    assert (unit / "media" / "region.png").is_file()
+    lesson = next((root / "archive" / "course" / "raw").rglob("unit-01/lesson-1.json"))
+    assets = json.loads(lesson.read_text(encoding="utf-8"))["assets"]
+    assert [entry["local"] for entry in assets] == ["media/region.png"]
+
+
+#: Why a lesson's figure is not prose material: the emit carries it into the unit.
+FIGURE_WHY = "a lesson's figure, carried into its unit as an asset by the emit"
+
+#: The reader's fixed blocks, which a Markdown reader replaces with `parse(text)`.
+PROSE_BLOCKS = """[
+                    {"type": "heading", "level": 1, "text": title},
+                    {"type": "para", "text": "Prose."},
+                ]"""
+
+#: The import line the reader's own import of the Markdown reader follows.
+PATHLIB = "from pathlib import Path\n"
+
+
 def test_the_manifest_the_walkthrough_writes_is_the_one_the_plan_reads(tmp_path):
     # ⭐ A premise check: if the fixture stopped being a corpus this skill can
     # scaffold, every assertion above would pass for the wrong reason.

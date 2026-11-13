@@ -136,6 +136,18 @@ refused, so the disagreement surfaces at you rather than at a reader. ⭐ A
 capture that named its media and deliberately did not fetch it says so with
 `media_skipped`, and that is a state rather than a shortfall.
 
+⭐ **A lesson's own figures are carried for you.** A line that is only
+`![what it shows](figures/region.png)` is read as an `image` block, and the
+generated `emit.py` (`skills.adapter.figures`) finds the file beside the
+lesson's source, copies it into the unit's own directory under `media/`,
+rewrites the block's `src` and declares the `assets` entry. ⛔ It refuses a
+figure with empty alternative text, a path outside the corpus or to no file, a
+type a browser does not show (png, jpg, gif, svg, webp) and a file over 2 MB.
+⚠️ The figure file is not prose: declare it in `content.not_material` with its
+reason, as you do your adapter's own files. A figure your `read.py` already
+carried, whose `src` is the `local` of an `assets` entry it returned, is left
+as it is. ⚠️ An image inside a paragraph stays text; give it a line of its own.
+
 ### 4. ⛔ Run the generated tests **before** you write a line, and read the failure
 
 ```
