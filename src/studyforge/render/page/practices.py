@@ -209,7 +209,7 @@ def _edited_card(entry: editions.Entry, document: dict, placement: Placement, un
 
 
 def kind(exercise: Exercise | None, lang: object, placement: Placement) -> str:
-    """Return a card's kind label: what sort of practice it is, then its language if it names one."""
+    """Return a card's kind label: what sort of practice it is, then any language it names."""
     if exercise is not None and exercise.is_deck:
         said = KINDS["deck"]
     elif exercise is not None and exercise.is_quiz:

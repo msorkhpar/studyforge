@@ -308,8 +308,9 @@ def test_the_index_filter_matches_a_title_and_never_the_read_words(
 
 
 #: The between-units bar's next link: which of its two labels shows, and where it goes.
+NEXT_SELECTOR = 'nav[aria-label="Between units"] a[rel="next"]'
 NEXT_LINK = (
-    "(() => { const a = document.querySelector('nav[aria-label=\"Between units\"] a[rel=\"next\"]');"
+    "(() => { const a = document.querySelector('" + NEXT_SELECTOR + "');"
     " if (!a) return null;"
     " const shown = Array.from(a.querySelectorAll('span')).filter(s => !s.hidden);"
     " return {label: shown.map(s => s.textContent.trim()), href: a.href}; })()"
@@ -327,7 +328,7 @@ def test_the_next_unit_marks_this_one_read_and_continues(fresh: OpenPage, built:
     else:
         raise AssertionError("no unit page of the fixture has a next link")
     assert before["label"] == ["Mark read & continue"]
-    fresh.evaluate("document.querySelector('nav[aria-label=\"Between units\"] a[rel=\"next\"]').click()")
+    fresh.evaluate("document.querySelector('" + NEXT_SELECTOR + "').click()")
     fresh.open(built.url(key))
     assert fresh.evaluate(CONTROL_KEY) == key
     assert fresh.evaluate(

@@ -370,9 +370,16 @@ section[data-practice-quiz] p[data-practice-part="status"]:empty { display: none
   section[data-practice-quiz] li[data-practice-question] { padding: .8rem .7rem .85rem; }
   section[data-practice-quiz] label { padding: .6rem .7rem; }
   /* ⚠️ On a phone the mark takes its own line under the option's words, so the
-     sentence keeps the width. */
-  section[data-practice-quiz] label { flex-wrap: wrap; }
-  section[data-practice-quiz] [data-practice-part="mark"] { flex-basis: 100%; margin: .2rem 0 0 1.7rem; padding: 0; }
+     sentence keeps the width: it sits in the label's bottom padding. */
+  section[data-practice-quiz] label { position: relative; }
+  section[data-practice-quiz] label:has([data-practice-part="mark"]) { padding-bottom: 1.9rem; }
+  section[data-practice-quiz] [data-practice-part="mark"] {
+    position: absolute;
+    bottom: .55rem;
+    left: 2.4rem;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -378,7 +378,8 @@ EXTRAS = """
     marks: Array.from(quiz.querySelectorAll('[data-practice-question]')).map((one) => {
       const marks = one.querySelectorAll('[data-practice-part="mark"]');
       const chosen = one.querySelector('input:checked');
-      const inChosen = chosen && chosen.closest('label').querySelector('[data-practice-part="mark"]');
+      const label = chosen && chosen.closest('label');
+      const inChosen = label && label.querySelector('[data-practice-part="mark"]');
       return marks.length === 1 && inChosen ? marks[0].textContent.trim() : marks.length;
     }),
     reset: part('reset').checkVisibility(),
@@ -404,4 +405,9 @@ def test_the_count_marks_and_reset_follow_the_readers_choices(served):
     assert after["marks"][:2] == ["Right", "Not this one"]
     served.evaluate("document.querySelector('[data-practice-part=\"reset\"]').click()")
     cleared = served.evaluate(EXTRAS)
-    assert cleared == {"count": f"0 of {asked} answered", "marks": [0] * asked, "reset": False, "checked": 0}
+    assert cleared == {
+        "count": f"0 of {asked} answered",
+        "marks": [0] * asked,
+        "reset": False,
+        "checked": 0,
+    }

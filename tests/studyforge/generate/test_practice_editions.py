@@ -59,7 +59,7 @@ def test_four_language_documents_that_name_one_edition_are_one_card(tmp_path):
     found = cards(markup)
     assert len(found) == 2, "one card for the four editions, one for the common practice"
     card = found[0]
-    assert ">Keep a conversation</a>" in card
+    assert '>Keep a conversation<svg data-practices-part="chevron"' in card
     assert "Available in: " in card
     names = re.findall(r'data-edition="[a-z]+"[^>]*>([A-Za-z]+)<', card)
     assert names == ["Aa", "Bb", "Cc", "Dd"]
