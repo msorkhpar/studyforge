@@ -81,6 +81,27 @@ def test_the_site_image_is_built_by_the_same_compose_command_reading_the_same_fi
     assert "PowerShell" in text
 
 
+
+def test_the_site_build_is_followed_by_the_prune_scoped_to_this_corpus_label(tmp_path):
+    """⭐ a rebuild leaves the old image dangling, and docker never removes it.
+
+    ⛔ The prune is filtered on this corpus's build label, so it never touches another
+    project's images; it is the next line after the build, never joined with `&&`,
+    which Windows PowerShell 5.1 cannot parse.
+    """
+    text = document(tmp_path)
+    compose = (
+        f"docker compose --env-file {skill.RUNNER_ENV} --env-file {skill.EDITOR_ENV} "
+        f"--env-file {skill.INSTANCE_ENV} --env-file {skill.SITE_ENV} -f {skill.COMPOSE_FILE}"
+    )
+    lines = fenced(text)
+    build = lines.index(f"{compose} build site")
+    assert lines[build + 1] == (
+        "docker image prune -f --filter label=com.local.compose.project=studyforge-demo"
+    )
+    assert "only after the build succeeded" in text
+
+
 def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path):
     """⭐ the reader is told the file is the one place a port is set, and what widening costs."""
     text = document(tmp_path)

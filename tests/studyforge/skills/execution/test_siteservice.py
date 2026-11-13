@@ -166,6 +166,43 @@ def test_the_site_is_built_by_compose_from_the_context_staging_writes(text):
     assert str(resolved) == f"{siteimage.SITE_DIR}/{siteimage.BUILD_FILE}"
 
 
+
+def test_every_built_service_carries_the_corpus_project_label_under_its_build(text):
+    """⭐ a rebuild leaves the old image dangling; the label scopes the prune to this corpus.
+
+    ⭐ The value is the corpus's stable compose project (`instance.project_for`), never
+    the per-checkout `STUDYFORGE_PROJECT` interpolation, so the printed prune names it
+    literally and two checkouts of one corpus label their images alike.
+    """
+    services = re.search(r"^services:\n((?:  .*\n|    .*\n|      .*\n|        .*\n)+)", text, re.M)
+    assert services, "the file renders no services"
+    built = [
+        (name, body)
+        for name, body in re.findall(r"^  (\S+):\n((?:    .*\n)+)", services.group(1), re.M)
+        if re.search(r"^    build:\n", body, re.M)
+    ]
+    assert [name for name, _ in built] == ["site"]
+    for name, body in built:
+        build = re.search(r"^    build:\n((?:      .*\n)+)", body, re.M)
+        assert build, f"{name} renders an empty build"
+        assert re.search(
+            rf"^      labels:\n        {re.escape(siteservice.PROJECT_LABEL)}: "
+            rf"\"?{re.escape(names.project_for('demo'))}\"?\n",
+            build.group(1),
+            re.M,
+        ), f"{name}'s build carries no project label:\n{build.group(1)}"
+
+
+def test_the_build_label_key_is_the_one_the_label_scoped_prune_filters_on():
+    assert siteservice.PROJECT_LABEL == "com.local.compose.project"
+    assert siteservice.built("studyforge-demo")["labels"] == {
+        "com.local.compose.project": "studyforge-demo"
+    }
+    assert siteservice.prune("studyforge-demo") == (
+        "docker image prune -f --filter label=com.local.compose.project=studyforge-demo"
+    )
+
+
 def label_of(block: str) -> str:
     found = re.search(r"labels:\n\s+org\.studyforge\.binds: \"?([^\"\n]*)\"?\n", block)
     assert found, "the service carries no binds label"

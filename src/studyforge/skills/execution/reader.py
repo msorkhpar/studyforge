@@ -32,6 +32,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 
 from studyforge.corpus.manifest import Manifest
+from studyforge.execute import instance
 from studyforge.skills.execution import composefile, contract, siteservice, toolchain
 from studyforge.skills.execution.prime import Prime
 from studyforge.skills.execution.runnerservice import Runner
@@ -118,7 +119,13 @@ def document(
         "",
         "```",
         f"{compose} build {siteservice.SERVICE}",
+        siteservice.prune(instance.project_for(manifest.source)),
         "```",
+        "",
+        "⭐ Each rebuild leaves the previous image dangling, and docker never removes it.",
+        "The second line removes this corpus's dangling images and no other project's:",
+        f"it is filtered on the `{siteservice.PROJECT_LABEL}` label the site's build",
+        "carries. Run it only after the build succeeded.",
         "",
         "## Bring it up",
         "",

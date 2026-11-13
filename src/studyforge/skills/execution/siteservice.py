@@ -79,6 +79,10 @@ from studyforge.skills.execution.contract import ContractRefused, blocks, option
 #: The compose service the study server is.
 SERVICE = "site"
 
+#: The label every built service carries under `build.labels`, valued with the corpus's
+#: compose project, which the printed prune filters on (`built`, `prune`).
+PROJECT_LABEL = "com.local.compose.project"
+
 #: The one-shot service that checks the publisher's `instance.env` before the
 #: others start (`studyforge preflight`), in the site's profile and image.
 PREFLIGHT = "preflight"
@@ -200,7 +204,7 @@ def plan(
         # ⭐ Empty until staged: the site is in a profile `SITE_ENV_NAME` turns on
         # with the image, so an unstaged corpus still brings the other two up.
         "image": f"${{{IMAGE}:-}}",
-        "build": built(),
+        "build": built(instance.project_for(source)),
         "profiles": [SERVICE],
         "container_name": interpolated(instance.SITE_NAME, instance.site_container_for(source)),
         str(require(block, "runs_as", "compose_key")): require(block, "runs_as", "compose_value"),
@@ -316,14 +320,30 @@ def egress_proxy(
     }
 
 
-def built() -> dict[str, str]:
-    """Return the site's `build`: the staged context beside the compose file, and its build file.
+def built(project: str) -> dict[str, object]:
+    """Return the site's `build`: the staged context beside the compose file, its build file
+    and the corpus's project label.
 
     ⭐ **So the site's image is built by the same compose command, on every shell.**
     `docker compose … build site` reads the tag from `SITE_ENV_NAME` like `up` does,
     and nothing has to be read out of a file by the shell first.
+
+    ⭐ **Every rebuild leaves the old image dangling, and docker never removes it**, so the
+    build carries `PROJECT_LABEL` and the reader's document prints `prune(project)` after
+    it. ⭐ `project` is the corpus's stable compose project (`instance.project_for`), not
+    the per-checkout `STUDYFORGE_PROJECT`: the prune is printed with no variable in it,
+    and two checkouts of one corpus build the same image.
     """
-    return {"context": f"./{BUILD_CONTEXT}", "dockerfile": BUILD_FILE}
+    return {
+        "context": f"./{BUILD_CONTEXT}",
+        "dockerfile": BUILD_FILE,
+        "labels": {PROJECT_LABEL: project},
+    }
+
+
+def prune(project: str) -> str:
+    """Return the prune that removes `project`'s dangling images and no other project's."""
+    return f"docker image prune -f --filter label={PROJECT_LABEL}={project}"
 
 
 def files(directory: str, allowed_ignore: str, live: bool = False) -> tuple[tuple[str, str], ...]:

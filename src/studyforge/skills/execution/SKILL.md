@@ -417,6 +417,27 @@ so step 6's command builds the image the first time it is brought up, and
 alone: compose reads the tag from `site.env`, and no shell reads it first.
 Re-run 5b when the library or the pin moves.
 
+⭐ **Every built service carries the corpus's project label under `build.labels`**,
+so the dangling image each rebuild leaves behind can be pruned without touching any
+other project's:
+
+    site:
+      build:
+        context: ./site
+        dockerfile: site.containerfile
+        labels:
+          com.local.compose.project: studyforge-<source>
+
+The value is the corpus's stable compose project, `studyforge-<source>`
+(`execute.instance.project_for`), the default `instance.env` records for
+`STUDYFORGE_PROJECT`. ⛔ It is not that per-checkout variable: the prune is printed
+with no variable in it, and two checkouts of one corpus build the same image.
+`EXECUTION.md` prints the prune as the line after `build site`, to run only once
+the build succeeded (a line of its own, not joined with `&&`, which Windows
+PowerShell 5.1 cannot parse):
+
+    docker image prune -f --filter label=com.local.compose.project=studyforge-<source>
+
 ### 6. Build the images and bring all three up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
