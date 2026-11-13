@@ -126,7 +126,9 @@ class Target:
 #: The two markers a reference can sit in or next to, as the archive writes them.
 #: ⛔ The render's own shapes for a code span and a link (`render.markup.text`):
 #: nothing inside a code span is ever rewritten.
-_MARKERS = re.compile(r"`[^`]+`|\[(?P<label>[^\]\n]+)\]\((?P<href>[^)\s]*)\)")
+_MARKERS = re.compile(
+    r"`[^`]+`|\[(?P<label>(?:[^\[\]\n]|\[[^\[\]\n]*\])+)\]\((?P<href>[^)\s]*)\)"
+)
 
 #: A bare dotted number standing on its own: three parts or more.
 _BARE = re.compile(r"(?<![\w.§/-])\d{1,3}(?:\.\d{1,3}){2,}(?![\w]|\.\d)")

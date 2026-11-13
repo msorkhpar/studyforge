@@ -435,3 +435,15 @@ def test_a_page_outside_the_corpus_root_counts_the_file_links_it_cannot_reach(tm
     )
     # ⭐ Beside the files, it reaches every one and counts none.
     assert on_disk(tmp_path).unreached(sections) == 0
+
+
+@pytest.mark.parametrize(
+    "written",
+    [
+        "**Taught in** [3.2.4 Variables x[i,t] and Windows](../../s/12/u4.unit.html).",
+        "[Variables x(i,t) and x[i,t]](../../s/12/u4.unit.html)",
+    ],
+)
+def test_a_link_whose_label_holds_brackets_is_one_link_and_its_number_is_not_served(written):
+    # ⛔ A `[` inside a label once split the link, and the bare number in it became a title.
+    assert mentions().text(written) == written
