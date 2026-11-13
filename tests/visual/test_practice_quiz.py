@@ -138,6 +138,9 @@ def asked_since(page: OpenPage, mark: int) -> list[str]:
         for event in page.browser.events[mark:]
         if event.get("method") == "Network.requestWillBeSent"
         and not event["params"]["request"]["url"].endswith("/favicon.ico")
+        # ⭐ A `data:` icon mask (the 2026-11 redesign's verdict icons) is decoded from the
+        # page's own bytes and reaches no origin.
+        and not event["params"]["request"]["url"].startswith("data:")
     ]
 
 
@@ -339,7 +342,8 @@ NUMBERING = """
       legendTop: legend.getBoundingClientRect().top,
       firstOptionTop: first.getBoundingClientRect().top,
       legendLeft: legend.getBoundingClientRect().left,
-      itemLeft: one.getBoundingClientRect().left
+      itemLeft: one.getBoundingClientRect().left + parseFloat(getComputedStyle(one).paddingLeft)
+        + parseFloat(getComputedStyle(one).borderLeftWidth)
     };
   });
 })()
@@ -353,9 +357,51 @@ def test_each_questions_number_sits_beside_its_stem_and_not_its_first_option(whe
     # a list marker lands beside the FIRST OPTION. ⭐ The number is the legend's
     # own `::before`, drawn at the
     # start of the stem's line, and the item draws no marker at all.
+    # ⚠️ The 2026-11 redesign puts each question on a padded panel, so "the start" is the
+    # item's content edge, inside its border and padding.
     page = request.getfixturevalue(where)
     for one in page.evaluate(NUMBERING):
         assert one["marker"] == "none", one
         assert "counter(question)" in one["number"], one
         assert one["legendTop"] < one["firstOptionTop"], one
         assert abs(one["legendLeft"] - one["itemLeft"]) < 1, one
+
+
+#: The 2026-11 redesign's additions, read off the live page: the answered count, the marks the
+#: chosen options carry after Check, and whether Reset is offered.
+EXTRAS = """
+(() => {
+  const quiz = document.querySelector('section[data-practice-quiz]');
+  const part = (name) => quiz.querySelector('[data-practice-part="' + name + '"]');
+  return {
+    count: part('count').hidden ? null : part('count').textContent.trim(),
+    marks: Array.from(quiz.querySelectorAll('[data-practice-question]')).map((one) => {
+      const marks = one.querySelectorAll('[data-practice-part="mark"]');
+      const chosen = one.querySelector('input:checked');
+      const inChosen = chosen && chosen.closest('label').querySelector('[data-practice-part="mark"]');
+      return marks.length === 1 && inChosen ? marks[0].textContent.trim() : marks.length;
+    }),
+    reset: part('reset').checkVisibility(),
+    checked: quiz.querySelectorAll('input:checked').length
+  };
+})()
+"""
+
+
+def test_the_count_marks_and_reset_follow_the_readers_choices(served):
+    # ⭐ "N of M answered" moves as options are chosen; after Check each chosen option, and only
+    # it, carries its verdict's word (never colour alone); Reset clears choices, marks and the
+    # count, and is offered only once the quiz has been checked.
+    asked = len(QUESTIONS)
+    before = served.evaluate(EXTRAS)
+    assert (before["count"], before["reset"]) == (f"0 of {asked} answered", False)
+    answers = {**KEYED, "q-2": WRONG["q-2"]}
+    choose(served, {"q-1": answers["q-1"]})
+    assert served.evaluate(EXTRAS)["count"] == f"1 of {asked} answered"
+    answer(served, answers)
+    after = served.evaluate(EXTRAS)
+    assert after["count"] == f"{asked} of {asked} answered" and after["reset"] is True
+    assert after["marks"][:2] == ["Right", "Not this one"]
+    served.evaluate("document.querySelector('[data-practice-part=\"reset\"]').click()")
+    cleared = served.evaluate(EXTRAS)
+    assert cleared == {"count": f"0 of {asked} answered", "marks": [0] * asked, "reset": False, "checked": 0}

@@ -59,7 +59,7 @@ import json
 from studyforge.exercise import Exercise
 from studyforge.exercise.quiz import Option, Question
 from studyforge.render import templates
-from studyforge.render.markup import escape_attribute, inline
+from studyforge.render.markup import escape, escape_attribute, inline
 
 #: The whole section: the questions, the control that grades them and the line
 #: that says what it made of them — one element with attributes, so a file (R13).
@@ -69,9 +69,15 @@ QUIZ_TEMPLATE = "practice-quiz.html"
 QUESTION_TEMPLATE = "practice-question.html"
 OPTION_TEMPLATE = "practice-option.html"
 
-#: The quiz's own heading. ⭐ Left out where the quiz stands under a lesson's heading already
-#: (`page.quizonce`), so a section is never headed twice.
-HEAD = '<div data-practice-part="head"><h2>Answer these</h2></div>\n'
+#: The quiz's head: its kind label (an `.eyebrow`: *Concept check* and how many questions) over
+#: its own heading. ⭐ The heading is left out where the quiz stands under a lesson's heading
+#: already (`page.quizonce`), so a section is never headed twice; the kind label stays, because
+#: it is what tells a reader this card is a check and not more lesson (the 2026-11 redesign).
+HEAD_TEMPLATE = "practice-quiz-head.html"
+HEADING = "Answer these"
+KIND = "Concept check"
+#: How many questions, in words: one and many. ⚠️ Ours, not the corpus's.
+COUNTED = ("{n} question", "{n} questions")
 
 #: What separates two rendered rows. ⚠️ The same shape `page.practice._region`
 #: uses: a row is exactly its markup plus one newline, never a conditional
@@ -95,11 +101,26 @@ def render(
         QUIZ_TEMPLATE,
         key=escape_attribute(key),
         corpus=escape_attribute(corpus),
-        head="" if embedded else HEAD,
+        head=head(len(exercise.questions), None if embedded else HEADING),
         grader=grader,
+        asked=str(len(exercise.questions)),
         questions=questions(exercise.questions, key),
         answers=answers(exercise.questions),
     )
+
+
+def head(count: int, heading: str | None, kind: str = KIND) -> str:
+    """Return a quiz's head: its kind label and question count, then `heading` unless `None`.
+
+    ⭐ Shared with `page.mockform`, so a quiz drawn one question at a time and a quiz drawn on
+    one page carry the same label.
+    """
+    return templates.fill(
+        HEAD_TEMPLATE,
+        kind=escape(kind),
+        count=escape(COUNTED[count != 1].format(n=count)),
+        heading="" if heading is None else f"<h2>{escape(heading)}</h2>",
+    ) + JOIN
 
 
 def questions(asked: tuple[Question, ...], key: str) -> str:

@@ -1,8 +1,9 @@
 <section data-practice-quiz="${key}" data-corpus="${corpus}" aria-label="Questions" tabindex="-1">
-${head}${grader}<ol data-practice-part="questions">
+${head}${grader}<p data-practice-part="count" data-practice-count="{answered} of {asked} answered" hidden>0 of ${asked} answered</p>
+<ol data-practice-part="questions">
 ${questions}</ol>
 <script type="application/json" data-practice-part="key">${answers}</script>
 <p data-practice-part="offline">Checking answers needs this page's script, and it is not running here. Read the questions and choose your answers; nothing here can check them.</p>
-<p data-practice-part="controls" hidden><button type="button" data-practice-part="check">Check answers</button></p>
+<p data-practice-part="controls" hidden><button type="button" data-practice-part="reset" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M 3 12 a 9 9 0 1 0 3 -6.7 L 3 8"></path><path d="M 3 3 v 5 h 5"></path></svg>Reset</button> <button type="button" data-practice-part="check">Check answers</button></p>
 <p data-practice-part="status" role="status" aria-live="polite" data-practice-right="{right} of {asked} answered correctly." data-practice-complete="Every question answered correctly." data-practice-blank="Choose an answer first."></p>
 </section>

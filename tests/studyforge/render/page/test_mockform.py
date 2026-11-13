@@ -163,10 +163,13 @@ def test_an_embedded_quiz_leaves_out_its_own_heading():
 
     given = section(workspace=QUIZ)
     drawn = practice.render(given, document(), sample_placement(), embedded=True)
-    assert 'data-form-kind="quiz"' in drawn and 'data-practice-part="head"' not in drawn
+    # ⭐ The 2026-11 redesign: the head keeps its kind label (`.eyebrow`) when embedded, and
+    # only the section's own heading is left out.
+    assert 'data-form-kind="quiz"' in drawn and "<h2>Answer these</h2>" not in drawn
+    assert '<p class="eyebrow">' in drawn
     whole = practice.render(given, document(), sample_placement())
-    assert 'data-practice-part="head"' in whole
+    assert "<h2>Answer these</h2>" in whole
     paged = practice.render(
         section(workspace={**QUIZ, "layout": "page"}), document(), sample_placement(), embedded=True
     )
-    assert 'data-practice-part="check"' in paged and 'data-practice-part="head"' not in paged
+    assert 'data-practice-part="check"' in paged and "<h2>Answer these</h2>" not in paged
