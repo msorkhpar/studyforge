@@ -80,12 +80,16 @@ def manifest(
 
 
 def thin_inputs(asked) -> tuple[str, ...]:
-    """Return the toolchain paths a thin tree keeps: what the course layers read."""
+    """Return the toolchain paths a thin tree keeps: what the course layers read.
+
+    ⭐ A course asked no layer (a profile and no prime, `vendor.ask`) keeps none.
+    """
     return tuple(
         sorted(
             {
                 str(one)
                 for image in ("runner-prime", "editor-prime")
+                if image in asked.builds
                 for one in asked.builds[image]["inputs"]
             }
         )

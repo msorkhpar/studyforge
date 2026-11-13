@@ -28,6 +28,7 @@ from tests.studyforge.skills.execution.standalone.test_write import (
     thin_toolchain,
 )
 
+PRIME = ".studyforge/execution/prime"
 DECLARED = FIXTURES / "sdk-profile" / "corpus.json"
 NAME = json.loads(DECLARED.read_text(encoding="utf-8"))["profile"]
 RUNNER_TAG, EDITOR_TAG = "profile-runner-tag", "profile-editor-tag"
@@ -67,6 +68,9 @@ def answered(asked: list[list[str]] | None = None, refuse: bool = False):
                 return 2, ""
             image = argv[argv.index("--image") + 1]
             return 0, f"t/{image}-{NAME}:{RUNNER_TAG if image == 'runner' else EDITOR_TAG}\n"
+        if "--prime" in argv and not Path(argv[argv.index("--prime") + 1]).is_dir():
+            # ⭐ As the real build command does: a course layer warms a prime directory.
+            return 2, ""
         code, printed = fake(argv, cwd)
         document = json.loads(printed)
         document["inputs"] = INPUTS[document["image"]]
@@ -75,13 +79,15 @@ def answered(asked: list[list[str]] | None = None, refuse: bool = False):
     return run
 
 
-def checkout(where: Path, declared: Path | None = DECLARED) -> Path:
+def checkout(where: Path, declared: Path | None = DECLARED, *, primed: bool = False) -> Path:
     """The fixture corpus as a git checkout; `declared` is another manifest laid over it.
 
     ⭐ A course that names the profile and has no prime recorded the profile's tags, as the
-    execution skill's record step writes them; one that names none recorded its primed bases'.
+    execution skill's record step writes them; one that names none, or has a prime (`primed`),
+    recorded its primed bases'.
     """
     named = json.loads((declared or DECLARED).read_text(encoding="utf-8")).get("profile")
+    named = None if primed else named
     recorded = {
         "runner": f"t/runner-{named}:{RUNNER_TAG}",
         "editor": f"t/editor-{named}:{EDITOR_TAG}",
@@ -91,6 +97,9 @@ def checkout(where: Path, declared: Path | None = DECLARED) -> Path:
     )
     if declared not in (None, DECLARED):
         shutil.copyfile(declared, root / "corpus.json")
+    if primed:
+        (root / PRIME / "maven").mkdir(parents=True)
+        (root / PRIME / "maven" / "pom.xml").write_text("<project/>\n", encoding="utf-8")
     subprocess.run([*GIT, "init", "-q"], cwd=root, check=True)
     subprocess.run([*GIT, "add", "-A"], cwd=root, check=True)
     subprocess.run([*GIT, "commit", "-q", "-m", "fixture"], cwd=root, check=True)
@@ -105,10 +114,18 @@ def without_profile(where: Path) -> Path:
     return path
 
 
-def export(where: Path, locked: bases.Bases | None, *, declared=DECLARED, run=None, name="out"):
+def export(
+    where: Path,
+    locked: bases.Bases | None,
+    *,
+    declared=DECLARED,
+    run=None,
+    name="out",
+    primed=False,
+):
     out = where / name
     made = write.release(
-        checkout(where / f"{name}-src", declared),
+        checkout(where / f"{name}-src", declared, primed=primed),
         out,
         toolchain=thin_toolchain(where / f"{name}-tc"),
         platform="linux/amd64",
@@ -207,7 +224,9 @@ def test_a_lock_that_names_no_profile_for_a_course_that_declares_one_is_refused(
 
 def test_a_lock_naming_a_profile_the_course_does_not_declare_is_refused(tmp_path):
     with pytest.raises(bases.BasesRefused, match="declares no profile"):
-        export(tmp_path, parsed(profile_lock()), declared=without_profile(tmp_path))
+        export(
+            tmp_path, parsed(profile_lock()), declared=without_profile(tmp_path), primed=True
+        )
     other = profile_lock(name="other")
     other["profile"]["runner"]["image"] = bases.profile_image("runner", "other")
     del other["profile"]["editor"]
@@ -229,13 +248,15 @@ def test_the_declared_runtimes_that_the_profile_layers_on_are_the_toolchain_s_to
 
 
 def test_the_profile_entry_changes_no_file_a_course_without_one_writes(tmp_path):
-    """The same corpus exported with and without a profile differs in the profile's names alone.
+    """The same primed corpus exported with and without a profile differs in its names alone.
 
     ⭐ Only the compose files and the release record name an image a layer starts from; every
     other file of the tree, the site's recipe and the runner's among them, is the same bytes.
     """
-    bare, _ = export(tmp_path, parsed(lock()), declared=without_profile(tmp_path), name="bare")
-    profiled_out, _ = export(tmp_path, parsed(profile_lock()), name="with")
+    bare, _ = export(
+        tmp_path, parsed(lock()), declared=without_profile(tmp_path), name="bare", primed=True
+    )
+    profiled_out, _ = export(tmp_path, parsed(profile_lock()), name="with", primed=True)
     kept = {p.relative_to(bare).as_posix() for p in bare.rglob("*") if p.is_file()}
     kept_with = {
         p.relative_to(profiled_out).as_posix() for p in profiled_out.rglob("*") if p.is_file()
@@ -245,3 +266,55 @@ def test_the_profile_entry_changes_no_file_a_course_without_one_writes(tmp_path)
         kept - {"corpus.json", "compose.yaml", "compose.pull.yaml", ".studyforge/release.json"}
     ):
         assert (bare / one).read_bytes() == (profiled_out / one).read_bytes(), one
+
+
+# ---------------------------------------------------------------------------
+# A course that names a profile and has no prime: its images are the profile's, with no layer.
+# ---------------------------------------------------------------------------
+
+
+def line_of(text: str, key: str) -> str:
+    """The one line of a rendered file that sets `key`."""
+    found = [one for one in text.splitlines() if one.strip().startswith(f"{key}:")]
+    assert len(found) == 1, found
+    return found[0].rstrip().rstrip('"')
+
+
+def test_a_prime_less_course_builds_its_runner_on_the_profile_runner_with_no_course_layer(
+    profiled,
+):
+    out, _, _ = profiled
+    text = (out / "compose.yaml").read_text(encoding="utf-8")
+    assert "runner-prime" not in text and "consumer-prime" not in text
+    assert line_of(text, "RUNNER_PRIMED").endswith(
+        f"/{bases.profile_image('runner', NAME)}:{RUNNER_TAG}@{THREES}"
+    )
+
+
+def test_a_prime_less_course_s_editor_is_the_profile_editor_under_the_course_s_name(profiled):
+    out, made, _ = profiled
+    text = (out / "compose.yaml").read_text(encoding="utf-8")
+    assert line_of(text, "EDITOR_BASE").endswith(
+        f"/{bases.profile_image('editor', NAME)}:{EDITOR_TAG}@{FOURS}"
+    )
+    assert made.names.editor in text
+    assert made.names.editor in (out / "compose.pull.yaml").read_text(encoding="utf-8")
+    recipe = ".studyforge/images/editor/Dockerfile"
+    assert "FROM ${EDITOR_BASE}" in (out / recipe).read_text(encoding="utf-8")
+    assert recipe in write.kept_paths(made)
+
+
+def test_a_prime_less_course_vendors_no_toolchain_file_and_records_the_unprimed_pair(profiled):
+    out, made, _ = profiled
+    vendored = out / ".studyforge/images/toolchain"
+    assert not any(p.is_file() for p in vendored.rglob("*")) if vendored.exists() else True
+    document = json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))
+    assert set(document["toolchain"]["tags"]) == {"runner", "editor"}
+
+
+def test_a_primed_course_that_names_a_profile_still_layers_its_prime_on_the_profile(tmp_path):
+    out, made = export(tmp_path, parsed(profile_lock()), primed=True)
+    text = (out / "compose.yaml").read_text(encoding="utf-8")
+    assert "runner-prime:" in text and "consumer-prime" in text
+    assert not (out / ".studyforge/images/editor/Dockerfile").exists()
+    assert made.names.runner_base.endswith(f"{RUNNER_TAG}@{THREES}")

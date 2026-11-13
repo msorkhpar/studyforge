@@ -254,3 +254,118 @@ def test_a_superset_tag_with_another_suffix_is_refused():
 def test_without_a_toolchain_to_ask_only_the_exact_tag_is_accepted():
     with pytest.raises(bases.BasesRefused, match="runner base is locked at tag"):
         check(polyglot(), toolchain=tags_for(("java", "maven")))
+
+
+# ---------------------------------------------------------------------------
+# `with_profile`: the lock's `profile` entry written from published images' tags and digests.
+# ---------------------------------------------------------------------------
+
+PROFILE = "example-profile"
+THREES, FOURS = "sha256:" + "3" * 64, "sha256:" + "4" * 64
+PROFILE_TAGS = {"runner": "runner-tag", "editor": "editor-tag"}
+
+
+def test_the_profile_entry_is_written_with_the_published_names_and_reads_back():
+    text = bases.with_profile(
+        json.dumps(lock()),
+        PROFILE,
+        PROFILE_TAGS,
+        {"runner": THREES, "editor": FOURS},
+        placeholder=True,
+    )
+    read = bases.from_text(text, placeholder=True)
+    assert read.profile.name == PROFILE
+    assert read.profile.runner == bases.Base(
+        bases.profile_image("runner", PROFILE), "runner-tag", THREES
+    )
+    assert read.profile.editor.reference == (
+        f"studyforge-code-toolchain-editor-{PROFILE}:editor-tag@{FOURS}"
+    )
+    assert (read.serve, read.runner, read.editor) == (
+        parsed(lock()).serve,
+        parsed(lock()).runner,
+        parsed(lock()).editor,
+    )
+    bases.check(
+        read,
+        version=library.version(),
+        toolchain={"runner": RUNNER_TAG, "editor": EDITOR_TAG},
+        profile_declared=PROFILE,
+        profile_tags=PROFILE_TAGS,
+    )
+
+
+def test_a_profile_entry_already_in_the_lock_is_replaced_whole():
+    first = bases.with_profile(
+        json.dumps(lock()), "other", PROFILE_TAGS, {"runner": THREES}, placeholder=True
+    )
+    again = bases.with_profile(
+        first, PROFILE, PROFILE_TAGS, {"runner": FOURS}, placeholder=True
+    )
+    read = bases.from_text(again, placeholder=True)
+    assert read.profile.name == PROFILE and read.profile.runner.digest == FOURS
+    assert read.profile.editor is None
+
+
+def test_the_editor_is_optional_and_the_runner_is_needed():
+    with pytest.raises(bases.BasesRefused, match="runner"):
+        bases.with_profile(
+            json.dumps(lock()), PROFILE, PROFILE_TAGS, {"editor": FOURS}, placeholder=True
+        )
+
+
+@pytest.mark.parametrize(
+    "digests, match",
+    [
+        ({"runner": "sha256:short"}, "digest is not sha256"),
+        ({"runner": bases.PLACEHOLDER}, "placeholder"),
+        ({"runner": THREES, "site": FOURS}, "runner or an editor"),
+    ],
+)
+def test_a_digest_that_could_not_be_pulled_or_an_unknown_image_is_refused(digests, match):
+    document = lock(serve={**lock()["serve"], "digest": ONES})
+    with pytest.raises(bases.BasesRefused, match=match):
+        bases.with_profile(json.dumps(document), PROFILE, PROFILE_TAGS, digests)
+
+
+def test_a_tag_the_toolchain_did_not_print_for_an_image_is_refused():
+    with pytest.raises(bases.BasesRefused, match="no tag for the editor"):
+        bases.with_profile(
+            json.dumps(lock()),
+            PROFILE,
+            {"runner": "runner-tag"},
+            {"runner": THREES, "editor": FOURS},
+            placeholder=True,
+        )
+
+
+def test_the_written_lock_with_the_toolchain_s_answer_passes_the_export_s_check(tmp_path):
+    """⭐ End to end with fakes: the tags come from `vendor.profile_tags`, as `release` asks."""
+    from studyforge.skills.execution.standalone import vendor
+    from tests.studyforge.skills.execution.standalone.test_vendor_profile import (
+        answering,
+        checkout_of,
+    )
+
+    tags = vendor.profile_tags(
+        checkout_of(tmp_path), PROFILE, ("node", "python"), platform="linux/amd64", run=answering([])
+    )
+    path = tmp_path / "bases.json"
+    path.write_text(json.dumps(lock()), encoding="utf-8")
+    path.write_text(
+        bases.with_profile(
+            path.read_text(encoding="utf-8"),
+            PROFILE,
+            tags,
+            {"runner": THREES, "editor": FOURS},
+            placeholder=True,
+        ),
+        encoding="utf-8",
+    )
+    bases.check(
+        bases.read(path, placeholder=True),
+        version=library.version(),
+        toolchain={"runner": RUNNER_TAG, "editor": EDITOR_TAG},
+        profile_declared=PROFILE,
+        profile_tags=tags,
+    )

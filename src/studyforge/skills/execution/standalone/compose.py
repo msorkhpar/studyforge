@@ -70,6 +70,12 @@ TOOLCHAIN = f"{IMAGES}/toolchain"
 NO_PRIME = f"{TOOLCHAIN}/no-prime"
 PRIME = ".studyforge/execution/prime"
 
+#: ⭐ The context of a course's editor that has no course layer: its recipe alone.
+EDITOR_RECIPE = f"{IMAGES}/editor"
+
+#: The build argument that recipe starts `FROM`.
+EDITOR_BASE = "EDITOR_BASE"
+
 #: The variables a learner sets, and the compose project's own.
 PROJECT_VARIABLE = "COURSE_PROJECT"
 SITE_PORT_VARIABLE = "COURSE_SITE_PORT"
@@ -179,11 +185,24 @@ def _thin(plan: Plan, run: Mapping[str, dict[str, object]]) -> dict[str, dict[st
     ⭐ The course's runner and editor warm their dependencies on the published base the
     lock names, by tag and digest, through the toolchain's course layer; the site's own
     recipe starts from the published serving base and takes the account as a build argument.
+
+    ⭐ A course asked no layer (a profile and no prime) builds none: its runner starts from the
+    profile's runner and its editor is the profile's editor under the course's name.
     """
     pinned = {
         "runner": qualified(plan.names.runner_base),
         "editor": qualified(plan.names.editor_base),
     }
+    if "runner-prime" not in plan.builds:
+        return {
+            "site": {"build": _site(thin=True), **run["site"]},
+            "runner": {"build": _runner(pinned["runner"]), **run["runner"]},
+            "editor": {
+                "build": {"context": EDITOR_RECIPE, "args": {EDITOR_BASE: pinned["editor"]}},
+                **run["editor"],
+            },
+            **live.started(run),
+        }
     return {
         "runner-prime": {
             "build": _toolchain(plan.builds["runner-prime"], PRIME, (), pinned),
@@ -355,8 +374,17 @@ def _site(*, thin: bool = False) -> dict[str, object]:
     }
 
 
-def _runner() -> dict[str, object]:
-    """Return the course's runner: its primed layer and the run service."""
+def _runner(base: str | None = None) -> dict[str, object]:
+    """Return the course's runner: its primed layer and the run service.
+
+    ⭐ With `base` (a published reference) the runner starts from it, and no layer is built.
+    """
+    if base is not None:
+        return {
+            "context": ".",
+            "dockerfile": f"{IMAGES}/runner/Dockerfile",
+            "args": {"RUNNER_PRIMED": base},
+        }
     return {
         "context": ".",
         "dockerfile": f"{IMAGES}/runner/Dockerfile",

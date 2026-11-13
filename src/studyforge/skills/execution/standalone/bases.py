@@ -12,6 +12,7 @@ compute.
     locked.serve.reference                     # "studyforge-serve:<tag>@sha256:<64 hex>"
     check(locked, version=..., toolchain={"runner": tag, "editor": tag}, serve_tag=...)
     key(locked.runner)                         # "<first twelve hex digits of its digest>"
+    with_profile(text, name, tags, {"runner": digest, "editor": digest})  # the lock, profiled
 
 The lock is one JSON object: `bases_api` (`1`), then `serve`, `runner` and
 `editor`, each `{"image": ..., "tag": ..., "digest": ...}`:
@@ -198,6 +199,45 @@ def from_text(text: str, *, placeholder: bool = False) -> Bases:
 def profile_image(kind: str, name: str) -> str:
     """Return the name a registry sees for profile `name`'s `kind` image."""
     return profile.image(PUBLISHED, kind, name)
+
+
+def with_profile(
+    text: str,
+    name: str,
+    tags: Mapping[str, str],
+    digests: Mapping[str, str],
+    *,
+    placeholder: bool = False,
+) -> str:
+    """Return the lock `text` with its `profile` entry written for profile `name`, or refuse.
+
+    `tags` is what `vendor.profile_tags` answers for the course's declared profile and runtimes
+    (each image's tag, after its repository); `digests` maps `runner` (needed) and, optionally,
+    `editor` to the digest the registry holds for that published image. ⭐ Each image's name is
+    the published one (`profile_image`), so only tags and digests are handed in; an entry the
+    lock already holds is replaced whole, and the text written is read back by `from_text`, so a
+    lock this returns is one an export reads. It starts no process and reads no registry.
+    """
+    try:
+        document = json.loads(text)
+    except ValueError as garbled:
+        raise BasesRefused("the bases lock is not JSON") from garbled
+    if not isinstance(document, dict):
+        raise BasesRefused("the bases lock is not a JSON object")
+    if "runner" not in digests:
+        raise BasesRefused(
+            f"profile {name!r} needs its runner's digest: the course's runner layer is built on it"
+        )
+    entry: dict[str, object] = {"name": name}
+    for kind, digest in digests.items():
+        image = profile_image(kind, name)
+        if kind not in tags:
+            raise BasesRefused(f"the toolchain printed no tag for the {kind} of profile {name!r}")
+        entry[kind] = {"image": image, "tag": tags[kind], "digest": digest}
+    document[profile.KEY] = entry
+    written = json.dumps(document, indent=2) + "\n"
+    from_text(written, placeholder=placeholder)
+    return written
 
 
 def _base(kind: str, entry: object, placeholder: bool, published: str | None = None) -> Base:

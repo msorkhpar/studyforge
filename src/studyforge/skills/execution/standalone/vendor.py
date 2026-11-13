@@ -9,7 +9,7 @@ learner's tree, byte for byte.
 
 **How you use it.**
 
-    asked = ask(checkout, runtimes, prime, platform=..., run=run)   # Toolchain(...)
+    asked = ask(checkout, runtimes, prime, platform=..., run=run, profile=None)  # Toolchain(...)
     pinned(course_root, checkout, runtimes, prime, profiled, platform=..., run=run)  # or refused
     copied = copy(checkout, target, asked.inputs)     # relative paths written
 
@@ -25,6 +25,14 @@ names, and the context is copied as bytes, never parsed (R18).
 of the build's inputs. ⛔ **So a checkout whose primed tags differ is not the
 one the course was built with**, and it is refused by name: vendoring it would
 give a learner images the builder never ran.
+
+## ⭐ A course that names a profile and has no prime has no course layer
+
+A course layer (`runner-prime`, `editor-prime`) warms a prime, and the toolchain refuses one
+asked without a prime directory. ⛔ A profile and a prime are not recorded together, so a course
+that names a profile and holds no prime (`primed`) recorded the profile's own images, and `ask`
+asks it the unprimed pair only: its runner and editor start from the profile's published images
+as they are. A course with a prime, or with no profile, is asked all four builds, as it always was.
 """
 
 from __future__ import annotations
@@ -52,6 +60,9 @@ from studyforge.skills.execution.standalone import split
 
 #: The four builds a learner's course needs, in the order they are built.
 BUILDS = ("runner", "editor", "runner-prime", "editor-prime")
+
+#: The two course layers among them, each warming the course's prime.
+LAYERS = BUILDS[2:]
 
 #: ⛔ The shape of the document `builds.printed_by` prints that this module has read.
 BUILDS_API = 1
@@ -85,6 +96,11 @@ class Toolchain:
 Run = split.Run
 
 
+def primed(prime: Path) -> bool:
+    """True when the course's prime directory holds a file, so its course layers warm something."""
+    return any(one.is_file() for one in Path(prime).rglob("*"))
+
+
 def ask(
     checkout: Path,
     runtimes: Sequence[str],
@@ -92,15 +108,22 @@ def ask(
     *,
     platform: str,
     run: Run,
+    profile: str | None = None,
 ) -> Toolchain:
-    """Ask the toolchain at `checkout` for the four builds, as its contract says to ask."""
+    """Ask the toolchain at `checkout` for the course's builds, as its contract says to ask.
+
+    ⭐ `profile` is the course's declared image profile. With one and no prime (`primed`), the
+    course has no layer to warm and only the unprimed `runner` and `editor` are asked; otherwise
+    all four `BUILDS` are, the layers with `prime`.
+    """
     checkout = Path(checkout)
     command = _printed_by(checkout)
+    wanted = BUILDS if not profile or primed(prime) else BUILDS[:2]
     builds = {
         image: _asked(
-            checkout, command, image, runtimes, prime if "prime" in image else None, platform, run
+            checkout, command, image, runtimes, prime if image in LAYERS else None, platform, run
         )
-        for image in BUILDS
+        for image in wanted
     }
     inputs = sorted({str(one) for build in builds.values() for one in build["inputs"]})
     return Toolchain(commit=_commit(checkout, run), builds=builds, inputs=tuple(inputs))
@@ -251,7 +274,7 @@ def pinned(
     profile, computed = profiled.get("profile_declared"), profiled.get("profile_tags")
     if profile and not isinstance(computed, Mapping):
         raise VendorRefused(f"profile {scrub(str(profile))} has no computed tags to compare")
-    if not any(one.is_file() for one in Path(prime).rglob("*")) and isinstance(computed, Mapping):
+    if not primed(prime) and isinstance(computed, Mapping):
         for image, recorded in (("runner", RUNNER_ENV), ("editor", EDITOR_ENV)):
             want = _recorded(Path(root) / recorded)
             repository, _, tag = want.rpartition(":")

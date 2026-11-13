@@ -539,7 +539,7 @@ runs one argv and answers `(exit code, stdout)`.
   release client), and every edge it does not follow is declared in `DEFERRED`
   with its reason.
 - ⛔ The toolchain checkout must compute the primed tags the course recorded
-  (`runner.env`, `editor.env`), or it is refused: check out the toolchain commit
+  (`runner.env`, `editor.env`), or the profile's for a profiled course with no prime, or it is refused: check out the toolchain commit
   the course was built with. Its builds arrive as data from the command its
   `consuming.json` names under `builds`; no Dockerfile is read (R18).
 - ⭐ The tree holds `compose.yaml` (builds every image locally:
@@ -585,6 +585,36 @@ runs one argv and answers `(exit code, stdout)`.
   `profile` and a lock with no `profile` entry write the bytes they always did. ⭐ The check
   that the checkout is the one the course was built with compares the profile's tags with
   what step 5a recorded when the course has no prime, and the primed bases' when it has one.
+- ⭐ **A course that names a profile and has no prime has no course layer.** A course layer
+  warms a prime, and the toolchain refuses one asked without a prime directory, so
+  `vendor.ask(..., profile=<declared>)` asks such a course the unprimed `runner` and `editor`
+  only. Its thin tree builds the course's runner `FROM` the profile's runner and its editor
+  from `.studyforge/images/editor/Dockerfile`, which is the profile's editor under the course's
+  name; it copies no toolchain file. A course with a prime, profiled or not, is asked and
+  layered exactly as above.
+- ⭐ **The lock's `profile` entry is written from the published images**, never typed:
+  `bases.with_profile(text, name, tags, digests)` returns the lock with the entry set, its
+  image names the published ones, read back by `from_text` before it is returned. `tags` is
+  `vendor.profile_tags(<checkout>, <profile>, <the course's runtimes>, platform=..., run=ask)`,
+  the toolchain's own answer and no build, and `digests` maps `runner` (needed) and `editor`
+  to the digest the registry holds for the image pushed under that tag:
+
+      from pathlib import Path
+      from studyforge.generate.declarations import read_corpus
+      from studyforge.skills.execution.standalone import bases, vendor
+
+      declared = read_corpus(Path("<course>")).manifest
+      tags = vendor.profile_tags(Path("<checkout>"), declared.profile, declared.runtimes,
+                                 platform="linux/amd64", run=ask)
+      text = Path("<lock>").read_text(encoding="utf-8")
+      digests = {"runner": "<runner digest>", "editor": "<editor digest>"}
+      Path("<lock>").write_text(bases.with_profile(text, declared.profile, tags, digests),
+                                encoding="utf-8")
+
+  ⭐ Each digest is what `docker buildx imagetools inspect
+  <namespace>/<published base name>-<profile>:<tag> --format '{{.Manifest.Digest}}'` prints
+  for the image pushed under that tag. ⛔ The profile's images are built for exactly the
+  course's declared runtimes, since that is the set the export asks the tags for.
 - ⭐ **The README explains the course before it explains the command**
   (`standalone.learner` over `facts` and `tour`): the counts, each feature with
   its picture, the two ways to use the course in one table, the requirements, and

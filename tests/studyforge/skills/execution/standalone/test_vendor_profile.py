@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -233,3 +234,95 @@ def test_a_profiled_course_with_a_prime_is_still_pinned_by_its_primed_base_tags(
         platform="linux/amd64",
         run=builds(TAGS),
     )
+
+
+# ---------------------------------------------------------------------------
+# `vendor.ask` for a course that names a profile and has no prime: no course layer is asked.
+# ---------------------------------------------------------------------------
+
+
+def refusing_a_missing_prime(asked: list):
+    """The synthetic build command, refusing a prime that is not a directory as the real one does."""
+    from tests.studyforge.skills.execution.standalone.test_vendor import TAGS
+    from tests.studyforge.skills.execution.standalone.test_vendor import answering as builds
+
+    fake = builds(TAGS, asked)
+
+    def run(argv, cwd):
+        if "--prime" in argv and not Path(argv[argv.index("--prime") + 1]).is_dir():
+            asked.append(list(argv))
+            return 2, ""
+        return fake(argv, cwd)
+
+    return run
+
+
+def test_a_profiled_course_with_no_prime_asks_the_unprimed_pair_and_no_course_layer(tmp_path):
+    from tests.studyforge.skills.execution.standalone.test_vendor import toolchain
+
+    asked: list = []
+    got = vendor.ask(
+        toolchain(tmp_path / "tc"),
+        RUNTIMES,
+        tmp_path / "no-prime",
+        platform="linux/amd64",
+        run=refusing_a_missing_prime(asked),
+        profile="example-profile",
+    )
+    assert list(got.builds) == ["runner", "editor"]
+    assert not any("--prime" in argv for argv in asked)
+    assert got.inputs == (".dockerignore", "docker/minimal")
+
+
+def test_a_profiled_course_with_no_prime_passes_pinned_and_ask_as_release_calls_them(tmp_path):
+    from tests.studyforge.skills.execution.standalone.test_vendor import course, toolchain
+
+    asked: list = []
+    checkout, prime = toolchain(tmp_path / "tc"), tmp_path / "c" / ".studyforge/execution/prime"
+    root = course(
+        tmp_path / "c",
+        runner="t/runner-example-profile:runner-tag",
+        editor="t/editor-example-profile:editor-tag",
+    )
+    run = refusing_a_missing_prime(asked)
+    vendor.pinned(root, checkout, RUNTIMES, prime, PROFILED, platform="linux/amd64", run=run)
+    got = vendor.ask(
+        checkout, RUNTIMES, prime, platform="linux/amd64", run=run, profile="example-profile"
+    )
+    assert list(got.builds) == ["runner", "editor"]
+    assert not any("--prime" in argv for argv in asked)
+
+
+def test_a_profiled_course_with_a_prime_still_asks_all_four_builds(tmp_path):
+    from tests.studyforge.skills.execution.standalone.test_vendor import toolchain
+
+    prime = tmp_path / "prime"
+    (prime / "maven").mkdir(parents=True)
+    (prime / "maven" / "pom.xml").write_text("<project/>\n", encoding="utf-8")
+    asked: list = []
+    got = vendor.ask(
+        toolchain(tmp_path / "tc"),
+        RUNTIMES,
+        prime,
+        platform="linux/amd64",
+        run=refusing_a_missing_prime(asked),
+        profile="example-profile",
+    )
+    assert list(got.builds) == list(vendor.BUILDS)
+    builds = [one for one in asked if one[0] != "git"]
+    assert ["--prime" in one for one in builds] == [False, False, True, True]
+
+
+def test_a_course_with_no_profile_still_asks_its_course_layers_with_its_prime(tmp_path):
+    """⭐ The non-profile path is unchanged: its layers are asked, and the toolchain judges."""
+    from tests.studyforge.skills.execution.standalone.test_vendor import toolchain
+
+    asked: list = []
+    with pytest.raises(vendor.VendorRefused, match="refused the runner-prime build"):
+        vendor.ask(
+            toolchain(tmp_path / "tc"),
+            RUNTIMES,
+            tmp_path / "no-prime",
+            platform="linux/amd64",
+            run=refusing_a_missing_prime(asked),
+        )

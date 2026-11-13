@@ -150,7 +150,9 @@ def release(
     prime = root / split.PRIME
     profiled = vendor.profile_check(manifest, bases, toolchain, platform=platform, run=run)
     vendor.pinned(root, toolchain, manifest.runtimes, prime, profiled, platform=platform, run=run)
-    asked = vendor.ask(toolchain, manifest.runtimes, prime, platform=platform, run=run)
+    asked = vendor.ask(
+        toolchain, manifest.runtimes, prime, platform=platform, run=run, profile=manifest.profile
+    )
     editor = require(
         read(
             (toolchain / CONSUMING).read_text(encoding="utf-8"),
@@ -255,6 +257,8 @@ def release(
         learner.SETTINGS: learner.settings(course),
         "README.md": learner.readme(course),
     }
+    if "runner-prime" not in asked.builds:
+        texts[f"{compose.EDITOR_RECIPE}/Dockerfile"] = images.editor_dockerfile(manifest.source)
     if bases is None:
         texts[f"{compose.NO_PRIME}/README"] = (
             "An empty build context: an unprimed image warms nothing.\n"

@@ -275,6 +275,24 @@ def site_dockerfile(slug: str, base: locked.Base | None = None) -> str:
     )
 
 
+def editor_dockerfile(slug: str) -> str:
+    """The course's editor when it has no course layer: the profile's published editor, as is.
+
+    ⭐ Written only for a course that names a profile and has no prime: the layer would warm
+    nothing, so the editor adds nothing, and the course's editor image keeps the course's name.
+    """
+    return "\n".join(
+        [
+            MARK,
+            "# The course's editor: the image profile's published editor, with nothing added.",
+            "ARG EDITOR_BASE",
+            "FROM ${EDITOR_BASE}",
+            f'LABEL org.studyforge.course="{slug}"',
+            "",
+        ]
+    )
+
+
 #: A course's own npm packages: the manifest and lockfile at its root, installed in its runner.
 PACKAGE_FILES = ("package.json", "package-lock.json")
 
