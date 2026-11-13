@@ -162,7 +162,10 @@ def test_the_banner_and_the_notes_are_visible_and_nothing_can_run(
         state = open_page.evaluate(
             """(() => {
               const shown = (el) => !!el && el.checkVisibility();
-              const banner = document.querySelector('[data-preview-banner]');
+              /* ⭐ The 2026-11 redesign: the banner's words sit in Run locally, opened here. */
+              const run = document.querySelector('details[data-preview-run-locally]');
+              if (run) { run.open = true; }
+              const banner = document.querySelector('[data-preview-banner], details[data-preview-run-locally] > [role=note]');
               const example = document.querySelector('details[data-code-example]');
               example.open = true;
               const open = document.querySelector('a[data-practices-part=open]');
@@ -271,7 +274,7 @@ def test_on_a_project_page_the_notes_link_the_readme_section_and_the_source_view
               new Function('window', {script})(at);
               const href = (selector) => [...document.querySelectorAll(selector)]
                 .map((a) => a.getAttribute('href'));
-              const notes = '[data-preview-note] a, [data-preview-banner] a';
+              const notes = '[data-preview-note] a, [data-preview-banner] a, details[data-preview-run-locally] a';
               return {{run: href(notes), source: href('a[data-code-path]')}};
             }})()"""
         )

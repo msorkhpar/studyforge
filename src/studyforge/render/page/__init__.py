@@ -140,6 +140,7 @@ from studyforge.render.page.examplerun import files as example_run_files
 from studyforge.render.page.masthead import Masthead
 from studyforge.render.page.masthead import brand as masthead_brand
 from studyforge.render.page.masthead import sections as masthead_sections
+from studyforge.render.page.diagram import checked as diagram_checked
 from studyforge.render.page.math import files as math_files
 from studyforge.render.page.mock import PARTS as MOCK_PARTS
 from studyforge.render.page.mock import files as mock_files
@@ -185,6 +186,7 @@ __all__ = [
     "claims",
     "compose",
     "deck_files",
+    "diagram_checked",
     "diagram_files",
     "example_run_files",
     "masthead_brand",

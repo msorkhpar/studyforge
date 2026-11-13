@@ -289,6 +289,10 @@ ACCEPTANCE = {
     "draws an exact count per domain from a pool, and scores a select-two item all or nothing": (
         "test_mock_pools_select"
     ),
+    #: ⭐ A row of its own (the 2026-11 redesign): a mermaid fence becomes a drawn diagram.
+    "draws a mermaid fence as a diagram in the page's own colours, with no request off the page": (
+        "test_diagram"
+    ),
     #: ⭐ A row of its own: a practice tagged for a language keeps its editor filling the pane.
     "opens a language-tagged practice with its editor filling the pane and the handles working": (
         "test_practice_tagged"

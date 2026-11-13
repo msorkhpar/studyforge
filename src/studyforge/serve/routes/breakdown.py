@@ -83,8 +83,8 @@ import json
 from pathlib import Path
 
 from studyforge.archive.scrub import scrub
-from studyforge.exercise.skips import SKIPPED
 from studyforge.exercise import (
+    SKIPPED,
     TEST,
     CaseDetail,
     Detail,

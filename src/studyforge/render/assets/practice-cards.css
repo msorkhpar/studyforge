@@ -39,10 +39,6 @@ section[data-practices] li[data-practice-card] {
 
 section[data-practices] li[data-practice-card]:hover { border-color: var(--rule-strong); }
 
-section[data-practices] li[data-practice-card]:has(a[data-practices-part="open"]:focus-visible) {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
 
 /* The kind label, its parts parted by a drawn dot. ⛔ Never a middle-dot
    character: the dot is a 3px circle. */
@@ -80,8 +76,9 @@ section[data-practices] a[data-practices-part="open"] {
   text-decoration: none;
 }
 
-/* ⛔ No focus ring of its own: the card draws it (above), around the whole hit area. */
-section[data-practices] a[data-practices-part="open"]:focus-visible { outline: none; }
+/* ⭐ The focused link draws its own ring (`test_keyboard`: whatever focus lands on shows one),
+   offset so it clears the title; the whole card stays the hit area through `::after`. */
+section[data-practices] a[data-practices-part="open"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 section[data-practices] a[data-practices-part="open"]::after {
   content: "";

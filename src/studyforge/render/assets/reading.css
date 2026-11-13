@@ -94,8 +94,8 @@ hr {
 }
 
 /* A quote holds arbitrary blocks, so it is a container and not a paragraph
-   with italics. ⭐ In a course a quote is almost always a NOTE — "In jPOS 3.",
-   a caution, an aside — so it stands on a card: a full hairline and the raised
+   with italics. ⭐ In a course a quote is almost always a NOTE — what changes in
+   a later version, a caution, an aside — so it stands on a card: a full hairline and the raised
    ground, ⛔ never a coloured stripe down one side. A note opened with a bold
    lead keeps that lead as its title. */
 blockquote {

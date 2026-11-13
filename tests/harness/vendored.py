@@ -28,7 +28,7 @@ MERMAID = "src/studyforge/render/assets/mermaid.min.js"
 
 
 def _mermaid_is_pinned(text: str) -> bool:
-    from studyforge.render.page.diagram import checked
+    from studyforge.render.page import diagram_checked as checked
 
     try:
         checked(text)
