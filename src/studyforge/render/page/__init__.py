@@ -132,6 +132,8 @@ from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.deck import PARTS as DECK_PARTS
 from studyforge.render.page.math import PARTS as MATH_PARTS
 from studyforge.render.page.deck import files as deck_files
+from studyforge.render.page.diagram import PARTS as DIAGRAM_PARTS
+from studyforge.render.page.diagram import files as diagram_files
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.examplerun import files as example_run_files
@@ -158,6 +160,7 @@ __all__ = [
     "AUDIO_ATTRIBUTE",
     "Claim",
     "DECK_PARTS",
+    "DIAGRAM_PARTS",
     "MATH_PARTS",
     "ENCODING",
     "REVIEW_PARTS",
@@ -178,6 +181,7 @@ __all__ = [
     "claims",
     "compose",
     "deck_files",
+    "diagram_files",
     "example_run_files",
     "math_files",
     "review_files",

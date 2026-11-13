@@ -76,6 +76,7 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import (
     anchors,
+    diagram,
     editions,
     examplerun,
     math,
@@ -170,6 +171,7 @@ def compose(
     body = code_region.examples(*code_region.mark(joined, placement), placement)
     body += examplerun.links(body, placement)
     body += math.links(body, placement)
+    body += diagram.links(body, placement)
     return (
         templates.fill(
             SKELETON,
