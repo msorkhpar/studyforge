@@ -221,6 +221,7 @@ SCRIPT_PARTS = (
     "study-progress.js",
     "theme.js",
     "rail-scroll.js",
+    "reading-progress.js",
     "search.js",
     "copy-code.js",
     "video-player.js",

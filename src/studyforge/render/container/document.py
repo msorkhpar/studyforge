@@ -70,7 +70,15 @@ from studyforge.render.container import listing, progress
 from studyforge.render.container.entries import Document
 from studyforge.render.container.placement import Placement
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import Links, PageError, RailContainer, between_units
+from studyforge.render.page import (
+    Links,
+    Masthead,
+    PageError,
+    RailContainer,
+    between_units,
+    masthead_brand,
+    masthead_sections,
+)
 from studyforge.render.page import rail as rail_region
 
 #: The skeleton every page of this site is filled from — the unit page's own.
@@ -103,6 +111,7 @@ def compose(
     placement: Placement,
     links: Links | None = None,
     rail: Sequence[RailContainer] | None = None,
+    masthead: Masthead | None = None,
 ) -> str:
     """Return one container page's exact text.
 
@@ -134,6 +143,8 @@ def compose(
             body=body,
             nav=_region(between_units(links)),
             rail=_region(rail_region(rail)),
+            brand=masthead_brand(masthead),
+            sections=masthead_sections(masthead),
             **placement.mode_slots(),
             **dict.fromkeys(EMPTY_SLOTS, ""),
         )

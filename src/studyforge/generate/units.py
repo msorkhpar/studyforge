@@ -58,7 +58,7 @@ from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
 from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
-from studyforge.render.page import Placement, render
+from studyforge.render.page import Masthead, Placement, render
 from studyforge.unit.builder import build_unit
 
 
@@ -129,7 +129,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
                 {key: relative_href(at.page, page) for key, page in above.items()},
             ),
             narration_for(corpus, source, at, document, placement, state, on_disk=on_disk),
-            rail(
+            across := rail(
                 corpus.contents,
                 at.page,
                 above,
@@ -138,6 +138,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
                 absent=absent,
                 tags=tags,
             ),
+            Masthead(corpus.contents.title, index_href(corpus.contents, source.key), across),
         )
         yield at.page, body
 

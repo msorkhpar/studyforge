@@ -44,6 +44,7 @@ from studyforge.generate.navigation import rail
 from studyforge.generate.writing import Written, place
 from studyforge.render import modes
 from studyforge.render.container import Document, Item, PageError
+from studyforge.render.page import Masthead
 from studyforge.render.container import Placement as ContainerPlacement
 from studyforge.render.container import render as render_container
 from studyforge.unit import listed_numbering, without_outline_number
@@ -74,13 +75,20 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
             render_container(
                 _document(corpus, container, at, tags),
                 placement,
-                rail=rail(
-                    corpus.contents,
-                    at.page,
-                    above,
-                    container=container.address.key,
-                    absent=corpus.absent,
-                    tags=tags,
+                rail=(
+                    across := rail(
+                        corpus.contents,
+                        at.page,
+                        above,
+                        container=container.address.key,
+                        absent=corpus.absent,
+                        tags=tags,
+                    )
+                ),
+                masthead=Masthead(
+                    corpus.contents.title,
+                    relative_href(at.page, corpus.shared.root_index),
+                    across,
                 ),
             ),
             written,

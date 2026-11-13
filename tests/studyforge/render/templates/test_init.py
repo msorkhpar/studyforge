@@ -73,6 +73,11 @@ ONE_LINE = (
     "read-state.html",
     "video.html",
     "video-link.html",
+    "masthead-brand.html",
+    "unit-meta.html",
+    "unit-meta-part.html",
+    "masthead-section.html",
+    "masthead-sections.html",
 )
 
 #: The templates whose newlines are real output. ⭐ Together with `ONE_LINE`

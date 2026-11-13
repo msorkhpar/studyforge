@@ -66,6 +66,10 @@ REGIONS: dict[str, tuple[str, str]] = {
         "`--measure`; a second bound here would be two rules for one question",
     ),
     'nav[aria-label="Outline"]': (CHROME_RULED, "region 2, the unit page's own outline"),
+    'nav[aria-label="Course sections"]': (
+        DEFERRED,
+        "the top bar's course sections (the 2026-11 redesign) — `topbar.css`, beside search",
+    ),
     'nav[aria-label="Between units"]': (
         CHROME_RULED,
         "region 3, the between-pages bar — and the CONTAINER page emits it too",
@@ -186,6 +190,8 @@ SKELETON_SLOTS = {
     "rootattributes": "the mode attribute on `<html>` of a modes corpus; nothing is painted",
     "modehead": "a modes corpus' stylesheet, script and boot, in `<head>`; nothing is painted",
     "modeswitch": "a modes corpus' switch and first-visit question, inside the top bar",
+    "brand": "the course's name in the top bar, a link home (the 2026-11 redesign); `topbar.css`",
+    "sections": "the course's top-level sections in the top bar (the 2026-11 redesign); `topbar.css`",
     "modenote": "the note a page outside the reading mode shows, in the masthead under the bar",
     "player": "the narration transport's — the DEFERRED row above",
     "nav": "region 3",
