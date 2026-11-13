@@ -640,12 +640,20 @@ runs one argv and answers `(exit code, stdout)`.
    checkout is not exported.
 8. Publishing is the owner's step, never this skill's. `standalone.publish` prints the
    command list from `.studyforge/release.json` (`python -m
-   studyforge.skills.execution.standalone.publish RELEASE_JSON NAMESPACE WORKDIR`); it runs
-   nothing. ⛔ Every docker line carries `--context desktop-linux`, and every build line sets
-   `STUDYFORGE_NAMESPACE=<placeholder>` explicitly: a value inherited from the shell would
-   leak into the registry lookups and tags. The list, in order:
-   - `docker compose build`, then **each image the manifest `release.json` lists** (not a
-     fixed count; the site once per narration);
+   studyforge.skills.execution.standalone.publish [--context NAME] RELEASE_JSON NAMESPACE
+   WORKDIR`); it runs nothing. ⭐ No docker line names a context unless `--context NAME` is
+   given; otherwise docker uses `DOCKER_CONTEXT` or the current context. ⛔ Every build line
+   sets `STUDYFORGE_NAMESPACE=<placeholder>` explicitly: a value inherited from the shell
+   would leak into the registry lookups and tags. ⛔ Every image is named by a concrete tag,
+   never a `${...}` interpolation. The list, in order:
+   - **one build per edition the corpus has**, each setting `COURSE_NARRATION` on the
+     command (it picks the site's target and its tag): `COURSE_NARRATION=without-narration
+     docker compose build` always, then `COURSE_NARRATION=with-narration docker compose
+     build site` only when the tree keeps the clips' checksums
+     (`.studyforge/narration-release/clips.sha256`; restore the clips first, or that build
+     stops); **each image the manifest `release.json` lists** is then handled (not a fixed
+     count; the site once per edition, `<course>-site:<tag>-without-narration` and
+     `-with-narration`);
    - **a personal-data scan of every built image**: its filesystem is exported to a folder
      and swept with the shared pattern set (`python -m studyforge.archive.scrub check
      FOLDER`); a finding stops the list before anything is pushed;
