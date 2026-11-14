@@ -5,7 +5,9 @@ it, and prints where it stands — how many units have material, how many are
 narrated, how many are reading-only, and whether any needs a container.
 
 **How you use it.** `main(argv) -> int`, and
-`python3 -m studyforge.skills.onboarding <corpus-root>`. ⭐ The reader's
+`python3 -m studyforge.skills.onboarding <corpus-root>`. ⭐ `python3 -m
+studyforge.skills.onboarding repin <framework-checkout>` is the second command,
+moving the corpus to a newer framework build; `repin.py` is it. ⭐ The reader's
 document `onboard` generates prints this invocation rather than its answer.
 
 **Depends on.** This package's `standing` for both the reading and its one
@@ -46,6 +48,10 @@ from studyforge.skills.onboarding.standing import lines, standing_of
 #: the root it was given: a root is a path, and a path carries a home (R7).
 NOT_A_CORPUS = f"not a corpus: the root given holds no {MANIFEST_FILENAME}"
 
+#: The first word that turns this module into the re-pin (`repin.py`). ⚠️ A corpus root
+#: literally named `repin` is reached as `./repin`.
+REPIN = "repin"
+
 
 def build_parser() -> argparse.ArgumentParser:
     """Return the argument parser, so a test can read the interface."""
@@ -58,7 +64,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Print where the corpus at `root` stands; `UNUSABLE` when there was no reading."""
+    """Print where the corpus at `root` stands; `UNUSABLE` when there was no reading.
+
+    ⭐ A first word `repin` is the other command this module carries (`repin.main`).
+    """
+    if argv and argv[0] == REPIN:
+        from studyforge.skills.onboarding.repin import main as repin
+
+        return repin(argv[1:])
     arguments = build_parser().parse_args(argv)
     root = Path(arguments.root)
     if not (root / MANIFEST_FILENAME).is_file():
