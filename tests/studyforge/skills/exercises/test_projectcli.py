@@ -6,7 +6,7 @@ import json
 import sys
 
 from studyforge.skills.exercises.projectcli import main, skeleton, summary
-from tests.studyforge.skills.exercises.project_sample import MANIFEST, SAMPLE
+from tests.studyforge.skills.exercises.project_sample import MANIFEST, SAMPLE, copy_sample
 from tests.support import repository_root, run
 
 
@@ -40,3 +40,18 @@ def test_the_module_runs_as_the_documented_command():
         repository_root() / "src",  # `-m` reads the package from the working directory
     )
     assert done.returncode == 0 and "Must-ship lots" in done.stdout
+
+
+def test_check_says_which_files_the_page_shows_a_change_to():
+    lines = summary(MANIFEST)
+    assert "  the page shows a change to 1 of 3 changed file(s):" in lines
+    shown = lines.index("  the page shows a change to 1 of 3 changed file(s):")
+    assert lines[shown + 1] == "    seedcrate/model.py"
+
+
+def test_check_of_a_manifest_citing_no_page_says_h1_is_not_read(tmp_path):
+    document = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    del document["cites"]
+    manifest = copy_sample(tmp_path)
+    manifest.write_text(json.dumps(document), encoding="utf-8")
+    assert "  no page is cited, so what copying it gives away (H1) is not read" in summary(manifest)

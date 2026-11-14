@@ -992,6 +992,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `files` | optional, empty by default: the further files the reader edits beside `main_file`, each workspace-relative path mapped to `EditedFile(starter, reference)`; see *A practice of several files* |
 | `try_file` | optional, `None` by default: the try-it file, one of the keys of `files`, that `run_command` executes (no tests, no grade); see *A try-it file: what Run executes* |
 | `read_only` | optional, empty by default: a project's read-only files beside `test_file` (its other tests, their fixtures, its data, the expected report), each workspace-relative path mapped to its text; see *A project practice* |
+| `copied` | optional, `None` by default: a project step's copied candidate, each file the reader edits as copying the step's page leaves it; `project_draft` builds it, and `H1` refuses a step it passes. See *A project practice* |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 | `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 
@@ -1173,6 +1174,21 @@ work this step asks for, and is refused as kept). `G3`: each edge case's plant p
 case, the expected-output check included, and fails its own edge. `G4` and `G5` as always. ⚠️
 Because a plant must pass the expected-output check, the entry point's own data should not reach
 an edge case: test edges with fixtures under `tests/`.
+
+**And one more, `H1`: copying the page must not pass.** A project step's page usually walks
+through the change file by file, and a page that shows every graded change in full lets a reader
+pass by copying it, while `G1`–`G5` all hold. `H1` (the `holdback` family) builds the **copied
+candidate**: the starter with every change the page shows applied. A change is a run of lines
+where a statement of the starter and the same-named statement of the reference differ, and the
+page shows it when its reference lines (stripped, blank lines dropped) appear in that order, next
+to each other, in the page's fenced code read as one list of lines. `H1` runs the candidate once
+and refuses the step when every case passes, naming the files whose code the page showed. So
+hold back at least one piece the tests grade on every step's page: describe it in prose, or show
+its signature and contract as a stub, and do not show its body. ⚠️ The rule reads code, not
+prose: a change split by a "before" block or an ellipsis, or rewritten in other words, does not
+count as shown, so `H1` is a floor, and a learner judge reading the page is still owed. The page
+is the one the manifest `cites`, found in the nearest folder above the manifest that holds it, or
+the text passed to `project_draft` as `page`; a page that cannot be found is refused.
 
 #### From a before/after pair of snapshots
 

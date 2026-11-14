@@ -239,6 +239,16 @@ and seeded, so the report is the same on every run. ⛔ **A plant must not chang
 `G3` needs each plant to pass every main case, the check included, so an edge is tested with a
 fixture under `tests/`, never through the data `main.py` reads.
 
+⛔ **Hold back at least one graded piece on every step's page.** A page that shows each file's
+full before and after lets a reader pass the practice by copying it, and `G1`–`G5` all hold for
+it: on one course three projects shipped that way until a learner judge found it. Describe the
+held-back piece in prose, or show its signature and contract as a stub, and never show its body.
+`H1` checks it: it applies every change the page's code shows to the starter, runs the tests on
+that copied candidate, and refuses the step when every case passes, naming the files the page
+gave away. `python -m studyforge.skills.exercises.project check <manifest>` lists the changed
+files the page shows a change to before any run. ⚠️ `H1` matches code, not prose, so a page that
+paraphrases the answer line by line passes it: the learner judge still reads each page.
+
 #### ⛔ An expected answer may not depend on which of several equal answers a tool returns
 
 ⚠️ A solver, a search, a hash order or a parallel run can return any one of
@@ -459,6 +469,11 @@ and trims it, and `preflight` (or `... preflight --dir DIR --floor-mb N`) refuse
 to start below a free-disk floor. It is opt-in: the pass itself does not call it.
 
 ## ⛔ When a gate refuses
+
+⭐ **A refused `H1` is fixed on the page, not in the practice.** Cut the code of
+one graded piece from the step's page, the body of a function the tests grade,
+and say in prose what it must do. Never weaken the tests until the copied
+candidate fails.
 
 ⭐ **The exercise is re-authored within `ATTEMPTS`, a fixed budget no caller
 can widen.** The brief for the retry carries every refusing verdict and the

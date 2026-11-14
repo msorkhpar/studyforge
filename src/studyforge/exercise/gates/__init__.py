@@ -44,6 +44,7 @@ container exists.
 | `evidence` | every run a suite needs, derived from the exercise's own cases |
 | `code` | `G1`–`G5`, and the `code` family |
 | `derivation` | `D1`–`D2`, the `derivation` family: what an `authoritative` exercise records |
+| `holdback` | `H1`, the `holdback` family: a project step's page does not give the answer away |
 | `quiz` | ⭐ a SUB-PACKAGE: `Q1`–`Q5`, the `quiz` family, and its own contract |
 
 ## ⭐ THE SEAM — a second gate family shares this record and edits nothing here
@@ -146,6 +147,7 @@ from studyforge.exercise.gates.families import (
     register,
     registered,
 )
+from studyforge.exercise.gates.holdback import COPIED, H1, HOLDBACK, check_holdback
 from studyforge.exercise.gates.quiz import QUIZ
 from studyforge.exercise.gates.record import (
     RECORD_KEYS,
@@ -180,6 +182,7 @@ __all__ = [
     "CARDS",
     "CITED_KEYS",
     "CODE",
+    "COPIED",
     "Cited",
     "D1",
     "D2",
@@ -196,6 +199,8 @@ __all__ = [
     "G4",
     "G5",
     "GateRecord",
+    "H1",
+    "HOLDBACK",
     "INPUT_KEYS",
     "Input",
     "ORIGIN_ROLE",
@@ -214,6 +219,7 @@ __all__ = [
     "Verdict",
     "check",
     "check_cards",
+    "check_holdback",
     "cited_card_role",
     "declared_cases",
     "declared_order",
