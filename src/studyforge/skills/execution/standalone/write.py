@@ -13,10 +13,15 @@ own Pages automation (`pages`): the workflow that deploys the read-only preview 
     released = release(course, out, toolchain=checkout, run=run)   # run: split.Run
     released.kept, released.written, released.verdicts
 
-**Depends on.** Every module of this package, `generate.read_corpus` for the
-course's declarations, `skills.onboarding.library` for the loaded library's
-version, and `git`, asked for commits. ⛔ It never writes into the course
-checkout, and it refuses a target directory that is not empty.
+⭐ Before a file is written, `preflight` asks every precondition it can decide, and the
+release raises ONE `ReleaseRefused` naming all of them (`one_or_all`): a full target, a bad
+account, an unsorted findings log, a stale lock and an unpinned toolchain are heard together.
+`preflight.preflight(...)` runs the same checks alone and writes nothing.
+
+**Depends on.** Every module of this package, the delivery skill's `one_or_all`,
+`skills.onboarding.library` for the loaded library's version, and `git`, asked for
+commits. ⛔ It never writes into the course checkout, and it refuses a target
+directory that is not empty.
 
 ## ⛔ Nothing here is a second copy of a decision
 
@@ -38,15 +43,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
-from studyforge.generate import read_corpus
-from studyforge.skills.execution.contract import (
-    CONSUMING,
-    EDITOR_API,
-    EDITOR_COMPONENT,
-    EDITOR_PROMISE,
-    read,
-    require,
-)
+from studyforge.skills.delivery.refusal import one_or_all
 from studyforge.skills.execution.standalone import (
     bases as locked,
 )
@@ -57,7 +54,6 @@ from studyforge.skills.execution.standalone import (
     images,
     learner,
     live,
-    own,
     pages,
     places,
     preview,
@@ -66,6 +62,7 @@ from studyforge.skills.execution.standalone import (
     tour,
     vendor,
 )
+from studyforge.skills.execution.standalone.preflight import gather
 from studyforge.skills.execution.standalone.record import MANIFEST
 from studyforge.skills.onboarding import library
 
@@ -132,52 +129,28 @@ def release(
     letters and digits, 4 to 30 characters, else refused). Only the README's start section names
     it; compose files, the settings file and `namespace` are unchanged. `None`: as it always was.
     """
-    if published_account is not None and not learner.is_account(published_account):
-        raise ReleaseRefused("published_account is not a Docker Hub account (4 to 30 a-z, 0-9)")
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
-    if out.exists() and any(out.iterdir()):
-        raise ReleaseRefused("the target directory is not empty; name a new or empty one")
     platform = platform or host_platform()
-    corpus = read_corpus(root)
-    manifest = corpus.manifest
-    if not manifest.runtimes:
-        raise ReleaseRefused("the course declares no runtime, so it has nothing to run standalone")
-    files = split.tracked(root, run)
-    verdicts = split.classify(root, files)
-    if not any(one.path == split.HOSTING for one in verdicts):
-        verdicts = (*verdicts, split.HOSTED)
-    kept = split.kept(verdicts, files)
-    prime = root / split.PRIME
-    profiled = vendor.profile_check(manifest, bases, toolchain, platform=platform, run=run)
-    vendor.pinned(root, toolchain, manifest.runtimes, prime, profiled, platform=platform, run=run)
-    asked = vendor.ask(
-        toolchain, manifest.runtimes, prime, platform=platform, run=run, profile=manifest.profile
+    reasons, ready = gather(
+        root,
+        out,
+        toolchain=toolchain,
+        platform=platform,
+        bases=bases,
+        published_account=published_account,
+        screenshots=screenshots,
+        run=run,
     )
-    editor = require(
-        read(
-            (toolchain / CONSUMING).read_text(encoding="utf-8"),
-            component=EDITOR_COMPONENT,
-            api=EDITOR_API,
-            promise=EDITOR_PROMISE,
-        ),
-        "editor",
+    if reasons or ready is None:
+        raise ReleaseRefused(one_or_all(reasons))
+    manifest, verdicts, kept, asked, editor = (
+        ready.manifest,
+        ready.verdicts,
+        ready.kept,
+        ready.asked,
+        ready.editor,
     )
-    if bases is not None:
-        locked.check(
-            bases,
-            version=library.version(),
-            toolchain=record.unprimed_tags(asked),
-            declared=manifest.runtimes,
-            tags_for=vendor.asker(toolchain, platform=platform, run=run),
-            serve_tag=locked.computed_serve_tag(library.PACKAGE.parent),
-            **profiled,
-        )
     out.mkdir(parents=True, exist_ok=True)
-    owned = [one for one in kept if one in pages.OWNED or one.startswith(pages.BUILDER_DIR + "/")]
-    if owned:
-        raise ReleaseRefused(
-            f"the course tracks {owned}, which the export writes itself; move or rename them"
-        )
     for one in kept:
         _copy(root / one, out / one)
     written: list[str] = []
@@ -190,7 +163,7 @@ def release(
             toolchain, out / compose.TOOLCHAIN, record.thin_inputs(asked) if bases else asked.inputs
         )
     ]
-    course_commit = _commit(root, run)
+    course_commit = ready.commit
     names = images.names_for(
         slug=manifest.source,
         course=course_commit[:12],
@@ -212,11 +185,8 @@ def release(
         live=(manifest.live.host, manifest.live.key_variable) if manifest.live else None,
     )
     built, pulled = compose.render(plan)
-    shots = _screenshots(screenshots, out, written)
-    try:
-        mine = own.read(root)
-    except ValueError as error:
-        raise ReleaseRefused(str(error)) from error
+    shots = _screenshots(ready.shots, out, written)
+    mine = ready.mine
     for name, one in mine.shots:
         where = f"{compose.IMAGES}/readme/{name}"
         _copy(one, out / where)
@@ -296,30 +266,12 @@ def release(
     )
 
 
-#: The README's pictures: what a file may be, and how much of the repository they may take.
-SHOT_SUFFIXES = (".png", ".webp")
-SHOT_MAX_BYTES = 160 * 1024
-SHOTS_MAX_BYTES = 700 * 1024
-
-
-def _screenshots(source: Path | None, out: Path, written: list[str]) -> tuple[tuple[str, str], ...]:
-    """Copy the README's pictures into the tree; return `(role, path)` for each, or refuse."""
-    if source is None:
-        return ()
-    roles = [role for role, _ in tour.ROLES]
-    found: list[tuple[str, Path]] = []
-    for one in sorted(Path(source).iterdir()):
-        if one.stem not in roles or one.suffix not in SHOT_SUFFIXES:
-            raise ReleaseRefused(f"{one.name} is not a picture the README shows: {roles}")
-        if one.stat().st_size > SHOT_MAX_BYTES:
-            raise ReleaseRefused(f"{one.name} is over {SHOT_MAX_BYTES // 1024} KB")
-        found.append((one.stem, one))
-    if sum(one.stat().st_size for _, one in found) > SHOTS_MAX_BYTES:
-        raise ReleaseRefused(f"the pictures together are over {SHOTS_MAX_BYTES // 1024} KB")
-    if len({role for role, _ in found}) != len(found):
-        raise ReleaseRefused("a role has two pictures; keep one")
+def _screenshots(
+    found: Sequence[tuple[str, Path]], out: Path, written: list[str]
+) -> tuple[tuple[str, str], ...]:
+    """Copy the README's pictures (`preflight.pictures`) into the tree; return `(role, path)`."""
     placed = []
-    for role in roles:
+    for role, _ in tour.ROLES:
         for name, one in found:
             if name == role:
                 where = f"{compose.IMAGES}/readme/{one.name}"
@@ -379,13 +331,6 @@ def _text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="\n") as handle:
         handle.write(text)
-
-
-def _commit(root: Path, run: split.Run) -> str:
-    code, printed = run(["git", "-C", str(root), "rev-parse", "HEAD"], root)
-    if code != 0:
-        raise ReleaseRefused("the course is not a git checkout, so no commit versions its images")
-    return printed.strip()
 
 
 def _library_commit(run: split.Run) -> str:

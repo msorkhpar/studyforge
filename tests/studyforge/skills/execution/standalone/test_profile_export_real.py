@@ -26,13 +26,14 @@ from pathlib import Path
 import pytest
 
 from studyforge.execute import published
-from studyforge.skills.execution.standalone import bases, vendor, write
+from studyforge.skills.execution.standalone import bases, write
 from tests.studyforge.skills.execution.standalone.test_bases import lock, parsed
 from tests.studyforge.skills.execution.standalone.test_profile_export import (
     DECLARED,
     GIT,
     NAME,
 )
+from tests.studyforge.skills.execution.standalone.test_vendor import findings
 
 CHECKOUT, DIGEST, OUT = (
     os.environ.get(name)
@@ -143,6 +144,7 @@ def real_course(where: Path, declared: Path = DECLARED) -> Path:
         tag = json.loads(printed)["tag"]
         recorded = root / ".studyforge" / "execution" / env
         recorded.write_text(f"{variable}={tag}\n", encoding="utf-8")
+    findings(root)
     subprocess.run([*GIT, "init", "-q"], cwd=root, check=True)
     subprocess.run([*GIT, "add", "-A"], cwd=root, check=True)
     subprocess.run([*GIT, "commit", "-q", "-m", "fixture"], cwd=root, check=True)
@@ -221,7 +223,7 @@ def test_the_real_toolchain_refuses_an_unknown_profile_and_a_tag_it_does_not_com
     unknown = tmp_path / "unknown.json"
     declared = json.loads(DECLARED.read_text(encoding="utf-8"))
     unknown.write_text(json.dumps({**declared, "profile": "no-such-profile"}), encoding="utf-8")
-    with pytest.raises(vendor.VendorRefused, match="refused profile no-such-profile"):
+    with pytest.raises(write.ReleaseRefused, match="refused profile no-such-profile"):
         write.release(
             real_course(tmp_path / "a", unknown),
             tmp_path / "out-a",
@@ -245,7 +247,7 @@ def test_the_real_toolchain_refuses_an_unknown_profile_and_a_tag_it_does_not_com
             },
         )
     )
-    with pytest.raises(bases.BasesRefused, match="is locked at tag stale"):
+    with pytest.raises(write.ReleaseRefused, match="is locked at tag stale"):
         write.release(
             real_course(tmp_path / "b"),
             tmp_path / "out-b",

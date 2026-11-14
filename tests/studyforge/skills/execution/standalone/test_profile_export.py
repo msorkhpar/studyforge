@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.corpus.manifest import load
-from studyforge.skills.execution.standalone import bases, vendor, write
+from studyforge.skills.execution.standalone import bases, write
 from tests.fixture_checks import FIXTURES
 from tests.studyforge.skills.execution.standalone.test_bases import ONES, TWOS, lock, parsed
 from tests.studyforge.skills.execution.standalone.test_vendor import TAGS, answering, course
@@ -200,7 +200,7 @@ def test_a_profile_that_names_a_runner_only_builds_the_editor_layer_on_the_plain
 
 
 def test_a_profile_the_toolchain_does_not_have_is_refused_by_the_toolchain_s_answer(tmp_path):
-    with pytest.raises(vendor.VendorRefused, match="refused profile claude-sdks"):
+    with pytest.raises(write.ReleaseRefused, match="refused profile claude-sdks"):
         export(tmp_path, parsed(profile_lock()), run=answered(refuse=True))
     assert not (tmp_path / "out").exists()
 
@@ -212,30 +212,30 @@ def test_a_profile_tag_the_toolchain_does_not_compute_is_refused_before_a_file_i
     stale = profile_lock()
     stale["profile"][kind] = {**stale["profile"][kind], "tag": "stale"}
     refusal = f"the {kind} of profile {NAME!r} is locked at tag stale"
-    with pytest.raises(bases.BasesRefused, match=refusal):
+    with pytest.raises(write.ReleaseRefused, match=refusal):
         export(tmp_path, parsed(stale))
     assert not (tmp_path / "out").exists()
 
 
 def test_a_lock_that_names_no_profile_for_a_course_that_declares_one_is_refused(tmp_path):
-    with pytest.raises(bases.BasesRefused, match="names no profile"):
+    with pytest.raises(write.ReleaseRefused, match="names no profile"):
         export(tmp_path, parsed(lock()))
 
 
 def test_a_lock_naming_a_profile_the_course_does_not_declare_is_refused(tmp_path):
-    with pytest.raises(bases.BasesRefused, match="declares no profile"):
+    with pytest.raises(write.ReleaseRefused, match="declares no profile"):
         export(
             tmp_path, parsed(profile_lock()), declared=without_profile(tmp_path), primed=True
         )
     other = profile_lock(name="other")
     other["profile"]["runner"]["image"] = bases.profile_image("runner", "other")
     del other["profile"]["editor"]
-    with pytest.raises(bases.BasesRefused, match="names profile 'other'"):
+    with pytest.raises(write.ReleaseRefused, match="names profile 'other'"):
         export(tmp_path, parsed(other), name="other")
 
 
 def test_a_course_that_declares_a_profile_is_never_exported_self_contained(tmp_path):
-    with pytest.raises(vendor.VendorRefused, match="export it thin"):
+    with pytest.raises(write.ReleaseRefused, match="export it thin"):
         export(tmp_path, None)
     assert not (tmp_path / "out").exists()
 
@@ -243,7 +243,7 @@ def test_a_course_that_declares_a_profile_is_never_exported_self_contained(tmp_p
 def test_the_declared_runtimes_that_the_profile_layers_on_are_the_toolchain_s_to_judge(tmp_path):
     """A course lacking runtimes the profile layers on is refused by the toolchain's answer."""
     refusing = answered(refuse=True)
-    with pytest.raises(vendor.VendorRefused):
+    with pytest.raises(write.ReleaseRefused):
         export(tmp_path, parsed(profile_lock()), run=refusing)
 
 

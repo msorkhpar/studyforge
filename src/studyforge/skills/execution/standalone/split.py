@@ -136,6 +136,7 @@ KNOWN_MOVES = {
     "written.json": "the execution skill's record of what it wrote",
     "toolchain.json": "the builder's toolchain selection; the learner's images are vendored",
     "site": "the builder's site image context; the learner's is vendored",
+    "findings.md": "the conversion's findings log: how the course was built",
 }
 
 #: The sentence for a path nothing here recognises.

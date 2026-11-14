@@ -46,6 +46,7 @@ AROUND = (
     ".studyforge/execution/prime/maven/module-a/pom.xml",
     ".studyforge/execution/code/.gitignore",
     ".studyforge/execution/allowed/.gitignore",
+    ".studyforge/findings.md",
 )
 
 
@@ -112,6 +113,11 @@ def test_what_a_learner_needs_to_study_or_run_the_course_is_kept(course, path):
 )
 def test_what_records_how_the_course_was_built_moves(course, path):
     assert verdict(course, path) == split.MOVE
+
+
+def test_the_findings_log_moves_as_a_record_of_how_the_course_was_built(course):
+    assert verdict(course, ".studyforge/findings.md") == split.MOVE
+    assert course[2][".studyforge/findings.md"].why != split.UNKNOWN
 
 
 def test_a_path_nothing_recognises_moves_and_says_so(course):
