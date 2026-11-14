@@ -51,13 +51,15 @@ def ask(argv: Sequence[str], cwd: Path | str, *, out: TextIO | None = None) -> t
         process = subprocess.Popen(  # noqa: S603 - an argv the operator's own command built
             [str(part) for part in argv],
             cwd=cwd,
-            stdin=subprocess.DEVNULL,
+            stdin=subprocess.PIPE,  # ⭐ closed at once below: DEVNULL opens /dev/null to write
             stdout=subprocess.PIPE,
             text=True,
         )
     except OSError:
         print(f"{ECHO}{argv[0]}: did not start", file=stream)
         return NOT_STARTED, ""
+    if process.stdin is not None:
+        process.stdin.close()  # end of input, as /dev/null would give
     said: list[str] = []
     with process:  # ⭐ closes the pipe and waits, so no descriptor outlives the call
         for line in process.stdout or ():

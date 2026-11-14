@@ -52,7 +52,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TextIO
 
-from studyforge.corpus.manifest import MANIFEST_FILENAME, parse
+from studyforge.corpus.manifest import MANIFEST_FILENAME, load
 from studyforge.execute import instance, maintenance
 from studyforge.skills.execution import onboard as execution
 from studyforge.skills.execution import record_editor, record_runner, siteservice
@@ -73,9 +73,6 @@ BUILDER = "python3"
 
 #: The file at a toolchain checkout's root that the execution skill reads.
 CONSUMING = "consuming.json"
-
-#: The refusals a framework function raises, each a sentence that names no path (R7).
-REFUSALS = (ValueError, LookupError, OSError)
 
 
 class Stopped(Exception):
@@ -131,13 +128,16 @@ def build_site(root: Path, out: TextIO) -> int:
 
 def runtimes_of(root: Path) -> tuple[str, ...]:
     """The runtimes the corpus's manifest declares; empty means nothing to execute."""
-    return tuple(parse((root / MANIFEST_FILENAME).read_text(encoding="utf-8")).runtimes)
+    return tuple(load(root / MANIFEST_FILENAME).runtimes)
 
 
 def write_execution(root: Path, toolchain: Path, platform: str | None, run: Run) -> None:
     """Execution steps 5 and 5a: write the files, then record both tags."""
-    manifest = parse((root / MANIFEST_FILENAME).read_text(encoding="utf-8"))
-    editor_text = (toolchain / CONSUMING).read_text(encoding="utf-8")
+    manifest = load(root / MANIFEST_FILENAME)
+    try:
+        editor_text = (toolchain / CONSUMING).read_text(encoding="utf-8")
+    except OSError as error:  # ⛔ strerror, never the error: it names the path (R7)
+        raise Stopped(f"cannot read the toolchain's {CONSUMING}: {error.strerror}") from None
     made = execution.generate(manifest, editor_text=editor_text, root=root)
     execution.write(made, root)
     record_runner(made, root, toolchain, ask=run, platform=platform)
@@ -193,7 +193,10 @@ def first_half(job: Repin, handed: list[str], shown: list[str]) -> list[Step]:
         return f"installed {built.name}"
 
     def hand_over() -> str:
-        job.must([python, "-m", "studyforge.skills.onboarding", "repin", *handed, job.commit])
+        code, _ = job.run([python, "-m", "studyforge.skills.onboarding", "repin", *handed,
+                           job.commit], job.root)  # fmt: skip
+        if code != 0:
+            raise Stopped(f"the installed library stopped (exit {code}) at the step it named")
         return "the installed library finished every step"
 
     wheels = f"{WHEELS}/<commit>"
@@ -262,10 +265,10 @@ def second_half(job: Repin) -> list[Step]:
         return f"ingested at {job.audit_date}"
 
     toolchain = job.toolchain or "<--toolchain>"
-    prune = siteservice.prune("studyforge-<source>")
+    prune = siteservice.prune(_project(root))
     docker = "skipped (pass --up to stage the site image and bring the corpus up)"
     return [
-        Step("pin", (f"reonboard('.', framework_commit=<commit>).write('.', regenerate=True)",
+        Step("pin", ("reonboard('.', framework_commit=<commit>).write('.', regenerate=True)",
                      "hand_edited('.') == []"), pin),  # fmt: skip
         Step("execution", (f"generate + write + record_runner + record_editor ({toolchain})",),
              execute),  # fmt: skip
@@ -281,7 +284,15 @@ def second_half(job: Repin) -> list[Step]:
 
 def _source(root: Path) -> str:
     """The corpus's `source`, which names its compose project."""
-    return parse((root / MANIFEST_FILENAME).read_text(encoding="utf-8")).source
+    return load(root / MANIFEST_FILENAME).source
+
+
+def _project(root: Path) -> str:
+    """The compose project a dry run prints, or its shape when the manifest is unread."""
+    try:
+        return instance.project_for(_source(root))
+    except Exception:  # noqa: BLE001 - a dry run prints the shape rather than refuse
+        return instance.project_for("<source>")
 
 
 # --- running them -----------------------------------------------------------
@@ -299,9 +310,9 @@ def perform(steps: Sequence[Step], out: TextIO, *, dry_run: bool, start: int = 1
             continue
         try:
             print(f"      -> {step.act()}", file=out, flush=True)
-        except (Stopped, *REFUSALS) as error:
-            print(f"      FAILED: {error}", file=out)
-            print(f"repin stopped at step '{step.name}'", file=out)
+        except Exception as error:  # noqa: BLE001 - any refusal stops the run, named
+            said = error if isinstance(error, Stopped) else f"{type(error).__name__}: {error}"
+            print(f"      FAILED: {said}\nrepin stopped at step '{step.name}'", file=out)
             return 1
     return 0
 

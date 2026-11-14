@@ -213,6 +213,14 @@ def test_the_first_failure_stops_the_run_and_names_its_step(tmp_path):
     assert machine.asked("studyforge.skills.onboarding") == []
 
 
+def test_an_installed_library_that_stops_stops_the_run_at_the_hand_over(tmp_path):
+    machine = Machine(failing="--installed")
+
+    (code, said), _, _ = _first_half(tmp_path, machine)
+
+    assert code != 0 and "stopped at step 'hand-over'" in said
+
+
 def test_a_build_that_leaves_no_wheel_is_refused_by_name(tmp_path):
     machine = Machine()
 
@@ -298,6 +306,54 @@ def test_a_build_that_fails_stops_before_the_audit(tmp_path, installed, monkeypa
 
     assert code != 0 and "stopped at step 'build'" in said
     assert machine.calls == []
+
+
+def test_a_framework_function_that_raises_stops_the_run_naming_its_step(
+    tmp_path, installed, monkeypatch
+):
+    # ⛔ A traceback names this module; the operator needs the step.
+    root = _onboarded(tmp_path)
+
+    def refuses(root, out):
+        raise RuntimeError("an index with no section")
+
+    monkeypatch.setattr(repin, "build_site", refuses)
+
+    code, said = _second_half(root, Machine())
+
+    assert code != 0
+    assert "RuntimeError: an index with no section" in said
+    assert "stopped at step 'build'" in said
+
+
+def test_a_corpus_with_no_manifest_is_refused_without_naming_its_directory(tmp_path):
+    # ⛔ An OSError formats itself with the full path; a refusal names the file alone (R7).
+    root = tmp_path / "private-corpus"
+    root.mkdir()
+
+    with pytest.raises(ValueError) as refusal:
+        repin.runtimes_of(root)
+
+    assert "corpus.json" in str(refusal.value) and str(tmp_path) not in str(refusal.value)
+
+
+def test_a_toolchain_with_no_consuming_file_is_refused_without_naming_it(tmp_path):
+    root = _onboarded(tmp_path)
+    toolchain = tmp_path / "private-toolchain"
+    toolchain.mkdir()
+
+    with pytest.raises(repin.Stopped) as refusal:
+        repin.write_execution(root, toolchain, None, Machine())
+
+    assert "consuming.json" in str(refusal.value) and str(tmp_path) not in str(refusal.value)
+
+
+def test_a_dry_run_prints_the_prune_for_this_corpus_project(tmp_path):
+    root = _onboarded(tmp_path)
+
+    _, said = _main(["../framework", "--root", str(root), "--dry-run", "--up"], Machine())
+
+    assert "label=com.local.compose.project=studyforge-walkthrough" in said
 
 
 def test_a_runnable_corpus_with_no_toolchain_is_refused_by_name(tmp_path, installed, monkeypatch):
