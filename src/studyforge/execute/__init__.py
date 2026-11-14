@@ -48,6 +48,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `browser` | a headless browser this machine has, asked for one page's screenshot and DOM |
 | `errors` | `RunRefused`, the one exception |
 | `searchnode` | the site's search index, precompiled once under `node` at build time |
+| `maintenance` | one command an operator's maintenance step names, echoed as it runs |
 
 ## The seam: the reader starts the runner
 
