@@ -196,6 +196,7 @@ documents in this checkout.
 
 | Step | Skill | What the step does | Done when |
 |---|---|---|---|
+| 0, first and last | `catalogue` — [what earlier courses learned](src/studyforge/skills/catalogue/SKILL.md) | Read before anything else: every trap an earlier course met and what to do instead. At the end, the run's sorted findings log feeds it back | the findings log names the catalogue it read, and every finding in it is sorted |
 | 0, optional | `delivery` — [delivery planning](src/studyforge/skills/delivery/SKILL.md) | For a large conversion: turns "convert this repository" into an ordered backlog whose every task ends in something you can be shown | the backlog is written, and the conversion's findings log exists by its end |
 | 1 | `reconnaissance` — [source reconnaissance](src/studyforge/skills/reconnaissance/SKILL.md) | Surveys material nobody has read yet: how deep it is, what a unit is, what repeats, whether anything runs | you hold a draft manifest and the questions only you can answer |
 | 2 | `onboarding` — [corpus onboarding](src/studyforge/skills/onboarding/SKILL.md) | Asks whether you want narration, then turns the settled draft into `corpus.json` and writes everything around it: the adapter scaffold and its tests, the skill stubs, the pin to the installed library | the one file that is yours is named, and every other file is generated |

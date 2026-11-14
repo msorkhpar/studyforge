@@ -15,6 +15,17 @@ put a Docker dependency in front of somebody converting a book.
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## When this skill does nothing, and says nothing
 
 ⭐ **A corpus is runnable when its manifest declares `runtimes`, and not
@@ -297,6 +308,16 @@ whose build names something the prime did not warm fails `G1` and never ships.
 ignores every run artifact with the one line `target/`
 (`RUN_OUTPUT_IGNORE`) in an ignore file of its own under `practice/`. ⛔ Never
 an edit to the corpus's root ignore file (R3).
+
+⛔ **Before the first lesson is written, run every library the course uses
+together, in one process, in the runner.** Import them all in each order, solve
+or call one small thing with each, and record the versions. ⚠️ On one course two
+libraries could not be loaded into one process in either order, a third crashed
+a later solve only when it had been imported first, and a fourth released a
+major version that rewrote its API while the modules were being written. Each
+reshaped modules that were already finished. ⭐ A smoke program that fails here
+costs one image rebuild; the same failure found in module 40 costs the modules
+that already teach the other library.
 
 ### 5. Write, and re-run whenever anything moves
 

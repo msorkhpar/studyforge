@@ -10,6 +10,17 @@ person answers the second, in exactly one file that this skill names for them.
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## The rule that governs every judgement below
 
 ⛔ **The consuming half of a corpus is generated, never hand-authored** (R19).
@@ -391,7 +402,11 @@ is declared done — never from memory afterwards.**
 from pathlib import Path
 from studyforge.skills.delivery import LOG, Entry, FindingsLog
 
-log = FindingsLog(run="<what this run was>", entries=(Entry(finding), ...))
+log = FindingsLog(
+    run="<what this run was>",
+    read="<the line `python3 -m studyforge.skills.catalogue --line` printed at the start>",
+    entries=(Entry(finding), ...),
+)
 Path(LOG).write_text("\n".join(log.lines()) + "\n", "utf-8")
 ```
 

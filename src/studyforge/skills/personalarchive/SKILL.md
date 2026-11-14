@@ -12,6 +12,17 @@ build-and-serve skill afterwards.
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## Before you start
 
 1. **A corpus root**: the directory holding `corpus.json`.

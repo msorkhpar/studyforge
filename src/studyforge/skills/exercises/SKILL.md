@@ -19,6 +19,17 @@ and ships only with the gate record that says it cleared.
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## Before you start
 
 1. **The corpus is onboarded.** `corpus.json` exists and `studyforge validate`
@@ -227,6 +238,19 @@ that runs `main.py` and compares its report with the reference's: keep `main.py`
 and seeded, so the report is the same on every run. ⛔ **A plant must not change that report**:
 `G3` needs each plant to pass every main case, the check included, so an edge is tested with a
 fixture under `tests/`, never through the data `main.py` reads.
+
+#### ⛔ An expected answer may not depend on which of several equal answers a tool returns
+
+⚠️ A solver, a search, a hash order or a parallel run can return any one of
+several equally good answers, and which one it returns depends on the order the
+model was built in, the seed, the thread count or the release. A learner who
+builds the same correct model in another order then fails a test written
+against the reference's answer. ⛔ So grade what every correct answer shares
+(the objective value, a feasibility check, the set of answers that tie), or
+make the answer unique (state the tie-break in the statement, or break ties
+in the data). ⭐ Before the practice ships, run the reference with its inputs
+in a different order, or with another seed, and confirm the verdict does not
+change.
 
 #### ⛔ Write a draft the gates can prove
 

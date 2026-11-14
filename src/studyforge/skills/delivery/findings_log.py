@@ -10,15 +10,16 @@ that is absent, empty or missing a slot rather than letting the run close green.
 
     from studyforge.skills.delivery import Disposition, Entry, FindingsLog, closing
 
-    log = FindingsLog(run="the first conversion", entries=(
+    log = FindingsLog(run="the first conversion", read=read_line(), entries=(
         Entry(finding),                                   # the slot starts open
         Entry(other, Disposition("yes", "the onboarding skill's pin check")),
     ))
     text = "\n".join(log.lines()) + "\n"   # the caller writes it at `LOG`
     print("\n".join(closing(text)))        # ⛔ `closing(None)` refuses
 
-**Depends on.** `dataclasses`, `re`, and this package's `finding` and
-`refusal`. ⛔ Not on the filesystem: the caller names the file, the same rule
+**Depends on.** `dataclasses`, `re`, this package's `finding` and
+`refusal`, and `studyforge.skills.catalogue` for the line that says which
+catalogue the run read first. ⛔ Not on the filesystem: the caller names the file, the same rule
 every module here keeps.
 
 ## ⛔ Why a skill obliges this, and why it is not a message
@@ -29,6 +30,15 @@ whatever survived. ⭐ **A finding written into
 the corpus, at a place the skill names, survives the message that announced
 it.** The place is `.studyforge/`, which the validator already skips as this
 tool's directory, so writing the log never makes the corpus it describes invalid.
+
+## ⛔ The log says which catalogue the run read first
+
+⚠️ The catalogue is what every earlier course learned, and two courses were
+built without opening it. ⭐ So a log carries, under its title, the line
+`studyforge.skills.catalogue.read_line()` returns, printed by
+`python3 -m studyforge.skills.catalogue` at the START of the run. ⛔ `closing`
+refuses a log without it. ⛔ `FindingsLog` takes it as a required field with no
+default: a default would let the end of a run claim a reading it never did.
 
 ## ⭐ The slot is the sort, started early
 
@@ -45,6 +55,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from studyforge.skills.catalogue import DIGEST_HEX, READ_PREFIX
 from studyforge.skills.delivery.finding import Finding
 from studyforge.skills.delivery.refusal import one_or_all
 
@@ -60,6 +71,9 @@ ANSWERS = ("yes", "no", "open")
 
 #: The log's first line, which is how `closing` knows the text is a log at all.
 TITLE = "# Findings log"
+
+#: ⛔ The line a log carries to say which catalogue its run read first.
+_READ = re.compile(r"^" + re.escape(READ_PREFIX) + r"[0-9a-f]{%d}$" % DIGEST_HEX, re.M)
 
 _HEADING = re.compile(r"^### (\S+) `\[(\w+)\]` — ", re.M)
 _SLOT = re.compile(r"^  - \*" + re.escape(QUESTION) + r"\* \*\*(\w+)\*\*(?: — (\S.*))?$", re.M)
@@ -112,12 +126,19 @@ class FindingsLog:
 
     run: str
     entries: tuple[Entry, ...]
+    #: ⛔ Required: `studyforge.skills.catalogue.read_line()`, taken when the run began.
+    read: str
 
     def __post_init__(self) -> None:
         """Refuse a log that cannot be read back — every reason named at once."""
         reasons: list[str] = []
         if not self.run.strip():
             reasons.append("a findings log names its run")
+        if not _READ.fullmatch(self.read.strip()):
+            reasons.append(
+                "a findings log says which catalogue its run read first: "
+                "`python3 -m studyforge.skills.catalogue --line`, run before the work"
+            )
         ids = [entry.finding.id for entry in self.entries]
         if not ids:
             reasons.append(
@@ -134,9 +155,9 @@ class FindingsLog:
 
     def lines(self) -> list[str]:
         """Render the whole log, which `closing` reads back."""
-        body: list[str] = [f"{TITLE} — {self.run.strip()}", ""]
+        body: list[str] = [f"{TITLE} — {self.run.strip()}", "", self.read.strip(), ""]
         body.append(
-            "⛔ Written by the conversion before the run is declared done. "
+            "⛔ Written by the run before it is declared done. "
             f"Every finding asks: *{QUESTION}*"
         )
         for entry in self.entries:
@@ -183,6 +204,12 @@ def closing(text: str | None) -> list[str]:
     reasons: list[str] = []
     if not text.startswith(TITLE):
         reasons.append(f"the text at {LOG} does not open with {TITLE!r}")
+    if not _READ.search(text):
+        reasons.append(
+            f"the log does not say which catalogue the run read first (a line {READ_PREFIX!r}"
+            " and its digest). ⛔ Read it with `python3 -m studyforge.skills.catalogue` "
+            "before the work, and record the line it prints"
+        )
     gaps, answers, markers = _gaps(text)
     if not markers:
         reasons.append("the log carries no finding; zero is written as one `none` finding")
