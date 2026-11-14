@@ -316,4 +316,10 @@ ACCEPTANCE = {
     #: flashcards and a spaced-review bank, whose state is kept in the reader's own browser.
     "turns a deck's cards and keeps what is known across reloads, and shows what a review bank "
     "has due by its stated rule, over file:// with no request": "test_revision",
+    #: ⭐ A row of its own: a project's explorer stands beside the editor, which fills the slot.
+    "opens a project practice with its file explorer in a column beside the editor, the editor "
+    "filling the slot and the pop-out link one line above it": "test_practice_explorer",
+    #: ⭐ A row of its own: the rail's levels, read off the live layout of a depth-2 corpus.
+    "indents a module's summary past its section's, hangs a wrapped summary under its first "
+    "word, and draws a section holding one module as one row": "test_rail_levels",
 }
