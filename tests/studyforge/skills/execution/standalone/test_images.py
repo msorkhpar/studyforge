@@ -84,6 +84,14 @@ def test_the_course_runner_bakes_the_run_service_and_runs_it():
     assert '"perl"' in text
 
 
+def test_the_course_runner_speaks_utf8_so_a_run_prints_text_as_written():
+    # ⚠️ Measured: the runner's locale was POSIX, so Java printed "Göteborg" as "G?teborg" in
+    # both System.out and its log lines, and authors of try-it files escaped their own text.
+    lines = images.runner_dockerfile("a-course").splitlines()
+    assert "ENV LANG=C.UTF-8" in lines
+    assert lines.index("ENV LANG=C.UTF-8") < lines.index("WORKDIR /work")
+
+
 def test_a_course_with_its_own_npm_packages_installs_them_offline_in_its_runner_at_build_time():
     # ⚠️ Measured: an example's Run failed with "Cannot find package '@anthropic-ai/sdk'": the
     # copy of the course's code holds no node_modules, and the runner has no network.
@@ -258,7 +266,7 @@ def test_the_self_contained_names_and_recipes_are_pinned():
         "b78156c3d6c16774eb40df138111eab553a39e396439f2efa51c8c4b56654669"
     )
     assert digest(images.runner_dockerfile("a-course")) == (
-        "0ba7f1abd0a563e7f6f1bf81a9020196d3567fff3e5cd9832293993486d132ec"
+        "905c6054bafd3caeae692275c590821906edee046c0486bddd27d07cc392966b"
     )
     assert digest(images.serve_dockerfile(commit="c", version="0.1.0")) == (
         "dba9e85da904b2b11abc81e1df19a4670e816222898568d95f3b030fc22ae348"

@@ -48,6 +48,11 @@ LOGGER_SWITCH = {
     "kotlin": "level = Level.ALL",
 }
 
+#: The loggers a JVM try-it file keeps out of a Run: the JDK's own, which print their FINE and
+#: FINER detail (deserialization, the HTTP server, the security providers) once the root
+#: logger is at ALL. ⚠️ Measured in the senior-Java course: dozens of certificate lines in one Run.
+JDK_LOGGERS = r"(java|javax|jdk|sun|com\.sun)\..*"
+
 #: The Gradle task a JVM practice registers beside its solution source folder. `CLASS` is
 #: `TRYIT_CLASS`; the Kotlin DSL is used, as the practice's own build file is.
 GRADLE_TASK = (
@@ -80,6 +85,7 @@ logTo("try-it");
 // console.log("result:", ...);
 """,
     "java": """import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -91,9 +97,14 @@ public class TryIt {
     public static void main(String[] args) {
         // Turn the logger up, so the log lines of your code show under the printed lines.
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s %5$s%n");
+        // Only this handler prints, and it leaves out the JDK's own detail.
+        Logger root = Logger.getLogger("");
+        for (Handler before : root.getHandlers()) {
+            root.removeHandler(before);
+        }
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.ALL);
-        Logger root = Logger.getLogger("");
+        handler.setFilter(entry -> !String.valueOf(entry.getLoggerName()).matches("JDKRE"));
         root.setLevel(Level.ALL);
         root.addHandler(handler);
         JDK_EXIT.setLevel(Level.OFF);
@@ -120,8 +131,14 @@ private val jdkExit: Logger = Logger.getLogger("java.lang.Runtime")
 fun main() {
     // Turn the logger up, so the log lines of your code show under the printed lines.
     System.setProperty("java.util.logging.SimpleFormatter.format", "%4\\$s %5\\$s%n")
-    val handler = ConsoleHandler().apply { level = Level.ALL }
-    Logger.getLogger("").apply { level = Level.ALL; addHandler(handler) }
+    // Only this handler prints, and it leaves out the JDK's own detail.
+    val root = Logger.getLogger("")
+    root.handlers.forEach(root::removeHandler)
+    val handler = ConsoleHandler().apply {
+        level = Level.ALL
+        setFilter { entry -> !entry.loggerName.orEmpty().matches(Regex("JDKRE")) }
+    }
+    root.apply { level = Level.ALL; addHandler(handler) }
     jdkExit.level = Level.OFF
 
     // A stand-in for the collaborator, like the one the tests use for the first main case.
@@ -170,7 +187,8 @@ def skeleton(lang: str, module: str = "solution", cls: str = "Thing") -> str:
     """
     if lang not in _SKELETON:
         raise ValueError(f"no try-it skeleton for that language; it has {sorted(_SKELETON)}")
-    return _SKELETON[lang].replace("MODULE", module).replace("CLASS", cls)
+    text = _SKELETON[lang].replace("JDKRE", JDK_LOGGERS.replace("\\", "\\\\"))
+    return text.replace("MODULE", module).replace("CLASS", cls)
 
 
 def gradle_task(lang: str) -> str:

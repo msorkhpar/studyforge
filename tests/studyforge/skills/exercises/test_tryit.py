@@ -47,3 +47,44 @@ def test_a_finished_skeleton_has_no_todo_left_but_the_one_the_author_replaces():
         text = tryit.skeleton(lang, "solution", "Cart")
         assert text.count("TODO") == 1, lang
         assert "java.lang.Runtime" in text
+
+
+def _ran_java(tmp_path, body: str) -> str:
+    import shutil
+    import subprocess
+
+    if shutil.which("java") is None:
+        pytest.skip("no JDK on this machine")
+    text = tryit.skeleton("java", "solution", "Cart")
+    start = text.index("            // TODO")
+    end = text.index("        } catch (RuntimeException stopped)")
+    source = tmp_path / "TryIt.java"
+    source.write_text(text[:start] + body + "\n" + text[end:], encoding="utf-8")
+    ran = subprocess.run(["java", str(source)], capture_output=True, text=True, timeout=120)
+    assert ran.returncode == 0, ran.stderr
+    return ran.stdout + ran.stderr
+
+
+def test_a_java_run_shows_each_log_line_of_the_readers_code_once(tmp_path):
+    # ⚠️ Measured: the skeleton added its handler beside the JDK's own console handler, so every
+    # line at INFO or above was printed twice.
+    out = _ran_java(tmp_path, '            java.util.logging.Logger.getLogger("shop").info("basket saved");')
+    assert out.count("basket saved") == 1, out
+
+
+def test_a_java_run_keeps_the_jdks_own_log_lines_out(tmp_path):
+    # ⚠️ Measured: with the root logger at ALL, deserialization, the HTTP server and the security
+    # providers printed their FINER lines into a reader's Run.
+    out = _ran_java(
+        tmp_path,
+        '            java.util.logging.Logger.getLogger("jdk.event.security").fine("certificate noise");\n'
+        '            java.util.logging.Logger.getLogger("sun.net.www").finer("socket noise");\n'
+        '            java.util.logging.Logger.getLogger("shop").fine("reader detail");',
+    )
+    assert "noise" not in out, out
+    assert "FINE reader detail" in out, out
+
+
+def test_the_kotlin_skeleton_quiets_the_same_two_sources_of_noise():
+    text = tryit.skeleton("kotlin", "solution", "Cart")
+    assert "removeHandler" in text and tryit.JDK_LOGGERS.replace("\\", "\\\\") in text

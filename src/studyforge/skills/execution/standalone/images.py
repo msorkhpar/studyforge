@@ -340,6 +340,8 @@ def runner_dockerfile(
                 if packages
                 else []
             ),
+            "# A run prints text as written: under the base's POSIX locale a JVM prints ö as ?.",
+            "ENV LANG=C.UTF-8",
             f"WORKDIR {WORK}",
             f'CMD ["perl", "{SCRIPT_INSIDE}"]',
             f'LABEL org.studyforge.course="{slug}"',
