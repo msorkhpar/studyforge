@@ -424,6 +424,59 @@ python3 -c "from pathlib import Path; \
 
 ---
 
+## Moving a course to a newer StudyForge
+
+⭐ **One command, run from the corpus root with the corpus's own Python**, takes
+the corpus to the framework build a checkout holds:
+
+```
+python3 -m studyforge.skills.onboarding repin <framework-checkout> --dry-run
+```
+
+`--dry-run` prints every step and its commands and runs nothing; leave it off
+to run them. `--toolchain <code-server-toolchain checkout>` is needed by a corpus
+that declares `runtimes`; `--up` adds the two docker steps; `--audit-date
+YYYY-MM-DD` adds the audit; `--platform linux/amd64` (or `linux/arm64`) is passed
+to the tag records of a corpus that names an image profile; `--builder` names the
+Python that builds the wheel (`python3` by default, since it needs setuptools).
+⭐ Each step prints its name and its result. ⛔ The first failure stops the run,
+names its step, and exits non-zero.
+
+What it does, in order, which is the manual sequence it replaces:
+
+1. **checkout**: refuses a checkout with uncommitted changes, and reads its FULL
+   commit with `git rev-parse HEAD`, refused unless it is forty hex digits.
+2. **wheel**: `python3 -m pip wheel -q --no-deps --no-build-isolation -w
+   .scratch/wheels/<commit> <checkout>`, which must leave exactly one wheel.
+3. **install**: `<this Python> -m pip install --no-index --no-deps
+   --force-reinstall` that wheel.
+4. **hand-over**: ⚠️ a Python that just installed a new library still runs the
+   old one it imported, so the same command starts again in a fresh interpreter,
+   which runs the rest — ⛔ refusing unless the library it imports was built
+   from that commit.
+5. **pin**: `reonboard('.', framework_commit=<commit>).write('.',
+   regenerate=True)` (step 3 above), then `hand_edited('.')` must be `[]`.
+   ⛔ **The pin is never edited by hand or by `sed`**: once that wrote a
+   truncated hash. The pin, every stub and the reader document move together.
+6. **execution**: the execution skill's steps 5 and 5a — `generate`, `write`,
+   `record_runner`, `record_editor` with the toolchain checkout. A corpus that
+   declares no runtimes writes nothing here, and says so.
+7. **build**: `studyforge build . --out .`, called as the build's own function.
+8. **stage-site** (`--up` only): the execution skill's step 5b, `stage_site`.
+9. **compose-up** (`--up` only): the execution skill's step 6 command, `build
+   site`, then this corpus's label-scoped prune, then `up -d --wait`.
+   ⚠️ The runner's and the editor's images are built from the toolchain's own
+   checkout, as that step says; this one builds the site's.
+10. **audit** (`--audit-date` only): `python3 -m ingest . <date>`, the corpus's own.
+
+⭐ Steps 5–8 call the framework's functions in the installed library; the
+checkout, wheel, install, hand-over, compose and audit steps start a process,
+through `studyforge.execute.maintenance`. Without `--up` or `--audit-date` the
+step prints that it was skipped. ⚠️ `.scratch/wheels/` is a build output: a
+corpus that has no ignore rule for it should add one.
+
+---
+
 ## ⛔ The escape hatch, because there always has to be one
 
 ⭐ A corpus may keep **hand-authored files this skill never generates and never
