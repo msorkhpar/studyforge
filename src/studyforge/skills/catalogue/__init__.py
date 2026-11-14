@@ -9,7 +9,7 @@ digest, so a findings log can record *which* catalogue its run started from.
     python3 -m studyforge.skills.catalogue          # the catalogue, then the line to record
 
     from studyforge.skills.catalogue import digest, read_line
-    read_line()      # 'Read first: the integration catalogue at 3f2a…' (12 hex)
+    read_line()      # 'Read first: the integration catalogue at 3f2a…' (64 hex)
 
 **Depends on.** `hashlib` and `pathlib`. ⛔ Not `importlib`: the directory is
 `Path(__file__).parent`, the rule `studyforge.skills.documents` keeps.
@@ -39,8 +39,9 @@ DOCUMENT = Path(__file__).parent / "SKILL.md"
 #: How a findings log records the catalogue its run read, before the digest.
 READ_PREFIX = "Read first: the integration catalogue at "
 
-#: The digest's length in hex: enough to tell two texts apart, short enough to read.
-DIGEST_HEX = 12
+#: The digest's length in hex: the whole SHA-256. ⛔ Never cut short here: one module
+#: in the framework shortens a digest, into a clip's name, and this is not it.
+DIGEST_HEX = 64
 
 
 def text() -> str:
@@ -49,9 +50,9 @@ def text() -> str:
 
 
 def digest(catalogue: str | None = None) -> str:
-    """The first `DIGEST_HEX` hex of the SHA-256 of the catalogue's text."""
+    """The SHA-256 of the catalogue's text, in hex."""
     body = text() if catalogue is None else catalogue
-    return hashlib.sha256(body.encode("utf-8")).hexdigest()[:DIGEST_HEX]
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
 def read_line(catalogue: str | None = None) -> str:

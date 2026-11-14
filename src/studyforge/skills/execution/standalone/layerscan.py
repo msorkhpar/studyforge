@@ -85,7 +85,7 @@ def write_layer(layer: tarfile.TarFile, folder: Path, listing: Path) -> None:
         with source, open(target, "wb") as out:
             while chunk := source.read(1 << 20):
                 out.write(chunk)
-    listing.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    listing.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 def _config_after(config: dict, base_layers: int) -> dict:
@@ -104,7 +104,12 @@ def _config_after(config: dict, base_layers: int) -> dict:
 
 def scan_tree(image_tar: Path, base: Sequence[str], out: Path) -> list[int]:
     """Write what the saved image at `image_tar` adds to `base` under `out`; return the layers."""
-    with tarfile.open(image_tar) as archive:
+    try:
+        archive = tarfile.open(image_tar)
+    except (OSError, tarfile.TarError) as error:
+        # ⛔ The refusal names what failed, never the path it was handed (R7).
+        raise ValueError(f"the saved image could not be read: {type(error).__name__}") from None
+    with archive:
         manifest = json.load(archive.extractfile("manifest.json"))
         if len(manifest) != 1:
             raise ValueError(f"the archive holds {len(manifest)} images; save exactly one")
@@ -116,7 +121,7 @@ def scan_tree(image_tar: Path, base: Sequence[str], out: Path) -> list[int]:
         indexes = added(diff_ids, base)
         out.mkdir(parents=True, exist_ok=True)
         (out / "config.json").write_text(
-            json.dumps(_config_after(config, len(base)), indent=1), encoding="utf-8"
+            json.dumps(_config_after(config, len(base)), indent=1), encoding="utf-8", newline="\n"
         )
         for index in indexes:
             stored = archive.extractfile(entry["Layers"][index])

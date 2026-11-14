@@ -1,6 +1,6 @@
 # Findings log — the integer-programming course's build and publish, 2026-11
 
-Read first: the integration catalogue at d8c5148c366f
+Read first: the integration catalogue at d8c5148c366f19e314bcec3e0a5002ce86e6cdc1e11b0b7fa885f200952f36f6
 
 ⛔ Written by the run before it is declared done. Every finding asks: *could a skill have generated this?*
 

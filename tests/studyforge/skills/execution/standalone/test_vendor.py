@@ -118,7 +118,7 @@ NOTHING = Finding("EXAMPLE-1/1", "none", "the run found nothing", ())
 
 #: ⭐ The catalogue line a log names under its title; the reader reads it, this fixture only
 #: carries it, at a placeholder commit.
-READ_FIRST = "Read first: the integration catalogue at 0123456789ab"
+READ_FIRST = "Read first: the integration catalogue at " + "0123456789abcdef" * 4
 
 
 def findings(where: Path, *entries: Entry) -> Path:
