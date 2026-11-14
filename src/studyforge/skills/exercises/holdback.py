@@ -33,7 +33,7 @@ method the before step lacks, appended at the end of its file, and the reference
 elsewhere. Lines alone would pair the stub's signature with the wrong function; a name pairs it
 with its own. A function new in the step and absent from the starter is in the candidate only
 when the page shows it whole. A statement with no name (an import, a docstring, a guard) is
-paired with the starter's in order, the first unnamed with the first unnamed. A file that does
+paired with the starter's by aligning the unnamed statements' texts (`difflib`). A file that does
 not parse is compared as one run of lines.
 
 ## ⚠️ WHAT THE RULE CANNOT SEE
@@ -123,18 +123,48 @@ def _apply(starter: str, reference: str, shown: str) -> str:
     old, new = _units(starter), _units(reference)
     if old is None or new is None:
         return _lines_applied(starter, reference, shown)
-    paired = dict(old)
-    out = []
-    for key, text in new:
-        out.append(_lines_applied(paired.get(key, ""), text, shown))
-    return "".join(out)
+    paired = dict(old) | _unnamed_pairs(old, new)
+    return "".join(_lines_applied(paired.get(key, ""), text, shown) for key, text in new)
+
+
+def _unnamed_pairs(old: list, new: list) -> dict[tuple, str]:
+    """Each unnamed reference statement's key, mapped to the starter statement it pairs with.
+
+    ⭐ Aligned by text (`difflib` over the statements), so an import the step adds does not
+    shift every later unnamed statement onto the wrong partner; inside a run replaced by a run,
+    each pairs with the most alike (at least half alike), and one the step adds pairs with nothing.
+    """
+    before = [(key, text) for key, text in old if key[0] == "statement"]
+    after = [(key, text) for key, text in new if key[0] == "statement"]
+    matcher = difflib.SequenceMatcher(
+        None, [t.strip() for _, t in before], [t.strip() for _, t in after], autojunk=False
+    )
+    pairs: dict[tuple, str] = {key: "" for key, _ in after}
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            for (_, text), (key, _) in zip(before[i1:i2], after[j1:j2], strict=True):
+                pairs[key] = text
+        elif tag == "replace":
+            pairs |= _likeliest(before[i1:i2], after[j1:j2])
+    return pairs
+
+
+def _likeliest(before: list, after: list) -> dict[tuple, str]:
+    """Pair each reference statement with the most alike unused starter one, if half alike."""
+    pairs: dict[tuple, str] = {}
+    free = list(before)
+    for key, text in after:
+        ratios = [difflib.SequenceMatcher(None, one, text).ratio() for _, one in free]
+        if ratios and max(ratios) >= 0.5:
+            pairs[key] = free.pop(ratios.index(max(ratios)))[1]
+    return pairs
 
 
 def _units(text: str) -> list[tuple[tuple, str]] | None:
     """`text` as its top-level statements, each keyed and with the lines above it; or `None`.
 
     ⭐ A function, a class or an assignment to names is keyed by its name; any other statement
-    by its place among the unnamed ones, so the first import pairs with the first import.
+    by its place among the unnamed ones; `_unnamed_pairs` aligns those by text.
     """
     try:
         tree = ast.parse(text)

@@ -992,6 +992,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `files` | optional, empty by default: the further files the reader edits beside `main_file`, each workspace-relative path mapped to `EditedFile(starter, reference)`; see *A practice of several files* |
 | `try_file` | optional, `None` by default: the try-it file, one of the keys of `files`, that `run_command` executes (no tests, no grade); see *A try-it file: what Run executes* |
 | `read_only` | optional, empty by default: a project's read-only files beside `test_file` (its other tests, their fixtures, its data, the expected report), each workspace-relative path mapped to its text; see *A project practice* |
+| `copied` | optional, `None` by default: a project step's copied candidate, each file the reader edits as copying the step's page leaves it; `project_draft` builds it, and `H1` refuses a step it passes. See *A project practice* |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 | `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 

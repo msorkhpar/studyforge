@@ -111,3 +111,11 @@ def test_a_page_that_holds_one_graded_body_back_clears_h1(tmp_path):
     h1 = next(verdict for verdict in result.record.verdicts if verdict.id == H1)
     assert h1.held, h1.says
     assert result.clears, [verdict.says for verdict in result.refused]
+
+
+def test_an_added_import_does_not_shift_the_unnamed_statements_after_it():
+    starter = 'import os\n\nif __name__ == "__main__":\n    print(os.sep)\n'
+    reference = 'import os\nimport sys\n\nif __name__ == "__main__":\n    print(sys.argv)\n'
+    made = copied({"m.py": starter}, {"m.py": reference}, fenced("import sys"))
+    expected = 'import os\nimport sys\n\nif __name__ == "__main__":\n    print(os.sep)\n'
+    assert made["m.py"] == expected
