@@ -206,6 +206,32 @@ transcribes them. In a real course, readers named exactly this as the problem.
   multiplexer against a scripted test host beats a mocked interface, because the reader's code
   meets the real rules. Drive concurrency with latches and holds, never with sleeps.
 
+#### ⛔ Where a practice stands, and how long it is
+
+- **Beside the section it practises.** Plan each code practice on one section's idea and place it
+  right after that section, with a `<!-- practice N -->` line at the section's end (N is the
+  practice's number on its page). The reader meets it while that part is still fresh, and a
+  practice of one section stays short: usually 2 to 15 lines of the reader's own code.
+- **A combining practice only when it is needed.** A unit may end with a practice that combines
+  several of its sections, when using them together is itself the lesson. It stands after the
+  last section it combines, at the unit's end, and it may be longer (up to the 50 lines above).
+  ⛔ It is the exception: never the default home of a unit's practices, and never a section
+  practice moved to the end.
+- **Check it before the pass is done:** `python -m studyforge.skills.exercises.placement <root>`
+  reports each practice that stands under the wrong section, has no marker (so it is drawn
+  after the whole lesson), or combines sections before the last of them; fix every line it prints.
+
+#### ⛔ Run executes the reader's own try-it file
+
+Every code practice ships a try-it file: a small entry point that builds the object the practice
+asks for with the first main case's stand-in, calls it on the statement's example, prints what
+comes back and turns the logger up. Run executes it, with no tests and no grade, so the reader
+sees what their code does before Submit asks whether it is right. Start it from
+`python -m studyforge.skills.exercises.tryit <lang> [module] [class]`, set the draft's `try_file`
+and the `run_command` *A try-it file: what Run executes* gives for the language and build (Maven
+included), and clear every `problems` line. ⛔ `studyforge validate` reports `no-try-it` for a code
+practice this skill authored without one, in every course.
+
 #### ⛔ The quiz
 
 - **Every question is a scenario** with inputs the page does not show, and every wrong option is

@@ -127,7 +127,7 @@ file in both.
 
 ---
 
-## The fifty-eight rule ids
+## The fifty-nine rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -185,7 +185,8 @@ before it, `check_untouched` after — which reports in the same shape.
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
 | `project-files` | a project practice's workspace and its record disagree: the record names a file the workspace does not hold, or the workspace holds a file the record does not name, so the reader could not see it. A run's `target/`, a `__pycache__` and dot-files are not judged |
-| `run-is-submit` | a graded code practice's run command equals its test command, in a corpus where another practice carries a `try_file`: Run would grade like Submit. A corpus with no try-it file anywhere is not judged |
+| `run-is-submit` | a graded code practice's run command equals its test command: Run would grade like Submit |
+| `no-try-it` | a code practice this framework authored (`generated`) carries no `try_file`, so Run has nothing of the reader's own to execute and shows them little or nothing. A practice the source ships keeps its own Run; a quiz and a deck are not judged |
 | `derivation-record` | an `authoritative` grader ships no record of its derivation's two gates, one nothing can read, or one that does not support the claim: another family's gates, no blanked method named, a starter or test that is not the exercise's own, or a starter identical to the original |
 | `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |
 | `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |

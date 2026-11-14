@@ -8,7 +8,11 @@ import pytest
 
 from studyforge.exercise import ExerciseError, from_document, to_document
 from studyforge.exercise.bundle import bundle_document, bundle_of, emit
-from studyforge.validate.exercises import RULE_RUN_IS_SUBMIT, check_run_is_not_submit
+from studyforge.validate.exercises import (
+    RULE_NO_TRY_IT,
+    RULE_RUN_IS_SUBMIT,
+    check_run_is_not_submit,
+)
 from tests.studyforge.exercise.bundle import bundles
 
 WS = "practice/p"
@@ -102,16 +106,28 @@ def _walk(*records):
     return SimpleNamespace(units=units)
 
 
-def test_the_rule_fires_on_run_equal_to_test_once_a_course_has_a_try_file():
+def test_run_equal_to_test_is_reported_in_every_course():
     same = {**BASE, "run_command": BASE["test_command"]}
     found = list(check_run_is_not_submit(_walk(WITH, same)))
     assert [(f.rule, f.where) for f in found] == [(RULE_RUN_IS_SUBMIT, "u1")]
     assert "Run would grade like Submit" in found[0].message
+    alone = list(check_run_is_not_submit(_walk(same)))
+    assert [(f.rule, f.where) for f in alone] == [(RULE_RUN_IS_SUBMIT, "u0")]
 
 
-def test_the_rule_is_quiet_for_a_course_that_has_no_try_file_and_for_no_code_practice():
-    same = {**BASE, "run_command": BASE["test_command"]}
-    assert list(check_run_is_not_submit(_walk(same, BASE))) == []
+def test_an_authored_code_practice_without_a_try_file_is_reported_even_where_none_has_one():
+    authored = {**BASE, "provenance": "generated", "trust": "advisory"}
+    found = list(check_run_is_not_submit(_walk(authored, WITH)))
+    assert [(f.rule, f.where) for f in found] == [(RULE_NO_TRY_IT, "u0")]
+    assert "no try-it file" in found[0].message
+
+
+def test_a_practice_the_source_ships_keeps_its_own_run():
+    assert list(check_run_is_not_submit(_walk(BASE))) == []
+
+
+def test_a_quiz_a_deck_and_a_corpus_with_no_practice_are_not_judged():
     quiz = {"kind": "quiz", "questions": []}
     assert list(check_run_is_not_submit(SimpleNamespace(units=[]))) == []
     assert list(check_run_is_not_submit(_walk(quiz))) == []
+    assert list(check_run_is_not_submit(_walk(WITH))) == []

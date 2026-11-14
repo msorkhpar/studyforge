@@ -1092,19 +1092,34 @@ draft = CodeDraft(
   else is read-only. `studyforge check` accepts any of the files.
 - **Nothing changes for a practice of one file**: no key, no input, no block.
 
+### Where a practice stands
+
+A practice helps most beside the section it exercises, so a practice planned on one section stands
+right after it: a `<!-- practice N -->` line at that section's end draws practice `N` there (a
+practice no marker names is drawn after the whole lesson). It practises one idea and stays short.
+A unit may end with a practice that combines several of its sections, only when using them
+together is the point; it stands after the last section it combines and may be longer.
+`python -m studyforge.skills.exercises.placement <root>` reads each page's plan
+(`exercises/**/coverage.json`) and its markers and prints each practice that stands under another
+section, has no marker, or combines sections before the last of them, and exits 1 when there is
+any. `studyforge.skills.exercises.placement.misplaced(lesson_text, plan)` answers for one page.
+
 ### A try-it file: what Run executes
 
 **Run and Submit are different acts.** Submit grades. Run executes the reader's own code, a
 small editable entry point, and shows what it printed and logged, with no tests and no grade.
-A practice whose `run_command` is its `test_command` has a Run that grades like Submit; give it
-a **try-it file** instead. `studyforge validate` reports `run-is-submit` for such a practice in
-any corpus where another practice already carries a `try_file`.
+⛔ **Every code practice you author has a try-it file**, in every course: a reader learns more
+from seeing what their code does than from a compile that prints nothing. `studyforge validate`
+reports `no-try-it` for an authored (`generated`) code practice without one (a practice the
+source ships keeps the Run its author gave it), and `run-is-submit` for one whose
+`run_command` is its `test_command` (a Run that grades like Submit). A quiz and a deck run
+nothing and are not judged.
 
 - **The record** gains `try_file`, the corpus-relative path of the file, which is also listed
   in `files` (the reader edits it like any further file). The `run_command` executes it and
   differs from `test_command`; a record whose two commands are equal and that names a
   `try_file` is refused. A `CodeDraft` sets `try_file=` (a key of its `files`) and a bundle
-  carries `"try_file"` beside `files`. A practice without it is unchanged. The page then says
+  carries `"try_file"` beside `files`. The page then says
   that Run executes that file, runs no tests and gives no grade.
 - **What the file does:** builds the object the practice asks for with the same stand-in the
   first main test uses, calls it on the statement's example, prints what comes back, and turns
@@ -1117,20 +1132,28 @@ any corpus where another practice already carries a `try_file`.
   | TypeScript | `try-it.ts` | `node <workspace>/try-it.ts` | `logTo("try-it")`, the harness logger beside the file |
   | Java | `TryIt.java` | `gradle --offline -q -p <workspace> tryIt` | `java.util.logging` root logger and a `ConsoleHandler`, both at `ALL` |
   | Kotlin | `TryIt.kt` | `gradle --offline -q -p <workspace> tryIt` | the same switch; the class is `TryItKt` |
+  | Java or Kotlin, Maven build | the same file | `mvn -o -q -f <workspace>/pom.xml compile exec:java` | the same switch |
 
 - **The JVM `tryIt` task.** The file lives in the main source set, so the build lists its
   folder beside the solution's and registers a `JavaExec` task whose `mainClass` is `TryIt`
   (Java) or `TryItKt` (Kotlin): `tasks.register<JavaExec>("tryIt") { classpath =
   sourceSets["main"].runtimeClasspath; mainClass.set("TryIt") }`.
+- **The Maven exec plugin.** A Maven practice keeps `TryIt` in `src/main/java` (or
+  `src/main/kotlin`) and lists the exec plugin, pinned, in its `pom.xml`:
+  `tryit.maven_plugin(lang)` returns the `<plugin>` with `mainClass` set. ⛔ The runner works
+  offline, so the plugin must already be in the image's Maven repository: the corpus's own Maven
+  build (the one the runner is primed from) lists `tryit.maven_prime_plugin()`, which binds the
+  plugin's `help` goal to `validate` so the prime's `mvn test` fetches it, and the runner is
+  rebuilt. A Run that cannot resolve `exec-maven-plugin` offline is a runner primed before that.
 - **The scaffold.** `studyforge.skills.exercises.tryit` holds `TRYIT_FILE`, `skeleton(lang,
-  module, cls)`, `gradle_task(lang)`, `run_command(lang, workspace)` and `problems(lang,
+  module, cls)`, `gradle_task(lang)`, `maven_plugin(lang)`, `run_command(lang, workspace,
+  build)` and `problems(lang,
   text)`; `python -m studyforge.skills.exercises.tryit <lang> [module] [class]` prints a
   skeleton. The skeleton ends in a `TODO` for the stand-in and the call; `problems` reports a
   file that still holds it, prints nothing, or does not turn the logger up.
 - **What an adapter sets:** `files` holds the try-it file with its starter text (the reader's
   file starts as the author wrote it, and the reference is the same text), `try_file` names
-  it, and `run_command` is the command in the table. A practice with no try-it file leaves
-  `try_file` unset.
+  it, and `run_command` is the command in the table.
 
 ### A project practice
 

@@ -38,11 +38,18 @@ DOCUMENT = {
     "origin": {"path": "src/one.md", "section": "Bitmaps"},
 }
 
+#: What `write_bundle` adds unless a test says otherwise: the try-it file every authored
+#: practice carries, which Run executes. ⚠️ `document` leaves it out, so a test of the bundle's
+#: own shape still reads one file.
+TRIED = {"files": ["try_it.py"], "try_file": "try_it.py"}
+
 STATEMENT = "Write a builder for the primary bitmap.\n\n- eight bytes\n- counted from one\n"
 STARTER = "def build(fields):\n    ...\n"
 REFERENCE = "def build(fields):\n    return sum(1 << (64 - n) for n in fields)\n"
 TESTS = "def test_builds():\n    pass\n\n\ndef test_empty():\n    pass\n"
 PLANT = "def build(fields):\n    return 1\n"
+#: The reader's try-it file: what Run executes (every authored practice has one).
+TRY_IT = "from bitmap import build\n\nprint('bitmap:', build([2, 3]))\n"
 
 #: What a build file of this fixture holds. ⚠️ Not a real tool's file:
 #: the framework never reads one, so its bytes only have to arrive intact.
@@ -63,7 +70,8 @@ def document(**overrides) -> dict:
     declared = {**json.loads(json.dumps(DOCUMENT)), **overrides}
     spot = bundle_of({**declared, **_DEFAULT_COMMANDS}, "bundle.json").places
     if "run_command" not in overrides:
-        declared["run_command"] = ["python3", spot.in_workspace(declared["main_file"])]
+        run = declared.get("try_file") or declared["main_file"]
+        declared["run_command"] = ["python3", spot.in_workspace(run)]
     if "test_command" not in overrides:
         declared["test_command"] = ["python3", "-m", "pytest", spot.workspace]
     return declared
@@ -80,8 +88,8 @@ def places(**overrides) -> Places:
 
 
 def write_bundle(root: Path, **overrides) -> Places:
-    """Write one complete bundle under `root` and return where it landed."""
-    declared = document(**overrides)
+    """Write one complete bundle under `root`, with its try-it file, and return where it landed."""
+    declared = document(**{**TRIED, **overrides})
     bundle = bundle_of(declared, "bundle.json")
     where = root / bundle.places.bundle
     (where / "starter").mkdir(parents=True, exist_ok=True)
@@ -94,6 +102,9 @@ def write_bundle(root: Path, **overrides) -> Places:
     _put(where / "reference" / bundle.main_file, REFERENCE)
     _put(where / "tests" / bundle.test_file, TESTS)
     _put(where / "plants" / "edge-1" / bundle.main_file, PLANT)
+    for path in bundle.files:
+        _put(where / "starter" / path, TRY_IT)
+        _put(where / "reference" / path, TRY_IT)
     for path in bundle.build:
         _put(where / "build" / path, BUILD_TEXT)
     return bundle.places
@@ -114,6 +125,11 @@ def inputs_of(root: Path, spot: Places) -> tuple:
             ("statement", "statement.md"),
             ("starter", f"starter/{bundle.main_file}"),
             ("reference", f"reference/{bundle.main_file}"),
+            *(
+                (f"{role}:{path}", f"{role}/{path}")
+                for path in bundle.files
+                for role in ("starter", "reference")
+            ),
             ("tests", f"tests/{bundle.test_file}"),
             (f"plant:{bundle.cases[1].id}", f"plants/edge-1/{bundle.main_file}"),
             *((f"build:{path}", f"build/{path}") for path in bundle.build),

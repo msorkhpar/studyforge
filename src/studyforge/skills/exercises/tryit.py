@@ -12,6 +12,7 @@ the argv `run_command` takes. The record's `try_file` names the file; it is one 
 
     text = skeleton("python", module="solution", cls="Cart")   # write it into the practice
     run = run_command("python", workspace)                      # the draft's `run_command`
+    run = run_command("java", workspace, build="maven")         # a Maven practice's Run
     path = TRYIT_FILE["python"]                                  # the draft's `try_file`
 
     python -m studyforge.skills.exercises.tryit python solution Cart      # print a skeleton
@@ -84,6 +85,9 @@ import java.util.logging.Logger;
 
 /** Run executes this file. Change the calls in main and see what prints. Submit grades. */
 public class TryIt {
+    /** Held here, so the JDK's own exit notice stays off: a logger nothing holds can be dropped. */
+    private static final Logger JDK_EXIT = Logger.getLogger("java.lang.Runtime");
+
     public static void main(String[] args) {
         // Turn the logger up, so the log lines of your code show under the printed lines.
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s %5$s%n");
@@ -92,10 +96,16 @@ public class TryIt {
         Logger root = Logger.getLogger("");
         root.setLevel(Level.ALL);
         root.addHandler(handler);
+        JDK_EXIT.setLevel(Level.OFF);
 
         // A stand-in for the collaborator, like the one the tests use for the first main case.
-        // TODO: copy that setup here, call CLASS on the statement's example, print the results:
-        // System.out.println("result: " + ...);
+        try {
+            // TODO: copy that setup here, call CLASS on the statement's example, print the results:
+            // System.out.println("result: " + ...);
+        } catch (RuntimeException stopped) {
+            // A method you have not finished, or a bug, stops here with its message, not a build error.
+            System.out.println("Run stopped: " + stopped);
+        }
     }
 }
 """,
@@ -103,19 +113,53 @@ public class TryIt {
 import java.util.logging.Level
 import java.util.logging.Logger
 
+// Held here, so the JDK's own exit notice stays off: a logger nothing holds can be dropped.
+private val jdkExit: Logger = Logger.getLogger("java.lang.Runtime")
+
 // Run executes this file. Change the calls in main and see what prints. Submit grades.
 fun main() {
     // Turn the logger up, so the log lines of your code show under the printed lines.
     System.setProperty("java.util.logging.SimpleFormatter.format", "%4\\$s %5\\$s%n")
     val handler = ConsoleHandler().apply { level = Level.ALL }
     Logger.getLogger("").apply { level = Level.ALL; addHandler(handler) }
+    jdkExit.level = Level.OFF
 
     // A stand-in for the collaborator, like the one the tests use for the first main case.
-    // TODO: copy that setup here, call CLASS on the statement's example, print the results:
-    // println("result: ${...}")
+    try {
+        // TODO: copy that setup here, call CLASS on the statement's example, print the results:
+        // println("result: ${...}")
+    } catch (stopped: RuntimeException) {
+        // A method you have not finished, or a bug, stops here with its message, not a build error.
+        println("Run stopped: $stopped")
+    }
 }
 """,
 }
+
+
+#: The plugin a Maven JVM practice declares in its `pom.xml`, so `exec:java` runs the try-it
+#: class in the build's own classpath. ⛔ The version is pinned, and the runner image must hold the
+#: plugin in its offline repository: list it in the practice's `pom.xml` before the prime warms
+#: that repository, or Run fails offline. `CLASS` is `TRYIT_CLASS`.
+EXEC_PLUGIN_VERSION = "3.5.0"
+MAVEN_PLUGIN = (
+    "<plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId>"
+    "<version>{version}</version><configuration><mainClass>{cls}</mainClass>"
+    "<cleanupDaemonThreads>false</cleanupDaemonThreads></configuration></plugin>\n"
+)
+
+#: The same plugin as the corpus's own Maven build (the one the runner is primed from) lists it.
+#: ⭐ The prime runs `mvn test`, which never loads a plugin no phase uses, so the plugin's
+#: harmless `help` goal is bound to `validate`: the warm then fetches the plugin and everything it
+#: needs, and runs none of the corpus's code.
+MAVEN_PRIME_PLUGIN = (
+    "<plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId>"
+    "<version>{version}</version><executions><execution><id>prime-try-it</id>"
+    "<phase>validate</phase><goals><goal>help</goal></goals></execution></executions></plugin>\n"
+)
+
+#: The builds a JVM practice can use, by the word an adapter passes as `build`.
+BUILDS = ("gradle", "maven")
 
 
 def skeleton(lang: str, module: str = "solution", cls: str = "Thing") -> str:
@@ -136,12 +180,32 @@ def gradle_task(lang: str) -> str:
     return GRADLE_TASK.format(cls=TRYIT_CLASS[lang])
 
 
-def run_command(lang: str, workspace: str) -> tuple[str, ...]:
-    """Return the argv Run uses for the try-it file of the practice at `workspace`."""
+def maven_plugin(lang: str) -> str:
+    """Return the `<plugin>` a Maven JVM practice's `pom.xml` lists, so Run can execute `TryIt`."""
+    if lang not in TRYIT_CLASS:
+        raise ValueError("only the JVM languages have a Maven plugin")
+    return MAVEN_PLUGIN.format(version=EXEC_PLUGIN_VERSION, cls=TRYIT_CLASS[lang])
+
+
+def maven_prime_plugin() -> str:
+    """Return the `<plugin>` the corpus's own Maven build lists, so the primed runner holds it."""
+    return MAVEN_PRIME_PLUGIN.format(version=EXEC_PLUGIN_VERSION)
+
+
+def run_command(lang: str, workspace: str, build: str = "gradle") -> tuple[str, ...]:
+    """Return the argv Run uses for the try-it file of the practice at `workspace`.
+
+    ⭐ `build` matters for Java and Kotlin only: `gradle` runs the practice's `tryIt` task, and
+    `maven` compiles the practice and runs `TryIt` through the exec plugin (`maven_plugin`).
+    """
+    if build not in BUILDS:
+        raise ValueError(f"no try-it command for that build; there are {list(BUILDS)}")
     if lang == "python":
         return ("python3", f"{workspace}/{TRYIT_FILE[lang]}")
     if lang == "typescript":
         return ("node", f"{workspace}/{TRYIT_FILE[lang]}")
+    if lang in TRYIT_CLASS and build == "maven":
+        return ("mvn", "-o", "-q", "-f", f"{workspace}/pom.xml", "compile", "exec:java")
     if lang in TRYIT_CLASS:
         return ("gradle", "--offline", "-q", "-p", workspace, "tryIt")
     raise ValueError("no try-it command for that language")

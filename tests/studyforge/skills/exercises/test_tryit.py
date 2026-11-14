@@ -22,3 +22,28 @@ def test_the_scaffold_names_every_language_and_flags_a_file_not_finished():
     assert 'mainClass.set("TryItKt")' in tryit.gradle_task("kotlin")
     with pytest.raises(ValueError):
         tryit.skeleton("cobol")
+
+
+def test_a_maven_practice_runs_try_it_through_the_pinned_exec_plugin():
+    assert tryit.run_command("java", WS, build="maven") == (
+        "mvn", "-o", "-q", "-f", f"{WS}/pom.xml", "compile", "exec:java",
+    )
+    plugin = tryit.maven_plugin("java")
+    assert f"<version>{tryit.EXEC_PLUGIN_VERSION}</version>" in plugin
+    assert "<mainClass>TryIt</mainClass>" in plugin
+    assert "<mainClass>TryItKt</mainClass>" in tryit.maven_plugin("kotlin")
+    assert tryit.run_command("python", WS, build="maven") == ("python3", f"{WS}/try_it.py")
+    primed = tryit.maven_prime_plugin()
+    assert "<goal>help</goal>" in primed and "<phase>validate</phase>" in primed
+    assert f"<version>{tryit.EXEC_PLUGIN_VERSION}</version>" in primed
+    with pytest.raises(ValueError):
+        tryit.run_command("java", WS, build="ant")
+    with pytest.raises(ValueError):
+        tryit.maven_plugin("python")
+
+
+def test_a_finished_skeleton_has_no_todo_left_but_the_one_the_author_replaces():
+    for lang in ("java", "kotlin"):
+        text = tryit.skeleton(lang, "solution", "Cart")
+        assert text.count("TODO") == 1, lang
+        assert "java.lang.Runtime" in text

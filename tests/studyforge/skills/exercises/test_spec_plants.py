@@ -102,7 +102,9 @@ def test_a_spec_plant_that_cannot_be_materialised_is_refused_before_anything_run
     tmp_path, replacement, words
 ):
     brief, ledger = _brief(tmp_path)
-    made = replace(basket(brief), plants={NEGATIVE.id: PlantSpec((replacement,))})
+    # ⭐ A one-file draft, so a replacement naming any other file reads as the one-file refusal.
+    one = replace(basket(brief), files={}, try_file=None)
+    made = replace(one, plants={NEGATIVE.id: PlantSpec((replacement,))})
     runner = Running()
     with pytest.raises(ExerciseError, match=words) as refused:
         gate_code(made, brief, ledger, runner, source="demo", where="w")

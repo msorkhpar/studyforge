@@ -40,6 +40,7 @@ from studyforge.exercise.gates.quiz import (
 )
 from studyforge.exercise.quiz import Option, Question
 from studyforge.skills.exercises import (
+    EditedFile,
     CORE,
     Aspect,
     Brief,
@@ -225,12 +226,19 @@ def page(path, address, unit, *, kind=CODE, variant="python", graders=()) -> Pag
 def _code(brief: Brief, name: str, **parts) -> CodeDraft:
     """A code draft with commands spelled from the brief's own workspace."""
     ws = brief.places.workspace
+    # ⭐ Every authored practice carries the try-it file Run executes, as the skill requires.
+    # A caller that passes `files` (even empty) writes its own, and gets no try-it file.
+    if "files" not in parts:
+        tried = f"from {name} import {name}\n\nprint('{name}:', {name}.__name__)\n"
+        parts["files"] = {"try_it.py": EditedFile(tried, tried)}
+        parts.setdefault("try_file", "try_it.py")
+    run = parts.get("try_file") or f"{name}.py"
     return CodeDraft(
         title=parts.pop("title"),
         lang="python",
         main_file=f"{name}.py",
         test_file=f"test_{name}.py",
-        run_command=("python3", f"{ws}/{name}.py"),
+        run_command=("python3", f"{ws}/{run}"),
         test_command=(
             "python3",
             "-m",

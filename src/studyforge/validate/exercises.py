@@ -72,8 +72,11 @@ RULE_BUNDLE_CONTENTS = "bundle-contents"
 #: A page whose exercises are not numbered `1..n`.
 RULE_PRACTICE_ORDINALS = "practice-ordinals"
 
-#: A code practice whose Run would grade like Submit, in a corpus that has adopted try-it files.
+#: A code practice whose Run would grade like Submit: its run command equals its test command.
 RULE_RUN_IS_SUBMIT = "run-is-submit"
+
+#: A code practice StudyForge authored with no try-it file, so Run has nothing of the reader's own.
+RULE_NO_TRY_IT = "no-try-it"
 
 #: ⛔ A gate record carrying personal data. ⚠️ `validate.corpus`' own spelling,
 #: because it is the same rule and two ids for one fact is two audits.
@@ -219,15 +222,18 @@ def check_practice_ordinals(walk: Walk) -> Iterator[Finding]:
 
 
 def check_run_is_not_submit(walk: Walk) -> Iterator[Finding]:
-    """Where a corpus has adopted try-it files, no graded code practice runs its tests on Run.
+    """Every authored code practice has a try-it file, and no code practice runs its tests on Run.
 
-    ⭐ **Opt-in by adoption.** The check fires only on a corpus in which at least one code
-    practice carries `try_file`: that corpus has said what Run is for (the reader's own calls, no
-    tests, no grade), so a practice whose `run_command` equals its `test_command` is the one it
-    forgot. ⛔ A corpus with no try-it file anywhere is left exactly as it was, so no existing
-    course newly fails.
+    ⭐ **Run and Submit are two acts.** Submit grades. Run executes the reader's own small entry
+    point, the try-it file (`try_file`), and shows what it printed and logged, with no tests and no
+    grade, so a reader can see what their code does before they ask whether it is right. A code
+    practice without one has nothing of the reader's to run: its Run compiles, or runs the
+    solution as a script, and shows the reader little or nothing. ⛔ So every code practice this
+    framework authored (`generated`) carries a try-it file (`no-try-it`), in every corpus. A
+    practice the source ships keeps the Run its author gave it. In any corpus, one whose run
+    command equals its test command grades on Run (`run-is-submit`). A quiz and a deck run nothing
+    and are skipped.
     """
-    found: list[tuple[Unit, object]] = []
     for unit in walk.units:
         if unit.document.get("kind") != "practice":
             continue
@@ -235,17 +241,22 @@ def check_run_is_not_submit(walk: Walk) -> Iterator[Finding]:
             exercise = exercise_of(unit.document, unit.where)
         except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
             continue
-        if exercise is not None and not exercise.is_quiz and not exercise.is_deck:
-            found.append((unit, exercise))
-    if not any(exercise.try_file is not None for _, exercise in found):
-        return
-    for unit, exercise in found:
+        if exercise is None or exercise.is_quiz or exercise.is_deck:
+            continue
         if exercise.test_command is not None and exercise.run_command == exercise.test_command:
             yield Finding(
                 RULE_RUN_IS_SUBMIT,
                 unit.where,
                 "Run would grade like Submit: its run command equals its test command. Give the "
                 "practice a try-it entry point (`try_file`) that Run executes.",
+            )
+        elif exercise.try_file is None and exercise.provenance == GENERATED:
+            yield Finding(
+                RULE_NO_TRY_IT,
+                unit.where,
+                "This code practice has no try-it file, so Run shows the reader nothing of their "
+                "own code. Give it one (`try_file`, written from "
+                "`studyforge.skills.exercises.tryit`) and point `run_command` at it.",
             )
 
 
