@@ -5,9 +5,28 @@ so the next conversion starts further along than the last one. The skills
 generate the consuming half of a corpus; this file carries what stays true once
 the framework is right, and that no generator can write for you.
 
-Entries arrive from the findings log every conversion writes at
-`.studyforge/findings.md`. The delivery skill's last step sorts that log, and
-what survives the sort below lands here.
+Entries arrive from the findings log every course writes at
+`.studyforge/findings.md`, whether the course was converted from existing
+material or written from a plan. The delivery skill's last step sorts that log,
+and what survives the sort below lands here.
+
+## How a course uses this file
+
+1. **At the start, read all of it**, before planning a lesson, a practice or an
+   image: `python3 -m studyforge.skills.catalogue`. The last line it prints names
+   this exact text by digest. Copy that line under the title of the run's
+   findings log.
+2. **During the run, keep the log as you go.** Each time you do something by
+   hand, work around the framework, find a trap in the material or a tool, or
+   find an entry here that was wrong, add a finding while the evidence is in
+   front of you. A log rebuilt from memory at the end loses most of it.
+3. **At the end, sort every finding** with the delivery skill's step 9. A hole
+   in a skill goes to the framework as a task. A fact that stays true after the
+   framework is right becomes an entry here, under the heading where the next
+   course will look for it. Add the run's sort table at the end of this file,
+   and file the run's log under `docs/course-logs/` in the framework repository.
+4. **The release checks it.** A release refuses a corpus whose log is missing,
+   does not name the catalogue it read, or still has an unsorted finding.
 
 ## What belongs here, and what does not
 
@@ -88,6 +107,17 @@ prose projected the whole run within a few percent on every measure. A slice
 taken from the first section projected the synthesis time about a fifth short,
 because the later material is longer: the opening of a course is rarely
 typical of it.
+
+### Size a learner's time from the words written, not from the plan's budget
+
+A plan sets a time per lesson before any lesson exists, and the number is
+then repeated as the course's length. On one course the plan budgeted 20
+minutes per lesson and 20 more for its practices. The module pages that were
+written came to about 3,200 words per lesson, which is closer to 30 minutes
+of careful reading beside code before a practice starts. When the course is
+written, count the words on its pages and the practices it asks for, and
+state the learner's time from those counts, as a range with the reading rate
+it assumes.
 
 ### A regeneration is a diff, and its reach is decided by layer, not size
 
@@ -256,6 +286,58 @@ Run every example test on the author's release and in the runner before
 authoring begins, and compare the per-module counts. Both runs green, with
 equal counts, is the evidence; one of them is not.
 
+### A course about a library finds the library's faults, one version at a time
+
+A course that runs every example against a pinned release meets that
+release's faults: crashes, silently wrong answers, parameters accepted and
+ignored, documented behaviour that is absent. On one optimization course, 70
+of its 90 findings were faults or surprises in the solvers and their
+wrappers, not in the course or the framework, and several changed what a
+lesson could honestly claim. Keep a findings table in the course from the
+first module: the behaviour, the exact versions, how it was measured, and
+which lessons rely on it. Write each page's claim against the table, not
+against the documentation. When the course moves to a newer release, re-run
+the table's checks before any lesson, since a fixed fault turns a correct
+warning on a page into a wrong one.
+
+### A licensed tool: the learner brings the licence, and its errors can name the machine
+
+Some tools a course teaches need a licence, and their packages make that
+easy to get wrong. A package can carry a size-limited licence file inside
+itself, so an image that installs it ships a licence without anyone choosing
+to. A tool started without a licence can print the user name and host name in
+its error, which the personal-data gate then finds in recorded output. A
+library can call the licensed tool by default (a reformulation helper that
+computes its constants with it), so a lesson that never names the tool still
+fails without the licence. Some licence kinds cannot run in a container or
+offline at all. Decide with the owner which licence kind a learner can use in
+the offline runner, mount it at run time, keep it out of every image and
+every published file, mask the host in recorded output, and give every lesson
+that needs the tool a path that runs without it.
+
+### An optional hardware track needs its own image and an engine that can reach the hardware
+
+A GPU track meets three walls before any lesson. Its libraries often cannot
+share the main runner's environment, because they pin versions of common
+packages the main course needs newer. Its builds target a fixed list of
+device generations and a minimum driver, so a card or driver one step
+outside the list fails at load. And an engine that runs its containers
+inside a virtual machine may have no device passthrough, or share no host
+temporary directory. Build the track as a second image, check the engine and
+the device before writing it, and make every practice in it pass on the CPU
+image too, with the hardware checks reported as skipped. Expect timings and
+results that do not repeat run to run, and mark every number on the page as
+measured on one machine.
+
+### A quiz graded in the browser carries its keys in the page
+
+A course served as static pages grades its quizzes in the reader's browser,
+so every lesson page holds its answer keys in its source. A reader who opens
+the source can read them. This is the price of a site that works offline
+without a server. Say so to the owner when the course is planned, and keep
+anything that must stay secret (an assessment, a certification) out of the
+quiz format.
+
 ### An offline runner holds the lifecycle it was primed with, and no more
 
 A runner primed by running the tests holds the plugins the test lifecycle
@@ -403,3 +485,25 @@ could generate, so most of it goes to the framework as a fix.
 | The curriculum record is two documents in one file, and only a label marks the boundary | Adopted | The anchor is source-specific, so no generator can write the test |
 | What a regeneration across a framework change actually moves | Adopted | A scoping fact a planner needs, and the cost of R19 that no fix removes |
 | Narration's real per-unit footprint | Adopted | `plan` answers it only once a manifest exists, and the media limit is a refusal |
+
+## The second sort: a course written from a plan
+
+The first course written from a plan rather than converted, sorted after it
+was published (its log is `docs/course-logs/integer-programming-python-or-tools.md`
+in the framework repository). It never read this file and kept its findings in
+its own repository, which is the first row, and why the read line and the
+release check exist.
+
+| What the course found | Verdict | Why |
+|---|---|---|
+| Nothing a course runs pointed at this catalogue, an installed package did not carry it, and no log was written | A hole in a skill: fixed in the framework | It now ships as a skill, every skill sends its reader here first, and the release checks the log |
+| Release and publish refused one precondition at a time, and the publish list pushed bases and scanned base-image files | A hole in a skill: fixed in the framework | Preflight names every reason; the publish list pushes and scans only the course's own images |
+| Re-pinning to a newer framework build took nine hand-run steps | A hole in a skill: fixed in the framework | One command with a dry run |
+| Project practices could be passed by copying their own page | A hole in a skill: fixed in the framework | A gate, and the hold-back rule in the exercises skill |
+| Libraries that cannot share a process, and expected answers that depend on which equal answer a solver returns | A hole in a skill: rules in the execution and exercises skills | A skill can oblige the smoke run and the reordered re-run |
+| Questions asked of the owner after modules were written | A hole in a skill: rules in the lessons and delivery skills | A skill can ask them before the plan |
+| Layout faults seen first by the owner, hand-written reports gone stale, no slot for a hardware variant in the release | A hole in a skill: open framework tasks | Each is generated output or a check the framework can own |
+| Learner time sized from the plan's budget | Adopted | Only the written course can give the counts |
+| A pinned library's faults, a licensed tool, an optional hardware track, quiz keys in the page | Adopted | True however the framework changes, and no generator can write them |
+| Renderer and grading faults met in real lessons | Fixed in the framework during the build | Bugs, not entries |
+

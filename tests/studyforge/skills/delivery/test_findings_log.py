@@ -28,9 +28,13 @@ from studyforge.skills.delivery import (
     LogRefused,
     closing,
 )
+from studyforge.skills.catalogue import read_line
 from studyforge.skills.onboarding import pin
 from studyforge.validate.source import SKIP_DIRS
 from tests.support import repository_root
+
+#: The read line every rendered log carries: this installation's catalogue.
+READ = read_line()
 
 #: A commit-shaped value for a stub; fabricated, never a real ref.
 COMMIT = "0" * 40
@@ -42,7 +46,7 @@ def finding(id: str = "IX-19/1", marker: str = "structural") -> Finding:
 
 
 def rendered(*entries: Entry, run: str = "a conversion") -> str:
-    return "\n".join(FindingsLog(run=run, entries=entries).lines()) + "\n"
+    return "\n".join(FindingsLog(run=run, entries=entries, read=READ).lines()) + "\n"
 
 
 def skill(package: ModuleType) -> str:
@@ -85,7 +89,7 @@ def test_the_slot_asks_the_question_the_catalogue_refuses_on():
     # ⚠️ The catalogue states the RULE, not the question: its table refuses
     # "anything a skill could generate". The question is the sort's own words,
     # which the next test reads where the sort was written.
-    catalogue = (repository_root() / "docs/integration-catalogue.md").read_text("utf-8")
+    catalogue = (repository_root() / "src/studyforge/skills/catalogue/SKILL.md").read_text("utf-8")
     assert "Anything a skill could generate" in catalogue
 
 
@@ -126,27 +130,27 @@ def test_a_none_entry_carries_no_slot_because_it_writes_zero():
 
 def test_an_empty_log_is_refused_because_zero_is_a_none_finding():
     with pytest.raises(LogRefused, match="Zero is written as one `none` finding"):
-        FindingsLog(run="a conversion", entries=())
+        FindingsLog(run="a conversion", entries=(), read=READ)
 
 
 def test_a_repeated_id_is_refused_by_name():
     with pytest.raises(LogRefused, match="appears twice: IX-19/2"):
-        FindingsLog(run="r", entries=(Entry(finding("IX-19/2")), Entry(finding("IX-19/2"))))
+        FindingsLog(run="r", entries=(Entry(finding("IX-19/2")), Entry(finding("IX-19/2"))), read=READ)
 
 
 def test_a_none_beside_a_real_finding_is_refused():
     with pytest.raises(LogRefused, match="stands beside a real one"):
-        FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2", "none"))))
+        FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2", "none"))), read=READ)
 
 
 def test_every_refusal_of_a_log_is_named_at_once():
     with pytest.raises(LogRefused) as raised:
-        FindingsLog(run=" ", entries=())
+        FindingsLog(run=" ", entries=(), read=READ)
     assert str(raised.value).startswith("2 refusals")
 
 
 def test_a_log_that_can_be_read_back_is_accepted():
-    log = FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2"))))
+    log = FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2"))), read=READ)
     assert len(log.entries) == 2
 
 
@@ -259,7 +263,7 @@ def test_the_delivery_sort_starts_from_the_log_and_points_at_the_catalogue():
     assert f"`{LOG}`" in text
     cited = re.search(r"the catalogue's own \*(.+?)\* section", text)
     assert cited, "the procedure no longer names the catalogue section a finished sort takes"
-    catalogue = (repository_root() / "docs/integration-catalogue.md").read_text("utf-8")
+    catalogue = (repository_root() / "src/studyforge/skills/catalogue/SKILL.md").read_text("utf-8")
     headings = [line for line in catalogue.splitlines() if line.startswith("## ")]
     assert any(cited.group(1) in heading for heading in headings), cited.group(1)
 
@@ -333,3 +337,33 @@ def test_a_typed_count_is_caught():
     # ⭐ The other direction: the pattern fires on the sentence it replaced.
     assert TYPED_COUNTS.findall("The report names one file as yours and seven as generated.")
     assert TYPED_COUNTS.findall("**Eight files, seven generated:**")
+
+
+# --- the catalogue the run read first -----------------------------------------
+
+
+def test_a_log_names_the_catalogue_its_run_read_first():
+    assert READ in rendered(Entry(finding())).splitlines()
+
+
+def test_a_log_without_a_read_line_is_refused_when_built():
+    with pytest.raises(LogRefused, match="which catalogue its run read first"):
+        FindingsLog(run="r", entries=(Entry(finding()),), read="")
+
+
+def test_a_read_line_that_names_no_digest_is_refused_when_built():
+    with pytest.raises(LogRefused, match="which catalogue its run read first"):
+        FindingsLog(run="r", entries=(Entry(finding()),), read="Read first: the catalogue")
+
+
+def test_a_log_whose_read_line_was_removed_is_refused_when_read_back():
+    text = rendered(Entry(finding())).replace(READ + "\n", "")
+    with pytest.raises(LogRefused, match="which catalogue the run read first"):
+        closing(text)
+
+
+def test_a_log_that_read_an_older_catalogue_still_closes():
+    # ⭐ The digest names what was read when the run began; entries added since
+    # are the sort's business, not a refusal.
+    text = rendered(Entry(finding())).replace(READ, read_line("an older catalogue"))
+    assert closing(text)[-1].startswith("open: ")

@@ -33,7 +33,7 @@ from tests.support import git, init_repository, repository_root, run
 DECISIONS = Path("docs") / "decisions.md"
 
 #: The integration catalogue, which ships beside it and is held to the same no-id rule.
-CATALOGUE = Path("docs") / "integration-catalogue.md"
+CATALOGUE = Path("src") / "studyforge" / "skills" / "catalogue" / "SKILL.md"
 
 #: The label that opens every entry part, in the order an entry carries them.
 PARTS = ("**Decision.**", "**Why.**", "**Serves.**")

@@ -9,6 +9,17 @@ It runs **in the target repository**, and its authority is `studyforge`.
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## ⛔ The three rules that decide every judgement below
 
 1. ⛔ **The planner never reads the extraction source** (R20). The repository
@@ -53,6 +64,12 @@ this step exists to stop.** The offer is read from the installation's own
 command table and skill tree, so it is right for the version installed, and a
 planner who went looking in the source would be planning against whatever
 they happened to read.
+
+⛔ **Then ask the owner the questions that are expensive to change later**,
+before the backlog is cut: the list is the lessons skill's *Before you start*,
+item 5 (private sources, release, licensed tools, optional hardware,
+ruled-out technology and narration, practice policy). An answer that arrives
+after the modules are written is a rewrite.
 
 ### 2. Decide where this corpus **finishes**, and say what it will never use
 
@@ -192,7 +209,8 @@ speak one tracker is a planner one team can use.
 ### 9. Feed the catalogue — ⛔ this is the step everybody skips
 
 ⭐ **Every integration's findings are distilled back into
-`docs/integration-catalogue.md`, so the *next* integration starts further
+the catalogue (`python3 -m studyforge.skills.catalogue`, shipped as the `catalogue`
+skill), so the *next* integration starts further
 along.** That is the difference between a framework and a thing that has been
 used twice, and it is why the catalogue lives in this repository rather than
 in whichever repository happened to learn the lesson.
@@ -210,6 +228,10 @@ message** (R19). The conversion wrote it at `.studyforge/findings.md` —
 paragraph above turns on: *could a skill have generated this?* ⭐ **`yes`
 routes to a skill as a finding against a task, `no` is a candidate entry, and
 `open` is the sort still owed.**
+⭐ **The catalogue is `src/studyforge/skills/catalogue/SKILL.md` in the
+framework repository**, and an installed package prints it. A sort adds its
+adopted entries there, appends its own sort table at the end, and files the
+run's log at `docs/course-logs/<corpus source>.md` beside it.
 The shape a finished sort takes is the catalogue's own *sort* section:
 every finding, a verdict, and why — the refusals written beside the adoptions.
 

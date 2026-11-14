@@ -12,6 +12,17 @@ fixed that, and those readers accepted it. Every rule here comes from that rewri
 
 ---
 
+## ⛔ First and last: what earlier courses learned
+
+⭐ **Before anything else, read the catalogue:** `python3 -m studyforge.skills.catalogue`.
+It is what every earlier course met and what to do instead, and it ends with the line
+this run's findings log records. ⛔ **Before the run is declared done, write the findings
+log** at `.studyforge/findings.md` (onboarding, step 7) with that line under its title: one
+finding for each thing done by hand, worked around or learned. Then sort each one (delivery,
+step 9): a hole in a skill goes to the framework as a task, and a fact that stays true goes
+into the catalogue, so the next course starts further along. ⛔ A release refuses a corpus
+whose log is missing, does not name the catalogue it read, or is not sorted.
+
 ## Before you start
 
 1. **The corpus is onboarded** and its build and gates run (`skills/onboarding`,
@@ -26,6 +37,23 @@ fixed that, and those readers accepted it. Every rule here comes from that rewri
    repository ignores. `emit` and `validate` walk every folder git does not ignore, so an
    unignored worktree under the root is walked file by file and its `.git` file is refused as a
    nested repository.
+5. **The owner has answered the questions that are expensive to change later.**
+   Ask them before the plan, and write the answers into the plan:
+   - **Private sources.** Where do the owner's private inputs live (a job
+     description, notes from another tool, the prompt that started the build)?
+     Keep them outside the corpus, or in a folder the repository ignores, from
+     the first commit. One course had to rewrite its whole history at the end
+     to take such files out.
+   - **Release.** Licence and copyright holder, the source repository, the
+     image namespace, the site's address, and whether this course ships alone
+     or with another.
+   - **Paid or licensed tools.** Which tools need a licence. The learner always
+     brings their own; no image carries one.
+   - **Optional hardware.** Whether a track needs hardware a learner may lack
+     (a GPU, say). It needs a second image and a fallback that runs everywhere.
+   - **Ruled-out technology**, and narration: yes or no.
+   - **Practice policy.** How many practices per lesson, and how much of each
+     project step a page may show (at least one graded piece is always held back).
 
 ## 1. Plan the page by its ideas, before writing a word
 

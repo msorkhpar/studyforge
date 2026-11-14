@@ -103,7 +103,7 @@ READING_LIST = (
     README,
     "docs/authoring/",
     "docs/decisions.md",
-    "docs/integration-catalogue.md",
+    "src/studyforge/skills/catalogue/SKILL.md",
     "docs/specs/",
 )
 

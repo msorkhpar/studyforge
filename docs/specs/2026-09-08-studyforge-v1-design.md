@@ -2350,7 +2350,7 @@ produced it.
 
 R20 says a consumer never reads the repository this framework was extracted
 from. That is only honest if what a consumer would have gone looking for is
-**here** — so the framework carries [a catalogue](../integration-catalogue.md)
+**here** — so the framework carries [a catalogue](../../src/studyforge/skills/catalogue/SKILL.md)
 of what goes wrong when material meets it, written for somebody planning work
 rather than somebody writing code: a plausible short parse that raises nothing;
 a corpus carrying the same material twice; a hierarchy encoded in filenames; an
