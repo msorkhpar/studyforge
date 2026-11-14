@@ -23,8 +23,14 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from studyforge.render.markup import anchor
+from studyforge.render.page import QUIZ_FORM_TEXT
 from studyforge.skills.execution.standalone.facts import Facts
 from studyforge.skills.execution.standalone.preview import RUN_ANCHOR
+
+#: ⭐ The last button of a lesson's quiz, read from the form that draws it (`page.mockform`), so
+#: the README names the label the page shows. ⚠️ A plain quiz is drawn one question at a time by
+#: default; the one-page layout and its Check control are an opt-out the tour does not describe.
+FINISH = QUIZ_FORM_TEXT["submit"]
 
 #: The README section every note in the preview points to, and its heading.
 RUN_HEADING = "Run it locally with Docker"
@@ -117,9 +123,10 @@ def features(facts: Facts, shots: Mapping[str, str], *, narrated: bool) -> list[
         ]
     if facts.quizzes:
         lines += [
-            "**Quizzes graded in the page.** A short quiz has a few questions with one "
-            "answer each. Choose, press **Check answers**, and each choice is explained "
-            "right or wrong. Nothing is sent anywhere: the page grades it.",
+            "**Quizzes graded in the page.** A short quiz shows one question at a time. "
+            "Choose an answer and it is explained right or wrong at once; move with "
+            f"**Previous** and **Next**, then press **{FINISH}** to see every answer's "
+            "verdict. Nothing is sent anywhere: the page grades it.",
             *_shot(shots, "quiz"),
             "",
         ]

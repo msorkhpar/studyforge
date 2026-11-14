@@ -5,6 +5,10 @@
 
 from __future__ import annotations
 
+import re
+
+from studyforge.render import templates
+from studyforge.render.page import QUIZ_FORM_TEXT
 from studyforge.skills.execution.standalone import tour
 from studyforge.skills.execution.standalone.facts import Facts
 
@@ -50,3 +54,26 @@ def test_the_comparison_lists_only_what_the_course_has_and_always_the_set_up():
     full = "\n".join(tour.ways(FULL, narrated=True))
     for row in ("Quizzes", "Run and Submit", "Code examples opened", "Narration"):
         assert row in full
+
+
+
+def _quiz_paragraph(text: str) -> str:
+    return next(one for one in text.split("\n") if one.startswith("**Quizzes graded"))
+
+
+#: The template the exam form draws a plain quiz with (`render.page.mockform.FORM_TEMPLATE`).
+FORM_TEMPLATE = "practice-mockform.html"
+
+
+def test_the_quiz_sentence_names_the_buttons_the_lesson_quiz_draws():
+    """⭐ A plain quiz is drawn one question at a time by the exam form (`page.mockform`), so
+    every button the tour names is one that form's template draws, and it names the last one.
+    """
+    finish = QUIZ_FORM_TEXT["submit"]
+    source = (templates.TEMPLATE_DIR / FORM_TEMPLATE).read_text(encoding="utf-8")
+    assert "${submit}" in source
+    drawn = set(re.findall(r"<button[^>]*>([^<]+)</button>", source.replace("${submit}", finish)))
+    paragraph = _quiz_paragraph("\n".join(tour.features(FULL, {}, narrated=False)))
+    named = set(re.findall(r"\*\*([^*]+)\*\*", paragraph)) - {"Quizzes graded in the page."}
+    assert named and named <= drawn, named - drawn
+    assert finish in named and "Check answers" not in paragraph
