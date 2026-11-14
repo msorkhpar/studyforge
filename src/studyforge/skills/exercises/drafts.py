@@ -189,6 +189,10 @@ class CodeDraft:
     #: ⭐ Optional: a project's read-only files beside `test_file` (more tests, fixtures, data, an
     #: expected report), workspace-relative path to text. Empty is every draft until now.
     read_only: Mapping[str, str] = field(default_factory=dict)
+    #: ⭐ Optional: a project step's copied candidate, every file the reader edits as copying the
+    #: step's page gives it (`holdback.copied`). `H1` runs it once and refuses a page that gives
+    #: the answer away. `None` is every draft that is not a project step: no `H1`.
+    copied: Mapping[str, str] | None = None
 
 
 @dataclass(frozen=True, slots=True)

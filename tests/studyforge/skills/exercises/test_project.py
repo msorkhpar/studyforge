@@ -15,6 +15,7 @@ import pytest
 from studyforge.exercise import EDGE, KEPT, MAIN, from_document
 from studyforge.exercise.bundle import bundle_of, emit
 from studyforge.exercise.gates import G1, G2, G3, G4, G5
+from studyforge.exercise.gates.holdback import H1
 from studyforge.skills.exercises import AuthoringError
 from studyforge.skills.exercises.project import project_draft, read_manifest
 from studyforge.validate.projects import check_project_files
@@ -26,7 +27,7 @@ WS = "practice/seeds/prose/unit-01/practice-1"
 def test_the_sample_project_clears_every_gate(tmp_path):
     result, _ = gated(tmp_path)
     assert result.clears, [verdict.says for verdict in result.refused]
-    assert [verdict.id for verdict in result.record.verdicts] == [G1, G2, G3, G4, G5]
+    assert [verdict.id for verdict in result.record.verdicts] == [G1, G2, G3, G4, G5, H1]
     g2 = next(verdict for verdict in result.record.verdicts if verdict.id == G2)
     assert "all 4 kept cases passed on it" in g2.says
 

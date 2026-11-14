@@ -1174,6 +1174,21 @@ case, the expected-output check included, and fails its own edge. `G4` and `G5` 
 Because a plant must pass the expected-output check, the entry point's own data should not reach
 an edge case: test edges with fixtures under `tests/`.
 
+**And one more, `H1`: copying the page must not pass.** A project step's page usually walks
+through the change file by file, and a page that shows every graded change in full lets a reader
+pass by copying it, while `G1`–`G5` all hold. `H1` (the `holdback` family) builds the **copied
+candidate**: the starter with every change the page shows applied. A change is a run of lines
+where a statement of the starter and the same-named statement of the reference differ, and the
+page shows it when its reference lines (stripped, blank lines dropped) appear in that order, next
+to each other, in the page's fenced code read as one list of lines. `H1` runs the candidate once
+and refuses the step when every case passes, naming the files whose code the page showed. So
+hold back at least one piece the tests grade on every step's page: describe it in prose, or show
+its signature and contract as a stub, and do not show its body. ⚠️ The rule reads code, not
+prose: a change split by a "before" block or an ellipsis, or rewritten in other words, does not
+count as shown, so `H1` is a floor, and a learner judge reading the page is still owed. The page
+is the one the manifest `cites`, found in the nearest folder above the manifest that holds it, or
+the text passed to `project_draft` as `page`; a page that cannot be found is refused.
+
 #### From a before/after pair of snapshots
 
 A course that grows a project keeps each step as a complete snapshot, `<module>/steps/NN/`, with

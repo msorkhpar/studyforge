@@ -7,7 +7,8 @@ changes (worded by its docstring, `main` until the author says otherwise), and o
 per function the step adds or changes, with the contract read off its docstring. ⛔ What only an
 author knows, the modeling idea and the lesson, is left empty, and `project.read_manifest` refuses
 an empty field, so a skeleton never ships unread. `summary(manifest)` builds the draft and says,
-file by file and case by case, what it would ship.
+file by file and case by case, what it would ship, and which changed files the step's page shows
+a change to (the copied candidate `H1` runs).
 
 **How you use it.**
 
@@ -39,7 +40,8 @@ from studyforge.skills.exercises.snapshot import read_snapshot, declared_tests
 CHECK_WORKSPACE = "practice/check"
 
 #: ⭐ The origin `check` builds a draft with when the manifest names none: it checks nothing a
-#: gate reads, and a real pass hands `project_draft` the page's own.
+#: gate reads, and a real pass hands `project_draft` the page's own. ⛔ With no page there is no
+#: page text either, and `check` says so rather than counting what an empty page shows.
 _NO_ORIGIN = Origin("unset", None)
 
 #: The entry point's usual names, tried in this order.
@@ -82,7 +84,8 @@ def skeleton(before: Path, after: Path, *, tests: str = "tests", relative_to: Pa
 def summary(manifest: Path) -> list[str]:
     """Return the lines `check` prints: the files by role, the cases by kind, and the plants."""
     found = read_manifest(manifest)
-    draft = project_draft(found, CHECK_WORKSPACE, origin=found.origin or _NO_ORIGIN)
+    page = None if found.origin else ""
+    draft = project_draft(found, CHECK_WORKSPACE, origin=found.origin or _NO_ORIGIN, page=page)
     edited = (draft.main_file, *draft.files)
     changed = [
         path
@@ -91,6 +94,10 @@ def summary(manifest: Path) -> list[str]:
     ]
     lines = [found.title, f"  the reader edits {len(edited)} file(s), {len(changed)} changed:"]
     lines += [f"    {path}" for path in changed]
+    if found.origin:
+        lines += _shown(draft, changed)
+    else:
+        lines.append("  no page is cited, so what copying it gives away (H1) is not read")
     lines.append(f"  read-only: {len(draft.read_only) + 1} file(s), the tests and their fixtures")
     for kind in (MAIN, EDGE, KEPT):
         named = [case for case in draft.cases if case.kind == kind]
@@ -99,6 +106,14 @@ def summary(manifest: Path) -> list[str]:
     edges = sum(1 for case in draft.cases if case.kind == EDGE)
     lines.append(f"  plants: {len(draft.plants)} for {edges} edge case(s)")
     return lines
+
+
+def _shown(draft, changed: list[str]) -> list[str]:
+    """The lines naming each changed file the page shows a change to, which `H1` will run."""
+    starters = {draft.main_file: draft.starter} | {p: f.starter for p, f in draft.files.items()}
+    shown = [path for path in changed if draft.copied[path] != starters[path]]
+    lines = [f"  the page shows a change to {len(shown)} of {len(changed)} changed file(s):"]
+    return lines + [f"    {path}" for path in shown]
 
 
 def main(argv: list[str]) -> int:

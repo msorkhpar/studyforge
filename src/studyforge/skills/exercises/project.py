@@ -17,8 +17,8 @@ test.
 and `python -m studyforge.skills.exercises.project check <manifest>` builds the draft and says
 what it would ship, without running anything (`projectcli`).
 
-**Depends on.** `studyforge.exercise` for the case vocabulary, `exercise.bundle` for a plant,
-and this package's `drafts`, `snapshot`, `blueprint` and `expected`. Standard library only.
+**Depends on.** `studyforge.exercise` for the case vocabulary, `exercise.bundle` for a plant, and
+this package's `drafts`, `snapshot`, `blueprint`, `expected` and `holdback`. Standard library only.
 
 ## ⭐ EVERY TEST IS A CASE, AND A KEPT ONE IS DERIVED
 
@@ -61,6 +61,7 @@ from studyforge.skills.exercises.expected import (
     Expected,
     check_source,
 )
+from studyforge.skills.exercises.holdback import cited_page, copied
 from studyforge.skills.exercises.snapshot import Snapshot, declared_tests, read_snapshot
 from studyforge.version import check as check_version
 
@@ -112,6 +113,7 @@ class Manifest:
     plants: dict[str, tuple[tuple[str, str, str], ...]]
     assertions_only: bool
     origin: Origin | None
+    path: Path | None = None  # ⭐ where it was read from: its cited page is found above it
 
 
 def read_manifest(path: Path) -> Manifest:
@@ -160,15 +162,21 @@ def read_manifest(path: Path) -> Manifest:
         },
         assertions_only=bool(value["assertions_only"]),
         origin=_cited(value["cites"], where),
+        path=Path(path),
     )
 
 
 def project_draft(
-    manifest: Manifest | Path, workspace: str, *, origin: Origin | None = None
+    manifest: Manifest | Path,
+    workspace: str,
+    *,
+    origin: Origin | None = None,
+    page: str | None = None,
 ) -> CodeDraft:
     """Return the code draft a project manifest declares, for the practice at `workspace`."""
     found = manifest if isinstance(manifest, Manifest) else read_manifest(manifest)
     where = found.title
+    cited = _required_origin(origin or found.origin, where)
     before = read_snapshot(found.before, tests=found.tests)
     after = read_snapshot(found.after, tests=found.tests)
     check = f"{found.tests}/{CHECK_FILE}"
@@ -203,7 +211,7 @@ def project_draft(
         ),
         cases=project_cases(found, before, after),
         report=REPORT,
-        origin=_required_origin(origin or found.origin, where),
+        origin=cited,
         statement=_statement(found),
         starter=starters[main],
         reference=references[main],
@@ -220,6 +228,7 @@ def project_draft(
             if path != main
         },
         read_only={**after.tests, **after.read_only},
+        copied=copied(starters, references, cited_page(found.path, cited.path, where, page)),
     )
 
 

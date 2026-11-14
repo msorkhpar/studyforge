@@ -2,7 +2,8 @@ r"""One draft, gated: staged, run in the caller's runner, and answered by every 
 
 **What it does.** Turns one `CodeDraft` into the bundle `exercise.bundle` defines, stages
 it outside the corpus, takes every run a gate record's evidence asks for through the
-caller's runner, and answers all five code gates; or turns one `QuizDraft` into
+caller's runner, and answers all five code gates (and `H1`, for a project step: its copied
+candidate is run once more, as the role `COPIED`); or turns one `QuizDraft` into
 its document and answers all five quiz gates. ⭐ Either way the result is a
 `Gated`: the gate record, and every file the exercise would commit.
 
@@ -99,6 +100,7 @@ from studyforge.exercise.gates import (
     plant_role,
     taken_over,
 )
+from studyforge.exercise.gates.holdback import COPIED, check_holdback
 from studyforge.exercise.gates.quiz import check_mock, check_quiz, check_review, cited_role
 from studyforge.exercise.quiz import QUIZ_PROVENANCE, QUIZ_TRUST
 from studyforge.skills.exercises.drafts import (
@@ -110,6 +112,7 @@ from studyforge.skills.exercises.drafts import (
     Judge,
     QuizDraft,
 )
+from studyforge.skills.exercises.holdback import shown_files
 from studyforge.skills.exercises.ledger import Ledger, digests
 from studyforge.skills.exercises.quizdoc import QUIZ_API, QUIZ_DOCUMENT, quiz_of
 from studyforge.skills.exercises.staging import cited, json_bytes, lay_down, record_bytes
@@ -166,7 +169,7 @@ class Gated:
 def gate_code(
     draft: CodeDraft, brief: Brief, ledger: Ledger, runner: Runner, *, source: str, where: str
 ) -> Gated:
-    """Stage one code draft, take every run its evidence needs, and answer `G1`–`G5`."""
+    """Stage one code draft, take every run its evidence needs, and answer `G1`–`G5` (and `H1`)."""
     places = brief.places
     bundle = bundle_of(_bundle_document(draft, places), where)
     positions = bundle.plants
@@ -211,6 +214,9 @@ def gate_code(
     }
     solutions = {"reference": references, "starter": starters}
     solutions |= {plant_role(case): edited[case.id] for case in _edges(bundle.cases)}
+    shown = shown_files(draft.copied, starters, where)
+    if shown:
+        solutions[COPIED] = dict(draft.copied)
     with tempfile.TemporaryDirectory(prefix="studyforge-stage-") as staged:
         stage = Path(staged)
         lay_down(stage, {places.in_bundle(path): data for path, data in held.items()})
@@ -219,12 +225,17 @@ def gate_code(
         runs = _Runs(exercise, draft, places, solutions, runner, where)
         evidence = Evidence.taken(exercise, runs.attempt, where)
         origins = cited(((ORIGIN_ROLE, bundle.origin),), ledger)
+        verdicts = check(exercise, evidence, origins, digests(ledger), where)
+        if draft.copied is not None:
+            # ⭐ The `holdback` family writes after `code`: families are ordered by name.
+            run = runs.attempt(COPIED, 1) if shown else None
+            verdicts = (*verdicts, check_holdback(exercise.cases, run, shown, where))
         record = GateRecord(
             inputs=taken_over(
                 stage / places.bundle, roles_of(bundle, positions, set(specs)), where
             ),
             origins=origins,
-            verdicts=check(exercise, evidence, origins, digests(ledger), where),
+            verdicts=verdicts,
         )
     files = (
         *((places.in_bundle(path), data) for path, data in held.items()),

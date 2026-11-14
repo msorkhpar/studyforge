@@ -47,6 +47,7 @@ runner is the caller's.
 | `expected` | a project's expected-output check: the test that runs the entry point and diffs it |
 | `project` | a project practice from a before/after pair of snapshots and one manifest |
 | `projectcli` | the project helper's two commands: a manifest to fill in, and what one ships |
+| `holdback` | a project step's copied candidate: the starter with each change its page shows |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |

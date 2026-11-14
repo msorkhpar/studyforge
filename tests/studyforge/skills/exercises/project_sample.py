@@ -21,14 +21,14 @@ from tests.support import repository_root
 SAMPLE = repository_root() / "tests" / "fixtures" / "project"
 MANIFEST = SAMPLE / "practices" / "01-must-ship" / "project.json"
 
-#: The page the practice cites, as a corpus would carry it.
+#: The page the practice cites, as a corpus would carry it; the sample carries its own copy.
 PAGE = "lessons/fixing.md"
 
 
 def brief_and_ledger(root: Path):
     """A one-page corpus under `root`, its ledger, and the brief for its first practice."""
     (root / "lessons").mkdir(parents=True, exist_ok=True)
-    (root / PAGE).write_text("# Fixing a variable\n\nA forced lot is fixed to one.\n", "utf-8")
+    (root / PAGE).write_text((SAMPLE / PAGE).read_text(encoding="utf-8"), "utf-8")
     ledger = take(root, [PAGE], [], "the ledger")
     page = Page(PAGE, Address(["seeds"]), "prose", 1, "code", (), "core")
     places = Places(page.address, page.variant, 1, 1)
@@ -45,10 +45,13 @@ def copy_sample(root: Path, change: dict | None = None) -> Path:
     return manifest
 
 
-def gated(root: Path, manifest: Path = MANIFEST, runner=None):
-    """Gate the practice the manifest declares, every run a real `pytest` process; the result."""
+def gated(root: Path, manifest: Path = MANIFEST, runner=None, page: str | None = None):
+    """Gate the practice the manifest declares, every run a real `pytest` process; the result.
+
+    ⭐ `page` is the text the step's page shows, in place of the sample's own `lessons/fixing.md`.
+    """
     brief, ledger = brief_and_ledger(root / "corpus")
-    draft = project_draft(manifest, brief.places.workspace)
+    draft = project_draft(manifest, brief.places.workspace, page=page)
     return gate_code(draft, brief, ledger, runner or Running(), source="demo", where="w"), draft
 
 
