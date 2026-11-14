@@ -13,6 +13,9 @@ from pathlib import Path
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
+from studyforge.skills.delivery import LOG, Entry
+from studyforge.skills.delivery.findings_log import TITLE
+from studyforge.skills.delivery.finding import Finding
 from studyforge.skills.execution.standalone import vendor
 from tests.studyforge.skills.execution import contracts
 from tests.studyforge.skills.execution.standalone.test_compose import BUILDS
@@ -105,7 +108,31 @@ def course(where: Path, runner: str = "t/runner:primed", editor: str = "t/editor
         f"# a comment\nSTUDYFORGE_RUNNER_IMAGE={runner}\n", encoding="utf-8"
     )
     (execution / "editor.env").write_text(f"EDITOR_IMAGE={editor}\n", encoding="utf-8")
+    findings(where)
     return where
+
+
+#: ⭐ The log a run that found nothing writes: one `none` finding, so every finding is sorted.
+NOTHING = Finding("EXAMPLE-1/1", "none", "the run found nothing", ())
+
+
+#: ⭐ The catalogue line a log names under its title; the reader reads it, this fixture only
+#: carries it, at a placeholder commit.
+READ_FIRST = "Read first: the integration catalogue at 0123456789ab"
+
+
+def findings(where: Path, *entries: Entry) -> Path:
+    """Write the corpus's findings log (`LOG`): `entries`, or the sorted log of a run that found
+    nothing. ⭐ Each entry is rendered by the delivery skill's own `Entry`, under the title and the
+    catalogue line the log opens with; ⛔ the release reads it only through `closing`.
+    """
+    lines = [f"{TITLE} — an example run", "", READ_FIRST]
+    for entry in entries or (Entry(NOTHING),):
+        lines += ["", *entry.lines()]
+    path = where / LOG
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
 
 
 def test_the_four_builds_are_asked_with_the_set_the_platform_and_a_prime_only_for_a_layer(tmp_path):

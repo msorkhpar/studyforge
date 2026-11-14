@@ -23,6 +23,7 @@ from studyforge.skills.execution.standalone import (
     images,
     learner,
     pages,
+    preflight,
     split,
     write,
 )
@@ -293,7 +294,7 @@ def test_the_readme_states_the_counts_of_the_tree_it_sits_in(pictured):
         (("cover.png",), 10, "not a picture the README shows"),
         (("index.gif",), 10, "not a picture the README shows"),
         (("index.png", "index.webp"), 10, "two pictures"),
-        (("index.png",), write.SHOT_MAX_BYTES + 1, "over"),
+        (("index.png",), preflight.SHOT_MAX_BYTES + 1, "over"),
         (
             ("index.png", "lesson.png", "quiz.png", "practice.png", "example.png"),
             150 * 1024,
@@ -541,7 +542,7 @@ def test_a_lock_whose_tags_the_toolchain_does_not_compute_is_refused_before_a_fi
     tmp_path,
 ):
     stale = parsed(lock(runner=dict(lock()["runner"], tag="stale")))
-    with pytest.raises(bases.BasesRefused, match="runner base is locked at tag stale"):
+    with pytest.raises(write.ReleaseRefused, match="runner base is locked at tag stale"):
         export(tmp_path, stale)
     assert not (tmp_path / "learner").exists()
 

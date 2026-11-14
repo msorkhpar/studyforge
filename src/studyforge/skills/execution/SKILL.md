@@ -523,6 +523,15 @@ runs one argv and answers `(exit code, stdout)`.
     print(table(classify(course, tracked(course, ask))))   # the table alone
     released = release(course, Path("<empty dir>"), toolchain=Path("<checkout>"), run=ask)
 
+⭐ **Run the preflight first.** `standalone.preflight.preflight(course, Path("<empty dir>"),
+toolchain=Path("<checkout>"), platform="linux/amd64", bases=..., run=ask)` asks every
+precondition the release can decide before it writes (account, empty target, runtimes, tracked
+paths, the toolchain's pinned and computed tags, the lock and its profile entry, the README's
+pictures) and returns every reason at once, an empty list when clear; `release` runs the same
+checks and raises one `ReleaseRefused` naming them all. ⛔ The release refuses a course with no
+sorted findings log at `.studyforge/findings.md`: write it per the onboarding skill's step 7
+and sort it per the delivery skill's step 9, until its report ends `open: 0`.
+
 - ⭐ `standalone.table` over `standalone.classify` prints the KEEP/MOVE table
   and writes nothing. KEEP is what
   serving, studying or working with the course uses (`corpus.json`, `archive/`,

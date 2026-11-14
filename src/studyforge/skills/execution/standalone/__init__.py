@@ -13,6 +13,9 @@ code-server-toolchain, not narrate-service.
 
     from studyforge.skills.execution.standalone import release
 
+    from studyforge.skills.execution.standalone.preflight import preflight
+
+    print("\n".join(preflight(course, out, toolchain=checkout, platform=p, run=run)) or "clear")
     released = release(course, out, toolchain=checkout, run=run)
     print(table(released.verdicts))
 
@@ -40,6 +43,7 @@ builds them.
 | `preview` | the read-only static tree for GitHub Pages: words, script, page edits; one file |
 | `pages` | the workflow that deploys the preview on every push to `main`, and its builder |
 | `record` | `.studyforge/release.json`, and the toolchain paths a thin tree keeps |
+| `preflight` | every refusal a release can decide before it writes, named at once |
 | `write` | the whole of it |
 
 ## ⭐ Shared bases, and thin images per course

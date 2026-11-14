@@ -70,8 +70,8 @@ REACH = {
     "studyforge.corpus.manifest": 11,
     # ⚠️ It counts `validate.narration`'s and `validate.links`'s sites, and `cli/serve.py`
     # and `cli/check.py`, which import `read_corpus` from `generate.declarations`, the
-    # module that defines it.
-    "studyforge.generate": 7,
+    # module that defines it. `skills.execution.standalone.preflight` made it eight.
+    "studyforge.generate": 8,
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.

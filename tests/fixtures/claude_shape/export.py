@@ -19,6 +19,7 @@ from pathlib import Path
 from studyforge.corpus.manifest import parse
 from studyforge.skills.execution import generate, record_editor, record_runner, write as write_execution
 from studyforge.skills.execution.standalone import bases, write
+from tests.studyforge.skills.execution.standalone.test_vendor import findings
 
 RUNTIMES = "gradle,java,kotlin,node,python"
 PLATFORM = ("--platform", "linux/amd64")
@@ -49,6 +50,7 @@ def prepared(corpus: Path, checkout: Path, toolchain: Path) -> Path:
         stdin=subprocess.DEVNULL,
     )
     assert built.returncode == 0, built.stderr
+    findings(checkout)  # ⭐ the release refuses a course with no sorted findings log
     for argv in (("init", "-q"), ("add", "-A"), ("commit", "-q", "-m", "course")):
         subprocess.run([*GIT, *argv], cwd=checkout, check=True, stdin=subprocess.DEVNULL)
     return checkout
