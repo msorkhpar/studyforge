@@ -88,3 +88,11 @@ def test_a_java_run_keeps_the_jdks_own_log_lines_out(tmp_path):
 def test_the_kotlin_skeleton_quiets_the_same_two_sources_of_noise():
     text = tryit.skeleton("kotlin", "solution", "Cart")
     assert "removeHandler" in text and tryit.JDK_LOGGERS.replace("\\", "\\\\") in text
+
+
+def test_the_java_skeleton_imports_no_name_a_practice_may_use_for_its_own_type():
+    # ⚠️ Measured: practices in the senior-Java course declare their own `Handler`; an import of
+    # java.util.logging.Handler would shadow it in a try-it file in the same package.
+    text = tryit.skeleton("java", "solution", "Cart")
+    assert "import java.util.logging.Handler;" not in text
+    assert "java.util.logging.Handler before" in text

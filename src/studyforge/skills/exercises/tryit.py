@@ -85,7 +85,6 @@ logTo("try-it");
 // console.log("result:", ...);
 """,
     "java": """import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,7 +98,7 @@ public class TryIt {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s %5$s%n");
         // Only this handler prints, and it leaves out the JDK's own detail.
         Logger root = Logger.getLogger("");
-        for (Handler before : root.getHandlers()) {
+        for (java.util.logging.Handler before : root.getHandlers()) {
             root.removeHandler(before);
         }
         ConsoleHandler handler = new ConsoleHandler();
