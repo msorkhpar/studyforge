@@ -15,10 +15,18 @@ the lines of the owner's command list, so the list is testable without a daemon.
   its tag in `compose.yaml`.
 - **Context.** No docker line names a context unless the owner names one
   (`--context NAME`); otherwise docker uses `DOCKER_CONTEXT` or the current context.
-- **Scan before push.** Each built image's filesystem is exported to a folder and swept
-  with the shared personal-data pattern set (`python -m studyforge.archive.scrub check`).
-- **Digest after push.** Each pushed base's manifest digest must equal the digest the course
-  images pin (`release.json` `bases`); a mismatch stops the list.
+- **Push the course's images only.** The site (once per edition), the runner and the editor
+  are pushed; ⛔ a base (`serve`, `runner_base`, `editor_base` in `release.json` `images`) is
+  never pushed: it is published already, and docker refuses to push a reference that carries
+  a digest, which a thin export's base does.
+- **Scan before push.** Each course image is saved (`docker save`) and the layers it adds on
+  top of its base are written to a folder (`standalone.layerscan`) and swept with the shared
+  personal-data pattern set (`python -m studyforge.archive.scrub check`). ⛔ The base's own
+  layers are the toolchain's responsibility and are not swept here.
+- **Clean up.** The folder is made writable (`chmod -R u+w`) before `rm -rf`, so the list,
+  which runs under `set -e`, never stops on a file it cannot delete.
+- **Digest after push.** Each published base's manifest digest must equal the digest the
+  course images pin (`release.json` `bases`); a mismatch stops the list.
 
     python -m studyforge.skills.execution.standalone.publish [--context NAME] \
         RELEASE_JSON NAMESPACE WORKDIR
@@ -47,6 +55,10 @@ USAGE = "usage: publish [--context NAME] RELEASE_JSON NAMESPACE WORKDIR"
 
 _INTERPOLATION = re.compile(r"^\$\{[A-Z_]+:-[^}]*\}/")
 _NARRATION = re.compile(r"\$\{" + NARRATION_VARIABLE + r":-[^}]*\}")
+
+#: The course's own images in `release.json` `images`, each with the key of the base it starts
+#: from (`images.Names`). ⭐ Every other key there is a base, which is never pushed.
+COURSE_BASES = {"site": "serve", "runner": "runner_base", "editor": "editor_base"}
 
 
 def docker(context: str | None = None) -> list[str]:
@@ -84,24 +96,46 @@ def editions(release: Mapping[str, object]) -> tuple[str, ...]:
     return NARRATIONS if CLIPS in keeps else NARRATIONS[:1]
 
 
-def images_of(release: Mapping[str, object]) -> list[str]:
-    """Every image `release.json` lists, as `repository:tag` without any namespace.
+def _concrete(release: Mapping[str, object], listed: str) -> list[str]:
+    """`listed` without its namespace, one name per edition where it names the narration."""
+    name = _INTERPOLATION.sub("", listed)
+    found = []
+    for edition in editions(release) if _NARRATION.search(name) else ("",):
+        concrete = _NARRATION.sub(edition, name)
+        if "$" in concrete:
+            raise ValueError(f"an image name keeps an interpolation: {listed}")
+        found.append(concrete)
+    return found
+
+
+def bases_of(release: Mapping[str, object]) -> dict[str, str | None]:
+    """Each course image, `repository:tag`, to the base it starts from, or `None` if unnamed.
 
     ⭐ The site's narration interpolation becomes one concrete tag per edition; ⛔ any
-    other interpolation left in a name is refused, never printed.
+    other interpolation left in a name is refused, never printed. A base keeps the digest
+    the record pins it by.
     """
     listed = release.get("images")
     if not isinstance(listed, Mapping) or not listed:
         raise ValueError("release.json lists no images")
-    found: set[str] = set()
-    for one in listed.values():
-        name = _INTERPOLATION.sub("", str(one))
-        for edition in editions(release) if _NARRATION.search(name) else ("",):
-            concrete = _NARRATION.sub(edition, name)
-            if "$" in concrete:
-                raise ValueError(f"an image name keeps an interpolation: {one}")
-            found.add(concrete)
-    return sorted(found)
+    found: dict[str, str | None] = {}
+    for key, base_key in COURSE_BASES.items():
+        if key not in listed:
+            continue
+        base = _concrete(release, str(listed[base_key]))[0] if base_key in listed else None
+        for one in _concrete(release, str(listed[key])):
+            found[one] = base
+    if not found:
+        raise ValueError("release.json lists no course image: no site, runner or editor")
+    return dict(sorted(found.items()))
+
+
+def images_of(release: Mapping[str, object]) -> list[str]:
+    """The course's own images `release.json` lists, as `repository:tag` without any namespace.
+
+    ⛔ Never a base: those are published already and verified by `digest_commands`.
+    """
+    return list(bases_of(release))
 
 
 def pinned_digests(release: Mapping[str, object]) -> dict[str, str]:
@@ -129,21 +163,34 @@ def build_command(namespace: str, edition: str = NARRATIONS[0], context: str | N
 
 
 def scan_commands(
-    image: str, namespace: str, workdir: str, context: str | None = None
+    image: str, base: str | None, namespace: str, workdir: str, context: str | None = None
 ) -> list[str]:
-    """Lines that export `image`'s filesystem under `workdir` and sweep it; stop on a finding."""
+    """Lines that sweep what `image` adds to `base` under `workdir`; stop on a finding.
+
+    ⭐ The base's layer list is read from the local image (a build pulled it); with no base
+    named, the list is empty and every layer is swept. The folder is made writable before it
+    is removed.
+    """
     name = "scan-" + re.sub(r"[^a-z0-9]+", "-", image.lower()).strip("-")
-    where = f"{workdir}/{name}"
-    ref = f"{namespace}/{image}"
+    where = shlex.quote(f"{workdir}/{name}")
     run = shlex.join(docker(context))
+    layers = f"{where}/base-layers.json"
+    listed = (
+        f"{run} image inspect --format '{{{{json .RootFS.Layers}}}}'"
+        f" {shlex.quote(f'{namespace}/{base}')} > {layers}"
+        if base
+        else f"echo '[]' > {layers}"
+    )
     return [
-        f"mkdir -p {shlex.quote(where)}",
-        f"{run} create --name {name} {shlex.quote(ref)} >/dev/null",
-        f"{run} export {name} | tar -x -C {shlex.quote(where)} --exclude='dev/*'",
-        f"{run} rm {name} >/dev/null",
-        f"python -m studyforge.archive.scrub check {shlex.quote(where)}"
+        f"mkdir -p {where}",
+        listed,
+        f"{run} save -o {where}/image.tar {shlex.quote(f'{namespace}/{image}')}",
+        f"python -m studyforge.skills.execution.standalone.layerscan"
+        f" {where}/image.tar {layers} {where}/added",
+        f"python -m studyforge.archive.scrub check {where}/added"
         f" || {{ echo 'personal data in {image}: stop'; exit 1; }}",
-        f"rm -rf {shlex.quote(where)}",
+        f"chmod -R u+w {where}",
+        f"rm -rf {where}",
     ]
 
 
@@ -168,12 +215,14 @@ def digest_commands(
 def owner_commands(
     release: Mapping[str, object], namespace: str, workdir: str, context: str | None = None
 ) -> list[str]:
-    """The owner's whole list, in order: build each edition, scan every image, push, verify."""
-    images = images_of(release)
+    """The owner's whole list, in order: build each edition, scan and push each course image,
+    verify each base."""
+    bases = bases_of(release)
+    images = list(bases)
     lines = ["set -e"]
     lines += [build_command(namespace, edition, context) for edition in editions(release)]
-    for image in images:
-        lines += scan_commands(image, namespace, workdir, context)
+    for image, base in bases.items():
+        lines += scan_commands(image, base, namespace, workdir, context)
     run = shlex.join(docker(context))
     lines += [f"{run} push {shlex.quote(f'{namespace}/{image}')}" for image in images]
     lines += digest_commands(namespace, pinned_digests(release), context)

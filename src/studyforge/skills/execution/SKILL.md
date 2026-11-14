@@ -681,14 +681,19 @@ runs one argv and answers `(exit code, stdout)`.
      docker compose build` always, then `COURSE_NARRATION=with-narration docker compose
      build site` only when the tree keeps the clips' checksums
      (`.studyforge/narration-release/clips.sha256`; restore the clips first, or that build
-     stops); **each image the manifest `release.json` lists** is then handled (not a fixed
-     count; the site once per edition, `<course>-site:<tag>-without-narration` and
-     `-with-narration`);
-   - **a personal-data scan of every built image**: its filesystem is exported to a folder
-     and swept with the shared pattern set (`python -m studyforge.archive.scrub check
-     FOLDER`); a finding stops the list before anything is pushed;
-   - `docker push` for each listed image;
-   - **a digest check**: each pushed base's manifest digest must equal the built digest
+     stops); **each course image the manifest `release.json` lists** is then handled (not a
+     fixed count; the runner, the editor and the site once per edition,
+     `<course>-site:<tag>-without-narration` and `-with-narration`). ⛔ A base (`serve`,
+     `runner_base`, `editor_base`) is never pushed: it is published already, and a thin
+     export names it by digest, which docker refuses to push;
+   - **a personal-data scan of every course image**: it is saved (`docker save`), the
+     layers it adds on top of its base are written to a folder
+     (`standalone.layerscan`), and the folder is swept with the shared pattern set
+     (`python -m studyforge.archive.scrub check FOLDER`); a finding stops the list before
+     anything is pushed. ⛔ The base's own layers are the toolchain's responsibility and
+     are not swept. The folder is made writable before it is removed;
+   - `docker push` for each course image;
+   - **a digest check**: each published base's manifest digest must equal the built digest
      the course images pin (`bases` in `release.json`). ⛔ On a mismatch the list stops;
      nothing further is published.
 

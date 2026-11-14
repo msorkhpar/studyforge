@@ -20,6 +20,19 @@ RELEASE = {
         "profile": {"name": "p", "runner": {"image": "r-p", "tag": "2", "digest": DIGEST}},
     },
 }
+#: ⭐ The shape a thin export writes: every base under its own key, by tag AND digest.
+THIN = {
+    "images": {
+        "serve": f"${{STUDYFORGE_NAMESPACE:-studyforge-local}}/studyforge-serve:1@{DIGEST}",
+        "runner_base": f"${{STUDYFORGE_NAMESPACE:-studyforge-local}}/r-p:2@{DIGEST}",
+        "editor_base": f"${{STUDYFORGE_NAMESPACE:-studyforge-local}}/e-p:3@{DIGEST}",
+        "site": "${STUDYFORGE_NAMESPACE:-studyforge-local}/demo-site:abc-0123"
+        "-${COURSE_NARRATION:-without-narration}",
+        "runner": "${STUDYFORGE_NAMESPACE:-studyforge-local}/demo-runner:abc-aaaa",
+        "editor": "${STUDYFORGE_NAMESPACE:-studyforge-local}/demo-editor:abc-aaaa",
+    },
+    "bases": RELEASE["bases"],
+}
 #: The same release from a corpus that carries narration clips.
 NARRATED = {**RELEASE, "keeps": ["README.md", images.CLIPS]}
 
@@ -46,10 +59,58 @@ def test_images_come_from_the_manifest_not_a_fixed_count():
     assert publish.images_of(RELEASE) == [
         "demo-runner:abc",
         "demo-site:abc-0123-without-narration",
-        "studyforge-serve:1",
     ]
     with pytest.raises(ValueError):
         publish.images_of({})
+    with pytest.raises(ValueError):
+        publish.images_of({"images": {"serve": "x/studyforge-serve:1"}})
+
+
+def test_only_the_course_images_are_pushed_never_a_base():
+    """⛔ A base is published already and docker refuses to push a reference with a digest."""
+    assert publish.images_of(THIN) == [
+        "demo-editor:abc-aaaa",
+        "demo-runner:abc-aaaa",
+        "demo-site:abc-0123-without-narration",
+    ]
+    lines = publish.owner_commands(THIN, "ns", "scratch")
+    pushes = [line for line in lines if " push " in line]
+    assert pushes == [
+        "docker push ns/demo-editor:abc-aaaa",
+        "docker push ns/demo-runner:abc-aaaa",
+        "docker push ns/demo-site:abc-0123-without-narration",
+    ]
+    assert not any("@sha256" in line for line in pushes)
+
+
+def test_each_course_image_is_scanned_against_the_base_it_starts_from():
+    assert publish.bases_of(THIN) == {
+        "demo-editor:abc-aaaa": f"e-p:3@{DIGEST}",
+        "demo-runner:abc-aaaa": f"r-p:2@{DIGEST}",
+        "demo-site:abc-0123-without-narration": f"studyforge-serve:1@{DIGEST}",
+    }
+    # ⭐ A record that names no base for an image scans that image whole.
+    assert publish.bases_of(RELEASE)["demo-runner:abc"] is None
+
+
+def test_the_scan_reads_only_the_layers_the_image_adds_to_its_base():
+    lines = publish.scan_commands("demo-site:t", "studyforge-serve:1@" + DIGEST, "ns", "w")
+    where = "w/scan-demo-site-t"
+    assert lines == [
+        f"mkdir -p {where}",
+        "docker image inspect --format '{{json .RootFS.Layers}}'"
+        f" ns/studyforge-serve:1@{DIGEST} > {where}/base-layers.json",
+        f"docker save -o {where}/image.tar ns/demo-site:t",
+        "python -m studyforge.skills.execution.standalone.layerscan"
+        f" {where}/image.tar {where}/base-layers.json {where}/added",
+        f"python -m studyforge.archive.scrub check {where}/added"
+        " || { echo 'personal data in demo-site:t: stop'; exit 1; }",
+        f"chmod -R u+w {where}",
+        f"rm -rf {where}",
+    ]
+    whole = publish.scan_commands("demo-site:t", None, "ns", "w")
+    assert f"echo '[]' > {where}/base-layers.json" in whole
+    assert not any("inspect" in line for line in whole)
 
 
 def test_the_pinned_digests_include_profile_images():
@@ -100,7 +161,6 @@ def test_a_corpus_with_clips_builds_scans_and_pushes_both_editions():
         "demo-runner:abc",
         "demo-site:abc-0123-with-narration",
         "demo-site:abc-0123-without-narration",
-        "studyforge-serve:1",
     ]
     lines = publish.owner_commands(NARRATED, "ns", "scratch")
     voiced_build = (
@@ -111,7 +171,7 @@ def test_a_corpus_with_clips_builds_scans_and_pushes_both_editions():
     scans = [i for i, one in enumerate(lines) if "studyforge.archive.scrub check" in one]
     pushes = [i for i, one in enumerate(lines) if " push " in one]
     assert len(builds) == 2 and max(builds) < min(scans)
-    assert len(scans) == 4 and len(pushes) == 4 and max(scans) < min(pushes)
+    assert len(scans) == 3 and len(pushes) == 3 and max(scans) < min(pushes)
     for edition in publish.editions(NARRATED):
         assert f"docker push ns/demo-site:abc-0123-{edition}" in lines
 
@@ -133,7 +193,7 @@ def test_scan_precedes_every_push_and_uses_the_shared_pattern_set():
     lines = publish.owner_commands(RELEASE, "ns", "scratch")
     pushes = [i for i, one in enumerate(lines) if " push " in one]
     scans = [i for i, one in enumerate(lines) if "studyforge.archive.scrub check" in one]
-    assert len(scans) == 3 and len(pushes) == 3 and max(scans) < min(pushes)
+    assert len(scans) == 2 and len(pushes) == 2 and max(scans) < min(pushes)
     assert all("exit 1" in lines[i] for i in scans)
 
 
