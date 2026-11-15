@@ -1,6 +1,6 @@
 """The live runner and its egress proxy in the compose file, and their absence everywhere else.
 
-Mirrors the live half of `src/studyforge/skills/execution/siteservice.py` (R12). ⭐ Read off the
+Mirror of `src/studyforge/skills/execution/siteservice_live.py` (R12). ⭐ Read off the
 rendered file as `docker compose` reads it. ⛔ A corpus that declares no live run renders the
 bytes it always did: the proof against the earlier tree is a render of both and a comparison of
 their hashes; here the same claim is read as properties (no service, network, variable, profile or
@@ -14,7 +14,7 @@ import re
 import pytest
 
 from studyforge.execute import published
-from studyforge.skills.execution import onboard, siteservice
+from studyforge.skills.execution import onboard, siteservice, siteservice_live
 from tests.studyforge.skills.execution.test_instance import generated
 from tests.studyforge.skills.execution.test_siteservice import service_block
 
@@ -54,7 +54,7 @@ def test_plan_with_no_live_is_the_plan_it_always_was(tmp_path):
 
 def test_a_declaring_corpus_gets_a_live_runner_and_a_proxy_in_the_live_profile_only(tmp_path):
     text = text_of(tmp_path)
-    for name in (siteservice.LIVE, siteservice.EGRESS):
+    for name in (siteservice_live.LIVE, siteservice_live.EGRESS):
         block = service_block(text, name)
         assert re.search(r"profiles:\n\s+- live\n", block)
         assert "ports:" not in block, f"{name} publishes nothing"
@@ -63,7 +63,7 @@ def test_a_declaring_corpus_gets_a_live_runner_and_a_proxy_in_the_live_profile_o
 
 
 def test_the_live_runner_is_hardened_reaches_only_runs_and_the_proxy_reads_only(tmp_path):
-    live = service_block(text_of(tmp_path), siteservice.LIVE)
+    live = service_block(text_of(tmp_path), siteservice_live.LIVE)
     assert "read_only: true" in live and "- ALL" in live and "no-new-privileges:true" in live
     assert re.search(r"ulimits:\n\s+core: 0\n", live)
     for limit in ("mem_limit", "pids_limit", "cpus"):
@@ -72,12 +72,12 @@ def test_the_live_runner_is_hardened_reaches_only_runs_and_the_proxy_reads_only(
     assert "network_mode" not in live
     volumes = re.search(r"volumes:\n((?:\s+- .*\n)+)", live).group(1)
     assert all(line.strip().strip('"').endswith(":ro") for line in volumes.splitlines())
-    assert "perl" in live and siteservice.LIVE_SCRIPT_INSIDE in live
+    assert "perl" in live and siteservice_live.LIVE_SCRIPT_INSIDE in live
 
 
 def test_the_proxy_joins_the_internal_network_and_the_routed_one_and_allows_one_host(tmp_path):
     text = text_of(tmp_path)
-    egress = service_block(text, siteservice.EGRESS)
+    egress = service_block(text, siteservice_live.EGRESS)
     assert re.search(r"networks:\n\s+- live-net\n\s+- live-out\n", egress)
     assert "EGRESS_ALLOW_HOST: api.example.test" in egress and "read_only: true" in egress
     nets = text.split("\nnetworks:\n")[1]

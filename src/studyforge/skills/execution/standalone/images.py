@@ -44,12 +44,8 @@ from studyforge.corpus.placement import AUDIO_DIRNAME, GENERATED_ROOT, STUDY_DIR
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
-from studyforge.skills.execution.siteservice import (
-    CORPUS,
-    LIVE_SCRIPT_FILE,
-    LIVE_SCRIPT_INSIDE,
-    SCRIPT_INSIDE,
-)
+from studyforge.skills.execution.siteservice import CORPUS, SCRIPT_INSIDE
+from studyforge.skills.execution.siteservice_live import LIVE_SCRIPT_FILE, LIVE_SCRIPT_INSIDE
 from studyforge.skills.execution.standalone import bases as locked
 from studyforge.skills.execution.standalone import profile
 

@@ -15,6 +15,11 @@ boundary; it takes a decoded string or a whole decoded document and raises
 `socket`, `getpass` or `subprocess`: this gate must hold no value and read no
 environment, and `test_scrub.py` asserts that of this module's imports.
 
+Size exception: this module is the R7 gate whole: the pattern set, both responses
+to it and the refusal. `test_scrub.py` pins this one module's imports (no `os`,
+`socket` or environment read), so a split would put part of the gate outside that
+guarantee, and a reviewer of a pattern would no longer see the response it feeds.
+
 ## Which of the two, and why it is not a contradiction
 
 ⭐ **Scrub our words; refuse the source's.** A log line, a subprocess's output,

@@ -29,14 +29,13 @@ from collections.abc import Mapping
 
 from studyforge.execute import published
 from studyforge.skills.execution.contract import require
-from studyforge.skills.execution.siteservice import (
-    CORPUS,
+from studyforge.skills.execution.siteservice import CORPUS, NETWORK
+from studyforge.skills.execution.siteservice_live import (
     EGRESS,
     EGRESS_SCRIPT_FILE,
     LIVE,
     LIVE_NET,
     LIVE_OUT,
-    NETWORK,
     egress_proxy,
     live_runner,
 )
@@ -64,7 +63,7 @@ def services(plan, site: dict[str, object], runner: dict[str, object]):
     owner = str(require(plan.editor, "runs_as", "compose_key"))
     told = dict(site["environment"])  # type: ignore[call-overload]
     site["environment"] = {**told, published.LIVE_SERVICE: LIVE}
-    runs = live_runner(runner, variable, owner, plan.editor)
+    runs = live_runner(runner, variable, owner, plan.editor, NETWORK)
     held = list(runs["volumes"])  # type: ignore[call-overload]
     runs["volumes"] = [one for one in held if not str(one).startswith("./")]
     runs["restart"] = "no"
