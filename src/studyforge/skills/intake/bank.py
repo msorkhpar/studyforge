@@ -240,7 +240,7 @@ _TRACKS: tuple[Question, ...] = (
        "A format added late needs a new kind of practice in every module.",
        "Coding and concept questions only.", tracks=_only("interview")),
     _q("interview.mocks", "costly",
-       "Are there mock interviews, and where do they sit?",
+       "Are there mock interviews? If so, each is its own module in the outline.",
        "A mock placed after numbering renumbers the closing sections.",
        "yes", kind="boolean", tracks=_only("interview")),
     _q("interview.project", "later",

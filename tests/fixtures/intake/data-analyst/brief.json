@@ -19,7 +19,7 @@
     "runtimes.offline": {"status": "answered", "decided_by": "author", "value": "Everything: the retailer's database ships as a generated SQLite file inside the course."},
     "runtimes.licensed_tools": {"status": "answered", "decided_by": "author", "value": "None."},
     "runtimes.hardware": {"status": "answered", "decided_by": "author", "value": "None; every practice runs on a laptop CPU in under a second."},
-    "practice.density": {"status": "answered", "decided_by": "author", "value": "2 to 3 code practices per lesson, plus a quiz at the end of each section."},
+    "practice.density": {"status": "answered", "decided_by": "author", "value": "2 to 3 code practices per lesson that runs code; the prose-only lessons have none. A quiz at the end of each section."},
     "practice.shape": {"status": "answered", "decided_by": "author", "value": "TODO functions beside the section they test, a starter that fails on an assertion, and at most 25 changed lines per practice."},
     "practice.tryit": {"status": "answered", "decided_by": "author", "value": "Yes: every practice has a try-it Run that prints the query result or the data frame before the learner edits."},
     "practice.projects": {"status": "answered", "decided_by": "claude", "value": "One project per section on the retailer's data, with the first step shown in full and later steps as goals only."},

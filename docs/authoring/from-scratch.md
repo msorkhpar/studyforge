@@ -100,37 +100,29 @@ That prints every question the `interview` track asks, each with its tier (`cost
 
 **The interview.** The sample's author opened by pasting the prompt they had written for the
 course. Claude recorded every answer the prompt held against its question id, then asked the
-rest one at a time, each with a default the author could accept with "yes". An excerpt:
+rest one at a time, each with a default the author could accept with "yes". The opening:
 
 ```text
 Author:  [pastes the course prompt] ... SQLite and Python only, no notebooks, nothing that
          needs a cloud account. Every practice has a try-it Run. MIT licence.
 Claude:  From that I have recorded scope.ruled_out, practice.tryit and publish.licence.
-         Next, practice.shape: what shape does a practice take?
-         Default: TODO functions beside each section, a starter that fails on an
-         assertion, and at most 30 changed lines per practice.
-         Why it is asked now: a shape fixed late once meant rewriting all 166 units.
-Author:  Yes, but 25 lines.
-Claude:  writing.diagrams: where are diagrams required?
-         Default: wherever a lesson explains data flow or structure, one per such lesson.
-Author:  Just pick.
-Claude:  Recorded as decided by Claude: one diagram wherever a lesson explains how rows
-         flow through a join, a grouping or a window. You will see it under
-         "Decided by Claude" and can reverse it there.
+         Next, goal.end_state: which 5 to 10 situations must the learner handle at the end?
 ```
 
-"Just pick" is an answer: it is recorded as `answered` with `decided_by: "claude"`, never left
-open. Answers taken from the pasted prompt are `decided_by: "author"`.
+Answers taken from the pasted prompt are `decided_by: "author"`.
 
 **The job description.** Claude read `.private/job-description.md` and proposed six skills, in
 its own words, each with a depth tag (`core`, `deep`, `survey`, `prose`). The author moved
 pandas cleaning above retention metrics and confirmed the list. The brief records that list in
 `interview.skills`, and `interview.job_description` records only where the file lives:
 `private:job-description.md`. The same rule keeps every personal value out of the brief: the
-commit identity, the licence holder, the repository and the image namespace are names of
-environment variables (`env:COURSE_LICENCE_HOLDER`), read at release time.
+commit identity, the licence holder, the repository and the image namespace are recorded as
+names of environment variables (`env:COURSE_LICENCE_HOLDER`), which the author sets in their
+own shell. Nothing reads the brief at release time; step 8 says where such a value is passed by
+hand.
 
-**The checker.** Midway through the interview, `check` named what was still open:
+**The checker.** Partway through, with the prompt's answers and the first questions recorded,
+`check` named what was still open:
 
 ```text
 $ python3 -m studyforge.skills.intake check
@@ -146,11 +138,28 @@ open: interview.format: missing
 open: 9
 ```
 
-Each line is one more question for the author. `runtimes.coverage` said "Python and SQL where
-possible", which is a hedge, not an answer; the author replaced it with which practices are
-SQL and which are Python. `publish.holder` held the retailer's name instead of a variable name.
-Two answers were defaults Claude had proposed and the author had not yet accepted. Once every
-one was settled:
+Each line is a question Claude puts to the author next. Two of them went like this:
+
+```text
+Claude:  practice.shape: what shape does a practice take?
+         Default: TODO functions beside each section, a starter that fails on an
+         assertion, and at most 30 changed lines per practice.
+         Why it is asked now: a shape fixed late once meant rewriting all 166 units.
+Author:  Yes, but 25 lines.
+Claude:  writing.diagrams: where are diagrams required?
+         Default: wherever a lesson explains data flow or structure, one per such lesson.
+Author:  Just pick.
+Claude:  Recorded as decided by Claude: one diagram wherever a lesson explains how rows
+         flow through a join, a grouping or a window. You will see it under
+         "Decided by Claude" and can reverse it there.
+```
+
+"Just pick" is an answer: it is recorded as `answered` with `decided_by: "claude"`, never left
+open. The other lines were settled the same way. `runtimes.coverage` said "Python and SQL where
+possible", which is a hedge, not an answer; the author replaced it with which practices are SQL
+and which are Python. `publish.holder` held the retailer's name instead of a variable name. Two
+answers were defaults Claude had proposed and the author had not yet accepted. Once every one
+was settled:
 
 ```text
 $ python3 -m studyforge.skills.intake check
@@ -202,7 +211,7 @@ Track: interview
 
 ## Practice
 
-- **How many code practices per lesson?** 2 to 3 code practices per lesson, plus a quiz at the end of each section.
+- **How many code practices per lesson?** 2 to 3 code practices per lesson that runs code; the prose-only lessons have none. A quiz at the end of each section.
 - **What shape does a practice take: TODO methods beside the section they test, and a size budget for the whole change?** TODO functions beside the section they test, a starter that fails on an assertion, and at most 25 changed lines per practice.
 - **Does every practice carry a try-it Run?** Yes: every practice has a try-it Run that prints the query result or the data frame before the learner edits.
 - **Are there project practices, and how much of each step does a page show?** One project per section on the retailer's data, with the first step shown in full and later steps as goals only.
@@ -252,7 +261,7 @@ Track: interview
 - **Where is the job description kept? It stays in the private folder only. Give it as private:FILE.** private:job-description.md
 - **Which skills does the role need, ranked, each with a depth tag?** 1. SQL joins and aggregation [core]; 2. window functions [deep]; 3. data cleaning in pandas [core]; 4. retention and cohort metrics [deep]; 5. explaining results to non-technical colleagues [prose]; 6. reading a query plan [survey].
 - **Which interview formats: coding, modelling, system design, behavioural, concept?** A live SQL round, a take-home Python task and a case discussion; no system design, no algorithm puzzles.
-- **Are there mock interviews, and where do they sit?** yes
+- **Are there mock interviews? If so, each is its own module in the outline.** yes
 - **Is there a fictional running project that ties the modules together?** Spokeline Cycles, a fictional bicycle retailer whose orders database is used from the first module to the last.
 
 ## Decided by Claude
@@ -345,20 +354,50 @@ approved the numbered outline.
 The `onboarding` skill ([corpus onboarding](../../src/studyforge/skills/onboarding/SKILL.md))
 turns the course repository into a corpus StudyForge can build, and the `execution` skill
 ([execution onboarding](../../src/studyforge/skills/execution/SKILL.md)) gives it the runner and
-the editor. Both read their answers from the brief instead of asking again.
+the editor. ⚠️ Neither skill reads the brief. You, or Claude working with you, carry its answers
+across by hand: into the draft manifest that onboarding settles, and into the runtimes the
+execution skill selects a toolchain for.
 
-First lay the outline out on disk: one folder per section and module, one Markdown page per
-lesson, and a curriculum document that lists them in order. Then follow onboarding as written:
-survey the repository, settle the draft manifest with the brief's answers (narration after the
-first release, runtimes `python` and `sqlite`), read what will be written, and write it.
-[What a corpus is](corpus.md) explains each key of the `corpus.json` that results.
+**Pages to survey.** Onboarding starts from a draft that the reconnaissance skill
+([source reconnaissance](../../src/studyforge/skills/reconnaissance/SKILL.md)) measures off the
+repository, so the outline has to be on disk first: one folder per section and module, one
+Markdown page per lesson, and a curriculum document that lists the pages in order. Each page
+needs at least its title and one paragraph. [`validate`](validate.md) refuses a unit with no
+blocks (`empty-unit`) and a declared unit that is absent (`unit-missing`), so a lesson can be a
+heading and a sentence until step 5 or step 6 writes it.
 
-The sample is runnable, so the `execution` skill follows: it selects the toolchain, writes the
-one compose file for the study server, the editor and the runner, and records the runner's tag.
+**The sequence**, each part as its skill's page says:
 
-Then start the findings log at `.studyforge/findings.md`, with the catalogue line from step 1
-under its title (onboarding, step 7). Every later step adds to it: each thing done by hand,
-worked around or learned is one finding.
+1. **Survey.** Reconnaissance's step 1 runs `survey(".")` from
+   `studyforge.skills.reconnaissance` and prints what it measured; its `proposal` is the draft.
+2. **Settle and onboard.** Write the brief's answers into the draft by hand: narration off for
+   now (the brief says after the first release) and the runtimes `python` and `sqlite`. Give a
+   reason for each proposed `not_material` glob, then `onboard(draft, reasons=...)` from
+   `studyforge.skills.onboarding` and `made.write(".")`. It writes `corpus.json`, the adapter's
+   scaffold and its tests. [What a corpus is](corpus.md) explains each key.
+3. **The reading step.** The adapter skill
+   ([adapter authoring](../../src/studyforge/skills/adapter/SKILL.md), its step 5) writes
+   `ingest/read.py`, the one hand-written file, which reads each page the curriculum lists.
+4. **Ingest, then validate.** Onboarding's step 5 runs the corpus's own `ingest` package, which
+   the adapter's scaffold put in the course repository, and then the checker:
+
+```sh
+python3 -m ingest . <ingested-date>
+studyforge validate .
+```
+
+**Consumer-side modules:** `ingest`
+
+That line declares that `ingest` belongs to the course repository, not to StudyForge, in the
+spelling `docs/specs/2026-09-08-studyforge-v1-design.md` defines.
+
+5. **Execution.** The sample is runnable, so the `execution` skill follows: with the runtimes
+   from the brief, it selects the toolchain, writes the one compose file for the study server,
+   the editor and the runner, and records the runner's tag.
+6. **The findings log.** Start `.studyforge/findings.md` with the catalogue line from step 1
+   under its title (onboarding, step 7). Every later step adds to it: each thing done by hand,
+   worked around or learned is one finding. Carrying the brief across by hand is the sample's
+   first.
 
 **Done when** these succeed, and the log exists:
 
@@ -370,6 +409,9 @@ studyforge preflight .
 
 `validate` exits `0`, `verify` says the installed library is the one the corpus pins, and
 `preflight` finds nothing wrong in the ports the compose file will use.
+
+The versions in the sample brief (Python 3.13, pandas 2.2, SQLite 3.45) are illustrative. Take
+the real ones from the toolchain's pins that the execution skill selects.
 
 ## 5. Pilot: one module, written and reviewed
 
@@ -385,30 +427,45 @@ the pilot module, and it is served locally for the author to review.
 Serve it without narration, since the brief says narration comes after the first release:
 
 ```sh
+mkdir site
 python3 -m studyforge.skills.buildserve . --out site --no-narration
 ```
 
+It validates, builds and then serves until you stop it with Ctrl-C.
+
 The author reviews the pilot in the browser. Every change the review asks for is made twice:
-once in the pilot, and once where it will reach the other nine modules. A rule about voice or
-length goes into the brief's `writing.reference`; a hole in a skill goes into the findings log
-as a finding against that skill. Suppose the review finds that the join diagrams repeat what the
-SQL already shows: the fix is a sentence in the brief about what a diagram is for, not ten
-module-by-module corrections later.
+once in the pilot, and once where it reaches the other nine modules. Where that second place is
+depends on what the change is:
+
+- **A choice about this course**, such as a voice or length rule, goes into the brief
+  (`writing.reference`), which the later modules are written from.
+- **A rule every course needs** goes into the skill that writes that kind of page: the lessons
+  skill for prose, the exercises skill for practices. When you cannot edit the framework, it
+  goes into the findings log as a finding against that skill, and step 9 files it.
+
+Suppose the review finds that each join diagram repeats what the SQL beside it already shows.
+For this course, the brief's `writing.diagrams` answer gains a sentence about what a diagram is
+for. If the reviewer's point holds for any course (a diagram shows what the code cannot), it is
+also a finding against the lessons skill. Either way it is fixed once, not in ten modules later.
 
 **Done when** the author has approved the pilot, `studyforge validate .` exits `0`, and every
-review change is either in the brief or logged as a finding.
+review change is in the brief, in a skill, or logged as a finding against one.
 
 ## 6. Batches: the rolling queue
 
-The `lessons` and `exercises` skills now run without review over the remaining modules, planned
-by the `delivery` skill ([delivery planning](../../src/studyforge/skills/delivery/SKILL.md)).
-Its first step checks the brief, and it turns the outline into an ordered backlog where each
-task ends in something that can be shown:
+The `lessons` and `exercises` skills now run without review over the remaining modules, in an
+order planned with the `delivery` skill
+([delivery planning](../../src/studyforge/skills/delivery/SKILL.md)). Its step 1 has you
+check the brief and read what the installed framework offers:
 
 ```sh
 python3 -m studyforge.skills.intake check
 python3 -m studyforge.skills.delivery
 ```
+
+The backlog itself is written by hand, following delivery's steps 2 and 3: where the course
+finishes, then an ordered list of tasks that each end in something that can be shown. For the
+sample, that is one task per module of the outline.
 
 How the batches run:
 
@@ -438,38 +495,64 @@ pilot.
 
 ```sh
 python3 -m studyforge.skills.buildserve . --out site --no-narration --port 8765
+```
+
+`site/` is the directory step 5 made; a rebuild replaces its own earlier output. The port is the one the brief fixed for the preview (`publish.preview`). The command serves
+until Ctrl-C, so take screenshots from a second terminal:
+
+```sh
+mkdir shots
 python3 -m studyforge.look site --out shots --all
 ```
 
-The port is the one the brief fixed for the preview (`publish.preview`). `look` writes a
-screenshot and the rendered page of every page the site links into `shots/`, which helps when
-you cannot open a browser yourself.
+`look` opens every page the site links in a Chromium-family browser already on your machine
+(Chrome, Chromium or `chrome-headless-shell`) and writes a screenshot and the rendered page of
+each into `shots/`, which helps when you cannot open a browser yourself.
 
 **Done when** the site answers, every partial state `buildserve` prints is one you expected,
 and the author has signed off the full-site review.
 
 ## 8. Release: export, prove, and hand the push list to the author
 
-The `execution` skill's step 7 owns the release: it exports the course into the tree learners
-get, and moves what is about building it to the branch `studyforge/build`. In order:
+The `execution` skill's step 7,
+[A course's `main` stands alone](../../src/studyforge/skills/execution/SKILL.md#7-a-courses-main-stands-alone--the-learner-tree-and-the-split),
+owns the release, and its
+[The split, step by step](../../src/studyforge/skills/execution/SKILL.md#the-split-step-by-step)
+gives the order. Nothing in it reads the brief: where it needs a value the brief names by
+variable, you pass that variable's value. In outline:
 
-1. **Preflight.** `standalone.preflight` reports every precondition the release can check
-   before it writes anything, and the release refuses a course whose findings log is missing or
-   unsorted. Sort it first (step 9 below shows how); the release needs that done.
-2. **Export and split.** `standalone.release` writes the learner tree into an empty directory.
-   The brief chose one fresh commit for the published history (`privacy.fresh_history`), made
-   with an identity set on the command, never the machine's own.
-3. **Clean-clone check.** Clone the exported branch alone into a new directory, bring it up
-   with `docker compose`, and confirm the site answers and a practice runs in the runner.
-4. **Personal-data scan.** Every course image is swept with the shared personal-data patterns
-   before anything is published; one finding stops the list.
-5. **The publish list.** `standalone.publish` prints every build and push command, filled from
-   the variables the brief named (`env:COURSE_REPOSITORY`, `env:COURSE_IMAGE_NAMESPACE`). It
-   runs nothing.
+1. **Preflight.** `standalone.preflight.preflight(course, target, toolchain=..., run=ask)`
+   returns every reason the release would refuse, before anything is written. ⛔ It starts no
+   process itself: `run` is a function you hand in that runs one argv in a directory and
+   answers its exit code and output (the execution skill shows one). The release refuses a
+   course whose findings log is missing or unsorted, so sort it first (step 9 shows how).
+2. **Export.** `standalone.release(course, target, toolchain=..., run=ask)` writes the learner
+   tree into an empty directory, with the same `run`.
+3. **Split.** In the course repository, branch `studyforge/build` from `main`; it keeps
+   everything. The learner `main` is the exported tree, and since the brief chose one fresh
+   commit (`privacy.fresh_history`), it is a fresh tree committed by a placeholder author set
+   on the command, never the machine's own git identity
+   (`standalone.publish.fresh_tree_commands`). `git ls-files` there must equal the manifest's
+   `keeps`, line for line.
+4. **Clean clone.** Clone that branch alone into a new directory, bring it up with
+   `docker compose`, and confirm the site answers and a practice runs in the runner.
+5. **Build the exported tree alone.** In a fresh clone of the export, `docker compose build`
+   every image before any publish command is given. A tree that builds only beside the course
+   checkout is not exported.
+6. **The publish list.** `standalone.publish` prints every build, personal-data scan, push and
+   digest-check command and runs none of them:
 
-**Done when** `git ls-files` in the learner tree equals the export's list of kept files, the
-clean clone answers, the scan finds nothing, and the author, as `publish.pusher` says, runs every
-push.
+```sh
+python -m studyforge.skills.execution.standalone.publish RELEASE_JSON NAMESPACE WORKDIR
+```
+
+`RELEASE_JSON` is the export's `.studyforge/release.json`, and `NAMESPACE` is the image
+namespace itself: the value of `COURSE_IMAGE_NAMESPACE`, the variable the brief's
+`publish.namespace` names, which you set in your shell.
+
+**Done when** `git ls-files` in the learner tree equals the manifest's `keeps`, the clean clone
+answers, the exported tree builds alone, the personal-data scan in the publish list finds
+nothing, and the author, as `publish.pusher` says, runs every push.
 
 ## 9. Close: sort the findings, feed the catalogue
 
