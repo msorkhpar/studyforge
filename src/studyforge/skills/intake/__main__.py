@@ -8,9 +8,10 @@ repeat what a brief contains.
 
 from __future__ import annotations
 
-import subprocess
 import sys
 from pathlib import Path
+
+from studyforge.validate.source import repository_ignores
 
 from . import BANK, BRIEF_PATH, TRACKS, BriefError, check, load, render
 
@@ -23,16 +24,23 @@ def _fail(message: str) -> int:
     return 2
 
 
+#: A path inside `.private/`. Git judges a path inside the folder by the folder's rule whether
+#: or not the folder exists yet; asked about the bare folder name, it would miss a `.private/`
+#: rule while the folder is absent.
+INSIDE_PRIVATE = Path(".private") / "intake-probe"
+
+
 def _private_ignored(root: Path) -> bool:
-    """Ask git whether `.private/` is ignored; raise OSError with a one-line reason."""
-    argv = ["git", "-C", str(root), "check-ignore", "-q", ".private/"]
-    try:
-        code = subprocess.run(argv, capture_output=True, check=False).returncode
-    except OSError:
-        raise OSError("git is not available to judge .private/") from None
-    if code not in (0, 1):
-        raise OSError(f"{root}: git cannot judge .private/ (is it a git repository?)")
-    return code == 0
+    """Ask git whether `.private/` is ignored; raise OSError with a one-line reason.
+
+    The question goes to the framework's one ignore reader, so intake starts no process of its
+    own. Its `None` (no git, or not a repository) is a refusal, never "not ignored".
+    """
+    inside = root / INSIDE_PRIVATE
+    ignored = repository_ignores(root, [inside])
+    if ignored is None:
+        raise OSError("git cannot judge .private/ (is the brief inside a git repository?)")
+    return inside in ignored
 
 
 def _check(path: Path) -> int:
@@ -51,7 +59,7 @@ def _render(path: Path) -> int:
     try:
         target.write_text(render(brief), encoding="utf-8", newline="\n")
     except OSError:
-        raise OSError(f"{target}: cannot write") from None
+        raise OSError("brief.md: cannot write beside the brief") from None
     try:
         print(target.resolve().relative_to(Path.cwd().resolve()))
     except ValueError:

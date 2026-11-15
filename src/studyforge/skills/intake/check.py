@@ -35,7 +35,7 @@ _FILE = r"(?!/)(?!(?:.*/)?\.\.(?:/|#|$))[^#\s]+"
 
 #: `env:NAME` or `private:FILE`, each optionally followed by `#KEY`.
 PRIVATE_REF: re.Pattern[str] = re.compile(
-    rf"(?:env:{_NAME}|private:{_FILE})(?:#{_NAME})?"
+    rf"(?:env:{_NAME}|private:{_FILE})(?:[#]{_NAME})?"
 )
 
 

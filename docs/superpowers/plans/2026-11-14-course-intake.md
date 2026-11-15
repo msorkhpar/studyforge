@@ -19,7 +19,7 @@ CLI alone), pytest. Run tests from the repository root as
 `python3 -m pytest -q -p no:cacheprovider <path>`; `pyproject.toml` already puts `src` and `.`
 on the path.
 
-**Spec:** `docs/specs/2026-11-14-course-intake-design.md`
+**Spec:** `docs/specs/2026-11-14-course-intake.md`
 
 ## Global Constraints
 

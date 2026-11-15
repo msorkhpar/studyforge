@@ -26,6 +26,7 @@ from studyforge.corpus.container import document as container_document
 from studyforge.corpus.manifest import document as manifest_document
 from studyforge.corpus.placement import identity as placement_identity
 from studyforge.exercise import record as exercise_record
+from studyforge.skills.intake import brief as intake_brief
 from studyforge.unit import builder as unit_builder
 from studyforge.unit import content as unit_content
 from studyforge.unit import served as unit_served
@@ -125,6 +126,29 @@ def readers() -> list[Reader]:
                 unit_builder.read(depth2 / "raw/java/unit-01"), declared_practices=1
             ),
         ),
+        # ⭐ The course brief, every kind of field once: a text and a choice at the top, an
+        # answered, a deferred and a proposed answer, and an outline down to a lesson's depth.
+        Reader(
+            "brief.json",
+            intake_brief.parse,
+            {
+                "brief_api": 1,
+                "title": "Sample course",
+                "track": "topic",
+                "answers": {
+                    "goal.end_state": {"status": "answered", "decided_by": "author",
+                                       "value": "Eight tasks, one line each."},
+                    "quiz.mocks": {"status": "deferred", "reason": "after the pilot"},
+                    "sources.mirror": {"status": "proposed", "value": True},
+                },
+                "outline": [
+                    {"title": "Basics", "modules": [
+                        {"title": "First steps", "pilot": True,
+                         "lessons": [{"title": "Hello", "depth": "core"}]},
+                    ]},
+                ],
+            },
+        ),
     ]
 
 
@@ -205,6 +229,7 @@ def test_every_module_that_reads_a_document_is_probed(readers):
         # ⚠️ Covered by a `Reader` above but NOT reported by the guard, which
         # looks for `from_document`; recorded here so the pair is visible.
         "contents/status.py",
+        "skills/intake/brief.py",
     }
     readable = modules_with_a_reader(repository_root() / "src" / "studyforge")
     missing = sorted(readable - covered)

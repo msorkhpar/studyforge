@@ -19,7 +19,8 @@ so a brief written against a newer question bank stays readable.
 Each error is one line that starts with the JSON path of the offending field. A message never
 repeats an answer value, because values may be personal.
 
-**Depends on.** The standard library, and `TRACKS` and `DEPTHS` from the package.
+**Depends on.** The standard library, `TRACKS` and `DEPTHS` from the package, and
+`studyforge.archive.scrub`'s gate, which `load` runs over the decoded document.
 """
 
 from __future__ import annotations
@@ -29,6 +30,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
+
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 
 from . import DEPTHS, TRACKS
 
@@ -185,13 +188,23 @@ def parse(data: object) -> Brief:
 
 
 def load(path: Path) -> Brief:
-    """Read a UTF-8 JSON brief from `path` and parse it."""
+    """Read a UTF-8 JSON brief from `path`, gate it, and parse it.
+
+    A refusal never names the path. The gate is the framework's personal-data gate, run over
+    the whole decoded document before any field is read; its refusal names where the value
+    sits, never the value. `parse` alone does not gate, so `check` can still report such a
+    value by question id on a brief built in memory.
+    """
     try:
         text = Path(path).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as err:
-        raise BriefError(f"{path}: cannot read ({type(err).__name__})") from None
+        raise BriefError(f"brief: cannot read ({type(err).__name__})") from None
     try:
         data = json.loads(text)
     except json.JSONDecodeError as err:
-        raise BriefError(f"{path}: not valid JSON (line {err.lineno})") from None
+        raise BriefError(f"brief: not valid JSON (line {err.lineno})") from None
+    try:
+        assert_clean(data, "brief")
+    except PersonalDataLeak as leak:
+        raise BriefError(str(leak)) from None
     return parse(data)

@@ -289,7 +289,7 @@ _TRACKS: tuple[Question, ...] = (
        "Out of scope unless an end-state situation needs them; then reading only.",
        tracks=_only("bridge")),
     _q("convert.repository", "costly",
-       "Where is the existing material? Give it as env:NAME or private:FILE#KEY.",
+       "Where is the existing material? Give the env: or private: reference that holds it.",
        "A wrong source location sends reconnaissance over the wrong material.",
        "env:COURSE_SOURCE_REPOSITORY", kind="private_ref", tracks=_only("convert")),
     _q("convert.toc", "later",

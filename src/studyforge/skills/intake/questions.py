@@ -48,18 +48,19 @@ class Question:
     depends_on: tuple[str, tuple[object, ...]] | None = None
 
     def __post_init__(self) -> None:
+        # A refusal names the field and the rule, never the value it refused.
         if self.group != self.id.split(".", 1)[0]:
-            raise ValueError(f"{self.id}: group {self.group!r} is not the id prefix")
+            raise ValueError("question.group: not the prefix of the question's id")
         if self.kind not in KINDS:
-            raise ValueError(f"{self.id}: kind {self.kind!r} is not one of {KINDS}")
+            raise ValueError(f"question.kind: not one of {KINDS}")
         if not self.tracks <= set(TRACKS):
-            raise ValueError(f"{self.id}: unknown track in {sorted(self.tracks)}")
+            raise ValueError(f"question.tracks: each must be one of {TRACKS}")
         if self.tier not in ("costly", "later"):
-            raise ValueError(f"{self.id}: tier {self.tier!r} is not costly or later")
+            raise ValueError("question.tier: not costly or later")
         if self.kind == "choice" and not self.choices:
-            raise ValueError(f"{self.id}: a choice question needs choices")
+            raise ValueError("question.choices: a choice question needs choices")
         if self.kind != "choice" and self.choices:
-            raise ValueError(f"{self.id}: only a choice question has choices")
+            raise ValueError("question.choices: only a choice question has choices")
 
 
 def applies(question: Question, track: str, answers: Mapping[str, "Answer"]) -> bool:
