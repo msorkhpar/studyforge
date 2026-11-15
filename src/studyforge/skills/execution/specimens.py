@@ -5,12 +5,14 @@ language, returns one `Specimen` per module that carries that language: the
 module's smallest real source and smallest real test, each with every file of
 the build it names (`closure`), so the module compiles on its own terms.
 
-**How you use it.** `prime` calls `per_module(...)` for each declared language
-of a build; `module_of(where, modules)` answers which module a file is in.
+**How you use it.** `prime` calls `for_build(...)` for a build, which calls
+`per_module(...)` for each declared language and refuses a language or a build
+that would compile nothing; `services(...)` adds the `META-INF/services` files of
+every primed module; `module_of(where, modules)` answers which module a file is in.
 
-**Depends on.** `re` and `execute.conventions.is_a_test`. ⛔ Nothing
-source-specific (R1): a name is found by the language's own keywords and a
-file's own stem, never by a name a corpus chose.
+**Depends on.** `re`, `corpus.manifest.SOURCE_SUFFIXES` and
+`execute.conventions.is_a_test`. ⛔ Nothing source-specific (R1): a name is found by
+the language's own keywords and a file's own stem, never by a name a corpus chose.
 
 ## ⛔ THE SMALLEST SOURCE AND THE SMALLEST TEST DO NOT COMPILE TOGETHER BY LUCK
 
@@ -46,6 +48,7 @@ import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 
+from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.execute import is_a_test
 
 #: A word, as the C-family languages and Python spell an identifier.
@@ -105,6 +108,64 @@ def per_module(
         picked = {one for one in (source, test) if one}
         support = {other for one in picked for other in reach(one)} - picked
         found.append(Specimen(language, module, source, test, tuple(sorted(support))))
+    return tuple(found)
+
+
+def services(
+    held: Sequence[tuple[str, int]], modules: Sequence[str], specimens: Sequence[Specimen]
+) -> tuple[str, ...]:
+    """Every `resources/META-INF/services/<type>` file of a module that has a specimen, sorted."""
+    primed = {one.module for one in specimens}
+    return tuple(
+        sorted(
+            where
+            for where, size in held
+            if size > 0
+            and "/resources/META-INF/services/" in f"/{where}"
+            and module_of(where, modules) in primed
+        )
+    )
+
+
+def for_build(
+    tool: str,
+    base: str,
+    declared: Sequence[str],
+    held: Sequence[tuple[str, int]],
+    modules: Sequence[str],
+    text: Callable[[str], str],
+    missing: list[str],
+) -> tuple[Specimen, ...]:
+    """Each module's real source and real test per declared language, with what they name.
+
+    ⭐ **Chosen module by module** (`per_module`), so a multi-module build
+    compiles as the build it is, and a module with nothing in the language is
+    primed through its build file alone. ⚠️ A declared language with no file
+    in this build is not this build's language and is passed over; one with a
+    source and no test anywhere in the build, or a test and no source, is
+    refused; and a build with no source and no test at all is refused, because
+    it would compile nothing.
+    """
+    found, before = [], len(missing)
+    languages = [runtime for runtime in declared if SOURCE_SUFFIXES.get(runtime)]
+    where = f"the {tool} build at {base or '.'}"
+    for runtime in languages:
+        suffixes = SOURCE_SUFFIXES[runtime]
+        candidates = [(one, size) for one, size in held if one.endswith(suffixes) and size > 0]
+        chosen = per_module(runtime, candidates, modules, text)
+        sources = any(one.source for one in chosen)
+        tests = any(one.test for one in chosen)
+        if sources and tests:
+            found.extend(chosen)
+        elif sources:
+            missing.append(f"{runtime} is declared and {where} carries no test for it")
+        elif tests:
+            missing.append(f"{runtime} is declared and {where} carries no source for it")
+    if not found and len(missing) == before:
+        missing.append(
+            f"{where} carries no source and no test in any declared language "
+            f"({', '.join(languages) or 'none declared'}), so it would compile nothing"
+        )
     return tuple(found)
 
 

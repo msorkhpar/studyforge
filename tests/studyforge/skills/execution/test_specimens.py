@@ -139,3 +139,39 @@ def test_an_empty_file_is_never_a_specimen():
         [""],
     )
     assert f"{M}/Empty.java" not in found[""].files()
+
+
+def for_build(files: dict[str, str], declared=("java",)):
+    held, text = build(files)
+    missing: list[str] = []
+    found = specimens.for_build("maven", "", declared, held, [""], text, missing)
+    return found, missing
+
+
+def test_a_build_keeps_each_language_with_a_source_and_a_test():
+    found, missing = for_build({f"{M}/A.java": "class A {}", f"{T}/ATest.java": "class ATest {}"})
+    assert [one.language for one in found] == ["java"] and missing == []
+
+
+def test_a_language_with_a_source_and_no_test_is_refused_by_name():
+    found, missing = for_build({f"{M}/A.java": "class A {}"})
+    assert found == ()
+    assert missing == ["java is declared and the maven build at . carries no test for it"]
+
+
+def test_a_language_with_a_test_and_no_source_is_refused_by_name():
+    found, missing = for_build({f"{T}/ATest.java": "class ATest {}"})
+    assert missing == ["java is declared and the maven build at . carries no source for it"]
+
+
+def test_a_build_that_would_compile_nothing_is_refused():
+    found, missing = for_build({"README.md": "words"}, declared=("java", "markdown"))
+    assert found == () and len(missing) == 1
+    assert "carries no source and no test in any declared language (java)" in missing[0]
+
+
+def test_service_files_come_only_from_a_primed_module_and_never_empty():
+    services = "src/main/resources/META-INF/services/p.Plugin"
+    held = [(f"a/{services}", 4), (f"b/{services}", 4), (f"a/{services}.empty", 0)]
+    primed = (specimens.Specimen("java", module="a", source="a/x.java"),)
+    assert specimens.services(held, ["a", "b"], primed) == (f"a/{services}",)

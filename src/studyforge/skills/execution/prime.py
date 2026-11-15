@@ -86,7 +86,6 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.describe import describe
 from studyforge.execute import SKIPPED
@@ -98,7 +97,7 @@ from studyforge.skills.execution.buildfiles import (
     under,
     warmable,
 )
-from studyforge.skills.execution.specimens import Specimen, module_of, per_module
+from studyforge.skills.execution.specimens import Specimen, for_build, services
 
 
 #: ⭐ A build whose directory is this top-level one is the corpus's OWN authored prime: a project
@@ -329,75 +328,17 @@ def _project(
     base = shallowest[0]
     inside = [(where, size) for where, size in held if under(where, base)]
     modules = sorted(one for one in roots if one == base or under(one, base))
-    specimens = _specimens(tool, base, declared, inside, modules, text, missing)
+    specimens = for_build(tool, base, declared, inside, modules, text, missing)
     return Project(
         tool=tool,
         root=base,
         build_files=tuple(sorted(where for where in wanted if under(where, base))),
         specimens=specimens,
-        services=_services(inside, modules, specimens),
+        services=services(inside, modules, specimens),
         whole=(
             tuple(sorted(where for where, size in inside if size > 0)) if base == AUTHORED else ()
         ),
     )
-
-
-def _services(
-    held: Sequence[tuple[str, int]], modules: Sequence[str], specimens: Sequence[Specimen]
-) -> tuple[str, ...]:
-    """Every `resources/META-INF/services/<type>` file of a module that has a specimen, sorted."""
-    primed = {one.module for one in specimens}
-    return tuple(
-        sorted(
-            where
-            for where, size in held
-            if size > 0
-            and "/resources/META-INF/services/" in f"/{where}"
-            and module_of(where, modules) in primed
-        )
-    )
-
-
-def _specimens(
-    tool: str,
-    base: str,
-    declared: Sequence[str],
-    held: Sequence[tuple[str, int]],
-    modules: Sequence[str],
-    text: Callable[[str], str],
-    missing: list[str],
-) -> tuple[Specimen, ...]:
-    """Each module's real source and real test per declared language, with what they name.
-
-    ⭐ **Chosen module by module** (`specimens`), so a multi-module build
-    compiles as the build it is, and a module with nothing in the language is
-    primed through its build file alone. ⚠️ A declared language with no file
-    in this build is not this build's language and is passed over; one with a
-    source and no test anywhere in the build, or a test and no source, is
-    refused; and a build with no source and no test at all is refused, because
-    it would compile nothing.
-    """
-    found, before = [], len(missing)
-    languages = [runtime for runtime in declared if SOURCE_SUFFIXES.get(runtime)]
-    where = f"the {tool} build at {base or '.'}"
-    for runtime in languages:
-        suffixes = SOURCE_SUFFIXES[runtime]
-        candidates = [(one, size) for one, size in held if one.endswith(suffixes) and size > 0]
-        chosen = per_module(runtime, candidates, modules, text)
-        sources = any(one.source for one in chosen)
-        tests = any(one.test for one in chosen)
-        if sources and tests:
-            found.extend(chosen)
-        elif sources:
-            missing.append(f"{runtime} is declared and {where} carries no test for it")
-        elif tests:
-            missing.append(f"{runtime} is declared and {where} carries no source for it")
-    if not found and len(missing) == before:
-        missing.append(
-            f"{where} carries no source and no test in any declared language "
-            f"({', '.join(languages) or 'none declared'}), so it would compile nothing"
-        )
-    return tuple(found)
 
 
 def _reader(root: Path) -> Callable[[str], str]:
