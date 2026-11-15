@@ -18,7 +18,8 @@ and `python -m studyforge.skills.exercises.project check <manifest>` builds the 
 what it would ship, without running anything (`projectcli`).
 
 **Depends on.** `studyforge.exercise` for the case vocabulary, `exercise.bundle` for a plant, and
-this package's `drafts`, `snapshot`, `blueprint`, `expected` and `holdback`. Standard library only.
+this package's `drafts`, `snapshot`, `blueprint`, `expected`, `holdback` and `projectfields`
+(each manifest field, read and refused by name). Standard library only.
 
 ## ⭐ EVERY TEST IS A CASE, AND A KEPT ONE IS DERIVED
 
@@ -47,7 +48,6 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.exercise import EDGE, KEPT, MAIN, Case, Origin
 from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises.blueprint import (
-    Lesson,
     Method,
     blueprint_markdown,
     stub_bodies,
@@ -63,6 +63,16 @@ from studyforge.skills.exercises.expected import (
     check_source,
 )
 from studyforge.skills.exercises.holdback import cited_page, copied
+from studyforge.skills.exercises.projectfields import (
+    kind_of,
+    list_of,
+    object_of,
+    read_case,
+    read_cited,
+    read_edit,
+    read_method,
+    text_of,
+)
 from studyforge.skills.exercises.snapshot import Snapshot, declared_tests, read_snapshot
 from studyforge.version import check as check_version
 
@@ -141,29 +151,31 @@ def read_manifest(path: Path) -> Manifest:
     )
     value = {**OPTIONAL, **value}
     base = Path(path).parent
-    expected = _object(value["expected"], "expected", where)
+    expected = object_of(value["expected"], "expected", where)
     return Manifest(
-        title=_text(value["title"], "title", where),
-        before=base / _text(value["before"], "before", where),
-        after=base / _text(value["after"], "after", where),
-        tests=_text(value["tests"], "tests", where),
-        entry=_text(value["entry"], "entry", where),
-        statement=_read(base / _text(value["statement"], "statement", where), where),
+        title=text_of(value["title"], "title", where),
+        before=base / text_of(value["before"], "before", where),
+        after=base / text_of(value["after"], "after", where),
+        tests=text_of(value["tests"], "tests", where),
+        entry=text_of(value["entry"], "entry", where),
+        statement=_read(base / text_of(value["statement"], "statement", where), where),
         expected=Expected(
-            _text(expected.get("output"), "expected.output", where),
+            text_of(expected.get("output"), "expected.output", where),
             float(expected.get("abs_tol", 1e-6)),
             float(expected.get("rel_tol", 1e-9)),
         ),
-        expected_kind=_kind(expected.get("kind", MAIN), (MAIN, EDGE), "expected.kind", where),
-        expected_says=_text(expected.get("says", CHECK_SAYS), "expected.says", where),
-        methods=tuple(_method(one, where) for one in _list(value["blueprint"], "blueprint", where)),
-        cases=tuple(_case(one, where) for one in _list(value["cases"], "cases", where)),
+        expected_kind=kind_of(expected.get("kind", MAIN), (MAIN, EDGE), "expected.kind", where),
+        expected_says=text_of(expected.get("says", CHECK_SAYS), "expected.says", where),
+        methods=tuple(
+            read_method(one, where) for one in list_of(value["blueprint"], "blueprint", where)
+        ),
+        cases=tuple(read_case(one, where) for one in list_of(value["cases"], "cases", where)),
         plants={
-            case: tuple(_edit(one, where) for one in _list(edits, f"plants.{case}", where))
-            for case, edits in _object(value["plants"], "plants", where).items()
+            case: tuple(read_edit(one, where) for one in list_of(edits, f"plants.{case}", where))
+            for case, edits in object_of(value["plants"], "plants", where).items()
         },
         assertions_only=bool(value["assertions_only"]),
-        origin=_cited(value["cites"], where),
+        origin=read_cited(value["cites"], where),
         path=Path(path),
     )
 
@@ -302,54 +314,6 @@ def _statement(found: Manifest) -> str:
     return f"{found.statement.rstrip()}\n\n{blueprint_markdown(found.methods)}"
 
 
-def _method(value: object, where: str) -> Method:
-    """Read one blueprint entry; every field but `stub` is required."""
-    entry = _object(value, "blueprint[]", where)
-    lesson = _object(entry.get("lesson"), "blueprint[].lesson", where)
-    return Method(
-        file=_text(entry.get("file"), "blueprint[].file", where),
-        signature=_text(entry.get("signature"), "blueprint[].signature", where),
-        contract=_text(entry.get("contract"), "blueprint[].contract", where),
-        idea=_text(entry.get("idea"), "blueprint[].idea", where),
-        lesson=Lesson(
-            _text(lesson.get("title"), "blueprint[].lesson.title", where),
-            _text(lesson.get("href"), "blueprint[].lesson.href", where),
-        ),
-        stub=entry.get("stub"),
-    )
-
-
-def _case(value: object, where: str) -> Case:
-    """Read one declared case, `[id, kind, says]`."""
-    if not isinstance(value, list) or len(value) != 3:
-        raise AuthoringError(f"{where}: a declared case is [id, kind, says]")
-    case_id, kind, says = value
-    return Case(
-        _text(case_id, "cases[].id", where),
-        _kind(kind, (MAIN, EDGE, KEPT), "cases[].kind", where),
-        _text(says, "cases[].says", where),
-    )
-
-
-def _edit(value: object, where: str) -> tuple[str, str, str]:
-    """Read one plant edit, `[file, old, new]`."""
-    if not isinstance(value, list) or len(value) != 3 or not all(isinstance(v, str) for v in value):
-        raise AuthoringError(f"{where}: a plant edit is [file, old, new], three strings")
-    return value[0], value[1], value[2]
-
-
-def _cited(value: object, where: str) -> Origin | None:
-    """Read `cites`, the lesson the practice is built from: absent is none, else path and section.
-
-    ⭐ Named `cites` rather than `origin`: the record's `origin` has one reader
-    (`cases.origin_in`), and this is the manifest's own word for the value handed to it.
-    """
-    if value is None:
-        return None
-    entry = _object(value, "cites", where)
-    return Origin(_text(entry.get("path"), "cites.path", where), entry.get("section"))
-
-
 def _required_origin(origin: Origin | None, where: str) -> Origin:
     """Refuse a draft with no origin: gate G5 resolves it against the ledger."""
     if origin is None:
@@ -358,34 +322,6 @@ def _required_origin(origin: Origin | None, where: str) -> Origin:
             f"project_draft or declare it as 'cites' in the manifest"
         )
     return origin
-
-
-def _kind(value: object, allowed: tuple[str, ...], field: str, where: str) -> str:
-    """Refuse a kind outside `allowed`."""
-    if value not in allowed:
-        raise AuthoringError(f"{where}: '{field}' is one of {list(allowed)}")
-    return str(value)
-
-
-def _text(value: object, field: str, where: str) -> str:
-    """Refuse a missing or empty text field, naming it."""
-    if not isinstance(value, str) or not value.strip():
-        raise AuthoringError(f"{where}: '{field}' is a non-empty string")
-    return value
-
-
-def _list(value: object, field: str, where: str) -> list:
-    """Refuse a field that is not a JSON array."""
-    if not isinstance(value, list):
-        raise AuthoringError(f"{where}: '{field}' is an array")
-    return value
-
-
-def _object(value: object, field: str, where: str) -> dict:
-    """Refuse a field that is not a JSON object."""
-    if not isinstance(value, dict):
-        raise AuthoringError(f"{where}: '{field}' is an object")
-    return value
 
 
 def _read(path: Path, where: str) -> str:
