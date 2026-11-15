@@ -333,7 +333,13 @@ class Tree:
     def spells(self, literal: str) -> bool:
         """True when the searched tree carries `literal`, a placeholder read as any text."""
         pieces = [re.escape(piece) for piece in PLACEHOLDER.split(literal)]
-        return re.search(".+?".join(pieces), self.text) is not None
+        pattern = ".+?".join(pieces)
+        if pattern.startswith(".+?"):
+            # ⭐ The same claim, at least one character of the line before what follows, asked
+            # by a one-character look-behind: a leading `.+?` rescans a minified bundle's
+            # megabyte line from every position in it.
+            pattern = "(?<=.)" + pattern.removeprefix(".+?")
+        return re.search(pattern, self.text) is not None
 
 
 def importable(name: str) -> bool:
@@ -428,6 +434,36 @@ def test_every_code_span_resolves_against_the_source(tree, name):
         {span for span in spans(name) if (name, span) not in NOT_CODE and not resolves(span, tree)}
     )
     assert unresolved == [], f"{name} names what the source does not have: {unresolved}"
+
+
+def _spelling(text: str) -> Tree:
+    """A `Tree` whose searched text is `text` alone, read without the repository."""
+    made = Tree.__new__(Tree)
+    made.text = text
+    return made
+
+
+@pytest.mark.parametrize(
+    ("text", "found"),
+    [
+        ("o.github.io/r", True),
+        (".github.io/r", False),
+        ("o.github.io/", False),
+        ("o\n.github.io/r", False),
+    ],
+)
+def test_a_placeholder_is_at_least_one_character_of_the_same_line(text, found):
+    assert _spelling(text).spells("<owner>.github.io/<repo>") is found
+
+
+def test_a_leading_placeholder_does_not_rescan_a_long_line_from_every_position():
+    # ⚠️ Measured: a span opening with a placeholder took 662 s of this module's run, because
+    # the searched tree holds minified bundles on single lines of megabytes.
+    import time
+
+    started = time.monotonic()
+    assert not _spelling("x" * 200_000).spells("<owner>.github.io/<repo>")
+    assert time.monotonic() - started < 2
 
 
 def test_every_listed_exemption_is_still_in_its_document():
