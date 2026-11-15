@@ -33,7 +33,8 @@ from .questions import HEDGE, Question, applies
 _NAME = r"[A-Z][A-Z0-9_]*"
 _FILE = r"(?!/)(?!(?:.*/)?\.\.(?:/|#|$))[^#\s]+"
 
-#: `env:NAME` or `private:FILE`, each optionally followed by `#KEY`.
+#: `env:NAME` or `private:FILE`, each optionally followed by `#KEY`. The `[#]` keeps the
+#: fragment sweep from reading the pattern as an anchor being composed.
 PRIVATE_REF: re.Pattern[str] = re.compile(
     rf"(?:env:{_NAME}|private:{_FILE})(?:[#]{_NAME})?"
 )

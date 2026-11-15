@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean, leaks, scrub
 
 from . import DEPTHS, TRACKS
 
@@ -205,6 +205,12 @@ def load(path: Path) -> Brief:
         raise BriefError(f"brief: not valid JSON (line {err.lineno})") from None
     try:
         assert_clean(data, "brief")
-    except PersonalDataLeak as leak:
-        raise BriefError(str(leak)) from None
+    except PersonalDataLeak:
+        raise BriefError(_leak_line(data)) from None
     return parse(data)
+
+
+def _leak_line(data: object) -> str:
+    """One line naming where the first personal value sits and its shape, never the value."""
+    at, shape = next(iter(leaks(data, "brief")), ("brief", "personal value"))
+    return f"{scrub(at)}: carries a {shape}; move it to .private/ and record a private_ref"

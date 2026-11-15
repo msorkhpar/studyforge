@@ -102,3 +102,16 @@ def test_the_module_runs_as_a_subprocess():
                           capture_output=True, text=True, check=False,
                           env={**os.environ, "PYTHONPATH": str(SRC)})
     assert done.returncode == 0 and "writing.pilot" in done.stdout
+
+
+def test_check_on_a_brief_holding_a_personal_value_exits_2_with_one_line(tmp_path, capsys):
+    planted = "/" + "home" + "/alice/notes"
+    data = clean_brief("topic")
+    data["answers"]["sources.list"] = {"status": "answered", "decided_by": "author",
+                                       "value": planted}
+    path = _repo(tmp_path, data)
+    assert main(["check", str(path)]) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert len(captured.err.strip().splitlines()) == 1
+    assert "answers.sources.list" in captured.err and planted not in captured.err

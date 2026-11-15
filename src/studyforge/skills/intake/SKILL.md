@@ -138,10 +138,11 @@ python3 -m studyforge.skills.intake check
 
 It prints one line per open costly question or outline fault, then `open: N`, and exits `1`
 while N is above `0`. A question is open when it is missing, empty, `proposed`, of the wrong
-type, or hedged (`where possible`, `TBD`, `to be decided`, `if time allows`, `maybe`). It also
-refuses a `.private/` that git does not ignore. ⛔ A personal value anywhere in the brief (an
-email, a home path) stops it before any question is judged: one line naming where the value sits,
-by question id, never the text, and exit `2`.
+type, or hedged (`where possible`, `TBD`, `to be decided`, `if time allows`, `maybe`). A
+`.private/` that git does not ignore is reported as open too. ⛔ A personal value anywhere in the
+brief (an email, a home path) stops it before any question is judged: one line naming where the
+value sits, by question id, never the text, and exit `2`. Move the value into `.private/` and
+record a `private_ref` in its place.
 
 ⛔ **`open: 0` is the done condition.** Every line it prints is a question to put to the author,
 or an answer to rewrite as a decision.

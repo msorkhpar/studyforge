@@ -99,3 +99,20 @@ def test_load_reports_invalid_json_as_a_brief_error(tmp_path):
     good = tmp_path / "ok.json"
     good.write_text(json.dumps(MINIMAL), encoding="utf-8")
     assert load(good).title == "Graph Basics"
+
+
+#: A home path assembled at run time, so no tracked file spells one.
+PLANTED = "/" + "home" + "/alice/notes"
+
+
+def test_load_refuses_a_personal_value_by_its_field_never_its_text(tmp_path):
+    path = tmp_path / "brief.json"
+    data = _with(["answers", "sources.list"],
+                 {"status": "answered", "decided_by": "author", "value": PLANTED})
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(BriefError) as err:
+        load(path)
+    message = str(err.value)
+    assert "answers.sources.list" in message and "private_ref" in message
+    assert PLANTED not in message and "alice" not in message
+    assert "\n" not in message and "write" not in message
