@@ -10,7 +10,6 @@ from __future__ import annotations
 import hashlib
 import importlib
 import json
-import os
 from dataclasses import replace
 from pathlib import PurePosixPath
 
@@ -148,12 +147,11 @@ def test_every_generated_file_whose_bytes_differ_from_the_record_is_named(tmp_pa
 
 def test_the_record_is_read_through_the_personal_data_gate(tmp_path):
     # ⛔ R7: a record is a list of paths, the shape a home directory
-    # arrives in. The planted path is expanded, never typed.
+    # arrives in. The planted path is a placeholder home, assembled so no file types one,
+    # and never this machine's own: the gate refuses any home directory.
     root, _ = _written(tmp_path)
     record = _record(root)
-    record["files"].append(
-        {"where": "/" + f"home/{os.environ.get('USER', 'someone')}/x", "sha256": ""}
-    )
+    record["files"].append({"where": "/" + "home/jane/x", "sha256": ""})
     (root / RECORD_FILE).write_text(json.dumps(record), encoding="utf-8")
 
     with pytest.raises(PersonalDataLeak):
