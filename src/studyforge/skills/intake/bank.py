@@ -94,7 +94,8 @@ _SHARED: tuple[Question, ...] = (
     _q("runtimes.licensed_tools", "costly",
        "Which licensed tools are used? The learner brings the licence.",
        "A licensed tool discovered late breaks the runner image and every practice using it.",
-       "None. If one is required, it is optional and every lesson has a free fallback."),
+       "None. If a topic needs one, the learner brings their own licence, and the topic has a "
+       "free fallback."),
     _q("runtimes.hardware", "costly",
        "Is any optional hardware needed, such as a GPU?",
        "Hardware needs a second image and a fallback; adding both late touches every practice.",
@@ -131,7 +132,7 @@ _SHARED: tuple[Question, ...] = (
        "Yes: the keys ship in the page source, and quizzes are for self-checking, not grading."),
     _q("writing.reference", "costly",
        "Which unit or voice should every lesson follow, and what is the length budget?",
-       "A reviewer once called a converted course padded; a pilot, a rewrite and a trim followed.",
+       "Prose found padded at review means a rewrite and a trim of every unit.",
        "The pilot lesson is the reference; each lesson stays under 900 words."),
     _q("writing.diagrams", "costly",
        "Where are diagrams required?",
@@ -211,7 +212,8 @@ _SHARED: tuple[Question, ...] = (
     _q("limits.machine", "later",
        "How much disk, memory and GPU does the machine have?",
        "A build that exceeds the disk fails near the end and the batch is rerun.",
-       "Plan for 16 GB of memory and 50 GB of free disk, with no GPU."),
+       "Record the real memory, disk and GPU once, "
+       "and plan parallel jobs to stay well inside them."),
     _q("limits.docker_context", "later",
        "Which Docker context is used?",
        "A build sent to the wrong context is rebuilt and its images pruned.",
@@ -224,7 +226,8 @@ _SHARED: tuple[Question, ...] = (
 
 _TRACKS: tuple[Question, ...] = (
     _q("interview.job_description", "costly",
-       "Where is the job description kept? It stays in the private folder only.",
+       "Where is the job description kept? It stays in the private folder only. "
+       "Give it as private:FILE.",
        "A job description committed once was scrubbed from the whole history at the end.",
        "private:job-description.txt", kind="private_ref", tracks=_only("interview")),
     _q("interview.skills", "costly",
@@ -286,7 +289,7 @@ _TRACKS: tuple[Question, ...] = (
        "Out of scope unless an end-state situation needs them; then reading only.",
        tracks=_only("bridge")),
     _q("convert.repository", "costly",
-       "Where is the existing material? Give the variable or key that holds its location.",
+       "Where is the existing material? Give it as env:NAME or private:FILE#KEY.",
        "A wrong source location sends reconnaissance over the wrong material.",
        "env:COURSE_SOURCE_REPOSITORY", kind="private_ref", tracks=_only("convert")),
     _q("convert.toc", "later",
