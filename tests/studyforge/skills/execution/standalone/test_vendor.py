@@ -194,19 +194,6 @@ def test_a_build_the_toolchain_refuses_is_refused_with_its_reason(tmp_path):
         )
 
 
-def test_the_context_is_copied_as_bytes_without_what_an_interpreter_wrote(tmp_path):
-    checkout = toolchain(tmp_path / "tc")
-    written = vendor.copy(checkout, tmp_path / "out", ["docker/minimal", ".dockerignore"])
-    assert written == (".dockerignore", "docker/minimal/Dockerfile")
-    assert (tmp_path / "out" / "docker" / "minimal" / "Dockerfile").read_bytes() == b"FROM x\n"
-    assert not (tmp_path / "out" / "docker" / "minimal" / "__pycache__").exists()
-
-
-def test_an_input_the_toolchain_does_not_hold_is_refused(tmp_path):
-    with pytest.raises(vendor.VendorRefused, match="does not hold"):
-        vendor.copy(toolchain(tmp_path / "tc"), tmp_path / "out", ["lockdown"])
-
-
 def test_what_a_build_says_beyond_the_kept_keys_is_dropped_unread(tmp_path):
     got = vendor.ask(
         toolchain(tmp_path / "tc"),

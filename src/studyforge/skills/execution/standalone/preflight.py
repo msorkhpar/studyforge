@@ -30,7 +30,7 @@ a build), since it would only repeat that reason in other words.
 ## ⛔ What stays mid-run
 
 ⚠️ Three refusals cannot be decided before writing, and stay where they happen in `release`:
-a toolchain input the checkout does not hold (`vendor.copy`, met while copying), the rulings over
+a toolchain input the checkout does not hold (`context.copy`, met while copying), the rulings over
 the compose text the release renders (`compose.render`), and the preview of the finished tree
 (`preview`, which reads the tree). Each still refuses by name.
 

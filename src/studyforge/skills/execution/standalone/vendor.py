@@ -1,22 +1,22 @@
-r"""The toolchain's four builds, asked of its pinned checkout, with their context copied in.
+r"""The toolchain's four builds, asked of its pinned checkout.
 
 **What it does.** Reads the toolchain's `consuming.json`, runs the command its
 `builds.printed_by` names for each build a learner's course needs — the shared
 unprimed `runner` and `editor`, and the course's two layers on them — checks
 that the checkout computes the two tags the course recorded when its execution
-was onboarded, and copies every input root those builds name into the
-learner's tree, byte for byte.
+was onboarded, and names every input root those builds read, which `context.copy`
+copies into the learner's tree.
 
 **How you use it.**
 
     asked = ask(checkout, runtimes, prime, platform=..., run=run, profile=None)  # Toolchain(...)
     pinned(course_root, checkout, runtimes, prime, profiled, platform=..., run=run)  # or refused
-    copied = copy(checkout, target, asked.inputs)     # relative paths written
+    copied = context.copy(checkout, target, asked.inputs)     # relative paths written
 
 **Depends on.** `contract` for the one file this reads of the component, and
 the caller's `run` (`split.Run`) to run the command that file names. ⛔ **It reads no Dockerfile
 and no build script**: the builds arrive as data from the command the contract
-names, and the context is copied as bytes, never parsed (R18).
+names (R18).
 
 ## ⛔ The checkout the course was built with, or nothing
 
@@ -39,7 +39,6 @@ from __future__ import annotations
 
 import json
 import re
-import shutil
 import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -75,9 +74,6 @@ SET_SLOT = "<the declared set>"
 #: ⛔ The rest (the checkout's and the prime's absolute paths among it) is dropped
 #: unread, and what is kept passes the personal-data gate before it is used (R7).
 KEPT = ("builds_api", "image", "tag", "dockerfile", "target", "args", "built_here", "inputs")
-
-#: Files the interpreter writes beside an input, never copied.
-SKIPPED = ("__pycache__",)
 
 
 class VendorRefused(ValueError):
@@ -296,28 +292,6 @@ def _unpinned(got: object, want: object, which: str) -> None:
         f"course recorded {scrub(str(want))}: check out the toolchain commit the course was built "
         "with, or re-onboard the course's execution"
     )
-
-
-def copy(checkout: Path, target: Path, inputs: Sequence[str]) -> tuple[str, ...]:
-    """Copy each input root from `checkout` into `target`, as bytes; return what was written."""
-    checkout, target = Path(checkout), Path(target)
-    written: list[str] = []
-    for entry in inputs:
-        source = checkout / entry
-        if source.is_file():
-            files = [source]
-        elif source.is_dir():
-            files = sorted(p for p in source.rglob("*") if p.is_file())
-        else:
-            raise VendorRefused(f"the toolchain names an input it does not hold: {scrub(entry)}")
-        for one in files:
-            relative = one.relative_to(checkout)
-            if any(part in SKIPPED for part in relative.parts) or one.suffix == ".pyc":
-                continue
-            (target / relative).parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(one, target / relative)
-            written.append(relative.as_posix())
-    return tuple(sorted(written))
 
 
 def _printed_by(checkout: Path) -> list[str]:

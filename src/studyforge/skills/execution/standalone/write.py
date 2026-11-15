@@ -2,7 +2,7 @@ r"""Write a course's learner tree: its material, and all that serves it without 
 
 **What it does.** From a course checkout, writes into an empty directory the tree its learner `main`
 holds: every tracked file `split` keeps, the vendored serving runtime (`closure`), the toolchain's
-build context at the course's pinned inputs (`vendor`), the build files studyforge owns (`images`),
+build context at the course's pinned inputs (`context`), the build files studyforge owns (`images`),
 the two compose files (`compose`), the learner's README and settings (`learner`), and
 `.studyforge/release.json`, the manifest of every path the tree keeps. ⭐ The tree also carries its
 own Pages automation (`pages`): the workflow that deploys the read-only preview on every push to
@@ -50,6 +50,7 @@ from studyforge.skills.execution.standalone import (
 from studyforge.skills.execution.standalone import (
     closure,
     compose,
+    context,
     facts,
     images,
     learner,
@@ -60,7 +61,6 @@ from studyforge.skills.execution.standalone import (
     record,
     split,
     tour,
-    vendor,
 )
 from studyforge.skills.execution.standalone.preflight import gather
 from studyforge.skills.execution.standalone.record import MANIFEST
@@ -159,7 +159,7 @@ def release(
     serve = bases.serve.tag if bases else _write_runtime(out, library_commit, version, written)
     written += [
         f"{compose.TOOLCHAIN}/{one}"
-        for one in vendor.copy(
+        for one in context.copy(
             toolchain, out / compose.TOOLCHAIN, record.thin_inputs(asked) if bases else asked.inputs
         )
     ]
