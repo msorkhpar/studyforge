@@ -17,8 +17,10 @@ from studyforge.skills.execution import buildfiles, prime, specimens
 
 def test_the_prime_reads_the_same_spelling_and_keeps_none_of_its_own():
     # ⛔ Two spellings of one answer drift the day one learns a tool the other does not.
-    for name in ("SKIPPED", "SOURCE_SUFFIXES"):
-        assert getattr(prime, name) is getattr(conventions, name), name
+    assert prime.SKIPPED is conventions.SKIPPED
+    # ⭐ The prime's language selection lives in `specimens.for_build`, which reads the suffixes.
+    assert specimens.SOURCE_SUFFIXES is conventions.SOURCE_SUFFIXES
+    assert not hasattr(prime, "SOURCE_SUFFIXES")
     # ⭐ The build-file spelling is read by `buildfiles`, which `prime` uses and which keeps no copy.
     assert buildfiles.BUILD_FILES is conventions.BUILD_FILES
     assert not hasattr(prime, "BUILD_FILES")

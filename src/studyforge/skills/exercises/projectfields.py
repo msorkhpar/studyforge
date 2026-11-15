@@ -4,7 +4,7 @@
 blueprint entry (`read_method`), a declared case (`read_case`), a plant edit (`read_edit`)
 and the lesson the practice cites (`read_cited`), on four shape checks (`text_of`,
 `list_of`, `object_of`, `kind_of`) that refuse a wrong value with `AuthoringError`, naming
-the field and never echoing the value.
+the field (`what`, the framework's label for a field) and never echoing the value.
 
 **How you use it.** `project.read_manifest` calls them with the manifest's name as `where`;
 each returns the value it read or raises.
@@ -68,29 +68,29 @@ def read_cited(value: object, where: str) -> Origin | None:
     return Origin(text_of(entry.get("path"), "cites.path", where), entry.get("section"))
 
 
-def kind_of(value: object, allowed: tuple[str, ...], field: str, where: str) -> str:
+def kind_of(value: object, allowed: tuple[str, ...], what: str, where: str) -> str:
     """Refuse a kind outside `allowed`."""
     if value not in allowed:
-        raise AuthoringError(f"{where}: '{field}' is one of {list(allowed)}")
+        raise AuthoringError(f"{where}: '{what}' is one of {list(allowed)}")
     return str(value)
 
 
-def text_of(value: object, field: str, where: str) -> str:
+def text_of(value: object, what: str, where: str) -> str:
     """Refuse a missing or empty text field, naming it."""
     if not isinstance(value, str) or not value.strip():
-        raise AuthoringError(f"{where}: '{field}' is a non-empty string")
+        raise AuthoringError(f"{where}: '{what}' is a non-empty string")
     return value
 
 
-def list_of(value: object, field: str, where: str) -> list:
+def list_of(value: object, what: str, where: str) -> list:
     """Refuse a field that is not a JSON array."""
     if not isinstance(value, list):
-        raise AuthoringError(f"{where}: '{field}' is an array")
+        raise AuthoringError(f"{where}: '{what}' is an array")
     return value
 
 
-def object_of(value: object, field: str, where: str) -> dict:
+def object_of(value: object, what: str, where: str) -> dict:
     """Refuse a field that is not a JSON object."""
     if not isinstance(value, dict):
-        raise AuthoringError(f"{where}: '{field}' is an object")
+        raise AuthoringError(f"{where}: '{what}' is an object")
     return value
