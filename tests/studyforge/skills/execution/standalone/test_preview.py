@@ -302,6 +302,14 @@ def test_no_page_and_no_script_names_an_account_or_a_repository(tmp_path):
     assert "location" in preview.PREVIEW_JS or "window.location" in preview.PREVIEW_JS
 
 
+def test_the_preview_never_writes_the_host_hint_and_the_script_reads_it(tmp_path):
+    out = made(tmp_path)
+    for name, text in html_of(out).items():
+        assert preview.HOST_HINT not in text, name
+    assert f'meta[name="{preview.HOST_HINT}"]' in preview.PREVIEW_JS
+    assert "@HINT@" not in preview.PREVIEW_JS
+
+
 def test_the_preview_is_the_same_bytes_every_time(tmp_path):
     tree = hidden_tree(tmp_path / "tree")
     preview.preview(tree, tmp_path / "one")
