@@ -17,7 +17,7 @@ The late decisions recur across all six courses, and each cost a retrofit or a r
   166 units.
 - **A try-it Run in every practice.** Added as a rule after four courses had shipped; retrofits
   of 78, 120 and 448 practices.
-- **Languages.** A brief that said "where possible" produced a course with Java missing from 31
+- **Languages.** A brief that read "where possible" produced a course with Java missing from 31
   of 40 practices.
 - **Quiz policy**: where quizzes go, mock exams, and the fact that a static site carries its
   answer keys in the page source.

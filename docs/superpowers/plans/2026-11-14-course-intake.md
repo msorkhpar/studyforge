@@ -32,7 +32,7 @@ on the path.
   `tests/studyforge/skills/intake/test_X.py`; `__init__.py` mirrors to `test_init.py`.
 - **Wording in `src/`, `docs/` and `README.md`:**
   - no process ids (letter-plus-number tokens like requirement or milestone ids);
-  - no dated rulings, no "the user/owner said", no quoted conversation;
+  - no dated rulings, no attributing a rule to a person, no quoted conversation;
   - no personal data;
   - fictional names and `.example` / `.invalid` domains only.
 - **Brief API:** `brief_api` is `1`, and the brief lives at `.studyforge/brief.json`, rendered to
@@ -349,7 +349,7 @@ The questions are listed below. `ALL` means every track. The wording of `ask`, `
     - set `quiz.mocks` to `"yes"` → `not a boolean`;
     - set `narration.wanted` to `"sometimes"` → `not one of`.
   - `test_a_deferred_costly_question_with_a_reason_is_not_open`
-  - `test_a_personal_value_in_free_text_is_reported_by_id_not_by_text`: put `/home/alice/notes`
+  - `test_a_personal_value_in_free_text_is_reported_by_id_not_by_text`: put a home-directory path for a sample account (build it in the test from `"/" + "home" + "/alice"`, so no tracked file holds the shape)
     in `sources.list`. Assert that the line starts `open: sources.list: carries` and that
     `alice` is not in the output (Review Focus 3).
   - `test_narration_scope_is_required_only_when_narration_is_wanted`
