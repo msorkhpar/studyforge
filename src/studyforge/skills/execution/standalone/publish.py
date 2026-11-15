@@ -13,8 +13,8 @@ the lines of the owner's command list, so the list is testable without a daemon.
   `with-narration` only when the tree keeps the clips' checksums (`images.CLIPS`). Each
   build sets `COURSE_NARRATION` on the command, which picks the site's build target and
   its tag in `compose.yaml`.
-- **Context.** No docker line names a context unless the owner names one
-  (`--context NAME`); otherwise docker uses `DOCKER_CONTEXT` or the current context.
+- **Context.** ⛔ No docker line names a context: the engine is the caller's, chosen with
+  `DOCKER_CONTEXT` or the current context, which is a setting of the owner's machine.
 - **Push the course's images only.** The site (once per edition), the runner and the editor
   are pushed; ⛔ a base (`serve`, `runner_base`, `editor_base` in `release.json` `images`) is
   never pushed: it is published already, and docker refuses to push a reference that carries
@@ -28,8 +28,7 @@ the lines of the owner's command list, so the list is testable without a daemon.
 - **Digest after push.** Each published base's manifest digest must equal the digest the
   course images pin (`release.json` `bases`); a mismatch stops the list.
 
-    python -m studyforge.skills.execution.standalone.publish [--context NAME] \
-        RELEASE_JSON NAMESPACE WORKDIR
+    python -m studyforge.skills.execution.standalone.publish RELEASE_JSON NAMESPACE WORKDIR
 """
 
 from __future__ import annotations
@@ -51,7 +50,7 @@ from studyforge.skills.execution.standalone.images import (
 AUTHOR_NAME = "Example"
 AUTHOR_EMAIL = "noreply@example.invalid"
 
-USAGE = "usage: publish [--context NAME] RELEASE_JSON NAMESPACE WORKDIR"
+USAGE = "usage: publish RELEASE_JSON NAMESPACE WORKDIR"
 
 _INTERPOLATION = re.compile(r"^\$\{[A-Z_]+:-[^}]*\}/")
 _NARRATION = re.compile(r"\$\{" + NARRATION_VARIABLE + r":-[^}]*\}")
@@ -59,11 +58,6 @@ _NARRATION = re.compile(r"\$\{" + NARRATION_VARIABLE + r":-[^}]*\}")
 #: The course's own images in `release.json` `images`, each with the key of the base it starts
 #: from (`images.Names`). ⭐ Every other key there is a base, which is never pushed.
 COURSE_BASES = {"site": "serve", "runner": "runner_base", "editor": "editor_base"}
-
-
-def docker(context: str | None = None) -> list[str]:
-    """The docker argv prefix: the named context, or none so docker uses the current one."""
-    return ["docker", "--context", context] if context else ["docker"]
 
 
 def commit_argv(message: str) -> list[str]:
@@ -155,16 +149,14 @@ def _env(namespace: str) -> str:
     return f"{NAMESPACE_VARIABLE}={shlex.quote(namespace)}"
 
 
-def build_command(namespace: str, edition: str = NARRATIONS[0], context: str | None = None) -> str:
+def build_command(namespace: str, edition: str = NARRATIONS[0]) -> str:
     """The build of one edition: every image for the first, the site alone for the voiced one."""
     services = [] if edition == NARRATIONS[0] else ["site"]
-    argv = [*docker(context), "compose", "build", *services]
+    argv = ["docker", "compose", "build", *services]
     return f"{_env(namespace)} {NARRATION_VARIABLE}={shlex.quote(edition)} {shlex.join(argv)}"
 
 
-def scan_commands(
-    image: str, base: str | None, namespace: str, workdir: str, context: str | None = None
-) -> list[str]:
+def scan_commands(image: str, base: str | None, namespace: str, workdir: str) -> list[str]:
     """Lines that sweep what `image` adds to `base` under `workdir`; stop on a finding.
 
     ⭐ The base's layer list is read from the local image (a build pulled it); with no base
@@ -173,7 +165,7 @@ def scan_commands(
     """
     name = "scan-" + re.sub(r"[^a-z0-9]+", "-", image.lower()).strip("-")
     where = shlex.quote(f"{workdir}/{name}")
-    run = shlex.join(docker(context))
+    run = "docker"
     layers = f"{where}/base-layers.json"
     listed = (
         f"{run} image inspect --format '{{{{json .RootFS.Layers}}}}'"
@@ -199,11 +191,9 @@ def digest_matches(expected: str, printed: str) -> bool:
     return printed.strip() == expected.strip() and expected.startswith("sha256:")
 
 
-def digest_commands(
-    namespace: str, pinned: Mapping[str, str], context: str | None = None
-) -> list[str]:
+def digest_commands(namespace: str, pinned: Mapping[str, str]) -> list[str]:
     """Lines that compare each pushed manifest digest to the pinned one and stop on a mismatch."""
-    inspect = shlex.join([*docker(context), "buildx", "imagetools", "inspect"])
+    inspect = "docker buildx imagetools inspect"
     return [
         f'test "$({inspect} {shlex.quote(f"{namespace}/{image}")}'
         f" --format '{{{{.Manifest.Digest}}}}')\" = {shlex.quote(digest)}"
@@ -212,37 +202,28 @@ def digest_commands(
     ]
 
 
-def owner_commands(
-    release: Mapping[str, object], namespace: str, workdir: str, context: str | None = None
-) -> list[str]:
+def owner_commands(release: Mapping[str, object], namespace: str, workdir: str) -> list[str]:
     """The owner's whole list, in order: build each edition, scan and push each course image,
     verify each base."""
     bases = bases_of(release)
     images = list(bases)
     lines = ["set -e"]
-    lines += [build_command(namespace, edition, context) for edition in editions(release)]
+    lines += [build_command(namespace, edition) for edition in editions(release)]
     for image, base in bases.items():
-        lines += scan_commands(image, base, namespace, workdir, context)
-    run = shlex.join(docker(context))
-    lines += [f"{run} push {shlex.quote(f'{namespace}/{image}')}" for image in images]
-    lines += digest_commands(namespace, pinned_digests(release), context)
+        lines += scan_commands(image, base, namespace, workdir)
+    lines += [f"docker push {shlex.quote(f'{namespace}/{image}')}" for image in images]
+    lines += digest_commands(namespace, pinned_digests(release))
     return lines
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
-    context = None
-    if args[:1] == ["--context"]:
-        if len(args) < 2 or not args[1] or args[1].startswith("-"):
-            print(USAGE, file=sys.stderr)
-            return 2
-        context, args = args[1], args[2:]
     if len(args) != 3:
         print(USAGE, file=sys.stderr)
         return 2
     with open(args[0], encoding="utf-8") as handle:
         release = json.load(handle)
-    for line in owner_commands(release, args[1], args[2], context):
+    for line in owner_commands(release, args[1], args[2]):
         print(line)
     return 0
 

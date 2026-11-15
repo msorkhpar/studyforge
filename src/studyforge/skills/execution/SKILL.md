@@ -700,9 +700,9 @@ and sort it per the delivery skill's step 9, until its report ends `open: 0`.
    checkout is not exported.
 8. Publishing is the owner's step, never this skill's. `standalone.publish` prints the
    command list from `.studyforge/release.json` (`python -m
-   studyforge.skills.execution.standalone.publish [--context NAME] RELEASE_JSON NAMESPACE
-   WORKDIR`); it runs nothing. ⭐ No docker line names a context unless `--context NAME` is
-   given; otherwise docker uses `DOCKER_CONTEXT` or the current context. ⛔ Every build line
+   studyforge.skills.execution.standalone.publish RELEASE_JSON NAMESPACE WORKDIR`); it
+   runs nothing. ⛔ No docker line names a context: the engine is the owner's, chosen with
+   `DOCKER_CONTEXT` or the current context on their own machine. ⛔ Every build line
    sets `STUDYFORGE_NAMESPACE=<placeholder>` explicitly: a value inherited from the shell
    would leak into the registry lookups and tags. ⛔ Every image is named by a concrete tag,
    never a `${...}` interpolation. The list, in order:

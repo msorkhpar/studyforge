@@ -121,7 +121,7 @@ def _docker_lines(lines):
     return [line for line in lines if "docker" in line.split("|")[0]]
 
 
-def test_the_build_sets_the_namespace_and_by_default_names_no_context():
+def test_the_build_sets_the_namespace_and_names_no_context():
     lines = publish.owner_commands(RELEASE, "ns-placeholder", "scratch")
     assert lines[0] == "set -e"
     assert lines[1] == (
@@ -131,14 +131,6 @@ def test_the_build_sets_the_namespace_and_by_default_names_no_context():
     docker = _docker_lines(lines)
     assert docker and all("--context" not in line for line in docker)
     assert all("desktop-linux" not in line for line in lines)
-
-
-def test_a_named_context_reaches_every_docker_line():
-    lines = publish.owner_commands(RELEASE, "ns", "scratch", context="remote-builder")
-    docker = _docker_lines(lines)
-    assert docker
-    for line in docker:
-        assert line.count("docker --context remote-builder ") == line.count("docker ")
 
 
 def test_no_line_carries_an_unexpanded_or_quoted_image_name():
@@ -176,17 +168,16 @@ def test_a_corpus_with_clips_builds_scans_and_pushes_both_editions():
         assert f"docker push ns/demo-site:abc-0123-{edition}" in lines
 
 
-def test_main_prints_the_list_and_takes_a_context(tmp_path, capsys):
+def test_main_prints_the_list_and_refuses_a_context(tmp_path, capsys):
     release = tmp_path / "release.json"
     release.write_text(json.dumps(NARRATED), encoding="utf-8")
     assert publish.main([str(release), "ns", "scratch"]) == 0
     plain = capsys.readouterr().out.splitlines()
     assert "docker push ns/demo-site:abc-0123-with-narration" in plain
-    assert publish.main(["--context", "remote-builder", str(release), "ns", "scratch"]) == 0
-    named = capsys.readouterr().out.splitlines()
-    assert "docker --context remote-builder push ns/demo-site:abc-0123-with-narration" in named
     assert publish.main([str(release), "ns"]) == 2
-    assert publish.main(["--context", str(release), "ns", "scratch"]) == 2
+    # ⛔ The engine is the caller's (`DOCKER_CONTEXT`): the list never names a context.
+    assert publish.main(["--context", "remote-builder", str(release), "ns", "scratch"]) == 2
+    assert "--context" not in capsys.readouterr().out
 
 
 def test_scan_precedes_every_push_and_uses_the_shared_pattern_set():
