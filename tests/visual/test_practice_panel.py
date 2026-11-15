@@ -163,6 +163,15 @@ def _until(page: OpenPage, ready, what: str) -> dict:
     raise AssertionError(f"the panel never {what}; it reads {reading}")
 
 
+def _served(page: OpenPage) -> dict:
+    """The panel of a served page, once its script has unhidden the controls.
+
+    ⛔ Read at once, a served page can still be the bytes a file shows: the controls are unhidden
+    by a script that answers after the page has loaded, so the first reading waits for it.
+    """
+    return _until(page, lambda reading: bool(reading["controls"]), "unhid its controls")
+
+
 def _tab_to(page: OpenPage, label: str) -> dict:
     """Tab from the top of the document until focus lands on `label`.
 
@@ -211,7 +220,7 @@ def test_a_file_shows_the_offline_note_and_a_served_page_shows_the_controls(
 
     open_page.open(origin.url(_case()))
     open_page.open_practice()
-    as_served = _state(open_page)
+    as_served = _served(open_page)
     assert as_served["controls"], "a served page did not unhide the panel's controls"
     assert not as_served["offline"], "a served page still says running needs a server"
     assert as_served["editor"], "a served page hid the editor slot instead of explaining it"
@@ -229,7 +238,7 @@ def test_every_control_the_panel_offers_is_reached_by_tab_in_document_order(
     """⭐ The tab order: the panel is part of the page's focus ring."""
     open_page.open(origin.url(_case()))
     open_page.open_practice()
-    offered = _acts(_state(open_page))
+    offered = _acts(_served(open_page))
     assert offered, "the panel offered nothing, so this traversal asserts nothing"
     reached = [step["label"] for step in open_page.trail(PRESSES)]
     hit = [label for label in reached if label in offered]
@@ -262,7 +271,7 @@ def test_a_page_whose_controls_are_out_of_the_focus_ring_fails_the_traversal(
     with served.serving(damaged_sites["keyboard"]) as broken:
         open_page.open(broken.url(_case()))
         open_page.open_practice()
-        offered = _acts(_state(open_page))
+        offered = _acts(_served(open_page))
         assert offered, "the control page unhid no controls either, so it proves nothing"
         reached = [step["label"] for step in open_page.trail(PRESSES)]
         assert not [label for label in reached if label in offered], (
@@ -374,7 +383,7 @@ def test_the_run_is_announced_in_a_live_region_that_never_takes_focus(
     """
     open_page.open(origin.url(_case()))
     open_page.open_practice()
-    at_rest = _state(open_page)
+    at_rest = _served(open_page)
     assert at_rest["status"]["role"] == "status", "the panel's status is not a status region"
     assert at_rest["status"]["live"] == "polite", "the status region is not announced politely"
     assert at_rest["status"]["text"] == "", "the panel announced something before anything happened"
@@ -412,7 +421,7 @@ def test_the_output_region_is_written_to_and_becomes_reachable_by_tab(
     """
     open_page.open(origin.url(_case()))
     open_page.open_practice()
-    before = _state(open_page)
+    before = _served(open_page)
     assert not before["output"]["visible"], "the output region was showing before any run"
     assert before["output"]["tabindex"] == "0", "the output region is not focusable at all"
     assert "Output" not in [step["label"] for step in open_page.trail(PRESSES)]
@@ -445,7 +454,7 @@ def test_every_control_in_the_panel_shows_a_visible_focus_ring_in_both_themes(
     """⛔ A focus ring that is invisible in dark is no ring — on the panel too."""
     open_page.open(origin.url(_case()), scheme=scheme)
     open_page.open_practice()
-    offered = _acts(_state(open_page))
+    offered = _acts(_served(open_page))
     invisible = [
         f"{step['label']}: outline {step['outline']}"
         for step in open_page.trail(PRESSES)
@@ -487,7 +496,7 @@ def test_the_panel_s_contrast_check_fails_on_a_stylesheet_whose_text_matches_its
         for scheme in SCHEMES:
             open_page.open(broken.url(_case()), scheme=scheme)
             open_page.open_practice()
-            assert _state(open_page)["controls"], "the control page unhid no controls"
+            assert _served(open_page)["controls"], "the control page unhid no controls"
             worst[scheme] = min(
                 contrast.ratio(contrast.parse(el["colour"]), contrast.parse(el["ground"]))
                 for el in theme.text_elements(open_page)
