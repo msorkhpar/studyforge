@@ -8,6 +8,12 @@ honest report of what could not be determined.
 other skill operates on contracts (R2). If a second skill starts needing to
 understand a source, the seam has been drawn wrong.
 
+⭐ **A course brief on the `convert` track carries the course-level answers**
+(`skills/intake`): goal, learner, runtimes, practice and quiz policy,
+publishing. Read them from `.studyforge/brief.json` rather than asking again.
+Reconnaissance still asks its own questions, about the source's structure,
+which no brief question covers.
+
 ---
 
 ## ⛔ First and last: what earlier courses learned

@@ -21,12 +21,18 @@ from studyforge.skills.delivery.offer import Capability, Offer, OfferRefused
 def test_the_installed_offer_is_every_command_then_every_skill_but_the_planner():
     ids = [capability.id for capability in Offer.installed().capabilities]
     commands = [f"studyforge {name}" for name in VERBS]
-    skills = [f"skill {name}" for name in documents.names() if name != offer.PLANNER]
+    left_out = (offer.PLANNER, offer.INTAKE)
+    skills = [f"skill {name}" for name in documents.names() if name not in left_out]
     assert ids == commands + skills
 
 
 def test_the_planner_is_this_package():
     assert offer.PLANNER == "delivery"
+
+
+def test_intake_is_not_one_of_the_offered_capabilities():
+    ids = [capability.id for capability in Offer.installed().capabilities]
+    assert "skill intake" not in ids
 
 
 def test_a_command_is_described_by_its_own_summary():

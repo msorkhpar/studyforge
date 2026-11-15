@@ -56,9 +56,10 @@ def test_the_offer_lists_every_installed_command_and_every_skill_but_the_planner
 
     ids = delivery.Offer.installed().ids
     assert {f"studyforge {name}" for name in VERBS} <= ids
-    assert {f"skill {name}" for name in documents.names() if name != "delivery"} <= ids
-    assert "skill delivery" not in ids
-    assert len(ids) == len(VERBS) + len(documents.names()) - 1
+    left_out = ("delivery", "intake")
+    assert {f"skill {name}" for name in documents.names() if name not in left_out} <= ids
+    assert "skill delivery" not in ids and "skill intake" not in ids
+    assert len(ids) == len(VERBS) + len(documents.names()) - len(left_out)
 
 
 # --- R20: nothing here cites a path inside the extraction source ------------

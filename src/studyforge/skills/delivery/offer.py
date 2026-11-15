@@ -20,8 +20,9 @@ From a shell, `python3 -m studyforge.skills.delivery` prints the same document.
 **Depends on.** `dataclasses`, `sys`, `studyforge.exitcodes`, this package's
 `refusal`, and two registries the installed package already keeps:
 `studyforge.cli.dispatch.VERBS`, the table of commands, and
-`studyforge.skills.documents`, the skill locator. ⛔ Nothing else, and in
-particular no path: both registries are read through their own modules.
+`studyforge.skills.documents`, the skill locator; and `studyforge.skills.intake`,
+only for its package name. ⛔ Nothing else, and in particular no path: both
+registries are read through their own modules.
 
 ## ⛔ Read from the installation, never typed
 
@@ -35,6 +36,10 @@ exists here exactly when a reader could run it.
 The delivery skill is the thing making the plan, so it is never a capability
 the plan schedules or forgoes. It is left out by the name of the package this
 module is in, never by a name typed here.
+
+Intake is left out the same way, by its package's own name. It runs before a
+course exists, so no backlog schedules or forgoes it, and offering it would add
+a capability every re-plan of an existing course must newly account for.
 
 ## ⛔ A capability the framework lacks is a finding, never an entry
 
@@ -55,6 +60,7 @@ import sys
 from dataclasses import dataclass
 
 from studyforge.exitcodes import UNUSABLE
+from studyforge.skills import intake
 from studyforge.skills.delivery.refusal import one_or_all
 
 #: What a command's capability id opens with: the command a reader types.
@@ -65,6 +71,9 @@ SKILL = "skill"
 
 #: The skill that makes the plan, by the name of the package holding this module.
 PLANNER = __name__.split(".")[-2]
+
+#: The skill that runs before a course exists, by the name of its own package.
+INTAKE = intake.__name__.split(".")[-1]
 
 #: How a skill document's first line opens, before the skill's own title.
 TITLE_OPENING = "# Skill — "
@@ -114,7 +123,7 @@ class Offer:
 
     @classmethod
     def installed(cls) -> Offer:
-        """Read this installation's commands and skills, leaving out the planner itself."""
+        """Read this installation's commands and skills, leaving out the planner and intake."""
         from studyforge.cli.dispatch import VERBS
         from studyforge.skills import documents
 
@@ -124,7 +133,7 @@ class Offer:
         skills = tuple(
             Capability(f"{SKILL} {name}", _title(documents.text(name), name))
             for name in documents.names()
-            if name != PLANNER
+            if name not in (PLANNER, INTAKE)
         )
         return cls(commands + skills)
 

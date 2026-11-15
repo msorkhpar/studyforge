@@ -65,11 +65,12 @@ command table and skill tree, so it is right for the version installed, and a
 planner who went looking in the source would be planning against whatever
 they happened to read.
 
-⛔ **Then ask the owner the questions that are expensive to change later**,
-before the backlog is cut: the list is the lessons skill's *Before you start*,
-item 5 (private sources, release, licensed tools, optional hardware,
-ruled-out technology and narration, practice policy). An answer that arrives
-after the modules are written is a rewrite.
+⛔ **Then settle the questions that are expensive to change later**, before
+the backlog is cut. Run `python3 -m studyforge.skills.intake check` first: a
+course brief that prints `open: 0` already holds the answers, and the plan
+uses them. A corpus with no brief, or one with questions still open, asks them
+now (`skills/intake`, the lessons skill's *Before you start*, item 5). An
+answer that arrives after the modules are written is a rewrite.
 
 ### 2. Decide where this corpus **finishes**, and say what it will never use
 

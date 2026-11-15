@@ -38,7 +38,9 @@ whose log is missing, does not name the catalogue it read, or is not sorted.
    unignored worktree under the root is walked file by file and its `.git` file is refused as a
    nested repository.
 5. **The owner has answered the questions that are expensive to change later.**
-   Ask them before the plan, and write the answers into the plan:
+   The answers live in the course brief (`skills/intake`, `.studyforge/brief.json`). A corpus
+   without one asks the intake questions now (`python3 -m studyforge.skills.intake questions`),
+   before the plan, and writes the answers into the plan. Among them:
    - **Private sources.** Where do the owner's private inputs live (a job
      description, notes from another tool, the prompt that started the build)?
      Keep them outside the corpus, or in a folder the repository ignores, from

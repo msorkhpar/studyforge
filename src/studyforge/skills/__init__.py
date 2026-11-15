@@ -1,10 +1,14 @@
-"""The skills: reconnaissance, adapter, onboarding, execution, build-and-serve, export, exercises.
+"""The skills: intake, reconnaissance, adapter, onboarding, execution, build, export, exercises.
 
 **What it does.** Holds whatever executable support the authoring and
 conversion skills need. ⭐ **The product is a set of skills, not a bespoke
 pipeline** (R16): the end state is that someone points a skill at material they
 care about and gets this format back — pages, narration, contents, navigation,
 practices — and keeps it as their durable personal record.
+
+⭐ **A course written from a goal starts one step earlier, with `intake`**: it interviews
+the author and writes the course brief before reconnaissance or onboarding runs, and every
+later skill reads its answers instead of asking again.
 
 **How you use it.** Through the skills themselves, which are documents with
 procedures rather than an API. Anything here exists to be *called by* a skill,
