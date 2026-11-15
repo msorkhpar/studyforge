@@ -193,9 +193,11 @@ def test_a_PLANTED_skip_is_disclosed_IDENTICALLY_in_both_forms(tmp_path):
 #: The two shapes a run reaches `tests/visual/` in. ⚠️ BOTH MEASURED in the pinned image:
 #: from `tests`, the controller never loads that conftest and the line was ABSENT under `-n`;
 #: from an argument INSIDE it, the conftest is an initial one there and the forward printed
-#: it a SECOND time.
+#: it a SECOND time. ⭐ The suite-root shape ignores `tests/`'s other entries: the argument is
+#: still `tests`, so the conftest is still not an initial one, and the child collects hundreds
+#: of tests rather than the whole suite twice.
 VISUAL_TARGETS = {
-    "from-the-suite-root": ("tests", "-k", "test_contrast_math"),
+    "from-the-suite-root": ("tests", "--ignore-glob=tests/[!v]*", "-k", "test_contrast_math"),
     "from-inside-the-directory": ("tests/visual/test_contrast_math.py",),
 }
 
