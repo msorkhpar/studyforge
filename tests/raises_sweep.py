@@ -275,57 +275,80 @@ class CatchSite:
 def catch_sites(src: Path, subject: Population) -> dict[str, CatchSite]:
     """`{path:function: CatchSite}` for every `try` around a reader of an exporting package."""
     sites: dict[str, CatchSite] = {}
+    memo = _memo_for(subject)
     for path in sorted(src.rglob("*.py")):
         rel = path.relative_to(src).as_posix()
-        me = module_name(src, path)
-        tree = ast.parse(path.read_text("utf-8"))
-        readers, imported = {}, {}
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.ImportFrom) or node.module is None or node.level:
-                continue
-            for alias in node.names:
-                local = alias.asname or alias.name
-                if node.module in subject.canonical:
-                    chosen = subject.canonical[node.module]
-                    if alias.name == "RAISES":
-                        kind = imported
-                    elif alias.name in subject.readers[chosen]:
-                        kind = readers
-                    else:
-                        continue
-                else:
-                    chosen = _defining_package(node.module, alias.name, subject)
+        key = (rel, module_name(src, path), path.read_text("utf-8"))
+        if key not in memo:
+            memo[key] = _file_sites(*key, subject)
+        sites.update(memo[key])
+    return sites
+
+
+#: ⭐ One population's per-file readings, keyed by `(path, module, text)`. A plant
+#: changes one file's text, so every re-scan of a planted copy reads that file afresh
+#: and takes the rest as already read. ⛔ One population at a time, held so its `id`
+#: cannot be reused by another while the memo answers for it.
+_MEMO: list[tuple[Population, dict[tuple[str, str, str], dict[str, CatchSite]]]] = []
+
+
+def _memo_for(subject: Population) -> dict[tuple[str, str, str], dict[str, CatchSite]]:
+    if not _MEMO or _MEMO[0][0] is not subject:
+        _MEMO[:] = [(subject, {})]
+    return _MEMO[0][1]
+
+
+def _file_sites(rel: str, me: str, text: str, subject: Population) -> dict[str, CatchSite]:
+    """The catch sites of one module, read from its text alone."""
+    sites: dict[str, CatchSite] = {}
+    tree = ast.parse(text)
+    readers, imported = {}, {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom) or node.module is None or node.level:
+            continue
+        for alias in node.names:
+            local = alias.asname or alias.name
+            if node.module in subject.canonical:
+                chosen = subject.canonical[node.module]
+                if alias.name == "RAISES":
+                    kind = imported
+                elif alias.name in subject.readers[chosen]:
                     kind = readers
-                    if chosen is None:
-                        continue
-                # ⛔ A package's own modules are not callers of its surface.
-                if me == chosen or me.startswith(f"{chosen}."):
+                else:
                     continue
-                kind[local] = chosen
-        bound = tuple_names_bound_in(tree, imported)
-        for function in ast.walk(tree):
-            if not isinstance(function, ast.FunctionDef | ast.AsyncFunctionDef):
+            else:
+                chosen = _defining_package(node.module, alias.name, subject)
+                kind = readers
+                if chosen is None:
+                    continue
+            # ⛔ A package's own modules are not callers of its surface.
+            if me == chosen or me.startswith(f"{chosen}."):
                 continue
-            for node in ast.walk(function):
-                if not isinstance(node, ast.Try):
-                    continue
-                called = {
-                    readers[call.func.id]
-                    for statement in node.body
-                    for call in ast.walk(statement)
-                    if isinstance(call, ast.Call)
-                    and isinstance(call.func, ast.Name)
-                    and call.func.id in readers
-                }
-                if not called:
-                    continue
-                named: set[str] = set()
-                for handler in node.handlers:
-                    if handler.type is not None:
-                        named |= names_the_tuple(handler.type, bound)
-                sites[f"{rel}:{function.name}"] = CatchSite(
-                    frozenset(called), frozenset(called - named)
-                )
+            kind[local] = chosen
+    bound = tuple_names_bound_in(tree, imported)
+    for function in ast.walk(tree):
+        if not isinstance(function, ast.FunctionDef | ast.AsyncFunctionDef):
+            continue
+        for node in ast.walk(function):
+            if not isinstance(node, ast.Try):
+                continue
+            called = {
+                readers[call.func.id]
+                for statement in node.body
+                for call in ast.walk(statement)
+                if isinstance(call, ast.Call)
+                and isinstance(call.func, ast.Name)
+                and call.func.id in readers
+            }
+            if not called:
+                continue
+            named: set[str] = set()
+            for handler in node.handlers:
+                if handler.type is not None:
+                    named |= names_the_tuple(handler.type, bound)
+            sites[f"{rel}:{function.name}"] = CatchSite(
+                frozenset(called), frozenset(called - named)
+            )
     return sites
 
 
