@@ -386,11 +386,6 @@ python3 -m ingest . <ingested-date>
 studyforge validate .
 ```
 
-**Consumer-side modules:** `ingest`
-
-That line declares that `ingest` belongs to the course repository, not to StudyForge, in the
-spelling `docs/specs/2026-09-08-studyforge-v1-design.md` defines.
-
 5. **Execution.** The sample is runnable, so the `execution` skill follows: with the runtimes
    from the brief, it selects the toolchain, writes the one compose file for the study server,
    the editor and the runner, and records the runner's tag.
@@ -398,6 +393,11 @@ spelling `docs/specs/2026-09-08-studyforge-v1-design.md` defines.
    under its title (onboarding, step 7). Every later step adds to it: each thing done by hand,
    worked around or learned is one finding. Carrying the brief across by hand is the sample's
    first.
+
+**Consumer-side modules:** `ingest`
+
+That line declares that `ingest` belongs to the course repository, not to StudyForge, in the
+spelling `docs/specs/2026-09-08-studyforge-v1-design.md` defines.
 
 **Done when** these succeed, and the log exists:
 
@@ -497,8 +497,9 @@ pilot.
 python3 -m studyforge.skills.buildserve . --out site --no-narration --port 8765
 ```
 
-`site/` is the directory step 5 made; a rebuild replaces its own earlier output. The port is the one the brief fixed for the preview (`publish.preview`). The command serves
-until Ctrl-C, so take screenshots from a second terminal:
+`site/` is the directory step 5 made; a rebuild replaces its own earlier output. The port is the
+one the brief fixed for the preview (`publish.preview`). The command serves until Ctrl-C, so
+take screenshots from a second terminal:
 
 ```sh
 mkdir shots
@@ -521,7 +522,7 @@ owns the release, and its
 gives the order. Nothing in it reads the brief: where it needs a value the brief names by
 variable, you pass that variable's value. In outline:
 
-1. **Preflight.** `standalone.preflight.preflight(course, target, toolchain=..., run=ask)`
+1. **Preflight.** `standalone.preflight.preflight(course, target, toolchain=..., platform="linux/amd64", run=ask)`
    returns every reason the release would refuse, before anything is written. ⛔ It starts no
    process itself: `run` is a function you hand in that runs one argv in a directory and
    answers its exit code and output (the execution skill shows one). The release refuses a
