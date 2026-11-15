@@ -54,6 +54,12 @@ class Question:
             raise ValueError(f"{self.id}: kind {self.kind!r} is not one of {KINDS}")
         if not self.tracks <= set(TRACKS):
             raise ValueError(f"{self.id}: unknown track in {sorted(self.tracks)}")
+        if self.tier not in ("costly", "later"):
+            raise ValueError(f"{self.id}: tier {self.tier!r} is not costly or later")
+        if self.kind == "choice" and not self.choices:
+            raise ValueError(f"{self.id}: a choice question needs choices")
+        if self.kind != "choice" and self.choices:
+            raise ValueError(f"{self.id}: only a choice question has choices")
 
 
 def applies(question: Question, track: str, answers: Mapping[str, "Answer"]) -> bool:

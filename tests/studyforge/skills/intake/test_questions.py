@@ -57,3 +57,20 @@ def test_group_is_the_id_prefix():
     with pytest.raises(ValueError):
         _q(kind="number")
     assert _q(kind="choice", choices=("a",)).kind == "choice"
+
+
+def test_an_unknown_track_is_refused():
+    with pytest.raises(ValueError):
+        _q(tracks=frozenset({"nonsense"}))
+
+
+def test_an_unknown_tier_is_refused():
+    with pytest.raises(ValueError):
+        _q(tier="never")
+
+
+def test_a_choice_question_needs_choices_and_others_must_have_none():
+    with pytest.raises(ValueError):
+        _q(kind="choice")
+    with pytest.raises(ValueError):
+        _q(kind="text", choices=("a",))
