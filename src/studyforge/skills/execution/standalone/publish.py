@@ -39,6 +39,8 @@ import shlex
 import sys
 from collections.abc import Mapping, Sequence
 
+from studyforge.archive.scrub import assert_clean
+
 from studyforge.skills.execution.standalone.images import (
     CLIPS,
     NAMESPACE_VARIABLE,
@@ -223,6 +225,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 2
     with open(args[0], encoding="utf-8") as handle:
         release = json.load(handle)
+    assert_clean(release, "release.json")
     for line in owner_commands(release, args[1], args[2]):
         print(line)
     return 0

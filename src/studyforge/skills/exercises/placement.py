@@ -35,6 +35,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.archive.scrub import assert_clean
+
 #: The line a lesson places practice `N` with (the same spelling `render/page/placed.py` reads).
 MARKER = re.compile(r"^\s*<!--\s*practice\s+(\d+)\s*-->\s*$")
 
@@ -151,6 +153,7 @@ def corpus_findings(root: Path) -> list[tuple[str, Misplaced]]:
     found: list[tuple[str, Misplaced]] = []
     for coverage in sorted((root / "exercises").rglob("coverage.json")):
         document = json.loads(coverage.read_text(encoding="utf-8"))
+        assert_clean(document, coverage.relative_to(root).as_posix())
         page, plan = document.get("page"), document.get("plan")
         if not isinstance(page, str) or not isinstance(plan, dict) or not (root / page).is_file():
             continue

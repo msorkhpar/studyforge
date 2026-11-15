@@ -135,6 +135,21 @@ def test_the_image_config_is_written_without_the_base_history(tmp_path):
     assert config["config"]["Labels"] == {"note": "fine"}
 
 
+def test_personal_data_in_what_the_course_adds_stops_the_scan_and_writes_nothing(
+    tmp_path, capsys
+):
+    history = [
+        {"created_by": f"base step {HOME}/one"},
+        {"created_by": f"COPY {HOME}/course /app"},
+    ]
+    code, out = _run(tmp_path, [BASE_ONE, ADDED], [_diff_id(BASE_ONE)], history=history)
+    assert code == 1
+    assert not (out / "config.json").exists()
+    said = capsys.readouterr().err
+    assert said.startswith("layerscan: ") and said.rstrip().endswith("stop")
+    assert HOME not in said
+
+
 def test_what_is_written_is_the_current_users_to_delete(tmp_path):
     code, out = _run(tmp_path, [BASE_ONE, ADDED], [_diff_id(BASE_ONE)])
     assert code == 0

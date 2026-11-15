@@ -50,6 +50,8 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.archive.scrub import assert_clean
+
 #: The suffixes a stored result file may have: the small text a judgement reads.
 KEPT_SUFFIXES = (".json", ".xml", ".txt", ".md")
 
@@ -223,6 +225,7 @@ def _write(path: Path, entry: Entry) -> None:
 def _read(path: Path) -> Entry | None:
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
+        assert_clean(document, path.name)
         files = document["files"]
         if not isinstance(files, dict) or document["verdict"] not in VERDICTS:
             return None

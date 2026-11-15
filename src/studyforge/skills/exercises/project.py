@@ -43,6 +43,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.archive.scrub import assert_clean
 from studyforge.exercise import EDGE, KEPT, MAIN, Case, Origin
 from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises.blueprint import (
@@ -125,6 +126,7 @@ def read_manifest(path: Path) -> Manifest:
         raise AuthoringError(f"{where}: the manifest cannot be read") from None
     except json.JSONDecodeError as error:
         raise AuthoringError(f"{where}: the manifest is not JSON, at line {error.lineno}") from None
+    assert_clean(value, where)
     if not isinstance(value, dict):
         raise AuthoringError(f"{where}: a project manifest is a JSON object")
     unknown = sorted(set(value) - set(MANIFEST_KEYS))

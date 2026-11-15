@@ -45,6 +45,8 @@ import tarfile
 from collections.abc import Sequence
 from pathlib import Path, PurePosixPath
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+
 USAGE = "usage: layerscan IMAGE_TAR BASE_LAYERS_JSON OUT"
 
 
@@ -111,6 +113,7 @@ def scan_tree(image_tar: Path, base: Sequence[str], out: Path) -> list[int]:
         raise ValueError(f"the saved image could not be read: {type(error).__name__}") from None
     with archive:
         manifest = json.load(archive.extractfile("manifest.json"))
+        assert_clean(manifest, "manifest.json")
         if len(manifest) != 1:
             raise ValueError(f"the archive holds {len(manifest)} images; save exactly one")
         entry = manifest[0]
@@ -119,10 +122,12 @@ def scan_tree(image_tar: Path, base: Sequence[str], out: Path) -> list[int]:
         if len(diff_ids) != len(entry["Layers"]):
             raise ValueError("the archive's layer list and its configuration disagree")
         indexes = added(diff_ids, base)
+        # ⭐ Gated after the base's history is dropped: the base's own content is the
+        # toolchain's to scan, and only what this course adds is written here.
+        own = _config_after(config, len(base))
+        assert_clean(own, "the image configuration")
         out.mkdir(parents=True, exist_ok=True)
-        (out / "config.json").write_text(
-            json.dumps(_config_after(config, len(base)), indent=1), encoding="utf-8", newline="\n"
-        )
+        (out / "config.json").write_text(json.dumps(own, indent=1), encoding="utf-8", newline="\n")
         for index in indexes:
             stored = archive.extractfile(entry["Layers"][index])
             with tarfile.open(fileobj=stored, mode="r:*") as layer:
@@ -135,10 +140,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if len(args) != 3:
         print(USAGE, file=sys.stderr)
         return 2
-    base = json.loads(Path(args[1]).read_text(encoding="utf-8")) or []
     try:
+        base = json.loads(Path(args[1]).read_text(encoding="utf-8")) or []
+        assert_clean(base, "the base layer list")
         indexes = scan_tree(Path(args[0]), base, Path(args[2]))
-    except NotOnBase as refused:
+    except (NotOnBase, PersonalDataLeak) as refused:
         print(f"layerscan: {refused}; stop", file=sys.stderr)
         return 1
     print(f"layerscan: {len(indexes)} layer(s) on top of the base written for the sweep")
