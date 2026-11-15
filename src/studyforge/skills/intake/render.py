@@ -90,5 +90,5 @@ def render(brief: Brief) -> str:
     lines += _block("Decided by Claude", decided)
     lines += _block("Deferred", deferred)
     lines += _block("Still open", open_lines)
-    lines += ["## Outline", "", *_outline(brief)]
+    lines += ["## Outline", "", *(_outline(brief) or ["None."])]
     return "\n".join(lines).rstrip("\n") + "\n"

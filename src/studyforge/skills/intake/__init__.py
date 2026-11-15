@@ -28,3 +28,13 @@ DEPTHS: tuple[str, ...] = ("core", "deep", "survey", "prose")
 
 #: Where the brief is stored, relative to the course repository root.
 BRIEF_PATH = ".studyforge/brief.json"
+
+# Re-exports come last: the submodules import the constants above from this package.
+from .bank import BANK  # noqa: E402
+from .brief import Brief, BriefError, load, parse  # noqa: E402
+from .check import check  # noqa: E402
+from .questions import Question  # noqa: E402
+from .render import render  # noqa: E402
+
+__all__ = ["BANK", "BRIEF_PATH", "Brief", "BriefError", "DEPTHS", "Question", "TRACKS",
+           "check", "load", "parse", "render"]

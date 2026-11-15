@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 
+from studyforge.skills.intake.bank import BANK
 from studyforge.skills.intake.brief import parse
 from studyforge.skills.intake.render import render
 
@@ -37,7 +38,9 @@ def test_render_is_deterministic_and_ends_with_one_newline():
 def test_values_render_as_text_yes_no_and_multiline_stays_in_the_list():
     text = _render(quiz__mocks=False, privacy__fresh_history=True,
                    goal__end_state="line one\nline two")
-    assert "yes" in text and "no" in text
+    ask = {q.id: q.ask for q in BANK}
+    assert f"- **{ask['quiz.mocks']}** no\n" in text
+    assert f"- **{ask['privacy.fresh_history']}** yes\n" in text
     assert " line one\n  line two\n" in text
     assert "env:COURSE_HOLDER" in text
 
@@ -64,3 +67,9 @@ def test_the_outline_marks_the_pilot_and_depths():
     text = _render()
     assert f"### Foundations\n\n- {PILOT} (pilot)\n  - Breadth-first search [core]\n" in text
     assert "- Weighted graphs\n  - Dijkstra [deep]\n" in text
+
+
+def test_an_empty_outline_renders_none():
+    data = clean_brief("topic")
+    data["outline"] = []
+    assert "## Outline\n\nNone.\n" in render(parse(data))
