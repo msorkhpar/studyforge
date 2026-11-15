@@ -83,6 +83,7 @@ DECLARED: dict[str, Declaration] = {
                 "build",
                 "content_sha256",
                 "counts_of",
+                "findings",
                 "item_parts",
                 "leaks",
                 "list_start",
