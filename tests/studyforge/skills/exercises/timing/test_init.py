@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/exercises/timing.py` (R12)."""
+"""Mirror of `src/studyforge/skills/exercises/timing/__init__.py` (R12)."""
 
 from __future__ import annotations
 

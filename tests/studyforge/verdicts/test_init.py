@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/verdicts.py` (R12)."""
+"""Mirror of `src/studyforge/verdicts/__init__.py` (R12)."""
 
 from __future__ import annotations
 

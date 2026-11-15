@@ -1,4 +1,7 @@
-"""The shared pattern set as a command and a function for a course's own gate."""
+"""Mirror of `src/studyforge/archive/scrubcli.py` (R12).
+
+The shared pattern set as a command and a function for a course's own gate.
+"""
 
 import os
 import subprocess

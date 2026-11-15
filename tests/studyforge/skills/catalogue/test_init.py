@@ -7,11 +7,14 @@ records names the exact text read.
 from __future__ import annotations
 
 import re
-import subprocess
-import sys
 
-from studyforge.skills import documents
+from studyforge.skills import catalogue, documents
 from studyforge.skills.catalogue import DIGEST_HEX, DOCUMENT, READ_PREFIX, digest, read_line, text
+from tests.support import assert_package_contract
+
+
+def test_states_its_contract():
+    assert_package_contract(catalogue, "studyforge.skills.catalogue")
 
 
 def test_the_catalogue_is_a_skill_document_the_package_ships():
@@ -27,33 +30,6 @@ def test_the_digest_names_the_text_and_changes_with_it():
 
 def test_the_read_line_is_the_prefix_and_the_digest():
     assert read_line() == READ_PREFIX + digest()
-
-
-def test_the_command_prints_the_catalogue_then_the_line():
-    done = subprocess.run(
-        [sys.executable, "-m", "studyforge.skills.catalogue"], capture_output=True, text=True
-    )
-    assert done.returncode == 0, done.stderr
-    assert done.stdout.startswith("# The integration catalogue")
-    assert done.stdout.rstrip().endswith(read_line())
-
-
-def test_the_line_alone():
-    done = subprocess.run(
-        [sys.executable, "-m", "studyforge.skills.catalogue", "--line"],
-        capture_output=True,
-        text=True,
-    )
-    assert (done.returncode, done.stdout) == (0, read_line() + "\n")
-
-
-def test_an_unknown_argument_is_refused():
-    done = subprocess.run(
-        [sys.executable, "-m", "studyforge.skills.catalogue", "--all"],
-        capture_output=True,
-        text=True,
-    )
-    assert done.returncode == 2 and "usage" in done.stderr
 
 
 def test_every_other_skill_sends_its_reader_to_the_catalogue_first_and_the_log_last():
