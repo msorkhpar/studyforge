@@ -3,14 +3,13 @@
 ⭐ Every clause is asserted both ways: each refusal fires by
 name, and every valid shape parses. The version gate is reached through the
 document, because `corpus_api` is the document's and not this module's.
-⚠️ Two instruments read beyond the module: the spec's §4 carries the key, and
-the vocabulary agrees with the runner image's pin file at its pinned commit.
+⚠️ One instrument reads beyond the module: the vocabulary agrees with the runner
+image's pin file at its pinned commit.
 """
 
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
@@ -24,7 +23,6 @@ from studyforge.corpus.manifest import (
     parse_runtimes,
 )
 from tests.harness import sibling
-from tests.support import repository_root
 
 #: A manifest that may declare runtimes: it sets exercises, at the version
 #: that added the key.
@@ -179,37 +177,6 @@ def test_the_key_is_optional_and_is_read_by_this_build():
     assert "runtimes" not in package.REQUIRED_KEYS
     # ⭐ JSON text in, value out: the path a corpus actually takes.
     assert package.parse(json.dumps({**BASE, "runtimes": ["node"]})).runtimes == ("node",)
-
-
-# --- spec §4 carries the key -------------------------------------------------
-
-SPEC = Path("docs") / "specs" / "2026-09-08-studyforge-v1-design.md"
-KEY_TABLE = "### The complete key list"
-
-
-def key_section(text: str) -> str:
-    """The text from §4's key-list heading to the next heading, or `""`."""
-    _, found, after = text.partition(KEY_TABLE)
-    return after.split("\n#", 1)[0] if found else ""
-
-
-def carries_the_key(text: str) -> bool:
-    """Whether §4's key list names `runtimes` as optional and says `4` added it."""
-    section = key_section(text)
-    return "| `runtimes` | *optional* |" in section and "`4` added `runtimes`" in section
-
-
-def test_the_spec_s_key_list_carries_the_key_and_the_version_that_added_it():
-    assert carries_the_key((repository_root() / SPEC).read_text(encoding="utf-8"))
-
-
-def test_the_spec_instrument_can_go_red():
-    # ⭐ Held on synthetic text, so the reader is proved able to refuse.
-    table = f"{KEY_TABLE}\n\n| `corpus_api` | **required** | `3` added `media.max_files` |\n"
-    assert not carries_the_key(table)
-    assert not carries_the_key("no such heading")
-    with_row = table + "| `runtimes` | *optional* | names |\n`4` added `runtimes`\n"
-    assert carries_the_key(with_row)
 
 
 # --- the vocabulary agrees with the runner image's pins ------------------------

@@ -24,8 +24,6 @@ from __future__ import annotations
 
 import re
 
-import pytest
-
 from studyforge.narrate import synth
 from tests.support import repository_root
 
@@ -70,22 +68,31 @@ def test_the_population_this_sweep_runs_over_is_inhabited():
     assert build_modules(), f"no module found under {BUILD_PACKAGE} — did the package move?"
 
 
-@pytest.mark.parametrize("case", build_modules(), ids=lambda case: case[0])
-def test_no_build_module_imports_the_synthesis_client(case):
+def test_no_build_module_imports_the_synthesis_client():
     # ⛔ That import is the SHAPE of a build that synthesises,
     # and the symptom of allowing it is a build that reaches a network — which
     # R8's whole floor is written against.
-    path, source = case
-    offending = [line for line in source.splitlines() if CLIENT.search(line)]
-    assert offending == [], f"{path} reaches the synthesis client: {offending}"
+    modules = build_modules()
+    assert modules, f"no module found under {BUILD_PACKAGE}"
+    offenders = []
+    for path, source in modules:
+        offending = [line for line in source.splitlines() if CLIENT.search(line)]
+        if offending:
+            offenders.append(f"{path} reaches the synthesis client: {offending}")
+    assert offenders == [], "\n".join(offenders)
 
 
-@pytest.mark.parametrize("case", build_modules(), ids=lambda case: case[0])
-def test_no_build_module_names_the_request_path(case):
+def test_no_build_module_names_the_request_path():
     # ⚠️ The name, not the import: `synth.synthesise(...)` makes the same request
     # through an import this file allows.
-    path, source = case
-    assert not SYNTHESISE.search(uncommented(source)), f"{path} calls the request path"
+    modules = build_modules()
+    assert modules, f"no module found under {BUILD_PACKAGE}"
+    offenders = [
+        f"{path} calls the request path"
+        for path, source in modules
+        if SYNTHESISE.search(uncommented(source))
+    ]
+    assert offenders == [], "\n".join(offenders)
 
 
 def test_the_two_refused_names_are_still_real():

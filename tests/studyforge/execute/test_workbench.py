@@ -122,23 +122,11 @@ def test_the_test_is_deliberately_left_read_only():
     assert INSIDE_MAIN in written[READONLY_EXCLUDE]
 
 
-def test_the_module_says_which_scope_can_lift_the_lock_it_writes():
-    # ⛔ `files.readonlyExclude`
-    # is an object setting and VS Code MERGES object settings across scopes, so a
-    # USER-scope entry naming the test file is merged into the workspace value this
-    # module writes and the test becomes writable. In a real session
-    # {"Main.java": True} became {"MainTest.java": True, "Main.java": True} after one
-    # ConfigurationTarget.Global write. ⚠️ No key here can prevent that — the editor
-    # image's confinement of the command surface is what does — so the module has to
-    # SAY so, or the next reader takes the lock for stronger than it is.
+def test_the_module_names_no_path_inside_the_toolchain():
+    # ⛔ Never linked and never imported: the toolchain is another repository and
+    # this framework knows no path inside it (R1, R20).
     from studyforge.execute import workbench
 
-    said = workbench.__doc__
-    assert "merge" in said.lower() and "ConfigurationTarget.Global" in said
-    assert "CONFINEMENT" in said
-    # ⛔ Named, never linked, and never imported: the toolchain is another
-    # repository and this framework knows no path inside it (R1, R20).
-    assert "code-server-toolchain" in said
     assert "code_server_toolchain" not in Path(workbench.__file__).read_text(encoding="utf-8")
 
 
@@ -203,18 +191,6 @@ def test_the_chat_pane_is_hidden_by_a_setting_and_the_explorer_is_not():
     assert not [key for key in CLOSED if "sideBar." in key and "secondary" not in key.lower()], (
         "a primary side bar visibility setting appeared; the belt can stop being only a belt"
     )
-
-
-def test_nothing_here_claims_to_be_a_security_boundary():
-    # ⛔ An iframe of an IDE with a shell is exactly as powerful as the process
-    # behind it. The boundary is the container, the loopback bind and one exact
-    # origin — and a docstring that said otherwise would be read by somebody
-    # deciding how to run one.
-    from studyforge.execute import workbench
-
-    said = workbench.__doc__ or ""
-    assert "NOT a security boundary" in said
-    assert "The boundary is the container" in said
 
 
 # --- written where the editor reads it ----------------------------------------

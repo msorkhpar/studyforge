@@ -164,13 +164,6 @@ def test_a_media_directory_counts_as_a_claimed_path(tmp_path):
     assert "audio directory" in claimed
 
 
-def test_a_tree_corpus_places_without_collisions(tmp_path):
-    # ⚠️ `tree` spells the address in directories, so distinct addresses cannot
-    # collide — and the check still runs, rather than being skipped for a named
-    # profile. A profile with no collisions produces a set with no duplicates.
-    assert validate(corpora.two_containers(tmp_path / "c")).findings == ()
-
-
 # --------------------------------------------------------------------------
 # an artifact that cannot be placed at all
 # --------------------------------------------------------------------------

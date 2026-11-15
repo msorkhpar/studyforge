@@ -8,20 +8,15 @@ ceiling and a row that needed one more line there would have to break it.
 accompanies cannot fail when the constant moves.
 """
 
-import json
-
 import pytest
 
 from studyforge.corpus.container import (
     CONTAINER_API,
-    KNOWN_CONTAINER_API,
     PRACTICE_ORIGIN_API,
     UNIT_KEYS,
     ContainerError,
     Unit,
     from_document,
-    parse,
-    render,
     to_document,
 )
 from studyforge.corpus.manifest import from_document as manifest_from_document
@@ -84,10 +79,6 @@ def test_a_practice_origin_is_a_version_three_shape():
     assert PRACTICE_ORIGIN_API == 3
 
 
-def test_the_set_this_build_reads_is_spelled_out():
-    assert KNOWN_CONTAINER_API == frozenset({1, 2, 3})
-
-
 def test_a_version_two_map_that_declares_one_is_refused_by_version():
     # ⛔ **R9's other direction, and the reason a version was minted at all.**
     # A build that cannot see `practice_origin` would sum both files' headings
@@ -103,11 +94,6 @@ def test_a_version_two_map_with_no_practice_origin_still_parses():
     made = built(container_api=2, units=[{"n": 1, "title": "One", "practices": 0}])
     assert made.container_api == 2
     assert made.units[0].practice_origin is None
-
-
-def test_the_declared_version_is_kept_rather_than_promoted():
-    text = json.dumps(document(container_api=1, units=[{"n": 1, "title": "One", "practices": 0}]))
-    assert '"container_api": 1' in render(parse(text, "container.json", manifest()))
 
 
 # --------------------------------------------------------------------------

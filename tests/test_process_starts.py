@@ -206,14 +206,16 @@ FROM_PLANTS = [
 ]
 
 
-@pytest.mark.parametrize(("module", "planted"), MODULE_PLANTS)
-def test_the_detector_fires_on_each_spawning_module_under_each_spelling(module, planted):
-    assert module in spawns(planted), planted
+def test_the_detector_fires_on_each_spawning_module_under_each_spelling():
+    assert MODULE_PLANTS
+    missed = [planted for module, planted in MODULE_PLANTS if module not in spawns(planted)]
+    assert missed == [], f"the detector missed: {missed}"
 
 
-@pytest.mark.parametrize("planted", OS_PLANTS + FROM_PLANTS)
-def test_the_detector_fires_on_each_spawning_name(planted):
-    assert spawns(planted), planted
+def test_the_detector_fires_on_each_spawning_name():
+    assert OS_PLANTS and FROM_PLANTS
+    missed = [planted for planted in OS_PLANTS + FROM_PLANTS if not spawns(planted)]
+    assert missed == [], f"the detector missed: {missed}"
 
 
 @pytest.mark.parametrize("module", SPAWNING_MODULES)

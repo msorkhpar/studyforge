@@ -102,9 +102,3 @@ def test_the_quiz_is_reachable_without_naming_a_module_inside_it():
     # never `studyforge.exercise.quiz.questions`.
     assert quiz.grade is not None and quiz.completes is not None
     assert exercise.QUIZ in exercise.EXERCISE_KINDS
-
-
-def test_the_exercise_package_names_the_quiz_in_its_own_table():
-    # ⚠️ R17: the parent's contract is where a reader finds out this exists,
-    # and a sub-package missing from it is one nobody discovers.
-    assert "`quiz`" in (exercise.__doc__ or "")

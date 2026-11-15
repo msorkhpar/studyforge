@@ -57,11 +57,15 @@ def test_a_bare_fence_read_from_markdown_renders_with_no_language_guessed():
     assert f'<span class="what">{figure.UNLABELLED_CODE}</span>' in markup
 
 
-@pytest.mark.parametrize("language", sorted(highlighted_languages()))
-def test_a_declared_language_asks_for_its_grammar_and_carries_no_fallback_note(language):
-    markup = render({"type": "code", "lang": language, "text": "x"})
-    assert f'class="language-{language}"' in markup
-    assert FALLBACK_CLASS not in markup
+def test_a_declared_language_asks_for_its_grammar_and_carries_no_fallback_note():
+    languages = sorted(highlighted_languages())
+    assert languages
+    offenders = []
+    for language in languages:
+        markup = render({"type": "code", "lang": language, "text": "x"})
+        if f'class="language-{language}"' not in markup or FALLBACK_CLASS in markup:
+            offenders.append(language)
+    assert offenders == [], f"declared languages without their grammar or with a note: {offenders}"
 
 
 def test_an_undeclared_language_renders_as_the_declared_plain_fallback_and_says_so():

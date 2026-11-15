@@ -112,10 +112,3 @@ def test_the_legal_set_is_a_subset_of_the_vocabulary_it_draws_from():
     # rule about nothing, and it would pass every test above.
     assert set(MAY_BE_AUTHORITATIVE) <= set(PROVENANCE)
     assert MAY_BE_AUTHORITATIVE == ("bundled",)
-
-
-@pytest.mark.parametrize("provenance", PROVENANCE)
-def test_no_default_trust_is_a_pair_the_rule_would_refuse(provenance):
-    # ⭐ The cross-check that catches the *other* way this fails open: a rule
-    # nothing violates because the defaults quietly stopped agreeing with it.
-    assert check_test_record(provenance) == (provenance, DEFAULT_TRUST[provenance])

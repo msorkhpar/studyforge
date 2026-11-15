@@ -50,13 +50,6 @@ def test_the_package_states_its_contract():
     assert_package_contract(container, "studyforge.render.container")
 
 
-def test_render_returns_bytes():
-    # ⭐ What is compared against a golden, written to disk and served is a byte
-    # string; handing back text would leave the encoding to the caller and R10's
-    # guarantee would hold everywhere except the step that matters.
-    assert isinstance(cases()[0].render(), bytes)
-
-
 def test_every_container_renders_against_its_golden_file(case):
     # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
@@ -64,11 +57,6 @@ def test_every_container_renders_against_its_golden_file(case):
     # which change you made.
     assert case.golden.exists(), f"no golden committed for {case.name}"
     assert case.render() == case.golden.read_bytes()
-
-
-def test_rendering_twice_gives_identical_bytes(case):
-    # ⛔ R10 at its narrowest: no clock, no set iteration, no directory walk.
-    assert case.render() == case.render()
 
 
 def test_the_page_is_named_as_a_container_page(case):

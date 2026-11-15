@@ -21,19 +21,26 @@ from studyforge.archive.scrub import scrub, shape_in
 from tests.support import personal_data_shapes, shapes_agree
 
 VOCABULARY = personal_data_shapes()
-BY_SHAPE = [pytest.param(row, id=row["shape"]) for row in VOCABULARY]
 
 
-@pytest.mark.parametrize("row", BY_SHAPE)
-def test_the_gate_does_what_the_shared_table_says(row):
-    said = "refuse" if shape_in(row["example"]) is not None else "pass"
-    assert said == row["gate"], row["shape"]
+def test_the_gate_does_what_the_shared_table_says():
+    assert VOCABULARY
+    wrong = [
+        row["shape"]
+        for row in VOCABULARY
+        if ("refuse" if shape_in(row["example"]) is not None else "pass") != row["gate"]
+    ]
+    assert wrong == [], f"the gate disagrees with the table on: {wrong}"
 
 
-@pytest.mark.parametrize("row", BY_SHAPE)
-def test_and_so_does_the_scrubber(row):
-    did = "rewrite" if scrub(row["example"]) != row["example"] else "keep"
-    assert did == row["scrub"], row["shape"]
+def test_and_so_does_the_scrubber():
+    assert VOCABULARY
+    wrong = [
+        row["shape"]
+        for row in VOCABULARY
+        if ("rewrite" if scrub(row["example"]) != row["example"] else "keep") != row["scrub"]
+    ]
+    assert wrong == [], f"the scrubber disagrees with the table on: {wrong}"
 
 
 def test_every_divergence_carries_a_reason():

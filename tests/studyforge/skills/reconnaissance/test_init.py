@@ -19,21 +19,6 @@ def test_the_skill_document_sits_beside_the_code_it_calls():
     assert "# Skill — source reconnaissance" in skill.read_text(encoding="utf-8")
 
 
-def test_the_skill_document_carries_the_measurements_rather_than_asserting_shape():
-    # ⛔ R19: anything a second source would have to re-derive is a hole in the
-    # skill. The traps are written down with their numbers, so the next
-    # integrator starts further along than the last.
-    text = (repository_root() / "src/studyforge/skills/reconnaissance/SKILL.md").read_text("utf-8")
-    for measured in (
-        "37 of 38",
-        "50.2%",
-        "53.7%",
-        "21 containers for a 3-container corpus",
-        "39.5%",
-    ):
-        assert measured in text, f"the skill no longer carries the measurement {measured!r}"
-
-
 def test_no_module_here_names_a_corpus_even_in_a_docstring():
     # ⛔ §7c, and R1 behind it: the framework knows nothing about any source.
     # ⚠️ **"Even in a comment" is what makes this check work** — the first

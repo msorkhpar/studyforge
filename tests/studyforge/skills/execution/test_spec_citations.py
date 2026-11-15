@@ -61,15 +61,28 @@ def test_the_spec_is_read_and_carries_the_sections_the_package_cites():
     assert {"8.1", "8.3", "11.0"} <= sections()
 
 
-@pytest.mark.parametrize("path", MODULES, ids=lambda path: path.name)
-def test_no_message_cites_a_numbered_ruling(path: Path):
-    assert [one for one in messages(path) if NUMBERED_RULING.search(one)] == []
+def test_no_message_cites_a_numbered_ruling():
+    assert MODULES
+    offenders = [
+        f"{path.name}: {one!r}"
+        for path in MODULES
+        for one in messages(path)
+        if NUMBERED_RULING.search(one)
+    ]
+    assert offenders == [], "messages citing a numbered ruling:\n" + "\n".join(offenders)
 
 
-@pytest.mark.parametrize("path", MODULES, ids=lambda path: path.name)
-def test_every_section_a_message_cites_is_a_heading_of_the_spec(path: Path):
-    cited = {number for one in messages(path) for number in SECTION.findall(one)}
-    assert cited - sections() == set()
+def test_every_section_a_message_cites_is_a_heading_of_the_spec():
+    assert MODULES
+    headings = sections()
+    offenders = [
+        f"{path.name}: §{number}"
+        for path in MODULES
+        for number in sorted(
+            {number for one in messages(path) for number in SECTION.findall(one)} - headings
+        )
+    ]
+    assert offenders == [], "sections the spec does not carry:\n" + "\n".join(offenders)
 
 
 def test_every_compose_refusal_names_its_rule_in_words():

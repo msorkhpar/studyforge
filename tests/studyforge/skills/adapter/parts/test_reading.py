@@ -7,7 +7,6 @@ import json
 
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
-from studyforge.skills.adapter.parts.reading import READ_PART
 from tests.studyforge.skills.adapter import corpora
 
 
@@ -15,17 +14,6 @@ def read_module():
     """`read.py` as it is delivered, before anybody has written a line of it."""
     made = scaffold(plan_for(parse(json.dumps(corpora.MANIFEST))))
     return next(item.text for item in made.files if item.where.endswith("read.py"))
-
-
-def test_this_is_the_part_that_is_not_generated():
-    # ⛔ R19 is unusable unless a reader can tell which files it covers.
-    assert READ_PART.generated is False
-    assert READ_PART.where == "{package}/read.py"
-
-
-def test_it_parses_and_states_a_contract():
-    tree = ast.parse(read_module())
-    assert ast.get_docstring(tree), "the module a person opens first has no contract (R17)"
 
 
 def test_the_three_steps_are_all_here():

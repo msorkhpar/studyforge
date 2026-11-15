@@ -99,12 +99,6 @@ def test_a_corpus_that_declares_no_edit_gets_a_check_that_permits_none():
     assert "PERMITTED = []" in text
 
 
-def test_the_generated_check_is_a_module_that_parses():
-    text, _ = _generated()
-
-    ast.parse(text)
-
-
 def test_a_renames_origin_is_consumed_as_a_field_and_never_read_as_a_record():
     # ⛔ `git status -z` puts a rename's origin in its OWN NUL-separated field,
     # with no status letters in front of it. Split-and-index read `one.txt` as

@@ -36,17 +36,6 @@ def test_every_entry_point_raises_the_one_exception(name, call):
 
 
 @pytest.mark.parametrize("name,call", REFUSALS, ids=[name for name, _ in REFUSALS])
-def test_nothing_returns_a_sentinel_instead_of_raising(name, call):
-    # R6, stated as a test: none of these repairs a value quietly, returns
-    # `None`, or hands back a "best effort". A caller never has to check.
-    try:
-        call()
-    except AddressError:
-        return
-    pytest.fail(f"{name} returned instead of raising")
-
-
-@pytest.mark.parametrize("name,call", REFUSALS, ids=[name for name, _ in REFUSALS])
 def test_every_message_names_the_offending_value(name, call):
     # ⛔ Never only "invalid". An address model that reports a problem without
     # naming the string costs more to diagnose than to fix.

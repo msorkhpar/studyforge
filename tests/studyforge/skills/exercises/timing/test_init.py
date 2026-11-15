@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from studyforge.skills.exercises.timing import FLOOR_MS, main, scan_text, scan_tree
+from studyforge.skills.exercises.timing import main, scan_text, scan_tree
 
 
 @pytest.mark.parametrize(
@@ -45,10 +45,6 @@ def test_a_wait_below_a_second_is_flagged(name, line, ms):
 )
 def test_a_generous_or_unrelated_or_excused_wait_is_not(name, line):
     assert scan_text(line, name) == []
-
-
-def test_the_floor_is_one_second():
-    assert FLOOR_MS == 1000
 
 
 def test_a_tree_is_read_in_path_order_and_the_command_only_warns_unless_strict(tmp_path, capsys):

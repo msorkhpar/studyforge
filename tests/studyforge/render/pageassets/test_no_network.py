@@ -47,10 +47,15 @@ DISARMED = (
 )
 
 
-@pytest.mark.parametrize("name", AUTHORED)
-@pytest.mark.parametrize("pattern", FETCHING, ids=lambda p: p.pattern[:24])
-def test_no_authored_asset_asks_the_network_for_anything(name, pattern):
-    assert pattern.search(text(name)) is None, f"{name} would fetch: {pattern.pattern}"
+def test_no_authored_asset_asks_the_network_for_anything():
+    assert AUTHORED and FETCHING
+    offenders = [
+        f"{name} would fetch: {pattern.pattern}"
+        for name in AUTHORED
+        for pattern in FETCHING
+        if pattern.search(text(name)) is not None
+    ]
+    assert offenders == [], "\n".join(offenders)
 
 
 @pytest.mark.parametrize("what,option", DISARMED)

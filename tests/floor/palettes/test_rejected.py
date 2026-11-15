@@ -129,13 +129,6 @@ def test_a_tree_with_no_convention_reads_two_EMPTY_answers(tmp_path):
 # --- the other half of the table: the accepted identity ----------------------------
 
 
-def test_the_convention_RECORDS_the_accepted_identity():
-    text = accepted()
-    assert "cool slate" in text.lower()
-    assert "ONE loud accent" in text
-    assert "none in the identity" in text
-
-
 def test_the_accepted_identity_is_described_and_never_LOCATED():
     text = accepted()
     assert _LOCATED.search(text) is None, "the identity is described in words, never located"

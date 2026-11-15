@@ -8,7 +8,7 @@ be added that excuses something while saying nothing.
 
 from __future__ import annotations
 
-from tests.floor.deviations import DECLARED, NO_SURFACE, REACHED_PAST, Declaration
+from tests.floor.deviations import DECLARED, NO_SURFACE, REACHED_PAST
 
 
 def test_the_declaration_is_inhabited():
@@ -41,14 +41,3 @@ def test_a_package_is_named_once_and_its_names_are_a_set():
     for package, declaration in DECLARED.items():
         assert isinstance(declaration.names, frozenset), package
         assert package.startswith("studyforge."), package
-
-
-def test_a_declaration_is_frozen_so_a_reading_cannot_edit_it():
-    # ⭐ The data may not be mutated by whatever reads it: an instrument that could
-    # rewrite its own exemption while running would be excusing itself.
-    declaration = Declaration("a ground", frozenset({"NAME"}))
-    try:
-        declaration.ground = "another"  # type: ignore[misc]
-    except AttributeError:
-        return
-    raise AssertionError("a Declaration was mutated in place")

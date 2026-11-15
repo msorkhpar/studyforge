@@ -13,7 +13,6 @@ import io
 import pytest
 
 from studyforge.cli import VERBS
-from studyforge.skills.buildserve import verbs
 from studyforge.skills.buildserve.verbs import NotAVerb, build, call, narrate, serve, validate
 from studyforge.validate.cli import UNUSABLE
 
@@ -70,11 +69,6 @@ def test_a_list_that_names_no_verb_is_refused_without_echoing_it(argv):
     with pytest.raises(NotAVerb) as refused:
         call(argv)
     assert "frobnicate" not in str(refused.value)
-
-
-def test_the_seam_is_the_only_caller_of_the_table():
-    # ⭐ The contract every verb relies on; `test_thin.py` asserts it over the package.
-    assert "VERBS" in vars(verbs)
 
 
 @pytest.mark.parametrize("answer", [True, False])

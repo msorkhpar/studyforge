@@ -60,11 +60,17 @@ def test_a_declaration_is_read_as_names_and_its_closing_full_stop_is_not_one():
     }
 
 
-@pytest.mark.parametrize("language", sorted(highlighted_languages()))
-def test_every_declared_language_asks_for_its_own_grammar(language):
-    assert grammar_for(language) == language
-    assert grammar_for(language.upper()) == language
-    assert not falls_back(language)
+def test_every_declared_language_asks_for_its_own_grammar():
+    languages = sorted(highlighted_languages())
+    assert languages
+    offenders = [
+        language
+        for language in languages
+        if grammar_for(language) != language
+        or grammar_for(language.upper()) != language
+        or falls_back(language)
+    ]
+    assert offenders == [], f"declared languages not asking for their own grammar: {offenders}"
 
 
 def test_an_undeclared_language_asks_for_the_plain_fallback():

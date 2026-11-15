@@ -23,7 +23,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.address import Address
-from studyforge.narrate.speakable import naming
 from studyforge.narrate.speakable.naming import (
     DIGEST_JOIN,
     DIGEST_LENGTH,
@@ -365,7 +364,3 @@ def test_a_clip_name_parses_back_to_its_id_and_its_digest():
 def test_a_name_that_is_not_a_clip_name_is_refused(name):
     with pytest.raises(SpeakableError):
         parse_clip_name(name)
-
-
-def test_the_module_states_its_contract():
-    assert (naming.__doc__ or "").strip()

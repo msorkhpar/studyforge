@@ -12,7 +12,6 @@ import ast
 from pathlib import Path
 
 from studyforge.skills import buildserve
-from tests.harness.sources import named_sources
 
 PACKAGE = Path(buildserve.__file__).parent
 
@@ -165,16 +164,3 @@ def test_a_planted_reach_into_the_builder_or_the_server_is_caught():
     for module in ("studyforge.generate", "studyforge.serve.app", "studyforge.narrate.client"):
         assert reaches_past_the_verbs(f"from {module} import x\n") == [f"import {module}"]
     assert reaches_past_the_verbs("import shutil\n") == ["import shutil"]
-
-
-def test_no_file_the_skill_ships_names_a_source():
-    # ⛔ R1, and SKILL.md is in the population: the floor's sweep reads `.py` alone.
-    files = sorted(path for path in PACKAGE.iterdir() if path.suffix in (".py", ".md"))
-    assert any(path.name == "SKILL.md" for path in files)
-    for path in files:
-        assert named_sources(path.read_text(encoding="utf-8")) == [], path.name
-
-
-def test_a_planted_source_name_is_caught():
-    planted = "# serves the " + "SPA" + "RQL tutorial\n"
-    assert len(named_sources(planted)) == 1

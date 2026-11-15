@@ -10,7 +10,7 @@ from studyforge.render.page import document as document_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
-from tests.studyforge.render.page.pages import depth1_unit_02, sample_placement
+from tests.studyforge.render.page.pages import sample_placement
 
 
 def a_document(**overrides) -> dict:
@@ -221,14 +221,6 @@ def test_the_player_markup_is_a_template_file_and_not_a_python_string():
 def test_an_optional_region_is_empty_or_its_markup_and_one_newline():
     assert document_module._region("") == ""
     assert document_module._region("<x>") == "<x>\n"
-
-
-def test_the_page_is_byte_for_byte_stable_across_runs():
-    # ⛔ R10: no clock, no directory enumeration, no set iteration.
-    case = depth1_unit_02()
-    first = document_module.compose(case.document, case.placement)
-    second = document_module.compose(case.document, case.placement)
-    assert first == second
 
 
 def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():

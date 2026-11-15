@@ -254,11 +254,9 @@ def test_every_shape_is_a_pattern_holding_no_value():
 # --------------------------------------------------------------------------
 
 VOCABULARY = personal_data_shapes()
-BY_SHAPE = [pytest.param(row, id=row["shape"]) for row in VOCABULARY]
 
 
-@pytest.mark.parametrize("row", BY_SHAPE)
-def test_this_sweep_does_what_the_shared_table_says(row):
+def test_this_sweep_does_what_the_shared_table_says():
     # ⛔ **One shape vocabulary, two policies.** This check and
     # `archive.scrub` have different subjects — this one may
     # derive the machine's identity and keeps an allow-list, that one may know
@@ -266,13 +264,18 @@ def test_this_sweep_does_what_the_shared_table_says(row):
     # *recognise*. ⚠️ This floor may not import the framework, so the two
     # sides share the table at `tests/harness/personal-data-shapes.json` and
     # each asserts only its own column. This module reads no framework code.
-    did = "report" if shape_matches(row["example"]) else "ignore"
-    assert did == row["quality"], row["shape"]
+    assert VOCABULARY
+    wrong = [
+        row["shape"]
+        for row in VOCABULARY
+        if ("report" if shape_matches(row["example"]) else "ignore") != row["quality"]
+    ]
+    assert wrong == [], f"this sweep disagrees with the table on: {wrong}"
 
 
 def test_the_table_this_sweep_is_measured_against_is_inhabited():
     # ⛔ A sweep states its denominator:
-    # the parametrised test above is satisfied by an empty table.
+    # the sweep above, without its own guard, would be satisfied by an empty table.
     assert len(VOCABULARY) >= 12
     assert {row["quality"] for row in VOCABULARY} == {"report", "ignore"}
 

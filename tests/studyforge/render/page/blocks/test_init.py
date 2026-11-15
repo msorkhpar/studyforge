@@ -54,11 +54,6 @@ def test_every_block_type_has_exactly_one_renderer():
     assert tuple(blocks.RENDERERS) == BLOCK_TYPES
 
 
-def test_the_mapping_is_in_vocabulary_order():
-    # ⚠️ R10: nothing downstream may depend on which module was imported first.
-    assert list(blocks.RENDERERS) == list(BLOCK_TYPES)
-
-
 def test_no_module_claims_a_type_twice():
     claimed = [name for module in blocks.MODULES for name in module.RENDERS]
     assert sorted(claimed) == sorted(BLOCK_TYPES)

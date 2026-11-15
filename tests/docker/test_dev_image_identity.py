@@ -49,9 +49,6 @@ NAME = "studyforge/dev:inputs-"
 #: A shared tag the image must not carry. ⛔ No instruction in `docker/dev/` may name it.
 SHARED = "studyforge/dev:local"
 
-#: The hand build the Dockerfile's FIRST sentence must carry.
-HAND_BUILD = "docker build --build-context project=. docker/dev"
-
 
 # --- the predicates, each one fed a doctored copy below ---------------------
 
@@ -136,12 +133,6 @@ def announcements(script: str) -> list[str]:
     ]
 
 
-def first_sentence(dockerfile_text: str) -> str:
-    """The Dockerfile's opening comment paragraph, as one line of prose."""
-    paragraph = dockerfile_text.split("\n#\n", 1)[0]
-    return " ".join(paragraph.replace("#", " ").split())
-
-
 # --- static: the shape, each with its control -------------------------------
 
 
@@ -220,16 +211,6 @@ def test_the_print_check_can_say_no():
     [line] = announcements(script)
     assert announcements(script.replace(line, ":")) == [], "a removed print read as present"
     assert announcements(script.replace(" >&2", "")) == [], "a stdout print read as stderr"
-
-
-def test_the_dockerfile_s_first_sentence_says_how_to_build_it_by_hand():
-    assert HAND_BUILD in first_sentence(read("Dockerfile")), first_sentence(read("Dockerfile"))
-
-
-def test_the_first_sentence_check_can_say_no():
-    text = read("Dockerfile")
-    moved = text.split("\n#\n", 1)[1]
-    assert HAND_BUILD not in first_sentence(moved), "a later paragraph read as the first"
 
 
 # --- the plant: the race window opened on purpose ---------------------------

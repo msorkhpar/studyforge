@@ -99,17 +99,6 @@ def test_the_skill_names_validate_as_its_definition_of_done():
     assert "Done is a machine's answer, not a person's" in text
 
 
-def test_the_skill_carries_the_measurements_rather_than_asserting_shape():
-    # ⛔ R19: anything a second source would have to re-derive is a hole in the
-    # skill. The block vocabulary and the real corpus's recorded-address share
-    # are carried; a count that moves (checks, rule ids) is printed, not typed.
-    text = skill_text()
-    for measured in ("**11\ntypes**", "12.2%"):
-        assert measured in text, f"the skill no longer carries the measurement {measured!r}"
-    for moving in ("**12 checks**", "| checks | **12** |", "**23 distinct rule ids**"):
-        assert moving not in text, f"{moving!r} is a count that moves; the skill prints it instead"
-
-
 def test_the_skill_prints_the_check_count_rather_than_carrying_it():
     # ⭐ A pointer resolves at read time, and an agent executes a
     # fence, so the fence is run here rather than read.

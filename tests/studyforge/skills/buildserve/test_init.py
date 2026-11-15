@@ -108,14 +108,6 @@ def test_the_procedure_says_narration_exists_what_provides_it_and_where_it_answe
     assert "loopback" in section
 
 
-def test_the_procedure_says_what_the_first_start_fetches_before_it_happens():
-    # ⛔ *No network beyond loopback is implied or required*: what IS fetched, once,
-    # is stated rather than met as a command failing in an operator's hands.
-    section = narration_prose()
-    assert "pulls container images and downloads an engine model" in section
-    assert "nothing this framework does leaves loopback" in section
-
-
 def test_the_procedure_starts_no_container_and_says_so():
     # ⛔ Spec §8.3, and the skill's own *will not do* list carries it too.
     assert "§8.3" in narration_prose()

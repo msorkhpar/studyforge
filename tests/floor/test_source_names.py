@@ -187,11 +187,11 @@ def test_the_product_suites_own_registry_is_this_registry():
     assert shape(sources.KNOWN_SOURCES) == shape(KNOWN_SOURCES)
 
 
-@pytest.mark.parametrize(
-    "text", NAMES_A_SOURCE + NAMES_NO_SOURCE + SPLIT_ACROSS_A_BREAK + SPLIT_AND_NO_SOURCE
-)
-def test_the_product_suites_own_reader_reads_as_this_reader(text):
+def test_the_product_suites_own_reader_reads_as_this_reader():
     # ⛔ The two readers are one rule too, not only the two registries.
     from tests.harness import sources
 
-    assert sources.named_sources(text) == named_sources(text)
+    texts = NAMES_A_SOURCE + NAMES_NO_SOURCE + SPLIT_ACROSS_A_BREAK + SPLIT_AND_NO_SOURCE
+    assert texts
+    differ = [text for text in texts if sources.named_sources(text) != named_sources(text)]
+    assert differ == [], f"the two readers disagree on: {differ}"

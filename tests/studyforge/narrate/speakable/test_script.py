@@ -337,22 +337,34 @@ def test_both_halves_of_the_shared_shape_vocabulary_are_inhabited():
     assert len(CARRIERS) == 9
 
 
-@pytest.mark.parametrize("carrier", sorted(CARRIERS))
-@pytest.mark.parametrize("row", REFUSED_SHAPES, ids=lambda row: row["shape"])
-def test_every_refusing_shape_is_refused_through_every_carrier(row, carrier):
+def test_every_refusing_shape_is_refused_through_every_carrier():
     # ⛔ A local hostname in a list item would be ADMITTED if the gate ran only
     # after `split_identifier`, which destroys the dot the gate anchors on. The transform must not
-    # be able to launder a leak.
-    with pytest.raises(PersonalDataLeak):
-        units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+    # be able to launder a leak. Every shape through every carrier, every admission named.
+    assert REFUSED_SHAPES and CARRIERS
+    admitted = []
+    for row in REFUSED_SHAPES:
+        for carrier in sorted(CARRIERS):
+            try:
+                units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+            except PersonalDataLeak:
+                continue
+            admitted.append(f"{row['shape']} via {carrier}")
+    assert admitted == [], "refusing shapes the gate admitted:\n" + "\n".join(admitted)
 
 
-@pytest.mark.parametrize("carrier", sorted(CARRIERS))
-@pytest.mark.parametrize("row", ADMITTED_SHAPES, ids=lambda row: row["shape"])
-def test_every_passing_shape_is_still_admitted_through_every_carrier(row, carrier):
+def test_every_passing_shape_is_still_admitted_through_every_carrier():
     # ⭐ The other half of the pair. A gate that refused these would refuse a
     # legitimate corpus with a diagnosis that looks exactly like a leak.
-    units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+    assert ADMITTED_SHAPES and CARRIERS
+    refused = []
+    for row in ADMITTED_SHAPES:
+        for carrier in sorted(CARRIERS):
+            try:
+                units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+            except Exception as error:  # every raise is a refusal, named below
+                refused.append(f"{row['shape']} via {carrier}: {type(error).__name__}")
+    assert refused == [], "passing shapes the gate refused:\n" + "\n".join(refused)
 
 
 def test_the_refusal_says_which_shape_and_never_what_matched():

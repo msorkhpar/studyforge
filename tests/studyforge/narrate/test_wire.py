@@ -61,14 +61,6 @@ def test_importing_the_build_or_the_plan_loads_no_wire_in_a_fresh_interpreter(im
     assert [name for name in (WIRE, CLIENT) if name in loaded] == []
 
 
-def test_the_plan_no_longer_reaches_the_narrate_verb_through_the_dispatcher():
-    # ⚠️ `cli/plan` has two possible routes to the client,
-    # `narrate.synth` and the dispatcher. ⭐ The dispatcher
-    # resolves a verb only when it is dispatched, so the second route is closed;
-    # this pins it closed, and `tests/studyforge/cli/test_dispatch.py` owns the clause.
-    assert "studyforge.cli.narrate.stage" not in loaded_by("studyforge.cli.plan")
-
-
 @pytest.mark.parametrize("importer", [CLIENT, WIRE])
 def test_the_same_instrument_sees_the_wire_arrive_when_an_importer_loads_it(importer):
     # ⭐ The control: a child that could not see a loaded module would pass above.

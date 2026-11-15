@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import ast
 
-from studyforge import exercise
 from studyforge.exercise import gates
 from tests.studyforge.exercise.gates.test_configuration import gates_modules
 from tests.support import assert_package_contract
@@ -95,12 +94,6 @@ def test_everything_a_second_gate_family_needs_is_on_that_surface():
     # into this record, and must never have to import a module inside here.
     taken = ("Family", "register", "Verdict", "GateRecord", "Cited", "Input", "ORIGIN_ROLE")
     assert set(taken) <= set(gates.__all__)
-
-
-def test_the_exercise_package_names_the_gates_in_its_own_table():
-    # ⚠️ R17: the parent's contract is where a reader finds out this exists,
-    # and a sub-package missing from it is one nobody discovers.
-    assert "`gates`" in (exercise.__doc__ or "")
 
 
 def test_nothing_in_the_package_imports_execute_or_starts_a_process():

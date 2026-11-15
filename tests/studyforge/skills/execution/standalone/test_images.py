@@ -72,11 +72,6 @@ def test_the_progress_store_is_made_in_the_image_so_its_volume_is_seeded_as_the_
     assert made < silent.index(f"chown -R {images.RUNS_AS} /corpus")
 
 
-def test_a_voiced_site_that_skipped_the_checksums_would_be_seen():
-    planted = images.site_dockerfile("a-course").replace("sha256sum -c", "true")
-    assert "sha256sum -c" not in planted.split(f"AS {images.NARRATIONS[1]}", 1)[1]
-
-
 def test_the_course_runner_bakes_the_run_service_and_runs_it():
     text = images.runner_dockerfile("a-course")
     assert "FROM ${RUNNER_PRIMED}" in text
@@ -122,11 +117,6 @@ def test_the_site_context_leaves_out_the_build_files_and_the_learners_state_and_
 def test_the_authored_exercises_and_scripts_never_enter_an_images_build_context():
     ignored = images.DOCKERIGNORE.splitlines()
     assert "exercises" in ignored and "scripts" in ignored
-
-
-def test_a_context_that_let_the_exercises_in_would_be_caught():
-    planted = [one for one in images.DOCKERIGNORE.splitlines() if one != "exercises"]
-    assert "exercises" not in planted
 
 
 PAGE = '<p data-audio="audio/a-0123abcd.mp3">One</p><li data-audio="">Two</li><p>Three</p>'

@@ -8,8 +8,8 @@
 3. the corpus carries an R3-safe ignore file and the repository's own root
    ignore file is byte-identical to before;
 4. afterwards nothing existing has changed — additions only (R3);
-5. **re-running changes nothing**, and the uninstall returns the repository to
-   its prior state, asserted by comparing the tree.
+5. **re-running changes nothing**; that the uninstall returns the repository to
+   its prior state is `test_removal.py`'s, asserted by comparing the tree.
 
 ⚠️ **The negative control is the point of the first clause.** Without the
 declaration a scaffold reads `NOT valid: 8 finding(s)` — one `unclassified`
@@ -29,7 +29,7 @@ import pytest
 
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
-from studyforge.skills.onboarding import onboard, uninstall
+from studyforge.skills.onboarding import onboard
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.record import OnboardingRefused
 from studyforge.skills.reconnaissance import survey
@@ -56,11 +56,6 @@ def _ingest(root):
         timeout=TIMEOUT,
         check=False,
     )
-
-
-def _tree(root):
-    """Every path under `root`, relative and sorted — what a diff would compare."""
-    return sorted(path.relative_to(root).as_posix() for path in root.rglob("*"))
 
 
 def _onboarded(tmp_path):
@@ -181,18 +176,6 @@ def test_re_running_it_changes_nothing(tmp_path):
         if path.read_bytes() != text
     ]
     assert changed == [], f"a second run rewrote {changed}"
-
-
-def test_the_uninstall_returns_the_repository_to_its_prior_state(tmp_path):
-    # ⛔ Clause 5's second half, asserted by comparing the trees.
-    root = corpora.material(tmp_path / "corpus")
-    before = _tree(root)
-
-    onboard(corpora.SETTLED, framework_commit=corpora.COMMIT).write(root)
-    removed = uninstall(root)
-
-    assert _tree(root) == before
-    assert "corpus.json" in removed
 
 
 def test_the_reader_is_left_a_document_written_from_the_corpus_own_declarations(tmp_path):

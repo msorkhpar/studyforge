@@ -1,7 +1,6 @@
 """The one exception this package raises."""
 
 from studyforge.exercise import ExerciseError
-from studyforge.exercise import errors as module
 
 
 def test_it_is_a_value_error():
@@ -21,11 +20,3 @@ def test_it_is_the_package_s_own_family_and_not_borrowed():
 
     assert not issubclass(ExerciseError, ArchiveError)
     assert not issubclass(ExerciseError, ContentError)
-
-
-def test_the_module_depends_on_nothing():
-    # ⭐ The reason it is a module of its own: `safety` and `record` both raise
-    # it, and putting it in either would make the other import a module it has
-    # no business knowing.
-    source = module.__doc__ or ""
-    assert "Depends on.** Nothing" in source

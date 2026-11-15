@@ -36,14 +36,10 @@ def a_document(**overrides) -> dict:
     return {**to_document(fixture_contents("depth1")), **overrides}
 
 
-def test_the_document_is_written_in_a_stated_key_order():
-    assert tuple(to_document(fixture_contents("depth2"))) == TOC_KEYS
-
-
 def test_the_stated_order_survives_into_the_BYTES():
     # ⛔ **The object's order is not the document's order**, and only one of
     # them is what a consumer reads. `json.dumps(sort_keys=True)` would re-sort
-    # every key on the way out and leave the assertion above passing, so this
+    # every key on the way out and leave an assertion on the object passing, so this
     # assertion reads the text itself (R10).
     text = render(fixture_contents("depth2"))
     assert [key for key in TOC_KEYS if f'"{key}"' in text] == list(TOC_KEYS)

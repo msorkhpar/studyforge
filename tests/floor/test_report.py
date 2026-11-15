@@ -12,19 +12,17 @@ import subprocess
 import sys
 import uuid
 from pathlib import Path
-from types import SimpleNamespace
 
 from tests.floor.report import (
     DISK_WALK,
     TRACKED_WALK,
-    UNREACHABLE,
     WALK_CAVEAT,
     DocumentPopulation,
     Finding,
     format_findings,
-    unreachable_population,
     unread_caveat,
 )
+from tests.harness.skipped import UNREACHABLE, unreachable_population
 from tests.support import repository_root
 
 
@@ -121,11 +119,6 @@ pytest_terminal_summary = _root.pytest_terminal_summary
 """
 
 
-def _skipped(reason: str) -> SimpleNamespace:
-    """A skipped report the way pytest tallies one: `(path, line, "Skipped: reason")`."""
-    return SimpleNamespace(nodeid="t.py::t", longrepr=("t.py", 1, f"Skipped: {reason}"))
-
-
 def _pytest(arguments: list[str], cwd: Path, **extra: str) -> subprocess.CompletedProcess:
     """A child pytest with the repository importable and nothing inherited that steers it."""
     env = dict(os.environ)
@@ -161,22 +154,6 @@ def _disclosure(output: str) -> list[str]:
             break
         found.append(line)
     return found
-
-
-def test_an_empty_population_is_still_PRINTED_as_zero():
-    # ⛔ The arm a careless repair deletes: `0` is a reading, never an absence.
-    assert unreachable_population({}) == [
-        f"{UNREACHABLE}: 0 skipped test(s) — this run reached every test it collected"
-    ]
-
-
-def test_the_count_and_every_reason_are_DERIVED_from_the_tally():
-    # ⛔ Reasons minted at run time, so no typed list of reasons can produce them.
-    first, second = f"absent {uuid.uuid4().hex}", f"absent {uuid.uuid4().hex}"
-    stats = {"skipped": [_skipped(first), _skipped(second), _skipped(first)], "passed": [1]}
-    lines = unreachable_population(stats)
-    assert lines[0].startswith(f"{UNREACHABLE}: 3 skipped test(s) — ")
-    assert lines[1:] == [f"  2 × {first}", f"  1 × {second}"]
 
 
 def test_a_run_that_reaches_everything_prints_the_EMPTY_population_and_exits_0(tmp_path):

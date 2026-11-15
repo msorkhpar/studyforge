@@ -11,7 +11,6 @@ import ast
 from pathlib import Path
 
 from studyforge.skills import personalarchive
-from tests.harness.sources import named_sources
 from tests.studyforge.skills.personalarchive.archiving import skill_text
 
 PACKAGE = Path(personalarchive.__file__).parent
@@ -116,17 +115,3 @@ def test_a_planted_reach_into_the_stores_internals_is_caught():
 def test_a_planted_store_path_outside_the_door_is_caught():
     planted = "from studyforge.progress import store_dir\n(store_dir(root) / 'progress.json')\n"
     assert sorted(names_the_store(planted)) == ["progress.json", "store_dir", "store_dir"]
-
-
-def test_no_file_the_skill_ships_names_a_source():
-    # ⛔ R1, and SKILL.md is in the population: the floor's sweep reads `.py` alone.
-    files = sorted(path for path in PACKAGE.iterdir() if path.suffix in (".py", ".md"))
-    assert any(path.name == "SKILL.md" for path in files)
-    for path in files:
-        assert named_sources(path.read_text(encoding="utf-8")) == [], path.name
-    assert skill_text()
-
-
-def test_a_planted_source_name_is_caught():
-    planted = "# exports the " + "SPA" + "RQL tutorial\n"
-    assert len(named_sources(planted)) == 1

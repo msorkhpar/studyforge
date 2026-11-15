@@ -46,14 +46,6 @@ def test_the_adapter_depends_on_the_installed_library_and_never_a_sibling_checko
         assert "sibling checkout" not in text, where
 
 
-def test_the_reading_step_refuses_by_naming_what_to_return():
-    text = files()["ingest/read.py"]
-    assert "raise NotImplementedError" in text
-    assert "is not written yet" in text
-    assert "studyforge.corpus.container.Container" in text
-    assert "build() keyword dicts" in text
-
-
 def test_the_source_side_count_lives_with_the_other_reading_steps():
     # ⛔ A scaffold with two hand-written modules has lost the property R19
     # depends on: counting the source is reading the source.

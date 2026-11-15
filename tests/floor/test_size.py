@@ -388,20 +388,3 @@ def test_the_authored_walk_reads_every_shipped_non_vendored_file():
     read = {config.relative(path, root) for path in authored_files(root)}
     assert read == shipped - set(VENDORED)
     assert read, "the walk read nothing, so every assertion above is vacuous"
-
-
-# --- the tree itself --------------------------------------------------------
-
-
-def test_no_size_exception_in_this_repository_promises_later_work():
-    # ⭐ The in-the-wild check, asserted over whatever exceptions the tree holds,
-    # so it stays true (vacuously) while there is none.
-    root = Path(__file__).resolve().parents[2]
-    for path in config.python_files(root):
-        text = path.read_text(encoding="utf-8")
-        if count_lines(text) <= config.ceiling_for(config.relative(path, root)):
-            continue
-        reason = size_exception(module_docstring(text, path))
-        assert not promises(reason), (
-            f"{config.relative(path, root)} justifies its size with a promise of later work"
-        )

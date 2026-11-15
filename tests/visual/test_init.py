@@ -139,10 +139,3 @@ def test_the_capture_directory_is_never_inside_the_repository() -> None:
     root = repository_root()
     for stem, text in _sources().items():
         assert str(root) not in text, f"{stem}.py writes an absolute repository path"
-
-
-@pytest.mark.parametrize("scheme", ["light", "dark"])
-def test_both_themes_are_named_by_the_harness(scheme: str) -> None:
-    from tests.visual.page import SCHEMES
-
-    assert scheme in SCHEMES

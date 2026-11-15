@@ -5,8 +5,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-import pytest
-
 from studyforge.address import Address
 from studyforge.corpus import placement
 from tests.support import assert_package_contract
@@ -97,11 +95,6 @@ def test_the_public_surface_is_exactly_what_the_contract_says():
     assert set(placement.__all__) == PUBLIC_SURFACE
     missing = sorted(name for name in PUBLIC_SURFACE if not hasattr(placement, name))
     assert missing == [], "exported but absent: " + ", ".join(missing)
-
-
-@pytest.mark.parametrize("name", sorted(PUBLIC_SURFACE))
-def test_every_exported_name_is_reachable_from_the_package(name):
-    assert getattr(placement, name) is not None
 
 
 def test_the_package_never_touches_a_filesystem():

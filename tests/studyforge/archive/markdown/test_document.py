@@ -64,12 +64,6 @@ def test_the_container_types_are_the_ones_that_hold_blocks():
         assert ("blocks" in block) == (block["type"] in CONTAINER_TYPES)
 
 
-def test_the_vocabulary_is_twelve_types():
-    assert len(BLOCK_TYPES) == 12
-    assert len(set(BLOCK_TYPES)) == 12
-    assert set(CONTAINER_TYPES) <= set(BLOCK_TYPES)
-
-
 def test_the_language_default_reaches_a_fence_inside_a_container():
     quoted = parse("> ```\n> x = 1\n> ```\n", lang_default="java")
     assert quoted[0]["blocks"][0]["lang"] == "java"

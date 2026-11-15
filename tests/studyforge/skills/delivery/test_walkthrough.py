@@ -18,7 +18,7 @@ import pytest
 
 from studyforge.skills import delivery
 from studyforge.skills.delivery import JIRA, Carrier, concentration, export
-from tests.harness.sources import KNOWN_SOURCES, named_sources
+from tests.harness.sources import KNOWN_SOURCES
 from tests.studyforge.skills.delivery import plans
 from tests.support import repository_root
 
@@ -83,31 +83,6 @@ def test_nothing_this_skill_ships_cites_a_path_inside_the_extraction_source():
         if path.is_dir():
             continue
         assert not citation.search(path.read_text("utf-8")), f"{path.name} cites a path inside it"
-
-
-def test_the_instrument_that_checks_for_a_source_name_actually_fires():
-    # ⛔ The PLANTED reading, for the two checks below. `named_sources`
-    # returning `[]` for everything would make both of them pass while checking
-    # nothing, and that is the exact failure the impossible reading caught three
-    # times in the last skill to ship. So it is shown finding one first.
-    planted = "a study corpus built from a CodeSignal export"
-    found = named_sources(planted)
-    assert [corpus for _, corpus, _ in found] == ["the extraction source"]
-    assert named_sources("a study corpus built from an export") == []
-
-
-def test_the_procedure_names_no_source_at_all():
-    # ⚠️ Stronger than R20 asks, and matched to what every other SKILL.md in
-    # this tree already does: none of them names a corpus.
-    assert named_sources(skill_document()) == []
-
-
-def test_no_module_in_this_package_names_a_source():
-    # ⛔ R1's prose form. The product floor sweeps `src/**/*.py` itself; this
-    # asserts it here too, so a failure names this package.
-    package = Path(delivery.__file__).parent
-    for module in sorted(package.glob("*.py")):
-        assert named_sources(module.read_text("utf-8")) == [], module.name
 
 
 # --- every command the procedure gives is one that actually runs ------------

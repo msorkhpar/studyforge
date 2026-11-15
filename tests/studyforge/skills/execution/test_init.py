@@ -1,8 +1,8 @@
 """The package's own contract: what it ships, what it names, and what it never does.
 
-⛔ R1, R18 and §8.3 are properties of the whole package rather than of any one
-module, so they are measured over every file it ships — `SKILL.md` included,
-because the floor's own sweep reads `.py` alone.
+⛔ R18 and §8.3 are properties of the whole package rather than of any one
+module, so they are measured over every file it ships. R1 is the floor's: its source-name sweep
+reads every shipped suffix under `src/`, `SKILL.md` included.
 """
 
 from __future__ import annotations
@@ -13,7 +13,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.skills import execution
-from tests.harness.sources import named_sources
 
 #: The package on disk.
 PACKAGE = Path(execution.__file__).parent
@@ -49,13 +48,6 @@ def test_every_module_the_package_ships_is_on_its_surface_or_private_to_it():
         assert ast.get_docstring(module), f"{name}.py ships without a contract"
 
 
-def test_no_file_it_ships_names_a_source():
-    # ⛔ R1. The framework knows nothing about any source, and `SKILL.md` is in
-    # the population because the floor's sweep reads `.py` alone.
-    for path in files(".py", ".md"):
-        assert named_sources(path.read_text(encoding="utf-8")) == [], path.name
-
-
 @pytest.mark.parametrize("never", NEVER_READ)
 def test_no_module_names_a_component_file_but_its_contract_as_a_value(never):
     # ⛔ R18. ⚠️ **String literals, never prose**: `contract.py`'s own docstring
@@ -81,10 +73,6 @@ def test_the_literal_check_is_not_vacuous():
         if isinstance(node, ast.Constant) and isinstance(node.value, str)
     }
     assert "Dockerfile" in literals
-
-
-def test_the_one_file_it_does_read_is_named_once():
-    assert execution.CONSUMING == "consuming.json"
 
 
 @pytest.mark.parametrize("wanted", INVOCATION)

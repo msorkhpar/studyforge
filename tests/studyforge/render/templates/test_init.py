@@ -134,16 +134,18 @@ def test_every_template_is_classified_as_one_line_or_many():
     assert sorted(ONE_LINE + MULTI_LINE) == sorted(templates.names())
 
 
-@pytest.mark.parametrize("name", ONE_LINE)
-def test_an_inline_template_stays_on_one_line(name):
+def test_an_inline_template_stays_on_one_line():
     # ⛔ `template()` does not join lines, so a newline in one of these would be
     # a newline in the page — and every committed golden would move.
-    assert "\n" not in templates.template(name).template
+    assert ONE_LINE
+    offenders = [name for name in ONE_LINE if "\n" in templates.template(name).template]
+    assert offenders == [], f"inline templates spanning lines: {offenders}"
 
 
-@pytest.mark.parametrize("name", MULTI_LINE)
-def test_a_page_shaped_template_keeps_its_newlines(name):
-    assert "\n" in templates.template(name).template
+def test_a_page_shaped_template_keeps_its_newlines():
+    assert MULTI_LINE
+    offenders = [name for name in MULTI_LINE if "\n" not in templates.template(name).template]
+    assert offenders == [], f"page-shaped templates with no newline: {offenders}"
 
 
 @pytest.mark.parametrize("name", templates.names())
@@ -153,11 +155,13 @@ def test_a_template_is_used_exactly_minus_one_trailing_newline(name):
     assert raw == loaded + "\n" or raw == loaded
 
 
-@pytest.mark.parametrize("name", templates.names())
-def test_no_template_ends_in_a_newline_once_loaded(name):
+def test_no_template_ends_in_a_newline_once_loaded():
     # ⚠️ The whole reason the strip exists: an editor adding a trailing newline
     # to an inline fragment must not lengthen the page.
-    assert not templates.template(name).template.endswith("\n")
+    names = templates.names()
+    assert names
+    offenders = [name for name in names if templates.template(name).template.endswith("\n")]
+    assert offenders == [], f"templates ending in a newline once loaded: {offenders}"
 
 
 def test_an_unfilled_placeholder_raises_and_never_reaches_the_page():
@@ -232,8 +236,7 @@ def test_every_template_is_asked_for_by_some_renderer():
     assert orphans == [], f"templates nothing renders: {orphans}"
 
 
-@pytest.mark.parametrize("name", templates.names())
-def test_a_template_names_no_class_the_surface_does_not_publish(name):
+def test_a_template_names_no_class_the_surface_does_not_publish():
     # ⛔ Asserted from the renderer's side. `test_surface` says every class
     # the stylesheet targets is published; this says every class the markup
     # emits is published too. Without both, the two sides can still disagree —
@@ -243,14 +246,22 @@ def test_a_template_names_no_class_the_surface_does_not_publish(name):
     # also carries `data-*` attribute names and `data-kind` values, and comparing
     # a class against those would let a template carry `class="data-readable"`.
     published = set(SURFACE_CLASSES.values()) | set(HOOK_CLASSES.values())
-    body = templates.template(name).template
-    used = {
-        klass for attribute in re.findall(r'class="([^"$]*)"', body) for klass in attribute.split()
-    }
-    stray = sorted(
-        klass for klass in used if klass not in published and not LIBRARY_CLASS.match(klass)
-    )
-    assert stray == [], f"{name} invents a class: {stray}"
+    names = templates.names()
+    assert names
+    offenders = []
+    for name in names:
+        body = templates.template(name).template
+        used = {
+            klass
+            for attribute in re.findall(r'class="([^"$]*)"', body)
+            for klass in attribute.split()
+        }
+        stray = sorted(
+            klass for klass in used if klass not in published and not LIBRARY_CLASS.match(klass)
+        )
+        if stray:
+            offenders.append(f"{name} invents a class: {stray}")
+    assert offenders == [], "\n".join(offenders)
 
 
 def test_the_loader_lives_in_the_directory_it_loads():

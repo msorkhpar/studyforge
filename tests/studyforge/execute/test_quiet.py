@@ -261,9 +261,10 @@ def test_an_unknown_undeclared_or_ambiguous_toolchain_selects_nothing(declared):
     assert select(declared) is None
 
 
-@pytest.mark.parametrize("name", list(ALL))
-def test_no_filter_passes_every_line_through_untouched(name):
-    assert shown(run(ALL[name], 1), select(())) == run(ALL[name], 1)
+def test_no_filter_passes_every_line_through_untouched():
+    assert ALL
+    offenders = [name for name in ALL if shown(run(ALL[name], 1), select(())) != run(ALL[name], 1)]
+    assert offenders == [], f"transcripts the unfiltered run altered: {offenders}"
 
 
 @pytest.mark.parametrize(
@@ -301,11 +302,15 @@ def test_a_new_toolchain_is_one_entry_of_data(monkeypatch):
 # --- what holds of every filter -----------------------------------------------------------
 
 
-@pytest.mark.parametrize("toolchain", EVERY_CHOICE)
-@pytest.mark.parametrize("name", list(ALL))
-def test_a_kept_line_is_never_edited_or_reordered(toolchain, name):
-    lines = run(ALL[name], 1)
-    assert unedited_subsequence(shown(lines, toolchain), lines)
+def test_a_kept_line_is_never_edited_or_reordered():
+    assert ALL and EVERY_CHOICE
+    offenders = [
+        f"{choice.id}/{name}"
+        for choice in EVERY_CHOICE
+        for name in ALL
+        if not unedited_subsequence(shown(run(ALL[name], 1), choice.values[0]), run(ALL[name], 1))
+    ]
+    assert offenders == [], f"filters that edited or reordered a kept line: {offenders}"
 
 
 def test_the_subsequence_check_is_not_blind():

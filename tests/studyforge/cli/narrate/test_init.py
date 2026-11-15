@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from studyforge.cli import VERBS, narrate
 from studyforge.cli.narrate.cli import main
 from tests.support import assert_package_contract, repository_root
@@ -13,9 +11,10 @@ def test_states_its_contract():
     assert_package_contract(narrate, "studyforge.cli.narrate")
 
 
-@pytest.mark.parametrize("name", narrate.__all__)
-def test_every_public_name_exists(name):
-    assert hasattr(narrate, name)
+def test_every_public_name_exists():
+    assert narrate.__all__
+    missing = [name for name in narrate.__all__ if not hasattr(narrate, name)]
+    assert missing == [], "exported but absent: " + ", ".join(missing)
 
 
 def test_the_verb_is_registered_in_the_one_table_against_this_main():

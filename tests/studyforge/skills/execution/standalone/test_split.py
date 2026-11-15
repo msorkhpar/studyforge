@@ -65,54 +65,72 @@ def verdict(course, path: str) -> str:
     return course[2][path].verdict
 
 
-@pytest.mark.parametrize(
-    "path",
-    [
-        "corpus.json",
-        "archive",
-        "practice",
-        "exercises",
-        "scripts",
-        "PROGRESS.md",
-        ".sdkman",
-        "index.html",
-        "kata",
-        "module-a",
-        "LICENSE",
-        ".gitignore",
-        ".github",
-        ".studyforge/assets",
-        ".studyforge/narration.json",
-        ".studyforge/narration-release",
-        ".studyforge/.gitignore",
-        ".studyforge/execution/runservice.pl",
-        ".studyforge/execution/prime",
-        ".studyforge/execution/code",
-        ".studyforge/execution/allowed",
-    ],
-)
-def test_what_a_learner_needs_to_study_or_run_the_course_is_kept(course, path):
-    assert verdict(course, path) == split.KEEP, course[2][path].why
+def misjudged(course, paths: tuple[str, ...], expected: str) -> list[str]:
+    """Every path in `paths` the table does not judge `expected`, with the table's sentence."""
+    table = course[2]
+    return [
+        f"{path}: {table[path].verdict} ({table[path].why})" if path in table else f"{path}: absent"
+        for path in paths
+        if path not in table or table[path].verdict != expected
+    ]
 
 
-@pytest.mark.parametrize(
-    "path",
-    [
-        "ingest",
-        "tests",
-        "docs",
-        "README.md",
-        "CLAUDE.md",
-        ".claude",
-        ".studyforge/pin.json",
-        ".studyforge/installed.json",
-        ".studyforge/skills",
-        ".studyforge/execution/compose.yaml",
-        ".studyforge/execution/instance.env",
-    ],
+#: What a learner needs to study or run the course.
+KEPT = (
+    "corpus.json",
+    "archive",
+    "practice",
+    "exercises",
+    "scripts",
+    "PROGRESS.md",
+    ".sdkman",
+    "index.html",
+    "kata",
+    "module-a",
+    "LICENSE",
+    ".gitignore",
+    ".github",
+    ".studyforge/assets",
+    ".studyforge/narration.json",
+    ".studyforge/narration-release",
+    ".studyforge/.gitignore",
+    ".studyforge/execution/runservice.pl",
+    ".studyforge/execution/prime",
+    ".studyforge/execution/code",
+    ".studyforge/execution/allowed",
 )
-def test_what_records_how_the_course_was_built_moves(course, path):
-    assert verdict(course, path) == split.MOVE
+
+#: What records how the course was built.
+MOVED = (
+    "ingest",
+    "tests",
+    "docs",
+    "README.md",
+    "CLAUDE.md",
+    ".claude",
+    ".studyforge/pin.json",
+    ".studyforge/installed.json",
+    ".studyforge/skills",
+    ".studyforge/execution/compose.yaml",
+    ".studyforge/execution/instance.env",
+)
+
+
+def test_what_a_learner_needs_to_study_or_run_the_course_is_kept(course):
+    assert KEPT
+    offenders = misjudged(course, KEPT, split.KEEP)
+    assert offenders == [], "should keep:\n" + "\n".join(offenders)
+
+
+def test_what_records_how_the_course_was_built_moves(course):
+    assert MOVED
+    offenders = misjudged(course, MOVED, split.MOVE)
+    assert offenders == [], "should move:\n" + "\n".join(offenders)
+
+
+def test_the_sweep_names_a_misjudged_path(course):
+    planted = (*course[:2], {**course[2], "LICENSE": split.Verdict("LICENSE", split.MOVE, "x")})
+    assert misjudged(planted, KEPT, split.KEEP) == [f"LICENSE: {split.MOVE} (x)"]
 
 
 def test_the_findings_log_moves_as_a_record_of_how_the_course_was_built(course):

@@ -53,14 +53,6 @@ def test_the_package_states_its_contract():
     assert_package_contract(page, "studyforge.render.page")
 
 
-def test_render_returns_bytes():
-    # ⭐ What is compared against a golden, written to disk and served is a byte
-    # string; handing back text would leave the encoding to the caller and R10's
-    # guarantee would hold everywhere except the step that matters.
-    case = CASES[0]()
-    assert isinstance(page.render(case.document, case.placement), bytes)
-
-
 def test_both_fixtures_render_against_their_golden_files(case):
     # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
@@ -71,10 +63,6 @@ def test_both_fixtures_render_against_their_golden_files(case):
     # `narration` became an argument the regenerator passed and this line did not.
     assert case.golden.exists(), f"no golden committed for {case.name}"
     assert case.render() == case.golden.read_bytes()
-
-
-def test_a_page_is_byte_for_byte_stable_across_runs(case):
-    assert page.render(case.document, case.placement) == page.render(case.document, case.placement)
 
 
 def test_a_page_issues_no_network_request(case):

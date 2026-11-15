@@ -107,13 +107,6 @@ def test_the_public_surface_is_exactly_what_the_contract_says():
     assert missing == [], "exported but absent: " + ", ".join(missing)
 
 
-@pytest.mark.parametrize("name", sorted(PUBLIC_SURFACE))
-def test_every_exported_name_is_reachable_from_the_package(name):
-    # ⛔ The point of `__init__.py` being the contract: nothing downstream
-    # should ever need `from studyforge.corpus.manifest.document import ...`.
-    assert getattr(manifest, name) is not None
-
-
 def test_only_the_document_module_reaches_a_filesystem():
     # ⭐ `parse` does no I/O and `load` is four lines on top of it. A
     # classification, a media policy and a declared edit are all decided from

@@ -17,11 +17,6 @@ def test_states_its_contract():
     assert_package_contract(contents, "studyforge.contents")
 
 
-def test_every_exported_name_is_really_there():
-    missing = [name for name in contents.__all__ if not hasattr(contents, name)]
-    assert missing == []
-
-
 def test_the_surface_is_the_whole_surface():
     # ⛔ `__init__.py` is the contract: a consumer that has to import
     # `studyforge.contents.order` directly is a consumer this contract failed.

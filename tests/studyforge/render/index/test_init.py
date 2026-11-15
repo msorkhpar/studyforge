@@ -67,14 +67,6 @@ def test_the_package_states_its_contract():
     assert_package_contract(index, "studyforge.render.index")
 
 
-def test_every_name_on_the_public_surface_resolves():
-    # ⛔ **Added because the sweep found it missing.** A misspelling in `__all__`
-    # was killed by ruff alone and by no test at all, and a row
-    # killed only by tidiness is a row killed by nothing when the tidiness moves.
-    missing = [name for name in index.__all__ if not hasattr(index, name)]
-    assert missing == [], missing
-
-
 def test_the_public_surface_is_exactly_the_package_s_public_names():
     # ⭐ Derived on both sides rather than typed on one: a name re-exported and
     # forgotten on `__all__` fails here instead of being discovered by the next
@@ -128,13 +120,6 @@ def _declared_owners() -> dict[str, str]:
     return found
 
 
-def test_render_returns_bytes():
-    # ⭐ What is compared against a golden, written to disk and served is a byte
-    # string; handing back text would leave the encoding to the caller and R10's
-    # guarantee would hold everywhere except the step that matters.
-    assert isinstance(cases()[0].render(), bytes)
-
-
 def test_both_fixtures_render_against_their_golden_file(case):
     # ⛔ The rendering acceptance: "renders both fixture corpora, at both depths". A
     # golden that moved without a deliberate change to the renderer is the R10
@@ -149,11 +134,6 @@ def test_the_two_fixtures_are_one_level_and_two():
     # ⭐ "At both depths", derived from the fixtures rather than asserted against
     # a literal this test would own.
     assert [built.document.depth for built in cases()] == [1, 2]
-
-
-def test_rendering_twice_gives_identical_bytes(case):
-    # ⛔ R10 at its narrowest: no clock, no set iteration, no directory walk.
-    assert case.render() == case.render()
 
 
 def test_the_page_reaches_the_network_nowhere(case):

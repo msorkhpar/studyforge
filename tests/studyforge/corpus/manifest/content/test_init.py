@@ -9,8 +9,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-import pytest
-
 from studyforge.corpus.manifest import content, errors
 from studyforge.corpus.manifest.content import parse, policy
 
@@ -151,13 +149,3 @@ def test_the_route_check_above_would_notice(monkeypatch):
     monkeypatch.delattr(content, "_e")
     monkeypatch.setattr(content, "_escape", len, raising=False)
     assert routes_to_the_escaping_phrase() == []
-
-
-@pytest.mark.parametrize(
-    "name",
-    ["MIN_WHY_CHARS", "WILDCARDS", "Classification", "ContentPolicy", "Exclusion", "NotMaterial"],
-)
-def test_the_package_answers_the_spelling_the_module_answered(name):
-    # ⭐ Every importer in the tree names `studyforge.corpus.manifest.content`
-    # and none of them changed: a package answers the spelling a module did.
-    assert getattr(content, name) is not None

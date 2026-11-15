@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-from studyforge import exercise
 from studyforge.exercise import bundle
 from tests.support import assert_package_contract, repository_root
 
@@ -74,12 +73,6 @@ def test_the_public_surface_is_declared_and_complete():
         "write",
     }
     assert all(hasattr(bundle, name) for name in bundle.__all__)
-
-
-def test_the_parent_contract_says_this_sub_package_exists():
-    # ⛔ R17: a parent contract is where a reader finds out a sub-package is
-    # there. `gates` and `quiz` are named for the same reason.
-    assert "`bundle`" in (exercise.__doc__ or "")
 
 
 def test_no_module_here_runs_anything_or_reaches_a_module_by_name():

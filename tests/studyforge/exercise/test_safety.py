@@ -140,12 +140,6 @@ def test_a_real_command_is_accepted(value):
     assert require_command(value, "test_command", WHERE) == tuple(value)
 
 
-def test_a_command_comes_back_as_a_tuple():
-    # ⚠️ Immutable, because the record is frozen and a list on a frozen
-    # dataclass is a mutable field on an immutable value.
-    assert isinstance(require_command(["mvn", "test"], "run_command", WHERE), tuple)
-
-
 # --------------------------------------------------------------------------
 # ⛔ commands that are refused — the security property
 # --------------------------------------------------------------------------

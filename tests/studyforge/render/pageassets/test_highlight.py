@@ -16,8 +16,6 @@ from __future__ import annotations
 
 import re
 
-import pytest
-
 from studyforge.render.pageassets import text
 
 #: The stylesheet's groups, weakest first, each identified by the declaration
@@ -163,22 +161,29 @@ def test_no_class_is_filed_under_two_groups():
             seen[klass] = group
 
 
-@pytest.mark.parametrize("combination,expected", sorted(MEASURED_COMBINATIONS.items()))
-def test_every_measured_combination_lands_where_it_should(combination, expected):
+def test_every_measured_combination_lands_where_it_should():
     # ⚠️ The annotations are the interesting ones: they carry `punctuation`
     # too, and would read as punctuation if `type` did not come after it.
-    assert resolve(combination.split()) == expected
+    assert MEASURED_COMBINATIONS
+    offenders = [
+        f"`{combination}` lands on {resolve(combination.split())}, not {expected}"
+        for combination, expected in sorted(MEASURED_COMBINATIONS.items())
+        if resolve(combination.split()) != expected
+    ]
+    assert offenders == [], "\n".join(offenders)
 
 
-@pytest.mark.parametrize("combination", sorted(MEASURED_COMBINATIONS))
-def test_no_measured_combination_takes_the_comment_colour_unless_it_is_one(combination):
+def test_no_measured_combination_takes_the_comment_colour_unless_it_is_one():
     # ⛔ THE BUG THIS FILE EXISTS FOR. A string-literal variant filed under
     # comment italicised every string in one language, the tests still passed,
     # and only a screenshot caught it.
-    if resolve(combination.split()) == "comment":
-        assert "comment" in combination.split(), (
-            f"`{combination}` takes the comment colour and italics but is not a comment"
-        )
+    assert MEASURED_COMBINATIONS
+    offenders = [
+        f"`{combination}` takes the comment colour and italics but is not a comment"
+        for combination in sorted(MEASURED_COMBINATIONS)
+        if resolve(combination.split()) == "comment" and "comment" not in combination.split()
+    ]
+    assert offenders == [], "\n".join(offenders)
 
 
 def test_an_interpolated_expression_reads_as_code_and_not_as_string():

@@ -25,12 +25,6 @@ def test_the_surface_is_exactly_what_it_declares():
     assert len(set(personalarchive.__all__)) == len(personalarchive.__all__)
 
 
-def test_the_procedure_ships_beside_the_package_and_states_both_rules():
-    text = skill_text()
-    assert "# Skill — personal archive" in text
-    assert "## ⛔ The merge rule" in text and "## ⛔ The belief rule" in text
-
-
 def test_both_invocations_the_procedure_gives_are_this_package_and_it_runs():
     text = skill_text()
     choice = "<" + "|".join(KINDS) + ">"

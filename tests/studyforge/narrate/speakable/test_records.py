@@ -55,16 +55,6 @@ def test_the_id_is_one_based_and_the_coordinates_are_zero_based():
     assert unit.block_path == (0,)
 
 
-def test_the_contract_says_what_withheld_does_not_count():
-    # ⚠️ R17: when one half of a pair is
-    # constrained, name what sits beside it that is not. A coverage report reading
-    # `withheld` as "everything the listener does not hear" would under-report.
-    contract = records.__doc__ or ""
-    assert "It is NOT a total count" in contract
-    for beside in ("image", "video", "rule", "html"):
-        assert beside in contract
-
-
 def test_the_refusal_is_its_own_family_and_not_a_value_error_by_accident():
     assert issubclass(SpeakableError, Exception)
     assert not issubclass(SpeakableError, ValueError)

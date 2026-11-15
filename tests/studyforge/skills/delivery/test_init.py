@@ -24,11 +24,6 @@ def test_the_surface_names_each_thing_once():
     assert len(delivery.__all__) == len(set(delivery.__all__))
 
 
-def test_the_procedure_ships_beside_the_package():
-    # ⛔ §9: the document is the deliverable and this package is what it calls.
-    assert (Path(delivery.__file__).parent / "SKILL.md").exists()
-
-
 def test_the_package_ships_no_roadmap():
     # ⛔ The package carries its procedure and its code, and no data file
     # describing how the framework itself is being built.

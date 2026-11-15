@@ -5,8 +5,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-import pytest
-
 from studyforge.render import pageassets
 from tests.support import assert_package_contract
 
@@ -75,13 +73,8 @@ def test_states_its_contract():
 
 def test_the_public_surface_is_exactly_what_the_contract_says():
     assert set(pageassets.__all__) == PUBLIC_SURFACE
-    missing = sorted(name for name in PUBLIC_SURFACE if not hasattr(pageassets, name))
+    missing = sorted(name for name in PUBLIC_SURFACE if getattr(pageassets, name, None) is None)
     assert missing == [], "exported but absent: " + ", ".join(missing)
-
-
-@pytest.mark.parametrize("name", sorted(PUBLIC_SURFACE))
-def test_every_exported_name_is_reachable_from_the_package(name):
-    assert getattr(pageassets, name) is not None
 
 
 def test_the_package_imports_nothing_outside_the_standard_library_and_itself():

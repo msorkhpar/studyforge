@@ -15,7 +15,7 @@ from types import ModuleType
 
 import pytest
 
-from studyforge.skills import adapter, delivery, documents, onboarding
+from studyforge.skills import delivery, documents, onboarding
 from studyforge.skills.delivery import (
     ANSWERS,
     LOG,
@@ -254,11 +254,6 @@ def test_the_stub_a_corpus_receives_points_at_a_procedure_that_names_the_log():
     assert QUESTION in procedure
 
 
-def test_the_adapter_hand_over_step_obliges_the_log_rather_than_a_message():
-    assert "findings log" in skill(adapter)
-    assert "onboarding skill's step 7" in skill(adapter)
-
-
 def test_the_delivery_sort_starts_from_the_log_and_points_at_the_catalogue():
     # ⭐ The section's NAME is read out of the procedure, never typed here, so a
     # rewrite of that prose keeps this green exactly when the procedure and the catalogue
@@ -319,28 +314,6 @@ def test_the_procedures_closing_command_refuses_a_log_with_a_missing_slot(tmp_pa
     done = run_closing(tmp_path)
     assert done.returncode != 0
     assert "IX-19/1 carries no disposition slot" in done.stderr
-
-
-# --- the scaffold's file count is its own listing's, never typed ----
-
-#: Typed counts of the scaffold's file set, which undercount as it grows.
-TYPED_COUNTS = re.compile(r"\b(?:seven|eight) (?:generated|files|as generated)\b", re.I)
-
-
-def test_no_skill_document_types_the_scaffolds_file_count():
-    for package in (adapter, onboarding):
-        assert not TYPED_COUNTS.findall(skill(package)), package.__name__
-
-
-def test_the_skill_documents_point_at_the_scaffolds_own_listing():
-    assert "the listing above is the count" in skill(adapter)
-    assert "`scaffold(...).lines()`" in skill(onboarding)
-
-
-def test_a_typed_count_is_caught():
-    # ⭐ The other direction: the pattern fires on the sentence it replaced.
-    assert TYPED_COUNTS.findall("The report names one file as yours and seven as generated.")
-    assert TYPED_COUNTS.findall("**Eight files, seven generated:**")
 
 
 # --- the catalogue the run read first -----------------------------------------

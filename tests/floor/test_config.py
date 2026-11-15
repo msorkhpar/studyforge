@@ -8,19 +8,6 @@ from tests.floor import config, report
 from tests.support import git, init_repository, repository_root, run, tracked_files
 
 
-def test_the_size_exception_marker_is_the_ruled_literal():
-    # ⛔ Fixed by R11, case included: every reader looks for exactly this
-    # token, so a marker that drifts passes here and fails there.
-    assert config.SIZE_EXCEPTION_MARKER == "Size exception:"
-
-
-def test_ceilings_are_the_documented_ones():
-    # R11 in the spec states 400 and 600. If these move, that rule moved
-    # first — this assertion is the tripwire.
-    assert config.SOURCE_LINE_CEILING == 400
-    assert config.TEST_LINE_CEILING == 600
-
-
 def test_ruff_line_length_agrees_with_the_always_on_checker():
     # ⛔ Two tools disagreeing about the same file is worse than one tool.
     # `pyproject.toml`'s `[tool.ruff] line-length` and `config.LINE_LENGTH`

@@ -18,7 +18,6 @@ import pytest
 from studyforge.corpus.container import (
     CONTAINER_API,
     KNOWN_CONTAINER_API,
-    ORIGIN_KEYS,
     REGION_ORIGIN_API,
     Container,
     ContainerError,
@@ -149,10 +148,6 @@ def test_a_string_origin_is_a_whole_file_and_carries_no_section():
 def test_an_object_origin_is_a_path_and_a_section():
     unit = built().units[0]
     assert (unit.origin, unit.origin_section) == ("TestCases.md", "3. Card issuance")
-
-
-def test_the_object_keys_are_path_and_section():
-    assert ORIGIN_KEYS == ("path", "section")
 
 
 def test_a_region_renders_back_as_the_object_it_was_read_from():

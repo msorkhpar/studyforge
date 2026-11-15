@@ -8,18 +8,9 @@ simplified back to the version that lost a lesson.
 
 from __future__ import annotations
 
-import re
-
 import pytest
 
 from studyforge.archive.markdown import patterns
-
-
-def test_every_public_name_is_a_pattern_a_bound_or_a_tag_list():
-    for name in dir(patterns):
-        if name.isupper():
-            value = getattr(patterns, name)
-            assert isinstance(value, re.Pattern | int | str), name
 
 
 @pytest.mark.parametrize("indent", ["", " ", "  ", "   "])
@@ -102,9 +93,3 @@ def test_the_media_embed_names_its_tags_and_leaves_img_alone():
 def test_an_unescaped_pipe_is_the_only_thing_that_ends_a_cell():
     assert patterns.UNESCAPED_PIPE.search("a | b")
     assert not patterns.UNESCAPED_PIPE.search("a \\| b")
-
-
-def test_the_image_span_limit_is_a_bound_not_a_style():
-    # A bound, so an unclosed `![` cannot swallow the rest of the document.
-    assert isinstance(patterns.IMAGE_SPAN_LIMIT, int)
-    assert 0 < patterns.IMAGE_SPAN_LIMIT < 100

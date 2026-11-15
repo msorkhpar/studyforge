@@ -8,7 +8,6 @@ framework is never a submodule (R18, amended).
 
 from __future__ import annotations
 
-import ast
 import importlib.util
 import json
 import re
@@ -128,11 +127,6 @@ def test_every_declared_skill_ships_a_procedure_in_the_package():
     assert not missing, f"these declared skills ship no procedure: {missing}"
 
 
-def test_the_generated_check_is_a_module_that_parses():
-    # ⚠️ Generated code nothing lints, so the parse is the lint.
-    ast.parse(pin.pin_test())
-
-
 def test_the_generated_check_refuses_a_submodule():
     # ⛔ R18, amended: nothing here is pushed to any remote, so a submodule URL
     # has no legal form. The corpus asserts it rather than being told it.
@@ -148,10 +142,6 @@ def test_the_generated_check_names_every_stub_it_must_agree_with():
     assert ".studyforge/skills/adapter.md" in text
     assert ".studyforge/skills/onboarding.md" in text
     assert ".studyforge/skills/reconnaissance.md" not in text
-
-
-def test_the_generated_check_says_it_is_generated():
-    assert "rather than a fix" in pin.pin_test()
 
 
 def test_the_generated_check_asks_no_checkout_and_starts_no_process():

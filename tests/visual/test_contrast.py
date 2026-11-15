@@ -111,23 +111,28 @@ def test_every_element_painting_text_clears_aa_against_the_ground_it_sits_on(
     assert not failures, f"{scheme}: {len(failures)} element(s) below AA:\n" + "\n".join(failures)
 
 
-@pytest.mark.parametrize("scheme", SCHEMES)
-@pytest.mark.parametrize("token", MEASURED_TOKENS)
-def test_every_measured_token_clears_aa_against_its_declared_ground(
-    readings: dict, scheme: str, token: str
-) -> None:
+def test_every_measured_token_clears_aa_against_its_declared_ground(readings: dict) -> None:
     """⭐ Coverage that does not depend on the fixture containing the construct.
 
     ⛔ Both colours still come from the browser — this is the ledger choosing
-    *which* pair to compare, never supplying either value.
+    *which* pair to compare, never supplying either value. Every scheme and
+    every measured token is read, and every pair below AA is named.
     """
-    resolved = readings[scheme]["resolved"]
-    ground = palette.LEDGER[token][1]
-    ratio = contrast.ratio(contrast.parse(resolved[token]), contrast.parse(resolved[ground]))
-    assert ratio >= contrast.AA_NORMAL, (
-        f"{scheme}: {token} ({resolved[token]}) on {ground} ({resolved[ground]}) "
-        f"= {ratio:.2f}, below AA {contrast.AA_NORMAL}"
-    )
+    assert MEASURED_TOKENS
+    failures = []
+    for scheme in SCHEMES:
+        resolved = readings[scheme]["resolved"]
+        for token in MEASURED_TOKENS:
+            ground = palette.LEDGER[token][1]
+            ratio = contrast.ratio(
+                contrast.parse(resolved[token]), contrast.parse(resolved[ground])
+            )
+            if ratio < contrast.AA_NORMAL:
+                failures.append(
+                    f"{scheme}: {token} ({resolved[token]}) on {ground} ({resolved[ground]}) "
+                    f"= {ratio:.2f}, below AA {contrast.AA_NORMAL}"
+                )
+    assert not failures, "measured tokens below AA:\n" + "\n".join(failures)
 
 
 @pytest.mark.parametrize("scheme", SCHEMES)

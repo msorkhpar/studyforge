@@ -26,10 +26,6 @@ def test_the_installed_offer_is_every_command_then_every_skill_but_the_planner()
     assert ids == commands + skills
 
 
-def test_the_planner_is_this_package():
-    assert offer.PLANNER == "delivery"
-
-
 def test_intake_is_not_one_of_the_offered_capabilities():
     ids = [capability.id for capability in Offer.installed().capabilities]
     assert "skill intake" not in ids

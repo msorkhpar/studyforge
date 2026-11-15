@@ -231,23 +231,6 @@ def test_an_authored_overlay_is_still_not_applied_although_its_address_is_declar
     assert "shared" not in [section["kind"] for section in without["sections"]]
 
 
-def test_this_package_says_the_address_is_declared_and_the_verb_is_not():
-    """⛔ The same, read against the prose a maintainer meets first.
-
-    ⚠️ `generate.units` must not claim the overlay's place is undeclared: a
-    false sentence beside a true test is the failure this asserts against.
-    """
-    from studyforge.generate import units
-
-    prose = units.__doc__ or ""
-
-    assert "Layout.content" in prose
-    assert "unowned" in prose
-    assert "declares where a unit's overlay sits" not in prose, (
-        "the present-tense claim that the place is undeclared still stands"
-    )
-
-
 def test_nothing_under_tests_is_disturbed_by_a_copy(tmp_path):
     """⭐ The helper's own premise: a fixture copy is writable and separate."""
     root = a_corpus(tmp_path, "depth1")
@@ -356,10 +339,11 @@ def test_both_derivations_are_really_called_in_the_tree():
     assert called == set(DERIVATIONS), called
 
 
-@pytest.mark.parametrize("case", framework_modules(), ids=lambda case: case[0])
-def test_no_call_site_spells_a_units_arguments_out_of_it(case):
-    where, source = case
-    assert spelled_calls(source, where) == []
+def test_no_call_site_spells_a_units_arguments_out_of_it():
+    modules = framework_modules()
+    assert modules, f"no module found under {FRAMEWORK}"
+    offenders = [found for where, source in modules for found in spelled_calls(source, where)]
+    assert offenders == [], "\n".join(offenders)
 
 
 def test_a_planted_call_that_drops_the_label_is_named_by_this_sweep():

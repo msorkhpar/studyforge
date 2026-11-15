@@ -13,7 +13,6 @@ import ast
 import json
 import sys
 
-from studyforge import exitcodes
 from studyforge.exitcodes import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.harness import isolation
@@ -116,9 +115,3 @@ def test_that_instrument_reports_what_a_module_with_dependencies_pulls_in():
     print(held)
     assert "studyforge.exitcodes" in held
     assert [name for name in held if name.startswith("studyforge.validate.")] != []
-
-
-def test_the_module_states_no_dependency_because_it_has_none():
-    # ⛔ The contract is checkable, not decorative (R17): the "Depends on"
-    # sentence says "Nothing", and the assertion above is what makes it true.
-    assert "**Depends on.** Nothing" in exitcodes.__doc__

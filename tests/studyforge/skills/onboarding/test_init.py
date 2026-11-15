@@ -23,10 +23,3 @@ def test_the_surface_names_each_thing_once():
     # functions); what a test can say that a linter cannot is that no name is
     # exported twice and every one of them resolves.
     assert len(onboarding.__all__) == len(set(onboarding.__all__))
-
-
-def test_the_procedure_ships_beside_the_package():
-    # ⛔ §9: the document is the deliverable and this package is what it calls.
-    from pathlib import Path
-
-    assert (Path(onboarding.__file__).parent / "SKILL.md").exists()
