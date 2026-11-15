@@ -1,0 +1,104 @@
+{
+  "brief_api": 1,
+  "title": "Data Analyst Interview Prep: SQL and Python with SQLite",
+  "track": "interview",
+  "answers": {
+    "goal.end_state": {"status": "answered", "decided_by": "author", "value": "Write a join across orders, customers and products and explain why a row count changed; aggregate revenue by month and region with a HAVING filter; rank customers with a window function; find the first and the repeat purchase of each customer; load a SQLite table into pandas and clean it; compute a weekly retention cohort; explain a metric drop to a non-technical manager; answer a timed case question on the retailer's data."},
+    "goal.non_goals": {"status": "answered", "decided_by": "author", "value": "No dashboards or BI tools, no machine learning, no database administration, no cloud warehouses, no statistics beyond means, medians and rates."},
+    "learner.who": {"status": "answered", "decided_by": "author", "value": "Someone who has written basic Python and simple SELECT queries and is preparing for a junior or mid-level data analyst interview; they must reach the level of answering the role's SQL and Python rounds unaided."},
+    "learner.levels": {"status": "answered", "decided_by": "author", "value": "One level; depth tags in the outline mark window functions and cohorts as the harder topics."},
+    "learner.time_budget": {"status": "answered", "decided_by": "claude", "value": "20 to 30 hours, recomputed from the written pages before the first release."},
+    "sources.list": {"status": "answered", "decided_by": "author", "value": "The SQLite documentation (public domain, paraphrased and cited); the Python standard library documentation (PSF licence, read only); the pandas documentation (BSD licence, read only). Every lesson is written in the course's own words."},
+    "sources.authority": {"status": "answered", "decided_by": "author", "value": "The ranked skill list in interview.skills; every skill on it has at least one practice."},
+    "sources.mirror": {"status": "answered", "decided_by": "claude", "value": true},
+    "scope.depth": {"status": "answered", "decided_by": "author", "value": "Core for joins, aggregation and pandas cleaning; deep for window functions, cohorts and the case questions; survey for query plans; prose only for explaining results to a manager. The tags live in the outline."},
+    "scope.ruled_out": {"status": "answered", "decided_by": "author", "value": "No server databases, no notebooks, no cloud accounts, no network access at run time; SQLite and Python only."},
+    "scope.cut_candidates": {"status": "answered", "decided_by": "author", "value": "Charting with a plotting library and A/B test statistics were both cut before numbering; neither is in the outline."},
+    "runtimes.languages": {"status": "answered", "decided_by": "author", "value": "Python 3.13 with pandas 2.2, and SQLite 3.45 through Python's sqlite3 module, pinned in the runner image."},
+    "runtimes.coverage": {"status": "answered", "decided_by": "author", "value": "Every SQL practice is SQL run through sqlite3, and every Python practice is Python; no practice is written twice. The two prose-only lessons in The interview section have no practice."},
+    "runtimes.offline": {"status": "answered", "decided_by": "author", "value": "Everything: the retailer's database ships as a generated SQLite file inside the course."},
+    "runtimes.licensed_tools": {"status": "answered", "decided_by": "author", "value": "None."},
+    "runtimes.hardware": {"status": "answered", "decided_by": "author", "value": "None; every practice runs on a laptop CPU in under a second."},
+    "practice.density": {"status": "answered", "decided_by": "author", "value": "2 to 3 code practices per lesson, plus a quiz at the end of each section."},
+    "practice.shape": {"status": "answered", "decided_by": "author", "value": "TODO functions beside the section they test, a starter that fails on an assertion, and at most 25 changed lines per practice."},
+    "practice.tryit": {"status": "answered", "decided_by": "author", "value": "Yes: every practice has a try-it Run that prints the query result or the data frame before the learner edits."},
+    "practice.projects": {"status": "answered", "decided_by": "claude", "value": "One project per section on the retailer's data, with the first step shown in full and later steps as goals only."},
+    "quiz.placement": {"status": "answered", "decided_by": "author", "value": "At the end of each section only; never inside a lesson or a project."},
+    "quiz.mocks": {"status": "answered", "decided_by": "author", "value": true},
+    "quiz.keys_in_page": {"status": "answered", "decided_by": "author", "value": "Yes: the keys ship in the page source, and quizzes are for self-checking, not grading."},
+    "writing.reference": {"status": "answered", "decided_by": "author", "value": "The pilot module's first lesson is the reference; each lesson stays under 900 words of prose."},
+    "writing.diagrams": {"status": "answered", "decided_by": "claude", "value": "Wherever a lesson explains how rows flow through a join, a grouping or a window: one diagram per such lesson."},
+    "writing.pilot": {"status": "answered", "decided_by": "author", "value": "Joins across orders and customers"},
+    "writing.review_rule": {"status": "answered", "decided_by": "author", "value": "The author reviews the pilot; after that the build runs without review unless the author asks for more."},
+    "narration.wanted": {"status": "answered", "decided_by": "author", "value": "after-release"},
+    "narration.scope": {"status": "answered", "decided_by": "claude", "value": "Prose only, never code or quizzes."},
+    "narration.voice": {"status": "deferred", "reason": "Chosen after the first release, when narration starts, from samples of the finished pilot lesson."},
+    "privacy.private_folder": {"status": "answered", "decided_by": "author", "value": ".private/ at the repository root, ignored before anything is stored in it."},
+    "privacy.commit_identity": {"status": "answered", "decided_by": "author", "value": "env:COURSE_COMMIT_IDENTITY"},
+    "privacy.sample_data": {"status": "answered", "decided_by": "author", "value": "A generated SQLite database for the fictional retailer Spokeline Cycles: invented customer names, no addresses, no emails, and a fixed random seed; scanned before every release."},
+    "privacy.fresh_history": {"status": "answered", "decided_by": "author", "value": true},
+    "publish.licence": {"status": "answered", "decided_by": "author", "value": "MIT for the code and the text."},
+    "publish.holder": {"status": "answered", "decided_by": "author", "value": "env:COURSE_LICENCE_HOLDER"},
+    "publish.repository": {"status": "answered", "decided_by": "author", "value": "env:COURSE_REPOSITORY"},
+    "publish.namespace": {"status": "answered", "decided_by": "author", "value": "env:COURSE_IMAGE_NAMESPACE"},
+    "publish.preview": {"status": "answered", "decided_by": "claude", "value": "Locally, on port 8765, before any public site exists."},
+    "publish.pusher": {"status": "answered", "decided_by": "author", "value": "The author only; Claude prepares the list and never pushes."},
+    "publish.joint": {"status": "answered", "decided_by": "author", "value": "Alone."},
+    "limits.agents": {"status": "answered", "decided_by": "claude", "value": "4 agents, as a rolling queue where a slow one never blocks the rest."},
+    "limits.reporting": {"status": "answered", "decided_by": "author", "value": "After each module, with the remaining estimate recomputed from written pages."},
+    "interview.job_description": {"status": "answered", "decided_by": "author", "value": "private:job-description.md"},
+    "interview.skills": {"status": "answered", "decided_by": "author", "value": "1. SQL joins and aggregation [core]; 2. window functions [deep]; 3. data cleaning in pandas [core]; 4. retention and cohort metrics [deep]; 5. explaining results to non-technical colleagues [prose]; 6. reading a query plan [survey]."},
+    "interview.format": {"status": "answered", "decided_by": "author", "value": "A live SQL round, a take-home Python task and a case discussion; no system design, no algorithm puzzles."},
+    "interview.mocks": {"status": "answered", "decided_by": "author", "value": true},
+    "interview.project": {"status": "answered", "decided_by": "claude", "value": "Spokeline Cycles, a fictional bicycle retailer whose orders database is used from the first module to the last."}
+  },
+  "outline": [
+    {"title": "Querying with SQL", "modules": [
+      {"title": "Selecting and filtering", "lessons": [
+        {"title": "SELECT, WHERE and ORDER BY on the orders table", "depth": "core"},
+        {"title": "NULLs and three-valued logic", "depth": "core"}
+      ]},
+      {"title": "Joins across orders and customers", "pilot": true, "lessons": [
+        {"title": "Inner joins and why a row count changes", "depth": "core"},
+        {"title": "Left joins and finding what is missing", "depth": "core"}
+      ]},
+      {"title": "Aggregation and grouping", "lessons": [
+        {"title": "GROUP BY and HAVING", "depth": "core"},
+        {"title": "Revenue by month and region", "depth": "core"}
+      ]},
+      {"title": "Window functions", "lessons": [
+        {"title": "Ranking customers", "depth": "deep"},
+        {"title": "Running totals and first purchases", "depth": "deep"},
+        {"title": "Reading a query plan", "depth": "survey"}
+      ]}
+    ]},
+    {"title": "Analysis in Python", "modules": [
+      {"title": "Reading SQLite from Python", "lessons": [
+        {"title": "sqlite3 connections and parameters", "depth": "core"},
+        {"title": "From a query to a data frame", "depth": "core"}
+      ]},
+      {"title": "Cleaning data with pandas", "lessons": [
+        {"title": "Types, duplicates and missing values", "depth": "core"},
+        {"title": "Joining and reshaping frames", "depth": "core"}
+      ]},
+      {"title": "Metrics and cohorts", "lessons": [
+        {"title": "Rates, medians and repeat purchases", "depth": "core"},
+        {"title": "A weekly retention cohort", "depth": "deep"}
+      ]}
+    ]},
+    {"title": "The interview", "modules": [
+      {"title": "Case questions on the retailer's data", "lessons": [
+        {"title": "A timed SQL case", "depth": "deep"},
+        {"title": "A take-home Python task", "depth": "deep"}
+      ]},
+      {"title": "Explaining results", "lessons": [
+        {"title": "Explaining a metric drop to a manager", "depth": "prose"},
+        {"title": "Stating assumptions and limits", "depth": "prose"}
+      ]},
+      {"title": "Mock interviews", "lessons": [
+        {"title": "Mock interview: the SQL round", "depth": "deep"},
+        {"title": "Mock interview: the case discussion", "depth": "deep"}
+      ]}
+    ]}
+  ]
+}

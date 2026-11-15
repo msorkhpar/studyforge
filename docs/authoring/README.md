@@ -50,6 +50,10 @@ Six steps. Each links to the page that explains it.
 | 5 | **Write the adapter** — read your files, write archive documents | an archive | [What an adapter must produce](archive.md) |
 | 6 | **Run the checker** — and fix what it names | exit `0` | [What `validate` checks](validate.md) |
 
+**Starting with no material at all?** [From an idea to a published course](from-scratch.md)
+comes first: it settles the costly decisions in a course brief, then writes the material with
+the skills before these six steps run on it.
+
 **Two complete corpora are worked through end to end**, in
 [Worked examples](examples.md): a two-level repository with runnable exercises,
 and a one-level flat set of prose with none. Both are in this repository, both

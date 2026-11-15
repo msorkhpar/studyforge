@@ -358,6 +358,15 @@ the page assets' outputs are designed but not pinned here, and a golden for outp
 nobody has designed is a fixture that will be wrong and will be trusted. A
 golden lands with the design of the output it pins.
 
+## `intake/` — sample course briefs
+
+Not a corpus: `intake/data-analyst/brief.json` is the course brief of the fictional course that
+`docs/authoring/from-scratch.md` walks through, on the `interview` track. It answers every
+costly question the intake checker asks, and `tests/studyforge/skills/intake/test_guide.py`
+holds the guide to it: the brief passes `check` with nothing open, and the brief the guide shows
+is its rendering. Its names are fictional and its personal values are `env:` and `private:`
+references, so it passes the personal-data gate like every other fixture.
+
 ## `sdk-profile/` — a corpus that names an image profile
 
 A copy of `runnable/` whose manifest declares the runtimes `python`, `node`, `java`, `gradle` and

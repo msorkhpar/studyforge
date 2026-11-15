@@ -208,6 +208,10 @@ documents in this checkout.
 | 6 | `buildserve` — [build and serve](src/studyforge/skills/buildserve/SKILL.md) | Asks whether you want narration for this run, then validates, narrates if you ask, builds the site and serves it on loopback; `--no-narration` serves no voice and deletes no clip | the site answers, and every partial state is named |
 | 7 | `personalarchive` — [personal archive](src/studyforge/skills/personalarchive/SKILL.md) | Exports the corpus to one file, with your progress or without it, and imports it on another machine | the file imports where you take it |
 
+Starting from an idea rather than from material? [From an idea to a published
+course](docs/authoring/from-scratch.md) follows one sample course through these skills, from
+intake to the release.
+
 Step 3's done condition is the agreement: if `studyforge validate` exits `0`,
 the framework accepts the corpus, and nothing else is asked of you.
 
@@ -264,6 +268,7 @@ at, written for somebody who has not read the design and does not intend to:
 - [What an adapter must produce](docs/authoring/archive.md): the archive's documents and blocks.
 - [What `validate` checks](docs/authoring/validate.md): every check and what it refuses.
 - [Worked examples](docs/authoring/examples.md): the two shipped corpora, end to end.
+- [From an idea to a published course](docs/authoring/from-scratch.md): a course written from a goal, step by step, on a sample.
 
 ## Images, built locally by tag
 
