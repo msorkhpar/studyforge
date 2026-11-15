@@ -28,6 +28,9 @@ if TYPE_CHECKING:  # pragma: no cover
 
 KINDS: tuple[str, ...] = ("text", "boolean", "choice", "private_ref")
 
+#: A boolean question's default is spelled as the JSON value a brief records for it.
+BOOLEAN_DEFAULTS: dict[str, bool] = {"true": True, "false": False}
+
 #: Phrases that postpone a decision instead of making it, matched as whole words.
 HEDGE: re.Pattern[str] = re.compile(
     r"\b(?:where possible|tbd|to be decided|if time allows|maybe)\b", re.IGNORECASE
@@ -61,6 +64,17 @@ class Question:
             raise ValueError("question.choices: a choice question needs choices")
         if self.kind != "choice" and self.choices:
             raise ValueError("question.choices: only a choice question has choices")
+        if self.kind == "boolean" and self.default not in BOOLEAN_DEFAULTS:
+            raise ValueError("question.default: a boolean default is true or false")
+        if self.kind == "choice" and self.default not in self.choices:
+            raise ValueError("question.default: a choice default is one of its choices")
+
+    @property
+    def default_value(self) -> object:
+        """The default as a brief records it: a JSON boolean for a boolean question."""
+        if self.kind == "boolean":
+            return BOOLEAN_DEFAULTS[self.default]
+        return self.default
 
 
 def applies(question: Question, track: str, answers: Mapping[str, "Answer"]) -> bool:

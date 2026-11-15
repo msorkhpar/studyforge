@@ -75,8 +75,10 @@ a commit or a reply.
 python3 -m studyforge.skills.intake questions --track interview
 ```
 
-prints every question the track asks, each with its tier, its `why` and its `default`. The bank
-decides which questions exist; this text decides only how they are asked.
+prints every question the track asks, each with its tier, its `why`, its `default` and its
+kind; a choice question lists its choices, and a dependent one names its gate
+(`depends on narration.wanted = yes, after-release`). The bank decides which questions exist;
+this text decides only how they are asked.
 
 - ⭐ **One question per message**, with its default proposed and its one-line `why`. The author
   should be able to answer "yes" and move on.
@@ -93,7 +95,7 @@ depth tag (`core`, `deep`, `survey`, `prose`). The author confirms or reorders i
 
 ⛔ **Never copy its sentences** into the brief, the outline or any page. The brief records
 derived skills in your own words, and `interview.job_description` records only where the file
-lives (`private:job-description.txt`).
+lives (`private:job-description.md`).
 
 ### 5. Draft the outline
 
@@ -129,6 +131,9 @@ Sections, modules and lessons, each lesson with a depth tag. Then:
 - **`deferred`** needs a `reason`. A reasoned deferral is a decision; an empty one is not.
 - **`proposed`** is a default you put forward that the author has neither accepted nor
   delegated. It counts as open.
+- ⛔ **A `value` has its question's kind.** A `boolean` answer is JSON `true` or `false`, never
+  the string `"yes"`; a `choice` answer is exactly one of the listed tokens; a `private_ref` is
+  `env:NAME` or `private:FILE`, optionally followed by `#KEY`; everything else is text.
 
 ### 7. Run the checker until nothing is open
 
@@ -155,7 +160,8 @@ python3 -m studyforge.skills.intake render
 
 writes `.studyforge/brief.md` beside the brief. Show it to the author. ⭐ Its *Decided by
 Claude* section lists every answer delegated to you, so the author can see and reverse each one
-before anything is built on it; *Deferred* and *Still open* follow it.
+before anything is built on it; *Deferred* and *Still open* follow it. *Still open* also lists
+a `later` answer that is only proposed, marked `(later)`.
 
 ### 9. Hand over
 
@@ -167,9 +173,10 @@ before anything is built on it; *Deferred* and *Still open* follow it.
 
 ## Conversation rules
 
-- ⭐ **"Just pick" is an answer.** Record the default with status `answered` and
-  `decided_by: claude`. It is not `proposed`: the author delegated it, and the rendered brief
-  lists it under *Decided by Claude*.
+- ⭐ **"Just pick" is an answer.** Record the default, or the default fitted to this course,
+  with status `answered` and `decided_by: claude` either way. Record it in the question's kind:
+  a boolean default `true` is the JSON value `true`. It is not `proposed`: the author delegated
+  it, and the rendered brief lists it under *Decided by Claude*.
 - ⛔ **A personal value is recorded only as a `private_ref`.** The commit identity, the licence
   holder, the source repository and the image namespace go into the brief as `env:NAME` or
   `private:FILE#KEY` (a file inside `.private/`), and the release commands read the value at

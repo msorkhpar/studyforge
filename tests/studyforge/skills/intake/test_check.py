@@ -116,7 +116,30 @@ def test_private_ref_forms_accepted(value):
 
 
 @pytest.mark.parametrize(
-    "value", ["env:holder", "private:../x", "private:/etc/x", "", "private:a/../x", "env:A#b"]
+    "value",
+    [
+        "env:holder", "private:../x", "private:/etc/x", "", "private:a/../x", "env:A#b",
+        "private:.", "private:./x", "private:a/./b", "private:a//b", "private:a/", "private:",
+        "private:.#KEY",
+    ],
 )
 def test_private_ref_forms_refused(value):
     assert not PRIVATE_REF.fullmatch(value)
+
+
+@pytest.mark.parametrize(
+    "edit, expected",
+    [
+        ({"goal__end_state": True}, "open: goal.end_state: not text"),
+        ({"publish__holder": False}, "open: publish.holder: not text"),
+        ({"narration__wanted": True}, "open: narration.wanted: not one of yes, no, after-release"),
+        ({"quiz__mocks": "true"}, "open: quiz.mocks: not a boolean"),
+    ],
+)
+def test_an_answer_of_the_wrong_json_type_names_what_its_kind_needs(edit, expected):
+    assert open_questions(_brief(**edit)) == [expected]
+
+
+def test_tracked_files_in_the_private_folder_are_reported():
+    brief = parse(clean_brief("topic"))
+    assert check(brief, True, private_tracked=True) == [".private/ holds files git tracks"]

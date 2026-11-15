@@ -73,3 +73,12 @@ def test_an_empty_outline_renders_none():
     data = clean_brief("topic")
     data["outline"] = []
     assert "## Outline\n\nNone.\n" in render(parse(data))
+
+
+def test_a_proposed_later_answer_shows_under_still_open_marked_later():
+    proposal = {"status": "proposed", "value": "40 hours"}
+    text = _render(learner__time_budget=proposal)
+    still_open = text[text.index("## Still open"):text.index("## Outline")]
+    line = "- open: learner.time_budget: proposed, not yet accepted (later)\n"
+    assert line in still_open and "None." not in still_open
+    assert text == _render(learner__time_budget=proposal)

@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import re
 
+import pytest
+
 from studyforge.archive.scrub import findings
 from studyforge.skills.intake import TRACKS
 from studyforge.skills.intake.bank import BANK, by_id
-from studyforge.skills.intake.questions import HEDGE
+from studyforge.skills.intake.brief import Answer, parse
+from studyforge.skills.intake.check import check
+from studyforge.skills.intake.questions import HEDGE, applies
 
 
 def test_ids_are_unique_and_shaped_group_dot_name():
@@ -69,3 +73,37 @@ def test_the_rows_carry_the_specified_tiers_kinds_and_tracks():
     assert bank["goal.end_state"].tracks == frozenset(TRACKS)
     assert sum(q.kind == "private_ref" for q in BANK) == 6
     assert sum(q.tier == "later" for q in BANK) == 12
+
+
+def _all_defaults(track: str) -> dict:
+    """A brief that records every applicable costly default, as "just pick" would.
+
+    `writing.pilot`'s default says how to choose the pilot, so the outline's pilot module is
+    named by that sentence: picking the default is choosing that module.
+    """
+    pilot = by_id()["writing.pilot"].default
+    answers: dict[str, dict] = {}
+    seen: dict[str, Answer] = {}
+    for question in BANK:
+        if question.tier != "costly" or not applies(question, track, seen):
+            continue
+        record = {"status": "answered", "decided_by": "claude", "value": question.default_value}
+        answers[question.id] = record
+        seen[question.id] = Answer(**record)
+    lesson = {"title": "First lesson", "depth": "core"}
+    module = {"title": pilot, "pilot": True, "lessons": [lesson]}
+    return {"brief_api": 1, "title": "Defaults Only", "track": track, "answers": answers,
+            "outline": [{"title": "Only section", "modules": [module]}]}
+
+
+@pytest.mark.parametrize("track", TRACKS)
+def test_a_brief_of_every_default_passes_the_checker(track):
+    assert check(parse(_all_defaults(track)), private_ignored=True) == []
+
+
+def test_typed_defaults_are_the_values_a_brief_records():
+    bank = by_id()
+    assert bank["quiz.mocks"].default_value is False
+    assert bank["privacy.fresh_history"].default_value is True
+    assert bank["narration.wanted"].default_value in bank["narration.wanted"].choices
+    assert bank["interview.job_description"].default == "private:job-description.md"

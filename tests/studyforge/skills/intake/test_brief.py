@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -94,8 +95,10 @@ def test_load_reports_invalid_json_as_a_brief_error(tmp_path):
     bad.write_text("{not json", encoding="utf-8")
     with pytest.raises(BriefError, match="not valid JSON"):
         load(bad)
-    with pytest.raises(BriefError, match="cannot read"):
+    with pytest.raises(BriefError, match="run the intake skill first"):
         load(tmp_path / "missing.json")
+    with pytest.raises(BriefError, match="cannot read"):
+        load(tmp_path)
     good = tmp_path / "ok.json"
     good.write_text(json.dumps(MINIMAL), encoding="utf-8")
     assert load(good).title == "Graph Basics"
@@ -116,3 +119,15 @@ def test_load_refuses_a_personal_value_by_its_field_never_its_text(tmp_path):
     assert "answers.sources.list" in message and "private_ref" in message
     assert PLANTED not in message and "alice" not in message
     assert "\n" not in message and "write" not in message
+
+
+def test_a_missing_brief_says_to_run_intake_and_names_only_the_relative_default(
+        tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(BriefError) as err:
+        load(Path(".studyforge/brief.json"))
+    assert str(err.value) == "no brief at .studyforge/brief.json; run the intake skill first"
+    with pytest.raises(BriefError) as err:
+        load(tmp_path / "elsewhere" / "brief.json")
+    assert str(err.value) == "no brief at the path given; run the intake skill first"
+    assert str(tmp_path) not in str(err.value)

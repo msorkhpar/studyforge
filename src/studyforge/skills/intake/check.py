@@ -31,7 +31,10 @@ from .brief import Answer, Brief
 from .questions import HEDGE, Question, applies
 
 _NAME = r"[A-Z][A-Z0-9_]*"
-_FILE = r"(?!/)(?!(?:.*/)?\.\.(?:/|#|$))[^#\s]+"
+#: A relative path inside `.private/`: segments of non-space characters other than `/` and
+#: `#`, joined by single slashes, none of them `.` or `..`.
+_SEGMENT = r"(?!\.\.?(?:/|#|$))[^/#\s]+"
+_FILE = rf"{_SEGMENT}(?:/{_SEGMENT})*"
 
 #: `env:NAME` or `private:FILE`, each optionally followed by `#KEY`. The `[#]` keeps the
 #: fragment sweep from reading the pattern as an anchor being composed.
@@ -62,10 +65,10 @@ def _problem(question: Question, answer: Answer | None) -> str | None:
         return "empty"
     if question.kind == "boolean":
         return None if isinstance(value, bool) else "not a boolean"
-    if not isinstance(value, str):
-        return "not a boolean" if isinstance(value, bool) else "empty"
     if question.kind == "choice" and value not in question.choices:
         return f"not one of {', '.join(question.choices)}"
+    if not isinstance(value, str):
+        return "not text"
     if question.kind == "private_ref" and not PRIVATE_REF.fullmatch(value):
         return "not a variable name or a .private/ key"
     if HEDGE.search(value):
@@ -122,9 +125,15 @@ def _title_findings(brief: Brief) -> list[str]:
     return lines
 
 
-def check(brief: Brief, private_ignored: bool) -> list[str]:
-    """Every open question and outline fault, then the git-ignore finding if it applies."""
+def check(brief: Brief, private_ignored: bool, private_tracked: bool = False) -> list[str]:
+    """Every open question and outline fault, then the git findings about `.private/`.
+
+    `private_tracked` says that `.private/` holds files git tracks: an ignore rule added after
+    a commit does not take them back out.
+    """
     lines = open_questions(brief) + outline_faults(brief) + _title_findings(brief)
     if not private_ignored:
         lines.append(".private/ is not ignored by git")
+    if private_tracked:
+        lines.append(".private/ holds files git tracks")
     return lines

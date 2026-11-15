@@ -33,7 +33,7 @@ from types import MappingProxyType
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean, leaks, scrub
 
-from . import DEPTHS, TRACKS
+from . import BRIEF_PATH, DEPTHS, TRACKS
 
 BRIEF_API = 1
 STATUSES: tuple[str, ...] = ("answered", "deferred", "proposed")
@@ -190,13 +190,17 @@ def parse(data: object) -> Brief:
 def load(path: Path) -> Brief:
     """Read a UTF-8 JSON brief from `path`, gate it, and parse it.
 
-    A refusal never names the path. The gate is the framework's personal-data gate, run over
+    A refusal never names the path, except that a missing brief at the default place names
+    that relative default. The gate is the framework's personal-data gate, run over
     the whole decoded document before any field is read; its refusal names where the value
     sits, never the value. `parse` alone does not gate, so `check` can still report such a
     value by question id on a brief built in memory.
     """
     try:
         text = Path(path).read_text(encoding="utf-8")
+    except FileNotFoundError:
+        where = BRIEF_PATH if Path(path) == Path(BRIEF_PATH) else "the path given"
+        raise BriefError(f"no brief at {where}; run the intake skill first") from None
     except (OSError, UnicodeDecodeError) as err:
         raise BriefError(f"brief: cannot read ({type(err).__name__})") from None
     try:

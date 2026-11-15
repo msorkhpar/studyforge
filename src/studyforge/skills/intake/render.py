@@ -13,7 +13,9 @@ bank and outline order.
     Path(".studyforge/brief.md").write_text(render(brief), encoding="utf-8")
 
 The "Still open" section comes from `check(brief, private_ignored=True)`, so the line about
-the private folder never appears: the renderer cannot see the repository.
+the private folder never appears: the renderer cannot see the repository. A `later` question
+the checker skips still shows there, marked `(later)`, when its answer is only proposed: a
+proposal nobody accepted is never hidden from the author.
 
 **Depends on.** `BANK` and `applies` from the package, and `check` for the open lines.
 """
@@ -77,6 +79,7 @@ def render(brief: Brief) -> str:
     """The brief as Markdown, LF only, ending in one newline."""
     decided: list[str] = []
     deferred: list[str] = []
+    proposed: list[str] = []
     for question, answer in _applicable(brief):
         if answer is None:
             continue
@@ -84,7 +87,9 @@ def render(brief: Brief) -> str:
             decided += _bullet(f"`{question.id}`:", _value(answer.value))
         elif answer.status == "deferred":
             deferred += _bullet(f"`{question.id}`:", answer.reason or "")
-    open_lines = [f"- {line}" for line in check(brief, private_ignored=True)]
+        elif answer.status == "proposed" and question.tier == "later":
+            proposed.append(f"- open: {question.id}: proposed, not yet accepted (later)")
+    open_lines = [f"- {line}" for line in check(brief, private_ignored=True)] + proposed
     lines = [f"# {brief.title}", "", f"Track: {brief.track}", ""]
     lines += _groups(brief)
     lines += _block("Decided by Claude", decided)

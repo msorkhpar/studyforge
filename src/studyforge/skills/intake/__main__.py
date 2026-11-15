@@ -2,18 +2,19 @@
 
 `check [BRIEF]` prints each open finding, then `open: N`, and exits 1 when N is above 0.
 `render [BRIEF]` writes `brief.md` beside the brief. `questions [--track T]` lists the
-questions a track asks. Every failure prints one line to stderr and exits 2; messages never
-repeat what a brief contains.
+questions a track asks, each with its kind, its choices and the gate it depends on. Every
+failure prints one line to stderr and exits 2; messages never repeat what a brief contains.
 """
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
 from studyforge.validate.source import repository_ignores
 
-from . import BANK, BRIEF_PATH, TRACKS, BriefError, check, load, render
+from . import BANK, BRIEF_PATH, TRACKS, BriefError, Question, check, load, render
 
 USAGE = ("usage: python3 -m studyforge.skills.intake check [BRIEF] | render [BRIEF] "
          "| questions [--track T]")
@@ -30,23 +31,29 @@ def _fail(message: str) -> int:
 INSIDE_PRIVATE = Path(".private") / "intake-probe"
 
 
-def _private_ignored(root: Path) -> bool:
-    """Ask git whether `.private/` is ignored; raise OSError with a one-line reason.
+def _private_state(root: Path) -> tuple[bool, bool]:
+    """Whether `.private/` is ignored, and whether it holds files git tracks anyway.
 
-    The question goes to the framework's one ignore reader, so intake starts no process of its
-    own. Its `None` (no git, or not a repository) is a refusal, never "not ignored".
+    Both questions go to the framework's one ignore reader in one call, so intake starts no
+    process of its own. Git never reports a tracked file as ignored, so a file on disk under
+    an ignored `.private/` that git does not report is one it tracks (or one a negated rule
+    lets through): either way it reaches a commit. The reader's `None` (no git, or not a
+    repository) is a refusal, never "not ignored"; an OSError carries a one-line reason.
     """
-    inside = root / INSIDE_PRIVATE
-    ignored = repository_ignores(root, [inside])
+    probe = root / INSIDE_PRIVATE
+    folder = root / ".private"
+    files = sorted(p for p in folder.rglob("*") if p.is_file()) if folder.is_dir() else []
+    ignored = repository_ignores(root, [probe, *files])
     if ignored is None:
         raise OSError("git cannot judge .private/ (is the brief inside a git repository?)")
-    return inside in ignored
+    is_ignored = probe in ignored
+    return is_ignored, is_ignored and any(path not in ignored for path in files)
 
 
 def _check(path: Path) -> int:
     brief = load(path)
-    ignored = _private_ignored(path.resolve().parent.parent)
-    findings = check(brief, private_ignored=ignored)
+    ignored, tracked = _private_state(path.resolve().parent.parent)
+    findings = check(brief, private_ignored=ignored, private_tracked=tracked)
     for line in findings:
         print(line)
     print(f"open: {len(findings)}")
@@ -67,6 +74,24 @@ def _render(path: Path) -> int:
     return 0
 
 
+#: What a brief records for each kind of answer, as `questions` prints it.
+KIND_NOTES = {
+    "text": "text",
+    "boolean": "boolean, recorded as JSON true or false",
+    "choice": "choice, recorded as exactly one of: {}",
+    "private_ref": "private_ref, recorded as env:NAME or private:FILE, optionally with #KEY",
+}
+
+
+def _token(value: object) -> str:
+    """A gate value as a brief spells it: JSON `true`/`false` for a boolean."""
+    return json.dumps(value) if isinstance(value, bool) else str(value)
+
+
+def _kind(question: Question) -> str:
+    return KIND_NOTES[question.kind].format(", ".join(question.choices))
+
+
 def _questions(track: str | None) -> int:
     tracks = (track,) if track else TRACKS
     for name in tracks:
@@ -77,6 +102,10 @@ def _questions(track: str | None) -> int:
                 print(f"{question.id} [{question.tier}] {question.ask}")
                 print(f"  why: {question.why}")
                 print(f"  default: {question.default}")
+                print(f"  kind: {_kind(question)}")
+                if question.depends_on is not None:
+                    gate, values = question.depends_on
+                    print(f"  depends on {gate} = {', '.join(map(_token, values))}")
     return 0
 
 

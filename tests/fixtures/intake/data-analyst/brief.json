@@ -24,7 +24,7 @@
     "practice.tryit": {"status": "answered", "decided_by": "author", "value": "Yes: every practice has a try-it Run that prints the query result or the data frame before the learner edits."},
     "practice.projects": {"status": "answered", "decided_by": "claude", "value": "One project per section on the retailer's data, with the first step shown in full and later steps as goals only."},
     "quiz.placement": {"status": "answered", "decided_by": "author", "value": "At the end of each section only; never inside a lesson or a project."},
-    "quiz.mocks": {"status": "answered", "decided_by": "author", "value": true},
+    "quiz.mocks": {"status": "answered", "decided_by": "author", "value": false},
     "quiz.keys_in_page": {"status": "answered", "decided_by": "author", "value": "Yes: the keys ship in the page source, and quizzes are for self-checking, not grading."},
     "writing.reference": {"status": "answered", "decided_by": "author", "value": "The pilot module's first lesson is the reference; each lesson stays under 900 words of prose."},
     "writing.diagrams": {"status": "answered", "decided_by": "claude", "value": "Wherever a lesson explains how rows flow through a join, a grouping or a window: one diagram per such lesson."},

@@ -56,7 +56,7 @@ def test_group_is_the_id_prefix():
         _q(group="other")
     with pytest.raises(ValueError):
         _q(kind="number")
-    assert _q(kind="choice", choices=("a",)).kind == "choice"
+    assert _q(kind="choice", choices=("a",), default="a").kind == "choice"
 
 
 def test_an_unknown_track_is_refused():
@@ -74,3 +74,16 @@ def test_a_choice_question_needs_choices_and_others_must_have_none():
         _q(kind="choice")
     with pytest.raises(ValueError):
         _q(kind="text", choices=("a",))
+
+
+def test_a_boolean_default_is_spelled_as_json_and_read_as_a_bool():
+    assert _q(kind="boolean", default="true").default_value is True
+    assert _q(kind="boolean", default="false").default_value is False
+    assert _q(default="d").default_value == "d"
+    with pytest.raises(ValueError, match="true or false"):
+        _q(kind="boolean", default="yes")
+
+
+def test_a_choice_default_is_one_of_its_choices():
+    with pytest.raises(ValueError, match="one of its choices"):
+        _q(kind="choice", choices=("a", "b"), default="c")

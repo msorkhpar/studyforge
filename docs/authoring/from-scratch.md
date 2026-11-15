@@ -219,7 +219,7 @@ Track: interview
 ## Quiz
 
 - **Where do quizzes go, and where do they never go?** At the end of each section only; never inside a lesson or a project.
-- **Does the course include mock exams or mock interviews?** yes
+- **Does the course include mock exams, timed, over the whole course or per level?** no
 - **Do you accept that a static site carries its answer keys in the page source?** Yes: the keys ship in the page source, and quizzes are for self-checking, not grading.
 
 ## Writing
@@ -522,8 +522,9 @@ owns the release, and its
 gives the order. Nothing in it reads the brief: where it needs a value the brief names by
 variable, you pass that variable's value. In outline:
 
-1. **Preflight.** `standalone.preflight.preflight(course, target, toolchain=..., platform="linux/amd64", run=ask)`
-   returns every reason the release would refuse, before anything is written. ⛔ It starts no
+1. **Preflight.** `standalone.preflight.preflight`, called as
+   `preflight(course, target, toolchain=..., platform="linux/amd64", run=ask)`, returns every
+   reason the release would refuse, before anything is written. ⛔ It starts no
    process itself: `run` is a function you hand in that runs one argv in a directory and
    answers its exit code and output (the execution skill shows one). The release refuses a
    course whose findings log is missing or unsorted, so sort it first (step 9 shows how).

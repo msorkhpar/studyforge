@@ -52,10 +52,15 @@ def test_check_outside_a_git_repository_exits_2_with_one_line(tmp_path, capsys):
     assert captured.out == "" and len(captured.err.strip().splitlines()) == 1
 
 
-def test_check_on_a_missing_brief_exits_2(tmp_path, capsys):
+def test_check_on_a_missing_brief_exits_2(tmp_path, capsys, monkeypatch):
     assert main(["check", str(tmp_path / ".studyforge" / "brief.json")]) == 2
     err = capsys.readouterr().err
     assert len(err.strip().splitlines()) == 1 and "Traceback" not in err
+    assert str(tmp_path) not in err
+    monkeypatch.chdir(tmp_path)
+    assert main(["check"]) == 2
+    assert capsys.readouterr().err == (
+        "no brief at .studyforge/brief.json; run the intake skill first\n")
 
 
 def test_check_on_a_wrong_shape_brief_exits_2_without_echoing_values(tmp_path, capsys):
@@ -89,6 +94,45 @@ def test_questions_for_a_track_lists_its_additions_and_not_others(capsys):
     assert "interview.mocks [costly]" in out
     assert "convert.repository" not in out
     assert "\n  why: " in out and "\n  default: " in out
+
+
+def test_questions_print_each_kind_its_choices_and_its_gate(capsys):
+    assert main(["questions", "--track", "topic"]) == 0
+    out = capsys.readouterr().out
+    blocks = out.split("\n")
+    kinds = [line for line in blocks if line.startswith("  kind: ")]
+    assert len(kinds) == sum(line.startswith("  why: ") for line in blocks)
+    assert "  default: false\n  kind: boolean, recorded as JSON true or false\n" in out
+    assert "  kind: choice, recorded as exactly one of: yes, no, after-release\n" in out
+    assert "  kind: private_ref, recorded as env:NAME or private:FILE" in out
+    assert "  depends on narration.wanted = yes, after-release\n" in out
+
+
+def _commit_private_then_ignore(root: Path) -> None:
+    git = ["git", "-C", str(root), "-c", "user.name=Example",
+           "-c", "user.email=noreply@example.invalid"]
+    (root / ".private").mkdir()
+    (root / ".private" / "notes.md").write_text("private notes\n", encoding="utf-8")
+    subprocess.run([*git, "add", ".private/notes.md"], check=True)
+    subprocess.run([*git, "commit", "-q", "-m", "notes"], check=True)
+    (root / ".gitignore").write_text(".private/\n", encoding="utf-8")
+
+
+def test_a_private_folder_ignored_after_a_commit_still_reports_its_tracked_files(
+        tmp_path, capsys):
+    path = _repo(tmp_path, ignore=False)
+    _commit_private_then_ignore(tmp_path)
+    assert main(["check", str(path)]) == 1
+    out = capsys.readouterr().out
+    assert out == ".private/ holds files git tracks\nopen: 1\n"
+
+
+def test_an_ignored_private_folder_with_untracked_files_is_fine(tmp_path, capsys):
+    path = _repo(tmp_path)
+    (tmp_path / ".private").mkdir()
+    (tmp_path / ".private" / "notes.md").write_text("private notes\n", encoding="utf-8")
+    assert main(["check", str(path)]) == 0
+    assert capsys.readouterr().out == "open: 0\n"
 
 
 def test_usage_errors_exit_2_with_one_line(capsys):
