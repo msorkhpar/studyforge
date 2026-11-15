@@ -39,13 +39,18 @@ NARRATED = {**RELEASE, "keeps": ["README.md", images.CLIPS]}
 
 def test_the_commit_sets_a_placeholder_author_on_the_command():
     argv = publish.commit_argv("msg")
-    assert argv[:5] == ["git", "-c", "user.name=Example", "-c", "user.email=noreply@example.invalid"]
+    author = ["-c", "user.name=Example", "-c", "user.email=noreply@example.invalid"]
+    assert argv[:5] == ["git", *author]
     steps = publish.fresh_tree_commands("main", "msg")
     assert steps[0][:2] == ["git", "init"] and steps[-1] == argv
 
 
 def test_a_fresh_commit_uses_the_placeholder_not_the_machine_identity(tmp_path):
-    env = {"HOME": str(tmp_path), "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null"}
+    env = {
+        "HOME": str(tmp_path),
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null",
+    }
     (tmp_path / "f").write_text("x", encoding="utf-8")
     for argv in publish.fresh_tree_commands("main", "learner tree"):
         subprocess.run(argv, cwd=tmp_path, env=env, check=True)

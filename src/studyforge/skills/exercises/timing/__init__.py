@@ -48,7 +48,8 @@ UNITS = {
 }
 
 _NUM = r"(\d+(?:\.\d+)?)"
-#: `sleep(N)`, `delay(N)`, `withTimeout(N)`, `setTimeout(f, N)`, `Duration.ofMillis(N)`, `timeout=N`.
+#: `sleep(N)`, `delay(N)`, `withTimeout(N)`, `setTimeout(f, N)`, `Duration.ofMillis(N)`,
+#: `timeout=N`.
 _BARE = re.compile(
     rf"\b(?:sleep|delay|withTimeout|withTimeoutOrNull|ofMillis|waitFor)\s*\(\s*{_NUM}\b"
     rf"|\bsetTimeout\s*\(.*,\s*{_NUM}\s*\)"
@@ -120,4 +121,3 @@ def main(argv: list[str] | None = None) -> int:
         )
     print(f"{len(found)} short wait(s)")
     return 1 if found and args.strict else 0
-

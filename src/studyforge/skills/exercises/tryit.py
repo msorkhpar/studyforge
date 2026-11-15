@@ -50,7 +50,8 @@ LOGGER_SWITCH = {
 
 #: The loggers a JVM try-it file keeps out of a Run: the JDK's own, which print their FINE and
 #: FINER detail (deserialization, the HTTP server, the security providers) once the root
-#: logger is at ALL. ⚠️ Measured in the senior-Java course: dozens of certificate lines in one Run.
+#: logger is at ALL. ⚠️ Measured in a Java course's practices: dozens of certificate lines in
+#: one Run.
 JDK_LOGGERS = r"(java|javax|jdk|sun|com\.sun)\..*"
 
 #: The Gradle task a JVM practice registers beside its solution source folder. `CLASS` is
@@ -113,7 +114,8 @@ public class TryIt {
             // TODO: copy that setup here, call CLASS on the statement's example, print the results:
             // System.out.println("result: " + ...);
         } catch (RuntimeException stopped) {
-            // A method you have not finished, or a bug, stops here with its message, not a build error.
+            // A method you have not finished, or a bug, stops here with its message,
+            // not a build error.
             System.out.println("Run stopped: " + stopped);
         }
     }

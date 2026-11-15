@@ -75,7 +75,9 @@ def test_a_new_file_keeps_everything_but_the_bodies_of_its_blueprint_methods():
     )
     assert stub_bodies(RULES, "pkg/other.py", (METHOD,)) == RULES, "another file's method"
     one_line = stub_bodies("def caps(lots, room): return lots\n", "pkg/model.py", (METHOD,))
-    assert one_line == 'def caps(lots, room):\n    """Returns the lots that fit."""\n    return ()\n'
+    assert one_line == (
+        'def caps(lots, room):\n    """Returns the lots that fit."""\n    return ()\n'
+    )
 
 
 def test_undefined_names_a_method_the_reference_does_not_define():

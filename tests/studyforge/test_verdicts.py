@@ -66,7 +66,8 @@ def test_compact_drops_files_a_judgement_does_not_read(tmp_path):
     store.record("a", "d", "pass", {"r.json": "{}"})
     path = tmp_path / "a.verdict.json"
     text = path.read_text(encoding="utf-8")
-    path.write_text(text.replace('"r.json": "{}"', '"r.json": "{}", "t/x.class": "z"'), encoding="utf-8")
+    widened = text.replace('"r.json": "{}"', '"r.json": "{}", "t/x.class": "z"')
+    path.write_text(widened, encoding="utf-8")
     assert store.compact() == 1
     assert set(store.lookup("a", "d").files) == {"r.json"}
     assert store.compact() == 0

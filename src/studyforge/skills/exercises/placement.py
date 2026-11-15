@@ -99,7 +99,9 @@ def _under(headings: list[_Heading], line: int) -> list[_Heading]:
 def _sections(plan: dict) -> dict[int, list[str]]:
     """Return each slot's sections, in the order its aspects name them."""
     basis = {
-        aspect.get("id"): [b[len(SECTION):] for b in aspect.get("basis") or [] if b.startswith(SECTION)]
+        aspect.get("id"): [
+            b[len(SECTION) :] for b in aspect.get("basis") or [] if b.startswith(SECTION)
+        ]
         for aspect in plan.get("aspects") or []
     }
     found: dict[int, list[str]] = {}

@@ -332,4 +332,5 @@ def test_a_skipped_case_is_said_with_the_third_word_and_what_it_needed():
     assert CASE_SKIPPED == SKIPPED
     assert line == "--- case test_on_gpu: skipped without gpu ---"
     assert said("test_on_gpu", passed=False) == "--- case test_on_gpu: failed ---"
-    assert said("test_on_gpu", passed=True, skipped_without=None) == "--- case test_on_gpu: passed ---"
+    expected = "--- case test_on_gpu: passed ---"
+    assert said("test_on_gpu", passed=True, skipped_without=None) == expected

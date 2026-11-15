@@ -26,7 +26,8 @@ from tests.visual.page import WIDE, OpenPage
 from tests.visual.test_preview import static
 
 BANNER = (
-    "document.querySelector('[data-preview-banner], details[data-preview-run-locally] > [role=note]')"
+    "document.querySelector("
+    "'[data-preview-banner], details[data-preview-run-locally] > [role=note]')"
     ".textContent.replace(/\\s+/g, ' ').trim()"
 )
 NOTES = "document.querySelectorAll('[data-preview-note=practice]').length"

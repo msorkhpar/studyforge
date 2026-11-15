@@ -68,7 +68,8 @@ _SUFFIX = ".verdict.json"
 
 
 class VerdictError(ValueError):
-    """A request the store cannot honour: a bad key, an unknown verdict, or a disk below the floor."""
+    """A request the store cannot honour: a bad key, an unknown verdict, or a disk below the
+    floor."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -262,4 +263,3 @@ def main(argv: list[str] | None = None) -> int:
         cap = None if args.max_mb is None else args.max_mb << 20
         print(f"pruned {len(store.prune(keep, cap))} entries")
     return 0
-

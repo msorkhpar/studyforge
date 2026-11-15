@@ -191,7 +191,9 @@ SKELETON_SLOTS = {
     "modehead": "a modes corpus' stylesheet, script and boot, in `<head>`; nothing is painted",
     "modeswitch": "a modes corpus' switch and first-visit question, inside the top bar",
     "brand": "the course's name in the top bar, a link home (the 2026-11 redesign); `topbar.css`",
-    "sections": "the course's top-level sections in the top bar (the 2026-11 redesign); `topbar.css`",
+    "sections": (
+        "the course's top-level sections in the top bar (the 2026-11 redesign); `topbar.css`"
+    ),
     "modenote": "the note a page outside the reading mode shows, in the masthead under the bar",
     "player": "the narration transport's — the DEFERRED row above",
     "nav": "region 3",

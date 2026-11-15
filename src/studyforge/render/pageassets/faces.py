@@ -42,8 +42,9 @@ font at all.
 Each SIL file is about 300 KB. Charis has regular, italic and bold (prose uses
 all three); Plus Jakarta Sans has regular (controls, navigation), semibold
 (labels, emphasis in the chrome) and bold (headings), about 42 KB each;
-JetBrains Mono has regular and bold (bold keywords). No mono italic is vendored: a code comment keeps its slant as the
-browser's synthesised oblique, and is told apart by its pencil colour first.
+JetBrains Mono has regular and bold (bold keywords). No mono italic is vendored: a code
+comment keeps its slant as the browser's synthesised oblique, and is told apart by its
+pencil colour first.
 A weight is added only with a stated reason.
 """
 

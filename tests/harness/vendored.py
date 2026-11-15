@@ -41,7 +41,8 @@ PINNED = {MERMAID: _mermaid_is_pinned}
 
 
 def pristine(name: str, text: str) -> bool:
-    """Whether `name` (a repository path, or an asset name) is a vendored bundle exactly as pinned."""
+    """Whether `name` (a repository path, or an asset name) is a vendored bundle exactly as
+    pinned."""
     for path, check in PINNED.items():
         if name == path or name == f"asset:{path.rsplit('/', 1)[-1]}":
             return check(text)

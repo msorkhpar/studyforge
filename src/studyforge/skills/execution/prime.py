@@ -127,7 +127,8 @@ class Project:
     #: A compiler plugin or an annotation processor is found by its provider file, so a prime that
     #: leaves it out compiles the module but never runs the plugin. Empty for a build with none.
     services: tuple[str, ...] = ()
-    #: ⭐ Every other file of an authored prime (`AUTHORED`), corpus-relative; empty for any other build.
+    #: ⭐ Every other file of an authored prime (`AUTHORED`), corpus-relative; empty for any
+    #: other build.
     whole: tuple[str, ...] = ()
 
     def copies(self) -> tuple[tuple[str, str], ...]:
@@ -335,7 +336,9 @@ def _project(
         build_files=tuple(sorted(where for where in wanted if under(where, base))),
         specimens=specimens,
         services=_services(inside, modules, specimens),
-        whole=tuple(sorted(where for where, size in inside if size > 0)) if base == AUTHORED else (),
+        whole=(
+            tuple(sorted(where for where, size in inside if size > 0)) if base == AUTHORED else ()
+        ),
     )
 
 

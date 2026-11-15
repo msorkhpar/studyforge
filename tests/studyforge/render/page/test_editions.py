@@ -66,7 +66,8 @@ def test_four_language_editions_are_one_card_with_one_status_and_the_languages_n
     found = cards(markup)
     assert len(found) == 1
     card = found[0]
-    assert ">Keep a conversation<svg data-practices-part=\"chevron\"" in card, "the title carries no language"
+    title = ">Keep a conversation<svg data-practices-part=\"chevron\""
+    assert title in card, "the title carries no language"
     assert card.count('data-practices-part="state"') == 1
     assert "Available in: " in card
     for lang in LANGS:

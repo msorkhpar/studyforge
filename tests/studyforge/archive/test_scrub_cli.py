@@ -20,7 +20,7 @@ def test_json_escaped_newline_before_an_annotation_is_not_an_email():
 
 def test_a_real_address_is_still_found_in_raw_text():
     assert shape_in("write to jane" + "@" + "realdomain.org now") == "email address"
-    assert shape_in("x\\n" + "jane@realdomain.org") == "email address"
+    assert shape_in("x\\n" + "jane" + "@" + "realdomain.org") == "email address"
 
 
 def test_findings_name_line_and_shape_not_the_text():

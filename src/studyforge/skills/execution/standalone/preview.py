@@ -164,7 +164,8 @@ PREVIEW_CSS = """\
 [data-preview-banner] a, [data-preview-note] a { color: inherit; text-decoration: underline; }
 [data-preview-note] { border-left: 0; border: 1px solid var(--rule, #dbe3ec); border-radius: 12px;
   background: var(--surface, #ffffff); }
-details[data-preview-run-locally] { position: relative; order: 0; margin-left: auto; font-family: var(--font-ui, sans-serif); }
+details[data-preview-run-locally] { position: relative; order: 0; margin-left: auto;
+  font-family: var(--font-ui, sans-serif); }
 details[data-preview-run-locally] + button[data-section="search-open"] { margin-left: .5rem; }
 details[data-preview-run-locally] > summary {
   display: inline-flex; align-items: center; gap: .4rem; list-style: none; cursor: pointer;
@@ -177,7 +178,8 @@ details[data-preview-run-locally] > div {
   position: absolute; right: 0; top: calc(100% + .5rem); z-index: 5; width: min(28rem, 90vw);
   box-sizing: border-box; padding: 1rem 1.1rem; font-size: .9rem; line-height: 1.5;
   color: var(--fg, #22304a); background: var(--surface, #ffffff);
-  border: 1px solid var(--rule, #dbe3ec); border-radius: 12px; box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+  border: 1px solid var(--rule, #dbe3ec); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
 }
 details[data-preview-run-locally] > div p { margin: 0 0 .75rem; }
 details[data-preview-run-locally] a { color: inherit; text-decoration: underline; }

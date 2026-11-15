@@ -242,7 +242,8 @@ def test_a_profiled_course_with_a_prime_is_still_pinned_by_its_primed_base_tags(
 
 
 def refusing_a_missing_prime(asked: list):
-    """The synthetic build command, refusing a prime that is not a directory as the real one does."""
+    """The synthetic build command, refusing a prime that is not a directory as the real one
+    does."""
     from tests.studyforge.skills.execution.standalone.test_vendor import TAGS
     from tests.studyforge.skills.execution.standalone.test_vendor import answering as builds
 

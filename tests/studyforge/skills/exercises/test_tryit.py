@@ -68,7 +68,8 @@ def _ran_java(tmp_path, body: str) -> str:
 def test_a_java_run_shows_each_log_line_of_the_readers_code_once(tmp_path):
     # ⚠️ Measured: the skeleton added its handler beside the JDK's own console handler, so every
     # line at INFO or above was printed twice.
-    out = _ran_java(tmp_path, '            java.util.logging.Logger.getLogger("shop").info("basket saved");')
+    line = '            java.util.logging.Logger.getLogger("shop").info("basket saved");'
+    out = _ran_java(tmp_path, line)
     assert out.count("basket saved") == 1, out
 
 
@@ -77,7 +78,8 @@ def test_a_java_run_keeps_the_jdks_own_log_lines_out(tmp_path):
     # providers printed their FINER lines into a reader's Run.
     out = _ran_java(
         tmp_path,
-        '            java.util.logging.Logger.getLogger("jdk.event.security").fine("certificate noise");\n'
+        '            java.util.logging.Logger.getLogger("jdk.event.security")'
+        '.fine("certificate noise");\n'
         '            java.util.logging.Logger.getLogger("sun.net.www").finer("socket noise");\n'
         '            java.util.logging.Logger.getLogger("shop").fine("reader detail");',
     )

@@ -444,10 +444,12 @@ def test_an_authored_prime_directory_is_copied_whole_and_any_other_build_is_sele
     root = corpus(tmp_path)
     kept = "prime/app/src/main/java/demo/Controller.java"
     for where in ("prime/pom.xml", "prime/app/pom.xml", kept):
-        put(root / where, "<project/>\n" if where.endswith(".xml") else "package demo;\nclass Controller {}\n")
+        body = "<project/>\n" if where.endswith(".xml") else "package demo;\nclass Controller {}\n"
+        put(root / where, body)
     put(root / "prime/app/src/main/java/demo/Demo.java", "package demo;\npublic class Demo {}\n")
     put(root / "prime/app/src/test/java/demo/DemoTest.java", "package demo;\nclass DemoTest {}\n")
-    # the corpus's other build is shallower in depth only by name; remove it so `prime/` is the build
+    # the corpus's other build is shallower in depth only by name; remove it so `prime/` is the
+    # build
     for old in (root / "sources").rglob("*"):
         if old.is_file():
             old.unlink()
@@ -459,7 +461,11 @@ def test_an_authored_prime_directory_is_copied_whole_and_any_other_build_is_sele
 
 def test_a_build_that_is_not_the_authored_prime_is_not_copied_whole(tmp_path):
     root = corpus(tmp_path)
-    put(root / "sources/app/src/main/java/demo/Unnamed.java", "package demo;\n" + "// padding so it is not the smallest source\n" * 20 + "class Unnamed {}\n")
+    padding = "// padding so it is not the smallest source\n" * 20
+    put(
+        root / "sources/app/src/main/java/demo/Unnamed.java",
+        "package demo;\n" + padding + "class Unnamed {}\n",
+    )
     made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
     assert "whole" not in made.document()["projects"][0]
     assert not any("Unnamed" in origin for _, origin in made.copies())

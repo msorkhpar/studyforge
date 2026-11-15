@@ -135,12 +135,16 @@ def test_an_empty_log_is_refused_because_zero_is_a_none_finding():
 
 def test_a_repeated_id_is_refused_by_name():
     with pytest.raises(LogRefused, match="appears twice: IX-19/2"):
-        FindingsLog(run="r", entries=(Entry(finding("IX-19/2")), Entry(finding("IX-19/2"))), read=READ)
+        FindingsLog(
+            run="r", entries=(Entry(finding("IX-19/2")), Entry(finding("IX-19/2"))), read=READ
+        )
 
 
 def test_a_none_beside_a_real_finding_is_refused():
     with pytest.raises(LogRefused, match="stands beside a real one"):
-        FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2", "none"))), read=READ)
+        FindingsLog(
+            run="r", entries=(Entry(finding()), Entry(finding("IX-19/2", "none"))), read=READ
+        )
 
 
 def test_every_refusal_of_a_log_is_named_at_once():

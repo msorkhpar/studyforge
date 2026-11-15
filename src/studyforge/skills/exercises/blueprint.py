@@ -16,7 +16,8 @@ starter by stubbing only the blueprint methods' bodies (`stub_bodies`).
     starters = stubbed(starters, (method,))                   # a stub where it was missing
     starter = stub_bodies(reference, "planner/model.py", (method,))  # a new file's starter
 
-**Depends on.** `ast`, `io`, `re` and `tokenize`, and this package's `drafts.AuthoringError`. Standard library only.
+**Depends on.** `ast`, `io`, `re` and `tokenize`, and this package's `drafts.AuthoringError`.
+Standard library only.
 
 ## ⭐ GENEROUS ENOUGH TO FINISH WITHOUT THE SOLUTION
 

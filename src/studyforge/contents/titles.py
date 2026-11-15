@@ -47,7 +47,8 @@ _LEADING_NUMBER = re.compile(r"^\d+\s+")
 
 
 def normalised(text: str) -> str:
-    """Return `text` lowercased, non-alphanumerics collapsed to single spaces, leading number dropped."""
+    """Return `text` lowercased, non-alphanumerics collapsed to single spaces, and its leading
+    number dropped."""
     words = re.sub(r"[\W_]+", " ", text.lower()).strip()
     return _LEADING_NUMBER.sub("", words)
 

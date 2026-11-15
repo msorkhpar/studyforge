@@ -348,7 +348,11 @@ def test_the_written_lock_with_the_toolchain_s_answer_passes_the_export_s_check(
     )
 
     tags = vendor.profile_tags(
-        checkout_of(tmp_path), PROFILE, ("node", "python"), platform="linux/amd64", run=answering([])
+        checkout_of(tmp_path),
+        PROFILE,
+        ("node", "python"),
+        platform="linux/amd64",
+        run=answering([]),
     )
     path = tmp_path / "bases.json"
     path.write_text(json.dumps(lock()), encoding="utf-8")

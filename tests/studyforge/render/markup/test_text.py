@@ -314,4 +314,5 @@ def test_an_unbalanced_bracket_stays_text_and_the_link_inside_it_renders():
 
 def test_two_levels_of_brackets_stay_text_deliberately():
     # ⛔ The rule balances one level only; no lesson title needs two.
-    assert text.inline("a [two [levels [deep]] here](b.html)") == "a [two [levels [deep]] here](b.html)"
+    nested = "a [two [levels [deep]] here](b.html)"
+    assert text.inline(nested) == nested

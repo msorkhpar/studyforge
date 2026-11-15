@@ -19,7 +19,8 @@ def test_the_shipped_bundle_is_pristine_by_its_path_and_its_asset_name():
 def test_one_changed_byte_ends_the_exemption():
     text = _bundle()
     assert not vendored.pristine(vendored.MERMAID, text + " ")
-    assert not vendored.pristine(vendored.MERMAID, text.replace("globalThis.mermaid =", "globalThis.mermaid  =", 1))
+    moved = text.replace("globalThis.mermaid =", "globalThis.mermaid  =", 1)
+    assert not vendored.pristine(vendored.MERMAID, moved)
 
 
 def test_the_same_text_under_any_other_path_is_read():

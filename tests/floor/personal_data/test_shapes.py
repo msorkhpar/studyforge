@@ -319,7 +319,8 @@ def test_the_mermaid_pin_is_the_builds_own_pin():
     # the package, and render.page keeps diagram off its public surface.
     from tests.floor.personal_data.shapes import VENDORED_ALLOWANCES, VENDORED_HEADER_END
 
-    source = (REPO / "src" / "studyforge" / "render" / "page" / "diagram.py").read_text(encoding="utf-8")
+    diagram = REPO / "src" / "studyforge" / "render" / "page" / "diagram.py"
+    source = diagram.read_text(encoding="utf-8")
     assert f'SHA256 = "{VENDORED_ALLOWANCES[MERMAID][0]}"' in source
     assert 'HEADER_END = "' + VENDORED_HEADER_END.replace("\n", "\\n") + '"' in source
     assert VENDORED_ALLOWANCES[MERMAID][2].fullmatch(LOCAL_TOKEN)
