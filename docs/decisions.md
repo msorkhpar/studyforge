@@ -1533,6 +1533,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`, `R8`, `R18`
 
+### A host may name the repository in a meta tag, for an address the preview cannot read
+
+**Decision.** `PREVIEW_JS` first reads `<meta name="studyforge:repository">` (`preview.HOST_HINT`) and uses its `content` only when it is exactly `https://github.com/<owner>/<repo>`, each part a plain label; any other value is ignored. Without a usable tag it reads `location` as before. The preview never writes the tag: a host that serves the pages on an address that is not `<owner>.github.io/<repo>/`, such as a custom domain, adds it to the pages it serves.
+
+**Why.** A project page on a custom domain has no owner in its host name, so the clone command kept its placeholders and the README and source links became plain text. Naming the repository in the pages would end the rule that every repository's preview is the same bytes; a tag the host adds keeps that rule, and the strict shape means a tag can only point a link at a repository on GitHub.
+
+**Serves.** `R3`, `R8`, `R18`
+
 ### A corpus names an image profile, and the export builds its layers on it
 
 **Decision.** A manifest may carry an optional top-level `profile`, a hyphenated name (`studyforge.corpus.manifest.profile.parse_profile`, gated at `corpus_api` 8 with no bump, and refused without `runtimes`). The thin export's bases lock may carry an optional `profile` entry (`standalone.profile.Profile`): its `name` and a `runner` and an `editor`, each a bare image named `<published base name>-<profile>` with tag and digest, the runner required. `write.release` asks the pinned toolchain for the profile's tags over the declared set (`standalone.vendor.profile_tags`) and refuses by name a profile the toolchain does not have, a runtime set it does not layer on, a lock whose profile is not the course's, or a tag it does not compute. The course's runner and editor layers start from the profile's images where the lock names them (`standalone.profile.built_on`), and their tags carry those digests; the release record lists the profile beside the bases. A course that names a profile is exported thin only. A manifest without the key and a lock without the entry produce the bytes they always did, and no module under `src/` names a profile. The command that prints a profile's tag is read from the toolchain's `consuming.json` `profile_tag` block (`standalone.vendor.profile_tags`); a toolchain without the block, or in a shape not read, is refused by name and no command is run.

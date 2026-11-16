@@ -56,6 +56,21 @@ ADDRESSES = (
     ("a.b.github.io", "/r/", None),
 )
 
+#: The shapes of a host's `<meta name="studyforge:repository">` value: `(content, link or None)`.
+#: ⛔ Only exactly `https://github.com/<owner>/<repo>` is used; anything else is ignored.
+HINTS = (
+    ("https://github.com/a/r", "https://github.com/a/r"),
+    ("https://github.com/Owner/Repo.name", "https://github.com/Owner/Repo.name"),
+    ("https://github.com/a", None),
+    ("https://github.com/a/r/", None),
+    ("https://github.com/a/r/tree/main", None),
+    ("http://github.com/a/r", None),
+    ("https://example.org/a/r", None),
+    ("https://github.com/a/r?x=1", None),
+    ("javascript:alert(1)", None),
+    ("", None),
+)
+
 
 class Quiet(http.server.SimpleHTTPRequestHandler):
     """A plain static file server that keeps the paths it was asked for."""
@@ -253,6 +268,58 @@ def test_the_repository_link_is_built_from_the_address_and_from_no_other_source(
             for host, path, _ in ADDRESSES
         ]
     assert built == [link for _, _, link in ADDRESSES]
+
+
+def test_a_host_hint_is_used_only_when_it_is_exactly_a_repository_on_github(
+    open_page: OpenPage, trees
+) -> None:
+    _tree, out, unit = trees
+    with static(out) as (origin, _asked):
+        open_page.open(f"{origin}/course/{unit.split('.studyforge/')[-1]}")
+        built = [
+            open_page.evaluate(f"window.studyforgePreview.hinted({content!r})")
+            for content, _ in HINTS
+        ]
+    assert built == [link for _, link in HINTS]
+
+
+def test_on_a_custom_domain_the_host_hint_builds_the_links_and_the_clone_command(
+    open_page: OpenPage, trees, tmp_path: Path
+) -> None:
+    _tree, out, unit = trees
+    # ⭐ A custom domain cannot be read for the repository, so the HOST names it in a meta tag;
+    # the page is opened inert and the real script is run over it with a custom-domain address.
+    inert = tmp_path / "inert"
+    shutil.copytree(out, inert)
+    (inert / "course" / "preview.js").write_text("", encoding="utf-8")
+    script = json.dumps(preview.PREVIEW_JS)
+    with static(inert) as (origin, _asked):
+        open_page.open(f"{origin}/course/{unit.split('.studyforge/')[-1]}")
+        state = open_page.evaluate(
+            f"""(() => {{
+              const meta = document.createElement('meta');
+              meta.name = {json.dumps(preview.HOST_HINT)};
+              meta.content = 'https://github.com/example-owner/example-course';
+              document.head.appendChild(meta);
+              const at = {{location: {{hostname: 'courses.example.org',
+                                      pathname: '/example-course/index.html'}}}};
+              new Function('window', {script})(at);
+              const href = (selector) => [...document.querySelectorAll(selector)]
+                .map((a) => a.getAttribute('href'));
+              const notes = '[data-preview-note] a, [data-preview-banner] a, details[data-preview-run-locally] a';
+              const text = (selector) => [...document.querySelectorAll(selector)]
+                .map((span) => span.textContent);
+              return {{run: href(notes), source: href('a[data-code-path]'),
+                       repo: text('[data-preview-repo]'), dir: text('[data-preview-dir]')}};
+            }})()"""
+        )
+    base = "https://github.com/example-owner/example-course/blob/main/"
+    assert state["run"] and set(state["run"]) == {f"{base}README.md#{tour.RUN_ANCHOR}"}, state
+    assert state["source"] == [f"{base}archive/x/Source.java"], state
+    assert state["repo"] and set(state["repo"]) == {
+        "https://github.com/example-owner/example-course.git"
+    }, state
+    assert state["dir"] and set(state["dir"]) == {"example-course"}, state
 
 
 def test_on_a_project_page_the_notes_link_the_readme_section_and_the_source_viewer(
